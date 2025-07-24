@@ -1,3 +1,13 @@
-少前像素地牢
+Girls-Frontline Pixel Dungeon
 =======================
-该像素地牢基于https://github.com/Sharku2011/GirlsFrontline-pixel-dungeon，是基于破碎像素地牢的少前像素地牢分支发行版，遵守GPL3.0协议，保持少前像素地牢原项目的非商业化原则
+소녀 픽셀 던전
+
+Pixel Dungeon, Shattered Pixel Dungeon 의 파생으로서 GPL-3.0 라이센스를 준수하며, 또한 소녀전선의 2차 창작 게임으로 상업적 의도가 없음을 미리 밝힙니다.
+
+Contributors:
+
+ - Art & Graphics : Namsek<br/>
+https://www.pixiv.net/member.php?id=14086167
+
+ - Programming : Sharku<br/>
+https://github.com/Sharku2011

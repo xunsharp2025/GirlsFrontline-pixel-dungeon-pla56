@@ -26,20 +26,20 @@ import com.gfpixel.gfpixeldungeon.Badges;
 import com.gfpixel.gfpixeldungeon.BuildConfig;
 import com.gfpixel.gfpixeldungeon.Challenges;
 import com.gfpixel.gfpixeldungeon.Dungeon;
-import com.gfpixel.gfpixeldungeon.items.Amulet;
+import com.gfpixel.gfpixeldungeon.items.ArmorKit;
 import com.gfpixel.gfpixeldungeon.items.BrokenSeal;
 import com.gfpixel.gfpixeldungeon.items.Honeypot;
 import com.gfpixel.gfpixeldungeon.items.Item;
-import com.gfpixel.gfpixeldungeon.items.TomeOfMastery;
 import com.gfpixel.gfpixeldungeon.items.armor.ClothArmor;
-//import com.gfpixel.gfpixeldungeon.items.armor.ScaleArmor;
 import com.gfpixel.gfpixeldungeon.items.armor.PlateArmor;
+import com.gfpixel.gfpixeldungeon.items.armor.ScaleArmor;
 import com.gfpixel.gfpixeldungeon.items.artifacts.CloakOfShadows;
 import com.gfpixel.gfpixeldungeon.items.bags.MagicalHolster;
 import com.gfpixel.gfpixeldungeon.items.bags.PotionBandolier;
 import com.gfpixel.gfpixeldungeon.items.bags.ScrollHolder;
 import com.gfpixel.gfpixeldungeon.items.bags.VelvetPouch;
 import com.gfpixel.gfpixeldungeon.items.food.Food;
+import com.gfpixel.gfpixeldungeon.items.food.Maccol;
 import com.gfpixel.gfpixeldungeon.items.food.Pasty;
 import com.gfpixel.gfpixeldungeon.items.food.SmallRation;
 import com.gfpixel.gfpixeldungeon.items.potions.PotionOfExperience;
@@ -56,12 +56,16 @@ import com.gfpixel.gfpixeldungeon.items.stones.StoneOfEnchantment;
 import com.gfpixel.gfpixeldungeon.items.wands.M79;
 import com.gfpixel.gfpixeldungeon.items.wands.WandOfDisintegration;
 import com.gfpixel.gfpixeldungeon.items.wands.WandOfMagicMissile;
-import com.gfpixel.gfpixeldungeon.items.weapon.melee.Cypros;
-import com.gfpixel.gfpixeldungeon.items.weapon.melee.G11;
-import com.gfpixel.gfpixeldungeon.items.weapon.melee.SMG.M9;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.Launcher.SRS;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.UG.Cannon;
-import com.gfpixel.gfpixeldungeon.items.weapon.melee.type561;
-import com.gfpixel.gfpixeldungeon.items.weapon.melee.type562;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.Cypros;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.MG.Dp;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.G11;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.HB.Kriss;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.SMG.M9;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.MG.Mg42;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.MG.Negev;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.Thunder;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.SMG.Ump45;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.SA.Welrod;
 import com.gfpixel.gfpixeldungeon.items.weapon.missiles.Boomerang;
@@ -128,33 +132,36 @@ public enum HeroClass {
 		}
 
 		if (BuildConfig.DEBUG) 	{
+			new PotionBandolier().collect();
+			new VelvetPouch().collect();
+			new MagicalHolster().collect();
+			new ScrollHolder().collect();
+
 			Dungeon.LimitedDrops.POTION_BANDOLIER.drop();
 			Dungeon.LimitedDrops.VELVET_POUCH.drop();
 			Dungeon.LimitedDrops.MAGICAL_HOLSTER.drop();
 			Dungeon.LimitedDrops.SCROLL_HOLDER.drop();
-			new type561().identify().collect();
-			new type562().identify().collect();
-			new Cypros().identify().collect();
+
+			new Honeypot().quantity(3).collect();
+
 			new Cannon().identify().collect();
-			new ScrollOfMagicMapping().identify().quantity(100).collect();
-			new PotionOfMindVision().identify().quantity(100).collect();
-			new ScrollOfUpgrade().identify().quantity(100).collect();
+            new SRS().identify().collect();
+			new ScaleArmor().identify().collect();
+			new Cypros().identify().collect();
+			new ScrollOfMagicMapping().identify().quantity(5).collect();
+			new PotionOfMindVision().identify().quantity(5).collect();
+			new ScrollOfUpgrade().identify().quantity(5).collect();
 			new StoneOfEnchantment().quantity(100).collect();
-			new ScrollOfMagicalInfusion().identify().quantity(100).collect();
+			new ScrollOfMagicalInfusion().identify().quantity(10).collect();
 			new WandOfDisintegration().identify().upgrade().collect();
 			new PlateArmor().identify().upgrade(100).collect();
-			new TomeOfMastery().collect();
-			new Amulet().quantity(114514).collect();
+			new Maccol().collect();
+			new ArmorKit().collect();
 			new PotionOfHealing().identify().quantity(5).collect();
 			new PotionOfExperience().identify().quantity(30).collect();
 			new PotionOfMight().identify().quantity(12).collect();
 			new PotionOfStrength().identify().quantity(12).collect();
 			new Dart().identify().quantity(50).collect();
-			new PotionBandolier().collect();
-			new VelvetPouch().collect();
-			new MagicalHolster().collect();
-			new ScrollHolder().collect();
-			new Honeypot().quantity(3).collect();
 			new PotionOfInvisibility().identify().quantity(10).collect();
 		}
 

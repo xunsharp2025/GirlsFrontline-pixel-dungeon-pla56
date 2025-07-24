@@ -197,8 +197,6 @@ public class ItemSpriteSheet {
 	public static final int KRISS             = WEP_TIER3+4;
 	public static final int WA            = WEP_TIER3+5;
 	public static final int C96            = WEP_TIER3+6;
-	public static final int type561	 = WEP_TIER3+15;
-	public static final int type562	 = WEP_TIER3+7;
 	static{
 		assignItemRect(KS23,           16, 16);
 		assignItemRect(KAR98,            15, 15);
@@ -207,8 +205,6 @@ public class ItemSpriteSheet {
 		assignItemRect(KRISS,             16, 16);
 		assignItemRect(WA,            14, 14);
 		assignItemRect(C96,            8, 12);
-		assignItemRect(type561,		16, 16);
-		assignItemRect(type562,		16, 16);
 	}
 
 	private static final int WEP_TIER4      =                               xy(9, 9);   //8 slots
@@ -519,10 +515,10 @@ public class ItemSpriteSheet {
 	private static final int FOOD       =                                   xy(1, 25);  //16 slots
 	public static final int MEAT        = FOOD+0;
 	public static final int STEAK       = FOOD+1;
-	public static final int OVERPRICED  = FOOD+13;
+	public static final int OVERPRICED  = FOOD+2;
 	public static final int CARPACCIO   = FOOD+3;
 	public static final int BLANDFRUIT  = FOOD+4;
-	public static final int RATION      = FOOD+12;
+	public static final int RATION      = FOOD+5;
 	public static final int PASTY       = FOOD+6;
 	public static final int PUMPKIN_PIE = FOOD+7;
 	public static final int CANDY_CANE  = FOOD+8;
@@ -531,10 +527,10 @@ public class ItemSpriteSheet {
 	static{
 		assignItemRect(MEAT,        15, 11);
 		assignItemRect(STEAK,       15, 11);
-		assignItemRect(OVERPRICED,  16, 16);
+		assignItemRect(OVERPRICED,  14, 11);
 		assignItemRect(CARPACCIO,   15, 11);
 		assignItemRect(BLANDFRUIT,  9,  12);
-		assignItemRect(RATION,      16, 16);
+		assignItemRect(RATION,      16, 12);
 		assignItemRect(PASTY,       16, 11);
 		assignItemRect(PUMPKIN_PIE, 16, 12);
 		assignItemRect(CANDY_CANE,  13, 16);

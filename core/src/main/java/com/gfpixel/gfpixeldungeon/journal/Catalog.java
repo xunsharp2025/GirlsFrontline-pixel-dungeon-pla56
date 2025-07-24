@@ -91,7 +91,6 @@ import com.gfpixel.gfpixeldungeon.items.wands.WandOfPrismaticLight;
 import com.gfpixel.gfpixeldungeon.items.wands.WandOfRegrowth;
 import com.gfpixel.gfpixeldungeon.items.wands.WandOfTransfusion;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.DMR.AK47;
-import com.gfpixel.gfpixeldungeon.items.weapon.melee.type561;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.SR.AWP;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.UG.C96;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.MG.Dp;
@@ -205,7 +204,6 @@ public enum Catalog {
 		WEAPONS.seen.put( Mg42.class,                     false);
 		WEAPONS.seen.put( Ntw20.class,                   false);
 		WEAPONS.seen.put( GROZA.class,                false);
-		WEAPONS.seen.put( type561.class,                false);
 	
 		ARMOR.seen.put( ClothArmor.class,                   false);
 		ARMOR.seen.put( LeatherArmor.class,                 false);

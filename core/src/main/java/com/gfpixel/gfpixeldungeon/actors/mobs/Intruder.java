@@ -24,11 +24,13 @@ package com.gfpixel.gfpixeldungeon.actors.mobs;
 import com.gfpixel.gfpixeldungeon.actors.Char;
 import com.gfpixel.gfpixeldungeon.actors.buffs.Bleeding;
 import com.gfpixel.gfpixeldungeon.actors.buffs.Buff;
+import com.gfpixel.gfpixeldungeon.actors.buffs.Charm;
 import com.gfpixel.gfpixeldungeon.actors.buffs.Corrosion;
 import com.gfpixel.gfpixeldungeon.actors.buffs.Terror;
 import com.gfpixel.gfpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.gfpixel.gfpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
 import com.gfpixel.gfpixeldungeon.items.weapon.enchantments.Grim;
+import com.gfpixel.gfpixeldungeon.items.weapon.enchantments.Vampiric;
 import com.gfpixel.gfpixeldungeon.sprites.IntruderSprite;
 import com.watabou.utils.Random;
 

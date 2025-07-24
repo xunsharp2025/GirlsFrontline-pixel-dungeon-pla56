@@ -60,7 +60,9 @@ public abstract class Wand extends Item {
 	private static final int USAGES_TO_KNOW    = 20;
 
 	public static final String AC_ZAP	= "ZAP";
+
 	private static final float TIME_TO_ZAP	= 1f;
+	
 	public int maxCharges = initialCharges();
 	public int curCharges = maxCharges;
 	public float partialCharge = 0f;
@@ -342,7 +344,7 @@ public abstract class Wand extends Item {
 		partialCharge = bundle.getFloat( PARTIALCHARGE );
 	}
 	
-	public static CellSelector.Listener zapper = new  CellSelector.Listener() {
+	protected static CellSelector.Listener zapper = new  CellSelector.Listener() {
 		
 		@Override
 		public void onSelect( Integer target ) {
@@ -409,7 +411,7 @@ public abstract class Wand extends Item {
 			return Messages.get(Wand.class, "prompt");
 		}
 	};
-
+	
 	public class Charger extends Buff {
 		
 		protected static final float BASE_CHARGE_DELAY = 10f;
@@ -419,7 +421,7 @@ public abstract class Wand extends Item {
 		protected static final float CHARGE_BUFF_BONUS = 0.25f;
 
 		float scalingFactor = NORMAL_SCALE_FACTOR;
-
+		
 		@Override
 		public boolean attachTo( Char target ) {
 			super.attachTo( target );
