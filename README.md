@@ -1,8 +1,8 @@
 Girls-Frontline Pixel Dungeon
 =======================
-소녀 픽셀 던전
+少前地牢副本
 
-Pixel Dungeon, Shattered Pixel Dungeon 의 파생으로서 GPL-3.0 라이센스를 준수하며, 또한 소녀전선의 2차 창작 게임으로 상업적 의도가 없음을 미리 밝힙니다.
+作为Pivel Dungeon、Shattered Pixel Dungeon的派生，我们获得了GPL-3.0许可证，也是一款少女前线的二次创作游戏，我们提前宣布没有商业意图。
 
 Contributors:
 
