@@ -6,12 +6,12 @@ Girls-Frontline Pixel Dungeon
 
 制作组成员:
 
- - 主美①：chocosuki
-   主美②：FTer
-   摸鱼没干活的美术：若干
+ - 主美①：chocosuki<br/>
+   主美②：FTer<br/>
+   摸鱼没干活的美术：若干<br/>
 
- - 程序 : 芊屵xunsharp
- - 程序 : choke cola
+ - 程序 : 芊屵xunsharp<br/>
+ - 程序 : choke cola<br/>
 特别鸣谢：
- - 顾问:shower
- - 顾问：JDSAling
+ - 顾问:shower<br/>
+ - 顾问：JDSAling<br/>
