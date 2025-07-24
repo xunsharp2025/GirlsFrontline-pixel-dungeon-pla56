@@ -516,6 +516,14 @@ public class ItemSpriteSheet {
 
 	//16 free slots
 
+	private static final int SOMEITEM	       =                                   xy(1, 24);  //16 slots
+	public static final int MaoQuotation 	= SOMEITEM+14;
+	static{
+		assignItemRect(MaoQuotation,        16, 16);
+
+	}
+
+
 	private static final int FOOD       =                                   xy(1, 25);  //16 slots
 	public static final int MEAT        = FOOD+0;
 	public static final int STEAK       = FOOD+1;
@@ -576,7 +584,6 @@ public class ItemSpriteSheet {
 	}
 
 	                                                                                    //64 free slots
-
 
 	private static void assignItemRect( int item, int width, int height){
 		int x = (item % WIDTH) * WIDTH;

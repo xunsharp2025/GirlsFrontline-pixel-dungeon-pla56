@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="com.gfpixel.gfpixeldungeon"
-	android:versionCode="517"
+	android:versionCode="520"
 	android:versionName="0.50-B"
 	android:installLocation="auto">
 	

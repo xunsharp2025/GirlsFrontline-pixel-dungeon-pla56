@@ -101,7 +101,6 @@ import com.gfpixel.gfpixeldungeon.items.wands.WandOfTransfusion;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.DMR.AK47;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.SR.AWP;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.UG.C96;
-import com.gfpixel.gfpixeldungeon.items.weapon.melee.UG.Cannon;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.MG.Dp;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.G11;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.AR.G36;
@@ -112,6 +111,7 @@ import com.gfpixel.gfpixeldungeon.items.weapon.melee.AR.Hk416;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.DMR.Kar98;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.HB.Kriss;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.SG.Ks23;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.UG.Cannon;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.UG.Lar;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.DMR.M16;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.SR.M1903;
@@ -298,7 +298,7 @@ public class Generator {
 					SRS.class,
 					Thunder.class
 			};
-			WEP_T1.probs = new float[]{ 1, 0, 1, 1, 1, 1, 0, 1, 0 };
+			WEP_T1.probs = new float[]{ 1, 0, 1, 1, 1, 1, 0, 1, 0.09f };
 			
 			WEP_T2.classes = new Class<?>[]{
 					M16.class,

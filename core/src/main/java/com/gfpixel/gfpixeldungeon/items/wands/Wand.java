@@ -104,7 +104,7 @@ public abstract class Wand extends Item {
 	
 	protected abstract void onZap( Ballistica attack );
 
-	public abstract void onHit(G11 staff, Char attacker, Char defender, int damage);
+    public abstract void onHit(G11 staff, Char attacker, Char defender, int damage);
 
 	@Override
 	public boolean collect( Bag container ) {

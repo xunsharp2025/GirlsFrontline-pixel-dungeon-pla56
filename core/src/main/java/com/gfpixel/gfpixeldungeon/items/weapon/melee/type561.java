@@ -22,7 +22,7 @@
 package com.gfpixel.gfpixeldungeon.items.weapon.melee;
 import com.gfpixel.gfpixeldungeon.sprites.ItemSpriteSheet;
 
-public class type561 extends MeleeWeapon {
+public class type561 extends G11 {
 
 	{
 		image = ItemSpriteSheet.type561;

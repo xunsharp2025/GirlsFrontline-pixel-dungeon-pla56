@@ -130,6 +130,7 @@ import com.gfpixel.gfpixeldungeon.items.weapon.melee.SG.Usas12;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.LR.Wa;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.SA.Welrod;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.SG.Win97;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.type562;
 import com.gfpixel.gfpixeldungeon.items.weapon.missiles.Boomerang;
 import com.watabou.utils.Bundle;
 
@@ -206,6 +207,7 @@ public enum Catalog {
 		WEAPONS.seen.put( Ntw20.class,                   false);
 		WEAPONS.seen.put( GROZA.class,                false);
 		WEAPONS.seen.put( type561.class,                false);
+		WEAPONS.seen.put( type562.class,                false);
 	
 		ARMOR.seen.put( ClothArmor.class,                   false);
 		ARMOR.seen.put( LeatherArmor.class,                 false);

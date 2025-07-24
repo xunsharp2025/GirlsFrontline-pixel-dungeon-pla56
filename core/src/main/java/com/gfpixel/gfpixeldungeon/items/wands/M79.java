@@ -78,6 +78,7 @@ public class M79 extends DamageWand {
         Buff.prolong( attacker, Recharging.class, 1 + staff.level()/2f);
         SpellSprite.show(attacker, SpellSprite.CHARGE);
     }
+
     //@Override
     /*public boolean chargeMe(){
 

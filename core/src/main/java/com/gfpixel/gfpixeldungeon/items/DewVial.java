@@ -144,7 +144,7 @@ public class DewVial extends Item {
 		volume += dew.quantity;
 		if (volume >= MAX_VOLUME) {
 			volume = MAX_VOLUME;
-			GLog.p( Messages.get(this, "full") );
+
 		}
 
 		updateQuickslot();
