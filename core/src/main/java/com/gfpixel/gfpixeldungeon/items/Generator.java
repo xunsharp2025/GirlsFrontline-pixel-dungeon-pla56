@@ -134,6 +134,7 @@ import com.gfpixel.gfpixeldungeon.items.weapon.melee.SakuraBlade;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.DMR.Sass;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.Thunder;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.SMG.Ump45;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.type561;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.SG.Usas12;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.LR.Wa;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.SA.Welrod;

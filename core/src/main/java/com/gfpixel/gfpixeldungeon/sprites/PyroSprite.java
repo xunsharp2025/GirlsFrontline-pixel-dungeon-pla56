@@ -23,7 +23,6 @@ package com.gfpixel.gfpixeldungeon.sprites;
 
 
 import com.gfpixel.gfpixeldungeon.Assets;
-import com.gfpixel.gfpixeldungeon.actors.Char;
 import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.TextureFilm;
 

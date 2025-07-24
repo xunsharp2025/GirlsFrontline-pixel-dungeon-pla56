@@ -23,7 +23,6 @@ package com.gfpixel.gfpixeldungeon.sprites;
 
 import com.gfpixel.gfpixeldungeon.Assets;
 import com.watabou.noosa.TextureFilm;
-import com.watabou.utils.Random;
 
 public class IntruderSprite extends MobSprite {
 

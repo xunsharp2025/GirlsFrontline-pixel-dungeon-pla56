@@ -24,7 +24,6 @@ package com.gfpixel.gfpixeldungeon.sprites;
 import com.gfpixel.gfpixeldungeon.Assets;
 import com.gfpixel.gfpixeldungeon.Dungeon;
 import com.gfpixel.gfpixeldungeon.items.weapon.missiles.darts.ParalyticDart;
-import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.utils.Callback;
 

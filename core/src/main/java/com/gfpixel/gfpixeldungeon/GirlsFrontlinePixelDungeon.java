@@ -27,6 +27,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.type561;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.type562;
 import com.gfpixel.gfpixeldungeon.scenes.PixelScene;
 import com.gfpixel.gfpixeldungeon.scenes.WelcomeScene;
 import com.watabou.noosa.Game;
@@ -134,7 +136,6 @@ public class GirlsFrontlinePixelDungeon extends Game {
 		com.watabou.utils.Bundle.addAlias(
 				com.gfpixel.gfpixeldungeon.items.weapon.melee.SA.Welrod.class,
 				"com.gfpixel.gfpixeldungeon.items.weapon.melee.Welrod" );
-
 		com.watabou.utils.Bundle.addAlias(
 				com.gfpixel.gfpixeldungeon.items.weapon.melee.SG.Ks23.class,
 				"com.gfpixel.gfpixeldungeon.items.weapon.melee.Ks23" );
@@ -144,7 +145,12 @@ public class GirlsFrontlinePixelDungeon extends Game {
 		com.watabou.utils.Bundle.addAlias(
 				com.gfpixel.gfpixeldungeon.items.weapon.melee.SG.Win97.class,
 				"com.gfpixel.gfpixeldungeon.items.weapon.melee.Win97" );
-
+		com.watabou.utils.Bundle.addAlias(
+				type561.class,
+				"com.gfpixel.gfpixeldungeon.items.weapon.melee.type561" );
+		com.watabou.utils.Bundle.addAlias(
+				type562.class,
+				"com.gfpixel.gfpixeldungeon.items.weapon.melee.type562" );
 		com.watabou.utils.Bundle.addAlias(
 				com.gfpixel.gfpixeldungeon.items.weapon.melee.SMG.M1a1.class,
 				"com.gfpixel.gfpixeldungeon.items.weapon.melee.M1a1" );

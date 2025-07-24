@@ -28,6 +28,7 @@ import com.gfpixel.gfpixeldungeon.actors.buffs.Recharging;
 import com.gfpixel.gfpixeldungeon.effects.SpellSprite;
 import com.gfpixel.gfpixeldungeon.items.Bomb;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.G11;
+//import com.gfpixel.gfpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.gfpixel.gfpixeldungeon.mechanics.Ballistica;
 import com.gfpixel.gfpixeldungeon.messages.Messages;
 import com.gfpixel.gfpixeldungeon.sprites.ItemSpriteSheet;
@@ -37,6 +38,7 @@ import com.watabou.utils.Bundle;
  * Created by LoveKirsi on 2017-11-22.
  */
 
+//public class M79 extends MeleeWeapon {
 public class M79 extends DamageWand {
     {
         image = ItemSpriteSheet.M79;
@@ -46,18 +48,14 @@ public class M79 extends DamageWand {
         unique = true;
         bones = false;
     }
-
     public int min(int lvl){
         return 1;
     }
-
     public int max(int lvl){
         return 1;
     }
-
     private float damageStack = 0;
     private static final String STACK     = "DamageStack";
-
     @Override
     protected void onZap( Ballistica bolt ) {
 
@@ -71,51 +69,41 @@ public class M79 extends DamageWand {
         new Bomb().explode(bolt.collisionPos, damageStack);
         damageStack = 0;
     }
-
     @Override
     public boolean isUpgradable() {
         return false;
     }
-
-
     @Override
     public void onHit(G11 staff, Char attacker, Char defender, int damage) {
         Buff.prolong( attacker, Recharging.class, 1 + staff.level()/2f);
         SpellSprite.show(attacker, SpellSprite.CHARGE);
     }
-
-
     //@Override
-    public boolean chargeMe(){
+    /*public boolean chargeMe(){
 
             super.curCharges = 1;
             return true;
 
-    }
-
+    }*/
     //@Override
     public void addStack() {
         addStack(1);
     }
-
     public void addStack(int charge) {
         damageStack += charge * 0.15f;
     }
-
-    public void setDamageStack(int stack) {
+    /*public void setDamageStack(int stack) {
         damageStack = stack * 0.15f;
     }
 
     public void setDamageStack(float stack) {
         damageStack = stack;
-    }
-
+    }*/
     @Override
     public void storeInBundle(Bundle bundle) {
         super.storeInBundle(bundle);
         bundle.put( STACK , damageStack );
     }
-
     @Override
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
@@ -125,20 +113,16 @@ public class M79 extends DamageWand {
             damageStack = 0;
         }
     }
-
     //@Override
     //public boolean getUniq(){ return true; }
-
     @Override
     public String statsDesc(){
         return Messages.get(this, "stats_desc", returnPlusDamage());
     };
-
     public int returnPlusDamage(){
         return (int)(damageStack * 100 + 100);
     }
     protected int initialCharges() {
         return 1;
     }
-
 }

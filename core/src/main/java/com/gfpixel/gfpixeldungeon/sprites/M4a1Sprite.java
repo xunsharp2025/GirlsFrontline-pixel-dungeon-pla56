@@ -22,10 +22,7 @@
 package com.gfpixel.gfpixeldungeon.sprites;
 
 import com.gfpixel.gfpixeldungeon.Assets;
-import com.gfpixel.gfpixeldungeon.actors.Char;
-import com.gfpixel.gfpixeldungeon.actors.mobs.Yog;
 import com.gfpixel.gfpixeldungeon.effects.Halo;
-import com.gfpixel.gfpixeldungeon.effects.Splash;
 import com.watabou.glwrap.Blending;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.TextureFilm;

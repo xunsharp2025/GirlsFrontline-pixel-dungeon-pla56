@@ -19,33 +19,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.gfpixel.gfpixeldungeon.sprites;
+package com.gfpixel.gfpixeldungeon.items.weapon.melee;
+import com.gfpixel.gfpixeldungeon.sprites.ItemSpriteSheet;
 
-import com.gfpixel.gfpixeldungeon.Assets;
-import com.watabou.noosa.MovieClip;
-import com.watabou.noosa.TextureFilm;
+public class type561 extends MeleeWeapon {
 
-public class GuardSprite extends MobSprite {
+	{
+		image = ItemSpriteSheet.type561;
 
-	public GuardSprite() {
-		super();
+		tier = 1;
+		RCH = 2;
+		ACC = 0.9f;
+	}
 
-		texture( Assets.GUARD );
-
-		TextureFilm frames = new TextureFilm( texture, 19, 21 );
-
-		idle = new Animation( 2, true );
-		idle.frames( frames, 0, 0, 0, 1, 0, 0, 1, 1 );
-
-		run = new MovieClip.Animation( 15, true );
-		run.frames( frames,  1, 2, 3, 4, 5 );
-
-		attack = new MovieClip.Animation( 12, false );
-		attack.frames( frames, 6, 7, 6);
-
-		die = new MovieClip.Animation( 8, false );
-		die.frames( frames, 1, 8, 9 );
-
-		play( idle );
+	@Override
+	public int max(int lvl) {
+		return  Math.round(0.75f*(tier+2.5f)) + lvl*Math.round(tier+4);
 	}
 }

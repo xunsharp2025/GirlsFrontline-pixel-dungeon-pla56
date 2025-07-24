@@ -126,7 +126,7 @@ public class G11 extends MeleeWeapon {
 			wand.execute(hero, AC_ZAP);
 		}
 	}
-
+	// 攻击动画函数
 	@Override
 	public int proc(Char attacker, Char defender, int damage) {
 		if (wand != null && Dungeon.hero.subClass == HeroSubClass.BATTLEMAGE) {
@@ -136,7 +136,7 @@ public class G11 extends MeleeWeapon {
 		}
 		return super.proc(attacker, defender, damage);
 	}
-
+	// 攻击动画函数
 	@Override
 	public int reachFactor(Char owner) {
 		int reach = super.reachFactor(owner);
@@ -362,7 +362,7 @@ public class G11 extends MeleeWeapon {
 
 	private final Emitter.Factory StaffParticleFactory = new Emitter.Factory() {
 		@Override
-		//reimplementing this is needed as instance creation of new staff particles must be within this class.
+		//需要重新实现这一点，因为新 Staff（法杖）粒子的实例创建必须在此类中
 		public void emit( Emitter emitter, int index, float x, float y ) {
 			StaffParticle c = (StaffParticle)emitter.getFirstAvailable(StaffParticle.class);
 			if (c == null) {

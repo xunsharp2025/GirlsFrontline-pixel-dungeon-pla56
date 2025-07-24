@@ -29,7 +29,6 @@ import com.gfpixel.gfpixeldungeon.items.Heap;
 import com.gfpixel.gfpixeldungeon.items.TomeOfMastery;
 import com.gfpixel.gfpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
 import com.gfpixel.gfpixeldungeon.items.wands.DamageWand;
-import com.gfpixel.gfpixeldungeon.items.wands.WandOfDisintegration;
 import com.gfpixel.gfpixeldungeon.items.weapon.enchantments.Grim;
 import com.gfpixel.gfpixeldungeon.items.weapon.enchantments.Vampiric;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.Cypros;

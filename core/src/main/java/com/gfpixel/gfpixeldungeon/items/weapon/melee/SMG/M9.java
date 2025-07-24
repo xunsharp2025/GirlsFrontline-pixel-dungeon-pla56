@@ -32,7 +32,6 @@ public class M9 extends SubMachineGun {
 		ACC = 0.65f;
         DLY = 0.333f;
 	}
-
 	@Override
 	public int max(int lvl) {
 		return  3*(tier+1) +    //20 base, down from 25
