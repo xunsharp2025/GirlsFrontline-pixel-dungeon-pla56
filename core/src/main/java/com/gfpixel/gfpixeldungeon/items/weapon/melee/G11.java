@@ -110,7 +110,6 @@ public class G11 extends MeleeWeapon {
 	public void execute(Hero hero, String action) {
 
 		super.execute(hero, action);
-
 		if (action.equals(AC_IMBUE)) {
 
 			curUser = hero;
@@ -213,7 +212,7 @@ public class G11 extends MeleeWeapon {
 	
 	public void gainCharge( float amt ){
 		if (wand != null){
-			wand.gainCharge(amt);
+			wand.gainCharge(0f);
 		}
 	}
 

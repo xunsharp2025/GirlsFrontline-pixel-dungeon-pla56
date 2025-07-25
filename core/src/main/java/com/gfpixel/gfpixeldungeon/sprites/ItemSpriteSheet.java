@@ -586,6 +586,12 @@ public class ItemSpriteSheet {
 	public static final int    Gun562    	= Gun561_NUKE+2;
 	public static final int   NEW_AK47    	= Gun561_NUKE+3;
 
+	public static final int REDBOOK =	Gun561_NUKE+5;
+
+	static {
+		assignItemRect(REDBOOK, 13, 16);
+	}
+
 	private static void assignItemRect( int item, int width, int height){
 		int x = (item % WIDTH) * WIDTH;
 		int y = (item / WIDTH) * WIDTH;

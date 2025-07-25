@@ -40,6 +40,7 @@ import com.gfpixel.gfpixeldungeon.items.food.Food;
 import com.gfpixel.gfpixeldungeon.items.potions.Potion;
 import com.gfpixel.gfpixeldungeon.items.scrolls.Scroll;
 import com.gfpixel.gfpixeldungeon.items.wands.Wand;
+import com.gfpixel.gfpixeldungeon.items.wands.WandofNukeBomb;
 import com.gfpixel.gfpixeldungeon.items.weapon.Weapon;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.gfpixel.gfpixeldungeon.items.weapon.missiles.Boomerang;
@@ -76,6 +77,7 @@ public class WndBag extends WndTabbed {
 		ARMOR,
 		ENCHANTABLE,
 		WAND,
+		WAND_NUKE,
 		SEED,
 		FOOD,
 		POTION,
@@ -379,7 +381,7 @@ public class WndBag extends WndTabbed {
 					bg.ra = 0.2f;
 					bg.ba = 0.2f;
 				}
-				
+
 				if (item.name() == null) {
 					enable( false );
 				} else {
@@ -393,6 +395,8 @@ public class WndBag extends WndTabbed {
 						mode == Mode.ARMOR && (item instanceof Armor) ||
 						mode == Mode.ENCHANTABLE && (item instanceof MeleeWeapon || item instanceof Boomerang || item instanceof Armor) ||
 						mode == Mode.WAND && (item instanceof Wand) ||
+								//TODO 远古版本判定方式 需要优化
+						mode == Mode.WAND_NUKE && (item instanceof WandofNukeBomb) ||
 						mode == Mode.SEED && (item instanceof Seed) ||
 						mode == Mode.FOOD && (item instanceof Food) ||
 						mode == Mode.POTION && (item instanceof Potion) ||
