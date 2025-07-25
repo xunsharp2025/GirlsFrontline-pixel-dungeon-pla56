@@ -67,7 +67,6 @@ public class Assets {
 	public static final String PYRO		= "pyro.png";
     public static final String NOEL			= "noel.png";
     public static final String P7			= "p7.png";
-	public static final String type561			= "type561.png";
     public static final String FNC		= "fnc.png";
 	public static final String KEEPER		= "shopkeeper.png";
 	public static final String SAIGA		= "saiga.png";

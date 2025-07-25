@@ -34,6 +34,7 @@ import com.gfpixel.gfpixeldungeon.items.potions.PotionOfHealing;
 import com.gfpixel.gfpixeldungeon.mechanics.Ballistica;
 import com.gfpixel.gfpixeldungeon.messages.Messages;
 import com.gfpixel.gfpixeldungeon.scenes.GameScene;
+import com.gfpixel.gfpixeldungeon.sprites.GuardSprite;
 import com.gfpixel.gfpixeldungeon.sprites.Mg5Sprite;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;

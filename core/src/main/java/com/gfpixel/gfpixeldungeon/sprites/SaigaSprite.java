@@ -1,5 +1,8 @@
 package com.gfpixel.gfpixeldungeon.sprites;
 
+import com.gfpixel.gfpixeldungeon.Assets;
+import com.watabou.noosa.TextureFilm;
+
 public class SaigaSprite {
 
         public SaigaSprite() {

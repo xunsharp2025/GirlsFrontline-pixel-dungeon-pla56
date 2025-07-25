@@ -24,6 +24,7 @@ package com.gfpixel.gfpixeldungeon.sprites;
 import com.gfpixel.gfpixeldungeon.Assets;
 import com.gfpixel.gfpixeldungeon.effects.Speck;
 import com.gfpixel.gfpixeldungeon.effects.particles.ShaftParticle;
+import com.watabou.glwrap.Blending;
 import com.watabou.noosa.TextureFilm;
 
 public class GhostSprite extends MobSprite {
