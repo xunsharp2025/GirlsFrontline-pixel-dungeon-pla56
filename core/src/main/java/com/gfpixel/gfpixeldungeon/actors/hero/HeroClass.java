@@ -45,9 +45,11 @@ import com.gfpixel.gfpixeldungeon.items.wands.WandOfDisintegration;
 import com.gfpixel.gfpixeldungeon.items.wands.WandOfMagicMissile;
 import com.gfpixel.gfpixeldungeon.items.wands.WandofNukeBomb;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.G11;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.Gun562;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.SMG.M9;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.SMG.Ump45;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.SA.Welrod;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.ShootGun;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.Thunder;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.UG.Cannon;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.Gun561;
@@ -167,6 +169,10 @@ public enum HeroClass {
 //		}
 
 		new PotionOfHealing().identify();
+
+		Gun562 gun = new Gun562();
+		gun.identify().collect();
+		Dungeon.quickslot.setSlot(1,gun);
 
 	}
 
