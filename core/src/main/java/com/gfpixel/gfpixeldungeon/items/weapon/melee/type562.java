@@ -55,7 +55,8 @@ public class type562 extends MeleeWeapon {
 	private static final float STAFF_SCALE_FACTOR = 0.75f;
 
 	{
-		image = ItemSpriteSheet.type562;
+		//TODO
+		image = ItemSpriteSheet.ARMOR_MAGE;
 		tier = 3;
 		RCH = 3;
 		ACC = 1f;

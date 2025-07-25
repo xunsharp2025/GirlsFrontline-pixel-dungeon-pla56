@@ -554,6 +554,7 @@ public class ItemSpriteSheet {
 	public static final int PICKAXE = QUEST+4;
 	public static final int ORE     = QUEST+5;
 	public static final int TOKEN   = QUEST+6;
+
 	static{
 		assignItemRect(SKULL,   16, 11);
 		assignItemRect(DUST,    12, 11);
@@ -580,6 +581,10 @@ public class ItemSpriteSheet {
 	}
 
 	                                                                                    //64 free slots
+	private static final int Gun561_NUKE   =                                       xy(1, 34);  //32 slots
+	public static final int  Gun561      	=  Gun561_NUKE+1;
+	public static final int    Gun562    	= Gun561_NUKE+2;
+	public static final int   NEW_AK47    	= Gun561_NUKE+3;
 
 	private static void assignItemRect( int item, int width, int height){
 		int x = (item % WIDTH) * WIDTH;

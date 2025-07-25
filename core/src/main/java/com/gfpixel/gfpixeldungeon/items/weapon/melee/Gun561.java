@@ -20,20 +20,28 @@
  */
 
 package com.gfpixel.gfpixeldungeon.items.weapon.melee;
+import com.gfpixel.gfpixeldungeon.items.Item;
 import com.gfpixel.gfpixeldungeon.sprites.ItemSpriteSheet;
 
-public class type561 extends G11 {
+public class Gun561 extends G11 {
 
 	{
-		image = ItemSpriteSheet.type561;
+		//TODO
+		image = ItemSpriteSheet.Gun561;
 
 		tier = 1;
 		RCH = 2;
 		ACC = 0.9f;
 	}
 
+	public static class NukeAmmo extends Item { }
+
+	@Override
+	public int min(int lvl) {
+		return 2 + lvl;
+	}
 	@Override
 	public int max(int lvl) {
-		return  Math.round(0.75f*(tier+2.5f)) + lvl*Math.round(tier+4);
+		return 9 + lvl * 2;
 	}
 }

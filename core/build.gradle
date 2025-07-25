@@ -11,6 +11,7 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))*/
 
 android {
+    namespace 'com.gfpixel.gfpixeldungeon'
     /*signingConfigs {
         gpd {
             keyAlias keystoreProperties['keyAlias']
