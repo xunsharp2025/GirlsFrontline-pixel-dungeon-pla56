@@ -21,8 +21,6 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.HeroIcon;
@@ -63,11 +61,7 @@ public enum HeroSubClass {
 		if (this == BATTLEMAGE){
 			String desc = Messages.get(this, name() + "_desc");
 			if (Game.scene() instanceof GameScene){
-				MagesStaff staff = Dungeon.hero.belongings.getItem(MagesStaff.class);
-				if (staff != null && staff.wandClass() != null){
-					desc += "\n\n" + Messages.get(staff.wandClass(), "bmage_desc");
-					desc = desc.replaceAll("_", "");
-				}
+
 			}
 			return desc;
 		} else {

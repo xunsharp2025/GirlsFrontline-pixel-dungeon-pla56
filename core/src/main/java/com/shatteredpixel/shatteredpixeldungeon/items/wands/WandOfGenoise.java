@@ -30,7 +30,7 @@ public class WandOfGenoise extends Wand {
     private static final float TIME_TO_EXPLODE = 2f;
 
     @Override
-    protected void onZap(Ballistica beam) {
+    public void onZap(Ballistica beam) {
         for (int n : PathFinder.NEIGHBOURS8) {
             int c = beam.collisionPos + n;
             if ( c >= 0 && Blob.volumeAt( c, GooWarn.class ) == 0 ) {
@@ -83,7 +83,6 @@ public class WandOfGenoise extends Wand {
 
         private static final float TURNS_TO_CHARGE = 50f;
 
-        @Override
         protected void recharge(){
 
             //float turnsToCharge = 25f;

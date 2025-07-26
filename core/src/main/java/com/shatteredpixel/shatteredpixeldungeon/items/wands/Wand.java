@@ -39,12 +39,14 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.mage.WildMagic;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.StaffParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -122,7 +124,7 @@ public abstract class Wand extends Item {
 
 	public abstract void onZap(Ballistica attack);
 
-	public abstract void onHit( MagesStaff staff, Char attacker, Char defender, int damage);
+	public abstract void onHit(G11 staff, Char attacker, Char defender, int damage);
 
 	public boolean tryToZap( Hero owner, int target ){
 
@@ -368,6 +370,14 @@ public abstract class Wand extends Item {
 		Sample.INSTANCE.play( Assets.Sounds.ZAP );
 	}
 
+	public void staffFx( StaffParticle particle ){
+		particle.color(0xFFFFFF); particle.am = 0.3f;
+		particle.setLifespan( 1f);
+		particle.speed.polar( Random.Float(PointF.PI2), 2f );
+		particle.setSize( 1f, 2f );
+		particle.radiateXY(0.5f);
+	}
+
 	public void staffFx( MagesStaff.StaffParticle particle ){
 		particle.color(0xFFFFFF); particle.am = 0.3f;
 		particle.setLifespan( 1f);
@@ -532,6 +542,12 @@ public abstract class Wand extends Item {
 
 		@Override
 		public void onZap(Ballistica attack) {}
+
+		@Override
+		public void onHit(G11 staff, Char attacker, Char defender, int damage) {
+
+		}
+
 		public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {}
 
 		@Override
@@ -628,7 +644,7 @@ public abstract class Wand extends Item {
 		private static final float SCALING_CHARGE_ADDITION = 40f;
 		private static final float NORMAL_SCALE_FACTOR = 0.875f;
 
-		private static final float CHARGE_BUFF_BONUS = 0.25f;
+		public static final float CHARGE_BUFF_BONUS = 0.25f;
 
 		float scalingFactor = NORMAL_SCALE_FACTOR;
 		

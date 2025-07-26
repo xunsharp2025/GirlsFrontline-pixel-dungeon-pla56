@@ -95,7 +95,7 @@ public class ElpheltSprite extends MobSprite {
                 }
             }
         );
-        Sample.INSTANCE.play(Assets.SND_ZAP);
+        Sample.INSTANCE.play(Assets.Sounds.ZAP);
     }
 
     @Override

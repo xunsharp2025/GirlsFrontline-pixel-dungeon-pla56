@@ -43,7 +43,7 @@ public class M84 extends Wand {
     {
         image = ItemSpriteSheet.M84;
 
-        collisionProperties = Ballistica.STOP_TERRAIN;
+        collisionProperties = Ballistica.STOP_TARGET;
 
         unique = true;
         bones = false;
@@ -58,27 +58,27 @@ public class M84 extends Wand {
     }
 
     @Override
-    protected void onZap(Ballistica bolt) {
+    public void onZap(Ballistica bolt) {
         Blob paralyticGas = Blob.seed(bolt.collisionPos, 50 + 10 * level(), ParalyticGas.class);
         GameScene.add(paralyticGas);
 
         for (int i : PathFinder.NEIGHBOURS9) {
             Char ch = Actor.findChar(bolt.collisionPos + i);
             if (ch != null) {
-                processSoulMark(ch, chargesPerCast());
+                //processSoulMark(ch, chargesPerCast());
             }
         }
     }
 
     @Override
-    protected void fx(Ballistica bolt, Callback callback) {
+    public void fx(Ballistica bolt, Callback callback) {
         MagicMissile.boltFromChar(
                 curUser.sprite.parent,
                 MagicMissile.CORROSION,
                 curUser.sprite,
                 bolt.collisionPos,
                 callback);
-        Sample.INSTANCE.play(Assets.SND_ZAP);
+        Sample.INSTANCE.play(Assets.Sounds.ZAP);
     }
 
     @Override

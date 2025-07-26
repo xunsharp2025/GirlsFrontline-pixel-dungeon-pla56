@@ -34,10 +34,7 @@ import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard.RitualSiteRoom;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.NoelSprite;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndNoel;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.SparseArray;
 
@@ -53,7 +50,6 @@ public class Noel extends NPC {
 
     @Override
     protected boolean act() {
-        throwItem();
         return super.act();
     }
 
@@ -75,7 +71,6 @@ public class Noel extends NPC {
         return true;
     }
 
-    @Override
     public boolean interact() {
 
         sprite.turnTo( pos, Dungeon.hero.pos );
@@ -88,23 +83,23 @@ public class Noel extends NPC {
             if (item != null) {
 
                 int DialogID = DialogInfo.ID_NOEL_QUEST + DialogInfo.COMPLETE;
-                WndDialog wnd = new WndDialog( DialogID ) {
-                    @Override
-                    protected void onFinish() {
-                        Quest.processed = true;
-                        GameScene.show(new WndNoel((Noel) this.npc, item));
-                    }
-                };
-
-                wnd.npc = this;
-                GameScene.show(wnd);
+//                WndDialog wnd = new WndDialog( DialogID ) {
+//                    @Override
+//                    protected void onFinish() {
+//                        Quest.processed = true;
+//                        GameScene.show(new WndNoel((Noel) this.npc, item));
+//                    }
+//                };
+//
+//                wnd.npc = this;
+//                GameScene.show(wnd);
 
             } else {
                 // 진행중 대사 출력
                 int DialogID = DialogInfo.ID_NOEL_QUEST + DialogInfo.INPROGRESS;
 
-                WndDialog.setBRANCH(DialogID, 0);
-                WndDialog.ShowChapter(DialogID);
+                //WndDialog.setBRANCH(DialogID, 0);
+                //WndDialog.ShowChapter(DialogID);
 
             }
 
@@ -112,10 +107,10 @@ public class Noel extends NPC {
             // 퀘스트 수주
             int DialogID = DialogInfo.ID_NOEL_QUEST;
 
-            WndDialog.setBRANCH(DialogID, 0);
-            WndDialog.ShowChapter(DialogID);
+            //WndDialog.setBRANCH(DialogID, 0);
+            //WndDialog.ShowChapter(DialogID);
 
-            Notes.add( Notes.Landmark.NOEL );
+            Notes.add( Notes.Landmark.IMP );
             Quest.given = true;
         }
 
@@ -237,7 +232,7 @@ public class Noel extends NPC {
             wand1 = null;
             wand2 = null;
 
-            Notes.remove( Notes.Landmark.NOEL );
+        //  Notes.remove( Notes.Landmark.NOEL );
         }
 
         public static boolean completed(){

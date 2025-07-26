@@ -80,7 +80,7 @@ public class TomeOfMastery extends Item {
 				way1 = HeroSubClass.FREERUNNER;
 				way2 = HeroSubClass.ASSASSIN;
 				break;
-			case RANGER:
+			case HUNTRESS:
 				way1 = HeroSubClass.SNIPER;
 				way2 = HeroSubClass.WARDEN;
 				break;
@@ -116,10 +116,10 @@ public class TomeOfMastery extends Item {
 		curUser.subClass = way;
 		
 		curUser.sprite.operate( curUser.pos );
-		Sample.INSTANCE.play( Assets.SND_MASTERY );
+		Sample.INSTANCE.play( Assets.Sounds.MASTERY );
 		
 		SpellSprite.show( curUser, SpellSprite.MASTERY );
-		curUser.sprite.emitter().burst( Speck.factory( Speck.MASTERY ), 12 );
+		//curUser.sprite.emitter().burst( Speck.factory( Speck.MASTERY ), 12 );
 		GLog.w( Messages.get(this, "way", way.title()) );
 		
 	}

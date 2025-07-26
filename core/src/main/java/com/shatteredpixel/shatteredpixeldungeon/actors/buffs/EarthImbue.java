@@ -44,7 +44,7 @@ public class EarthImbue extends FlavourBuff {
 	
 	@Override
 	public void tintIcon(Image icon) {
-		greyIcon(icon, 5f, cooldown());
+		//greyIcon(icon, 5f, cooldown());
 	}
 
 	@Override

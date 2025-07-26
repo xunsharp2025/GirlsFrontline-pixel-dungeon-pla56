@@ -111,7 +111,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLivingEarth;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Flail;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
@@ -2077,8 +2076,6 @@ public class Hero extends Char {
 				} else {
 					((Wand) i).charge(this);
 				}
-			} else if (i instanceof MagesStaff && i.keptThoughLostInvent){
-				((MagesStaff) i).applyWandChargeBuff(this);
 			}
 		}
 

@@ -180,11 +180,11 @@ public class Cypros extends MeleeWeapon {
                     if (Random.Int( CHARMCHANCE ) == 0) {
                         Buff.affect( enemy, Charm.class, Random.IntRange( 3, 7 ) ).object = hero.id();
                         enemy.sprite.centerEmitter().start( Speck.factory( Speck.HEART ), 0.2f, 5 );
-                        Sample.INSTANCE.play( Assets.SND_CHARMS );
+                        Sample.INSTANCE.play( Assets.Sounds.CHARMS );
                     }
                     break;
                 case CONFIRE:
-                    Sample.INSTANCE.play(Assets.SND_ZAP);
+                    Sample.INSTANCE.play(Assets.Sounds.ZAP);
                     hero.sprite.parent.add(new Beam.DeathRay(hero.sprite.center(), enemy.sprite.center()));
                 break;
                 case TRAVAILLER: default:

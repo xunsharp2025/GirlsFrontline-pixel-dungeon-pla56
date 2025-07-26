@@ -61,6 +61,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Statue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Swarm;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Wraith;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -100,7 +101,10 @@ public class WandOfCorruption extends Wand {
 		MINOR_DEBUFFS.put(Burning.class,        0f);
 		MINOR_DEBUFFS.put(Poison.class,         0f);
 	}
-	
+	@Override
+	public void onHit(G11 staff, Char attacker, Char defender, int damage) {
+
+	}
 	private static final float MAJOR_DEBUFF_WEAKEN = 1/2f;
 	private static final HashMap<Class<? extends Buff>, Float> MAJOR_DEBUFFS = new HashMap<>();
 	static{
@@ -220,16 +224,6 @@ public class WandOfCorruption extends Wand {
 			AllyBuff.affectAndLoot(enemy, curUser, Corruption.class);
 		} else {
 			Buff.affect(enemy, Doom.class);
-		}
-	}
-
-	@Override
-	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
-		// lvl 0 - 25%
-		// lvl 1 - 40%
-		// lvl 2 - 50%
-		if (Random.Int( buffedLvl() + 4 ) >= 3){
-			Buff.prolong( defender, Amok.class, 4+ buffedLvl()*2);
 		}
 	}
 

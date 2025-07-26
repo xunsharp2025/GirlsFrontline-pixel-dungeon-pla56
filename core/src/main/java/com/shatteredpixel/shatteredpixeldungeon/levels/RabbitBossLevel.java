@@ -69,12 +69,12 @@ public class RabbitBossLevel extends Level {
 	
 	@Override
 	public String tilesTex() {
-		return Assets.TILES_TEMPLE;
+		return Assets.Environment.TILES_PRISON;
 	}
 	
 	@Override
 	public String waterTex() {
-		return Assets.WATER_PRISON;
+		return Assets.Environment.WATER_PRISON;
 	}
 	
 	private static final String STATE	        = "state";
@@ -148,25 +148,20 @@ public class RabbitBossLevel extends Level {
 	protected void createItems() {
 		Item item = Bones.get();
 		if (item != null) {
-			drop( item, randomRespawnCell() ).type = Heap.Type.REMAINS;
+			drop( item, randomRespawnCell(elphelt) ).type = Heap.Type.REMAINS;
 		}
 	}
 
 	@Override
-	public int randomRespawnCell() {
+	public int randomRespawnCell(Char ch) {
 		return entrance + PathFinder.NEIGHBOURS8[Random.Int(8)]; //random cell adjacent to the entrance.
 	}
 
 	@Override
-	public void press( int cell, Char ch ) {
-
-		super.press(cell, ch);
-
-		if (ch == Dungeon.hero) {
-			//hero enters tengu's chamber
-			if (state == State.READY) {
-				progress();
-			}
+	public void seal( ) {
+		super.seal();
+		if (state == State.READY) {
+			progress();
 		}
 	}
 
@@ -273,7 +268,7 @@ public class RabbitBossLevel extends Level {
 			case PHASE1:
 
 				GameScene.flash(0xFFFFFF);
-				Sample.INSTANCE.play(Assets.SND_BLAST);
+				Sample.INSTANCE.play(Assets.Sounds.BLAST);
 
 				state = State.PHASE2;
 				elphelt.phase = 2;
@@ -282,7 +277,7 @@ public class RabbitBossLevel extends Level {
 			case PHASE2:
 
 				GameScene.flash(0xFFFFFF);
-				Sample.INSTANCE.play(Assets.SND_BLAST);
+				Sample.INSTANCE.play(Assets.Sounds.BLAST);
 
 				changeMap(MAP_END);
 				clearEntities(null);

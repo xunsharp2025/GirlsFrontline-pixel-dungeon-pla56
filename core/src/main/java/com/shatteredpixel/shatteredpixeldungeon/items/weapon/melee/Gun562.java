@@ -39,7 +39,7 @@ public class Gun562 extends ShootGun {
     @Override
     public void onShootComplete(int cell) {
         //播放音效
-        Sample.INSTANCE.play(Assets.SND_BLAST);
+        Sample.INSTANCE.play(Assets.Sounds.BLAST);
 
         //处理地形和物品互动
         //爆炸特效

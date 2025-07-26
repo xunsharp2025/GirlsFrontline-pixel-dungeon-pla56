@@ -33,6 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.CorrosionParticle;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -82,18 +83,9 @@ public class WandOfCorrosion extends Wand {
 				callback);
 		Sample.INSTANCE.play(Assets.Sounds.ZAP);
 	}
-
 	@Override
-	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
-		// lvl 0 - 33%
-		// lvl 1 - 50%
-		// lvl 2 - 60%
-		if (Random.Int( buffedLvl() + 3 ) >= 2) {
-			
-			Buff.affect( defender, Ooze.class ).set( Ooze.DURATION );
-			CellEmitter.center(defender.pos).burst( CorrosionParticle.SPLASH, 5 );
-			
-		}
+	public void onHit(G11 staff, Char attacker, Char defender, int damage) {
+
 	}
 
 	@Override

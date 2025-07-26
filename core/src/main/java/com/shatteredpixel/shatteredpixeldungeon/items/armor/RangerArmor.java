@@ -33,6 +33,9 @@ import com.watabou.utils.Callback;
 
 import java.util.HashMap;
 
+//Ranger's armor allows them to throw a shuriken at every enemy in their line of sight
+
+/*
 public class RangerArmor extends ClassArmor {
 
 	
@@ -81,3 +84,4 @@ public class RangerArmor extends ClassArmor {
 	}
 
 }
+*/

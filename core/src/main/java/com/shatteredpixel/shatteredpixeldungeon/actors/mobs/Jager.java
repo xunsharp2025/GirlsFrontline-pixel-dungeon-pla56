@@ -25,6 +25,6 @@ public class Jager extends Warlock {
         return Random.NormalIntRange(1, 2);
     }
 
-    @Override
-    protected float weaknessDuration() { return Weakness.DURATION / 2; }
+//    @Override
+//    protected float weaknessDuration() { return Weakness.DURATION / 2; }
 }

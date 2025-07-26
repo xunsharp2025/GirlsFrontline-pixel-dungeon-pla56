@@ -29,6 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Lightning;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SparkParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Shocking;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -93,9 +94,8 @@ public class WandOfLightning extends DamageWand {
 	}
 
 	@Override
-	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
-		//acts like shocking enchantment
-		new Shocking().proc(staff, attacker, defender, damage);
+	public void onHit(G11 staff, Char attacker, Char defender, int damage) {
+
 	}
 
 	private void arc( Char ch ) {

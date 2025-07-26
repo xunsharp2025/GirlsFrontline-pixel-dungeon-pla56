@@ -37,7 +37,7 @@ import com.watabou.utils.Random;
 public class ScrollOfPsionicBlast extends Scroll {
 
 	{
-		initials = 5;
+		//initials = 5;
 
 		bones = true;
 	}
@@ -47,7 +47,7 @@ public class ScrollOfPsionicBlast extends Scroll {
 		
 		GameScene.flash( 0xFFFFFF );
 		
-		Sample.INSTANCE.play( Assets.SND_BLAST );
+		Sample.INSTANCE.play( Assets.Sounds.BLAST );
 		Invisibility.dispel();
 		
 		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
@@ -73,26 +73,26 @@ public class ScrollOfPsionicBlast extends Scroll {
 		}
 	}
 	
-	@Override
-	public void empoweredRead() {
-		GameScene.flash( 0xFFFFFF );
-		
-		Sample.INSTANCE.play( Assets.SND_BLAST );
-		Invisibility.dispel();
-		
-		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
-			if (Dungeon.level.heroFOV[mob.pos]) {
-				mob.damage(mob.HT, this );
-			}
-		}
-		
-		setKnown();
-		
-		readAnimation();
-	}
+//	@Override
+//	public void empoweredRead() {
+//		GameScene.flash( 0xFFFFFF );
+//
+//		Sample.INSTANCE.play( Assets.Sounds.BLAST );
+//		Invisibility.dispel();
+//
+//		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
+//			if (Dungeon.level.heroFOV[mob.pos]) {
+//				mob.damage(mob.HT, this );
+//			}
+//		}
+//
+//		setKnown();
+//
+//		readAnimation();
+//	}
 	
 	@Override
 	public int value() {
-		return isKnown() ? 50 * quantity : super.price();
+		return isKnown() ? 50 * quantity : super.value();
 	}
 }

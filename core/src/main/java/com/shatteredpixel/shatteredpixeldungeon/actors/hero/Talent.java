@@ -53,7 +53,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
@@ -380,12 +379,7 @@ public enum Talent {
 
 	public static void onUpgradeScrollUsed( Hero hero ){
 		if (hero.hasTalent(ENERGIZING_UPGRADE)){
-			MagesStaff staff = hero.belongings.getItem(MagesStaff.class);
-			if (staff != null){
-				staff.gainCharge(2 + 2*hero.pointsInTalent(ENERGIZING_UPGRADE), true);
-				ScrollOfRecharging.charge( Dungeon.hero );
-				SpellSprite.show( hero, SpellSprite.CHARGE );
-			}
+			//TODO MAGESTAFF
 		}
 		if (hero.hasTalent(MYSTICAL_UPGRADE)){
 			CloakOfShadows cloak = hero.belongings.getItem(CloakOfShadows.class);

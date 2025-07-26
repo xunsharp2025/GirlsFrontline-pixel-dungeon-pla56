@@ -21,16 +21,21 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.items.EquipableItem;
+import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.PotionBandolier;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.ScrollHolder;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
@@ -38,27 +43,31 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.InventorySlot;
+import com.shatteredpixel.shatteredpixeldungeon.ui.ItemSlot;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RightClickMenu;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.watabou.gltextures.TextureCache;
 import com.watabou.input.GameAction;
 import com.watabou.input.KeyBindings;
 import com.watabou.input.KeyEvent;
 import com.watabou.input.PointerEvent;
 import com.watabou.noosa.BitmapText;
+import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.PointF;
 
 public class WndBag extends WndTabbed {
-	
+
 	//only one bag window can appear at a time
 	public static Window INSTANCE;
 
 	protected static final int COLS_P   = 5;
 	protected static final int COLS_L   = 5;
-	
+
 	protected static int SLOT_WIDTH_P   = 28;
 	protected static int SLOT_WIDTH_L   = 28;
 
@@ -66,9 +75,9 @@ public class WndBag extends WndTabbed {
 	protected static int SLOT_HEIGHT_L	= 28;
 
 	protected static final int SLOT_MARGIN	= 1;
-	
+
 	protected static final int TITLE_HEIGHT	= 14;
-	
+
 	private ItemSelector selector;
 
 	private int nCols;
@@ -80,7 +89,7 @@ public class WndBag extends WndTabbed {
 	protected int count;
 	protected int col;
 	protected int row;
-	
+
 	private static Bag lastBag;
 
 	public WndBag( Bag bag ) {
@@ -88,16 +97,16 @@ public class WndBag extends WndTabbed {
 	}
 
 	public WndBag( Bag bag, ItemSelector selector ) {
-		
+
 		super();
-		
+
 		if( INSTANCE != null ){
 			INSTANCE.hide();
 		}
 		INSTANCE = this;
-		
+
 		this.selector = selector;
-		
+
 		lastBag = bag;
 
 		slotWidth = PixelScene.landscape() ? SLOT_WIDTH_L : SLOT_WIDTH_P;
@@ -122,7 +131,7 @@ public class WndBag extends WndTabbed {
 		}
 
 		placeTitle( bag, windowWidth );
-		
+
 		placeItems( bag );
 
 		resize( windowWidth, windowHeight );
@@ -138,17 +147,17 @@ public class WndBag extends WndTabbed {
 
 		layoutTabs();
 	}
-	
+
 	public static WndBag lastBag( ItemSelector selector ) {
-		
+
 		if (lastBag != null && Dungeon.hero.belongings.backpack.contains( lastBag )) {
-			
+
 			return new WndBag( lastBag, selector );
-			
+
 		} else {
-			
+
 			return new WndBag( Dungeon.hero.belongings.backpack, selector );
-			
+
 		}
 	}
 
@@ -163,7 +172,7 @@ public class WndBag extends WndTabbed {
 
 		return lastBag( selector );
 	}
-	
+
 	protected void placeTitle( Bag bag, int width ){
 
 		float titleWidth;
@@ -230,9 +239,9 @@ public class WndBag extends WndTabbed {
 		PixelScene.align(txtTitle);
 		add( txtTitle );
 	}
-	
+
 	protected void placeItems( Bag container ) {
-		
+
 		// Equipped items
 		Belongings stuff = Dungeon.hero.belongings;
 		placeItem( stuff.weapon != null ? stuff.weapon : new Placeholder( ItemSpriteSheet.WEAPON_HOLDER ) );
@@ -255,17 +264,17 @@ public class WndBag extends WndTabbed {
 				count++;
 			}
 		}
-		
+
 		// Free Space
 		while ((count - 5) < container.capacity()) {
 			placeItem( null );
 		}
 	}
-	
+
 	protected void placeItem( final Item item ) {
 
 		count++;
-		
+
 		int x = col * (slotWidth + SLOT_MARGIN);
 		int y = TITLE_HEIGHT + row * (slotHeight + SLOT_MARGIN);
 
@@ -337,7 +346,7 @@ public class WndBag extends WndTabbed {
 		if (item == null || (selector != null && !selector.itemSelectable(item))){
 			slot.enable(false);
 		}
-		
+
 		if (++col >= nCols) {
 			col = 0;
 			row++;
@@ -354,7 +363,7 @@ public class WndBag extends WndTabbed {
 			return super.onSignal(event);
 		}
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 		if (selector != null) {
@@ -362,7 +371,7 @@ public class WndBag extends WndTabbed {
 		}
 		super.onBackPressed();
 	}
-	
+
 	@Override
 	protected void onClick( Tab tab ) {
 		hide();
@@ -373,7 +382,7 @@ public class WndBag extends WndTabbed {
 			Game.scene().addToFront(w);
 		}
 	}
-	
+
 	@Override
 	public void hide() {
 		super.hide();
@@ -381,12 +390,12 @@ public class WndBag extends WndTabbed {
 			INSTANCE = null;
 		}
 	}
-	
+
 	@Override
 	protected int tabHeight() {
 		return 20;
 	}
-	
+
 	private Image icon( Bag bag ) {
 		if (bag instanceof VelvetPouch) {
 			return Icons.get( Icons.SEED_POUCH );
@@ -400,15 +409,15 @@ public class WndBag extends WndTabbed {
 			return Icons.get( Icons.BACKPACK );
 		}
 	}
-	
+
 	private class BagTab extends IconTab {
 
 		private Bag bag;
 		private int index;
-		
+
 		public BagTab( Bag bag, int index ) {
 			super( icon(bag) );
-			
+
 			this.bag = bag;
 			this.index = index;
 		}
@@ -434,7 +443,7 @@ public class WndBag extends WndTabbed {
 			return Messages.titleCase(bag.name());
 		}
 	}
-	
+
 	public static class Placeholder extends Item {
 
 		public Placeholder(int image ) {
@@ -450,7 +459,7 @@ public class WndBag extends WndTabbed {
 		public boolean isIdentified() {
 			return true;
 		}
-		
+
 		@Override
 		public boolean isEquipped( Hero hero ) {
 			return true;

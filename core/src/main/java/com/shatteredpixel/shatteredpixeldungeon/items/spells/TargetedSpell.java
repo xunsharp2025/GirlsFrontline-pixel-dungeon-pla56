@@ -45,7 +45,7 @@ public abstract class TargetedSpell extends Spell {
 	
 	protected abstract void affectTarget( Ballistica bolt, Hero hero );
 	
-	protected void fx( Ballistica bolt, Callback callback ) {
+	public void fx( Ballistica bolt, Callback callback ) {
 		MagicMissile.boltFromChar( curUser.sprite.parent,
 				MagicMissile.MAGIC_MISSILE,
 				curUser.sprite,

@@ -42,7 +42,7 @@ public class M79 extends DamageWand {
     {
         image = ItemSpriteSheet.M79;
 
-        collisionProperties = Ballistica.STOP_TERRAIN | Ballistica.STOP_CHARS;
+        collisionProperties = Ballistica.STOP_TARGET | Ballistica.STOP_CHARS;
 
         unique = true;
         bones = false;
@@ -56,7 +56,7 @@ public class M79 extends DamageWand {
     private float damageStack = 0;
     private static final String STACK     = "DamageStack";
     @Override
-    protected void onZap( Ballistica bolt ) {
+    public void onZap( Ballistica bolt ) {
 
         Char ch = Actor.findChar( bolt.collisionPos );
 

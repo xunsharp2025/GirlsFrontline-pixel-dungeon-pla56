@@ -37,11 +37,6 @@ public class Type95 extends HitBuffer {
     }
 
     @Override
-    public void onAttack( Char h, Char enemy ) {
-
-    }
-
-    @Override
     public int damageRoll(Char owner) {
         if (owner instanceof Hero && owner.buffs(Bless.class).isEmpty()) {
             Buff.prolong(owner, Bless.class, 1.2f);

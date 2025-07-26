@@ -63,7 +63,7 @@ public class DreamerSprite extends MobSprite {
 	public void onComplete( Animation anim ) {
 		if (anim == attack) {
 
-			Sample.INSTANCE.play( Assets.SND_ZAP );
+			Sample.INSTANCE.play( Assets.Sounds.ZAP );
 			MagicMissile.boltFromChar( parent,
 					MagicMissile.SHADOW,
 					this,

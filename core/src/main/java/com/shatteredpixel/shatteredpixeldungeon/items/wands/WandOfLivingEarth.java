@@ -33,6 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -183,26 +184,10 @@ public class WandOfLivingEarth extends DamageWand {
 				callback);
 		Sample.INSTANCE.play(Assets.Sounds.ZAP);
 	}
-	
-	@Override
-	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
-		EarthGuardian guardian = null;
-		for (Mob m : Dungeon.level.mobs){
-			if (m instanceof EarthGuardian){
-				guardian = (EarthGuardian) m;
-				break;
-			}
-		}
-		
-		int armor = Math.round(damage*0.33f);
 
-		if (guardian != null){
-			guardian.sprite.centerEmitter().burst(MagicMissile.EarthParticle.ATTRACT, 8 + buffedLvl() / 2);
-			guardian.setInfo(Dungeon.hero, buffedLvl(), armor);
-		} else {
-			attacker.sprite.centerEmitter().burst(MagicMissile.EarthParticle.ATTRACT, 8 + buffedLvl() / 2);
-			Buff.affect(attacker, RockArmor.class).addArmor( buffedLvl(), armor);
-		}
+	@Override
+	public void onHit(G11 staff, Char attacker, Char defender, int damage) {
+
 	}
 	
 	@Override

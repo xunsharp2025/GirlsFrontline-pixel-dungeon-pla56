@@ -279,7 +279,17 @@ public class type562 extends MeleeWeapon {
 		return 0;
 	}
 
-	private final WndBag.Listener itemSelector = new WndBag.Listener() {
+	private WndBag.ItemSelector itemSelector = new WndBag.ItemSelector() {
+		@Override
+		public String textPrompt() {
+			return "";
+		}
+
+		@Override
+		public boolean itemSelectable(Item item) {
+			return false;
+		}
+
 		@Override
 		public void onSelect( final Item item ) {
 			if (item != null) {

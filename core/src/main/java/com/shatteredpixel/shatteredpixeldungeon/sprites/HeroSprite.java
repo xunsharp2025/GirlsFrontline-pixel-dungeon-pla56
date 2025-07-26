@@ -37,85 +37,77 @@ import com.watabou.utils.PointF;
 import com.watabou.utils.RectF;
 
 public class HeroSprite extends CharSprite {
-	
-	private static final int FRAME_WIDTH	= 12;
-	private static final int FRAME_HEIGHT	= 15;
-	
-	private static final int RUN_FRAMERATE	= 20;
-	
+
+	public static final int FRAME_WIDTH	= 22;
+	public static final int FRAME_HEIGHT	= 23;
+
+	private static final int RUN_FRAMERATE	= 18;
+
 	private static TextureFilm tiers;
-	
+
 	private Animation fly;
 	private Animation read;
 
 	public HeroSprite() {
 		super();
-		
+
+		link( Dungeon.hero );
+
 		texture( Dungeon.hero.heroClass.spritesheet() );
 		updateArmor();
-		
-		link( Dungeon.hero );
 
 		if (ch.isAlive())
 			idle();
 		else
 			die();
 	}
-	
+
 	public void updateArmor() {
 
-		TextureFilm film = new TextureFilm( tiers(), Dungeon.hero.tier(), FRAME_WIDTH, FRAME_HEIGHT );
-		
-		idle = new Animation( 1, true );
-		idle.frames( film, 0, 0, 0, 1, 0, 0, 1, 1 );
-		
+		TextureFilm film = new TextureFilm( tiers(), ((Hero)ch).tier(), FRAME_WIDTH, FRAME_HEIGHT );
+
+		idle = new Animation( 5, true );
+		idle.frames( film, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 );
+
 		run = new Animation( RUN_FRAMERATE, true );
 		run.frames( film, 2, 3, 4, 5, 6, 7 );
-		
-		die = new Animation( 20, false );
-		die.frames( film, 8, 9, 10, 11, 12, 11 );
-		
-		attack = new Animation( 15, false );
-		attack.frames( film, 13, 14, 15, 0 );
-		
-		zap = attack.clone();
-		
-		operate = new Animation( 8, false );
-		operate.frames( film, 16, 17, 16, 17 );
-		
-		fly = new Animation( 1, true );
-		fly.frames( film, 18 );
 
-		read = new Animation( 20, false );
-		read.frames( film, 19, 20, 20, 20, 20, 20, 20, 20, 20, 19 );
-		
-		if (Dungeon.hero.isAlive())
+		die = new Animation( 6, false );
+		die.frames( film, 8, 9, 10, 11, 12, 13 );
+
+		attack = new Animation( 23, false );
+		attack.frames( film, 14, 15, 16, 17, 18, 17, 16, 14 );
+
+		zap = attack.clone();
+
+		operate = new Animation( 6, false );
+		operate.frames( film, 28, 29, 28, 29 );
+
+		fly = new Animation( 1, true );
+		fly.frames( film, 27 );
+
+		read = new Animation( 12, false );
+		read.frames( film, 19, 20, 21, 22, 23, 24, 25, 26, 20, 19  );
+
+		if (ch.isAlive())
 			idle();
 		else
 			die();
 	}
-	
+
 	@Override
 	public void place( int p ) {
 		super.place( p );
-		if (Game.scene() instanceof GameScene) Camera.main.panTo(center(), 5f);
+		Camera.main.panTo(center(), 5f);
 	}
 
 	@Override
 	public void move( int from, int to ) {
 		super.move( from, to );
-		if (ch != null && ch.flying) {
+		if (ch.flying) {
 			play( fly );
 		}
 		Camera.main.panFollow(this, 20f);
-	}
-
-	@Override
-	public void idle() {
-		super.idle();
-		if (ch != null && ch.flying) {
-			play( fly );
-		}
 	}
 
 	@Override
@@ -150,31 +142,34 @@ public class HeroSprite extends CharSprite {
 	@Override
 	public void update() {
 		sleeping = ch.isAlive() && ((Hero)ch).resting;
-		
+
 		super.update();
 	}
-	
+
 	public void sprint( float speed ) {
 		run.delay = 1f / speed / RUN_FRAMERATE;
 	}
-	
+
 	public static TextureFilm tiers() {
 		if (tiers == null) {
-			SmartTexture texture = TextureCache.get( Assets.Sprites.ROGUE );
+			// 우선적으로  texture를 불러와서 캐릭터 스프라이트 전체의 크기를 가져온다 - 기존의 경우 도적, 현재는 흥국이로 변경
+			SmartTexture texture = TextureCache.get( Assets.Sprites.MAGE );
+			// 불러온 texture의 넓이와 정해진 tier별 높이만큼을 다른 스프라이트에서 제한적으로 불러와 메모리를 절약한다
+			// 향후 TIERWIDTH와 TIERHEIGHT 등의 변수를 별도로 분리하여 관리하는 방안 고려할 것
 			tiers = new TextureFilm( texture, texture.width, FRAME_HEIGHT );
 		}
-		
+
 		return tiers;
 	}
-	
+
 	public static Image avatar( HeroClass cl, int armorTier ) {
-		
+
 		RectF patch = tiers().get( armorTier );
 		Image avatar = new Image( cl.spritesheet() );
 		RectF frame = avatar.texture.uvRect( 1, 0, FRAME_WIDTH, FRAME_HEIGHT );
 		frame.shift( patch.left, patch.top );
 		avatar.frame( frame );
-		
+
 		return avatar;
 	}
 }

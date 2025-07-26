@@ -66,20 +66,14 @@ public class SPDSettings extends GameSettings {
 	public static boolean fullscreen() {
 		return getBoolean( KEY_FULLSCREEN, DeviceCompat.isDesktop() );
 	}
-	
+
 	public static void landscape( boolean value ){
 		put( KEY_LANDSCAPE, value );
 		((GirlsFrontlinePixelDungeon)GirlsFrontlinePixelDungeon.instance).updateDisplaySize();
 	}
-	
-	//can return null because we need to directly handle the case of landscape not being set
-	// as there are different defaults for different devices
-	public static Boolean landscape(){
-		if (contains(KEY_LANDSCAPE)){
-			return getBoolean(KEY_LANDSCAPE, false);
-		} else {
-			return null;
-		}
+
+	public static boolean landscape() {
+		return getBoolean(KEY_LANDSCAPE, Game.dispWidth > Game.dispHeight);
 	}
 	
 	public static void powerSaver( boolean value ){
@@ -292,7 +286,7 @@ public class SPDSettings extends GameSettings {
 	
 	public static boolean systemFont(){
 		return getBoolean(KEY_SYSTEMFONT,
-				(language() == Languages.KOREAN || language() == Languages.CHINESE || language() == Languages.JAPANESE));
+				(language() == Languages.CHINESE));
 	}
 
 	//Connectivity

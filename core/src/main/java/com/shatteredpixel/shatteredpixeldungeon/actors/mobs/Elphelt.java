@@ -2,7 +2,6 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
-import com.shatteredpixel.shatteredpixeldungeon.DialogInfo;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -43,7 +42,6 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ElpheltSprite;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BossHealthBar;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
@@ -89,7 +87,7 @@ public class Elphelt extends Mob {
     }
 
     @Override
-    protected float attackDelay() {
+    public float attackDelay() {
         return 1f;
     }
 
@@ -131,7 +129,7 @@ public class Elphelt extends Mob {
 
     public int phase = 0;
 
-	@Override
+    @Override
     public void move( int step ) {
         Dungeon.level.seal();
         super.move( step );
@@ -143,12 +141,12 @@ public class Elphelt extends Mob {
         BossHealthBar.assignBoss(this);
 
         if (!Dungeon.level.locked) {
-            WndDialog.ShowChapter(DialogInfo.ID_RABBIT_BOSS);
-            if (phase < 1) {
-                phase = 1;
-            }
-            spend(TICK);
-            Dungeon.level.seal();
+//            WndDialog.ShowChapter(DialogInfo.ID_RABBIT_BOSS);
+//            if (phase < 1) {
+//                phase = 1;
+//            }
+//            spend(TICK);
+//            Dungeon.level.seal();
         }
     }
 
@@ -181,8 +179,8 @@ public class Elphelt extends Mob {
 
     @Override
     protected boolean canAttack( Char enemy ) {
-	    if (enemy == null) {
-	        return false;
+        if (enemy == null) {
+            return false;
         }
 
         switch (phase) {
@@ -206,7 +204,7 @@ public class Elphelt extends Mob {
                 }
                 if (timerRush >= COOLDOWN_RUSH) {
                     timerRush = COOLDOWN_RUSH;
-                    traceRush = new Ballistica( pos, target, Ballistica.STOP_CHARS | Ballistica.STOP_TERRAIN );
+                    traceRush = new Ballistica( pos, target, Ballistica.STOP_CHARS | Ballistica.STOP_TARGET );
                     //canRush = findChar(traceRush.collisionPos) != null;
                     canRush = traceRush.dist >= 1;
                     traceMagnum = null;
@@ -222,7 +220,7 @@ public class Elphelt extends Mob {
     @Override
     protected boolean doAttack( Char enemy ) {
 
-	    switch (phase) {
+        switch (phase) {
             case 0: default:
             case 1:
                 if (enemy == null) {
@@ -363,7 +361,7 @@ public class Elphelt extends Mob {
         Badges.validateBossSlain();
 
 
-        WndDialog.ShowChapter(DialogInfo.ID_RABBIT_BOSS + DialogInfo.COMPLETE);
+        //WndDialog.ShowChapter(DialogInfo.ID_RABBIT_BOSS + DialogInfo.COMPLETE);
 
         yell( Messages.get(this, "defeated") );
     }
@@ -455,7 +453,7 @@ public class Elphelt extends Mob {
                             if (fch.pos == trajectory.collisionPos) {
                                 Paralysis.prolong(fch, Paralysis.class, 3.0f);
                             }
-                            Dungeon.level.press(fch.pos, fch, true);
+                            //Dungeon.level.press(fch.pos, fch, true);
                             if (fch == Dungeon.hero){
                                 Dungeon.observe();
                             }
@@ -475,7 +473,7 @@ public class Elphelt extends Mob {
 
     private List<Integer> bridlePath;
 
-	private void warnExpress() {
+    private void warnExpress() {
 
         if (traceRush.dist > 1) {
             bridlePath = traceRush.subPath(1, traceRush.dist);
@@ -485,7 +483,7 @@ public class Elphelt extends Mob {
             return;
         }
 
-	    for (int c : bridlePath) {
+        for (int c : bridlePath) {
             if ( Blob.volumeAt( c, GenoiseWarn.class ) == 0 ) {
                 GameScene.add(Blob.seed(c, 2, GenoiseWarn.class));
             }
@@ -503,28 +501,28 @@ public class Elphelt extends Mob {
 
     private void bridleExpress() {
 
-	    if (!onRush || dstRush < 0) {
-	        next();
+        if (!onRush || dstRush < 0) {
+            next();
             return;
         }
 
         if (traceRush == null) {
             if ( enemy != null && enemy.isAlive() && fieldOfView[enemy.pos] && enemy.invisible <= 0 ) {
-                traceRush = new Ballistica( pos, dstRush, Ballistica.STOP_CHARS | Ballistica.STOP_TERRAIN );
+                traceRush = new Ballistica( pos, dstRush, Ballistica.STOP_CHARS | Ballistica.STOP_TARGET );
             } else {
-                traceRush = new Ballistica( pos, Dungeon.level.randomDestination(), Ballistica.STOP_CHARS | Ballistica.STOP_TERRAIN );
+                traceRush = new Ballistica( pos, Dungeon.level.randomDestination(this), Ballistica.STOP_CHARS | Ballistica.STOP_TARGET );
             }
             bridlePath = traceRush.subPath(1, traceRush.dist);
         }
 
-	    int procPos = pos;
+        int procPos = pos;
 
-	    for (int c : bridlePath) {
-	        final Char ch = findChar(c);
+        for (int c : bridlePath) {
+            final Char ch = findChar(c);
 
-	        if (ch != null) {
-	            // 튕겨나갈 경로 계산
-	            final Ballistica traceChar = new Ballistica( c, traceRush.path.get(Math.min(traceRush.path.size()-1,traceRush.dist+1)), Ballistica.STOP_CHARS | Ballistica.STOP_TERRAIN );
+            if (ch != null) {
+                // 튕겨나갈 경로 계산
+                final Ballistica traceChar = new Ballistica( c, traceRush.path.get(Math.min(traceRush.path.size()-1,traceRush.dist+1)), Ballistica.STOP_CHARS | Ballistica.STOP_TARGET );
 
                 Char collideChar = findChar(traceChar.collisionPos);
 
@@ -545,12 +543,12 @@ public class Elphelt extends Mob {
                 // 캐릭터에 부딪힌 경우 날아갈 위치는 해당 캐릭터의 위치-1까지
                 int dist = (collideTag < 2) ? traceChar.dist : Math.max(traceChar.dist - 1, 0);
 
-	            final int newPos = traceChar.path.get( dist );
+                final int newPos = traceChar.path.get( dist );
 
-	            final int initialPos = ch.pos;
+                final int initialPos = ch.pos;
 
-	            // 이동경로에서 부딫힌 적을 튕겨냄
-	            Actor.addDelayed( new Pushing(ch, ch.pos, newPos, new Callback() {
+                // 이동경로에서 부딫힌 적을 튕겨냄
+                Actor.addDelayed( new Pushing(ch, ch.pos, newPos, new Callback() {
                     @Override
                     public void call() {
 
@@ -568,14 +566,14 @@ public class Elphelt extends Mob {
                             Paralysis.prolong(ch, Paralysis.class, 2f);
                         }
 
-                        Dungeon.level.press(ch.pos, ch, true);
+                        //Dungeon.level.press(ch.pos, ch, true);
                         if (ch == Dungeon.hero) {
                             Dungeon.observe();
                         }
                     }
                 }), 0f );
 
-	            break;
+                break;
             }
 
             procPos = c;
@@ -610,13 +608,13 @@ public class Elphelt extends Mob {
 
         if (traceMagnum == null) { return; }
 
-	    int damage = Random.NormalIntRange(25,35) / traceMagnum.dist;
+        int damage = Random.NormalIntRange(25,35) / traceMagnum.dist;
 
-        Sample.INSTANCE.play(Assets.SND_ZAP);
+        Sample.INSTANCE.play(Assets.Sounds.ZAP);
 
-	    Char ch = findChar(traceMagnum.collisionPos);
-	    if (ch != null) {
-	        // 필중
+        Char ch = findChar(traceMagnum.collisionPos);
+        if (ch != null) {
+            // 필중
             ch.damage(damage - ch.drRoll(), Elphelt.this );
             ch.sprite.centerEmitter().start( Speck.factory( Speck.HEART ), 0.2f, 5 );
             //  3턴 지속 매혹 부여
@@ -628,7 +626,7 @@ public class Elphelt extends Mob {
         for (int c : traceMagnum.subPath(0, traceMagnum.dist))
             CellEmitter.center(c).burst( BloodParticle.BURST, 1 );
 
-	    if (ch != null) {
+        if (ch != null) {
             sprite.parent.add(new Beam.DeathRay(sprite.center(), ch.sprite.center()));
         } else {
             sprite.parent.add(new Beam.DeathRay(sprite.center(), DungeonTilemap.raisedTileCenterToWorld(traceMagnum.collisionPos)));
@@ -755,7 +753,7 @@ public class Elphelt extends Mob {
                     if (enemy == null) {
                         spend( TICK );
                         state = WANDERING;
-                        target = Dungeon.level.randomDestination();
+                        target = Dungeon.level.randomDestination(Elphelt.this);
                         return true;
                     }
 
@@ -785,7 +783,7 @@ public class Elphelt extends Mob {
                             if (!enemyInFOV) {
                                 sprite.showLost();
                                 state = WANDERING;
-                                target = Dungeon.level.randomDestination();
+                                target = Dungeon.level.randomDestination(Elphelt.this);
                             }
                             return true;
                         }
@@ -814,7 +812,7 @@ public class Elphelt extends Mob {
                             spend( TICK );
                             if (!enemyInFOV) {
                                 state = WANDERING;
-                                target = Dungeon.level.randomDestination();
+                                target = Dungeon.level.randomDestination(Elphelt.this);
                                 sprite.showLost();
                                 if (Random.Int(3) == 0) {
                                     yell( Messages.get(Elphelt.this, "seek"+Random.IntRange(1, 2)) );
@@ -853,7 +851,7 @@ public class Elphelt extends Mob {
 
             Genoises.remove(Elphelt.Genoise.this);
 
-            Sample.INSTANCE.play( Assets.SND_BLAST );
+            Sample.INSTANCE.play( Assets.Sounds.BLAST );
 
             if (target >= 0 && Dungeon.level.heroFOV[target]) {
                 CellEmitter.center( target ).burst( BlastParticle.FACTORY, 30 );

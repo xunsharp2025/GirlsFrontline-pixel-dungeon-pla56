@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Light;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Speed;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -47,12 +48,12 @@ public class C96 extends UniversaleGun {
     }
 
     @Override
-    public void onAttack( Char owner, Char enemy ) {
-        if (owner instanceof Hero && owner.buffs(Speed.class).isEmpty()) {
-            Buff.prolong(owner, Light.class, 9.5f);
+    public int proc(Char attacker, Char defender, int damage ) {
+        if (defender instanceof Hero && defender.buffs(Speed.class).isEmpty()) {
+            Buff.prolong(defender, Light.class, 9.5f);
         }
+        return super.proc(attacker, defender, damage);
     }
-
 
     @Override
     public int damageRoll(Char owner) {

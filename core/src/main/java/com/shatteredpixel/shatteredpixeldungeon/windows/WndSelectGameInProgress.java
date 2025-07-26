@@ -11,6 +11,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ScrollPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
@@ -73,7 +74,7 @@ public class WndSelectGameInProgress extends Window {
             Slots.add( newSlot );
             content.add( newSlot );
             newSlot.setPos( 5 + (newSlot.width() + MARGIN) * ((slotNumber) % SlotsToDisplay.x),
-                            MARGIN + (newSlot.height() + MARGIN) * ((slotNumber) / SlotsToDisplay.x) );
+                    MARGIN + (newSlot.height() + MARGIN) * ((slotNumber) / SlotsToDisplay.x) );
             ++slotNumber;
         }
 
@@ -89,7 +90,7 @@ public class WndSelectGameInProgress extends Window {
             Slots.add( newSlot );
             content.add( newSlot );
             newSlot.setPos( 5 + (Slots.get(0).width() + MARGIN) * ((games.size()) % SlotsToDisplay.x),
-                            MARGIN + (newSlot.height() + MARGIN) * ((games.size()) / SlotsToDisplay.x) );
+                    MARGIN + (newSlot.height() + MARGIN) * ((games.size()) / SlotsToDisplay.x) );
         }
 
         add(squad);
@@ -121,10 +122,10 @@ public class WndSelectGameInProgress extends Window {
 
         public static float SCALE = SLOT_SCALE;
 
-        protected RenderedText name;
-        protected RenderedText level;
-        protected RenderedText score;
-        protected RenderedText depth;
+        protected RenderedTextBlock name;
+        protected RenderedTextBlock level;
+        protected RenderedTextBlock score;
+        protected RenderedTextBlock depth;
 
         private HeroClass cls;
 
@@ -148,7 +149,7 @@ public class WndSelectGameInProgress extends Window {
                 case ROGUE:
                     order = 3;
                     break;
-                case RANGER:
+                case HUNTRESS:
                     order = 4;
                     break;
                 default:
@@ -180,18 +181,20 @@ public class WndSelectGameInProgress extends Window {
                 depthEmmiters[i] = new Emitter();
             }
 
-            name = PixelScene.renderText( 7 );
-            level = PixelScene.renderText( 7 );
-            score = PixelScene.renderText( 8 );
-            depth = PixelScene.renderText( 7 );
+            name =  PixelScene.renderTextBlock( 7 );
+            level = PixelScene.renderTextBlock( 7 );
+            score = PixelScene.renderTextBlock( 8 );
+            depth = PixelScene.renderTextBlock( 7 );
         }
 
         @Override
         protected void layout() {
             super.layout();
 
+            // 设置frame的缩放比例
             frame.scale.set( SCALE );
 
+            // 设置portrait的缩放比例
             portrait.scale.set( 8.0f / 17.0f * SCALE );
 
             // 2 는 프레임 좌측 상단에서 margin 넣는거, x는 변할 일 없는데 y는 높낮이 조절용으로 좀 건드릴듯
@@ -210,16 +213,9 @@ public class WndSelectGameInProgress extends Window {
 
             add( name );
 
-            if (Info.heroClass == HeroClass.NONE) {
-                name.text( Info.heroClass.title() );
-            } else {
-                name.text( Info.subClass != HeroSubClass.NONE ? Info.subClass.title() + " " + Info.heroClass.title() :Info.heroClass.title() );
-            }
+            name.text( Info.subClass != HeroSubClass.NONE ? Info.subClass.title() + " " + Info.heroClass.title() :Info.heroClass.title() );
 
-
-            name.x = x + 10.5f * SCALE - name.width() / 2f;
-            name.y = y + 34.5f * SCALE - name.height() / 3f;
-
+            name.setPos(x + 10.5f * SCALE - name.width() / 2f, y + 34.5f * SCALE - name.height() / 3f);
             name.alpha(3.0f);
 
             //add(depth);
@@ -230,14 +226,12 @@ public class WndSelectGameInProgress extends Window {
             add(level);
             level.text(String.valueOf(Info.level));
 
-            level.x = x + 16f * SCALE - level.width() / 4f;
-            level.y = y + 29f * SCALE - level.height() / 8f;
+            level.setPos(x + 16f * SCALE - level.width() / 4f, y + 29f * SCALE - level.height() / 8f);
 
             add(score);
             score.text(String.valueOf(0));
 
-            score.x = x + 10.5f * SCALE - score.width() / 2f;
-            score.y = y + 47f * SCALE;
+            score.setPos(x + 10.5f * SCALE - score.width() / 2f, y + 47f * SCALE);
 
             for (int i = 0; i < 10; ++i) {
                 add(challengeMarks[i]);
@@ -254,13 +248,13 @@ public class WndSelectGameInProgress extends Window {
                 challengeMarks[ i ].visible = ((Info.challenges) & Challenges.MASKS[i]) != 0 ;
             }
 
-            int procTheme = Math.min( Info.heroClass == HeroClass.NONE ? 0 : (Info.maxDepth-1)/5 + 1, 6 );
+            int procTheme = Math.min( (Info.maxDepth-1)/5 + 1, 6 );
 
             for (int i = 0; i < procTheme; ++i) {
                 add(depthEmmiters[i]);
                 depthEmmiters[i].pos( x + (11f + (i+1) * 8f/(procTheme+1)) * SCALE, y + 2.5f * SCALE);
                 depthEmmiters[i].fillTarget = false;
-                depthEmmiters[i].pour(Speck.factory( Speck.YELLOW_LIGHT ), 0.6f);
+                depthEmmiters[i].pour(Speck.factory( Speck.FORGE ), 0.6f);
 
             }
 

@@ -64,7 +64,7 @@ public class Scarecrow extends Crab {
     }
 
     @Override
-    protected float attackDelay() {
+    public float attackDelay() {
         return 0.5f;
     }
 

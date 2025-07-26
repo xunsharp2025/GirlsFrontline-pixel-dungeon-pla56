@@ -34,6 +34,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BloodParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -137,14 +138,8 @@ public class WandOfTransfusion extends Wand {
 	}
 
 	@Override
-	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
-		if (defender.buff(Charm.class) != null && defender.buff(Charm.class).object == attacker.id()){
-			//grants a free use of the staff and shields self
-			freeCharge = true;
-			Buff.affect(attacker, Barrier.class).setShield(2*(5 + buffedLvl()));
-			GLog.p( Messages.get(this, "charged") );
-			attacker.sprite.emitter().burst(BloodParticle.BURST, 20);
-		}
+	public void onHit(G11 staff, Char attacker, Char defender, int damage) {
+
 	}
 
 	@Override

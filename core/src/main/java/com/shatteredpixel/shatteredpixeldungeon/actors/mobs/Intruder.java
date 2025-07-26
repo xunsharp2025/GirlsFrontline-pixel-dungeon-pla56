@@ -58,7 +58,7 @@ public class Intruder extends Golem {
     }
 
     @Override
-    protected float attackDelay() {
+    public float attackDelay() {
         return 0.2f;
     }
 

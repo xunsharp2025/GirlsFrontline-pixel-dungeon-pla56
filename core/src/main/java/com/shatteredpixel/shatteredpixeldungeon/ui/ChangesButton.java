@@ -26,48 +26,36 @@ import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.ChangesScene;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
-import com.watabou.noosa.ui.Button;
 
 public class ChangesButton extends Button {
 
-	protected Image image;
+    protected Image image;
 
-	public ChangesButton() {
-		super();
+    public ChangesButton() {
+        super();
 
-		width = image.width;
-		height = image.height;
-	}
+        width = image.width;
+        height = image.height;
+    }
 
-	@Override
-	protected void createChildren() {
-		super.createChildren();
+    @Override
+    protected void createChildren() {
+        super.createChildren();
 
-		image = Icons.NOTES.get();
-		add( image );
-	}
+        image = Icons.CHANGES.get();
+        add( image );
+    }
 
-	@Override
-	protected void layout() {
-		super.layout();
+    @Override
+    protected void layout() {
+        super.layout();
 
-		image.x = x;
-		image.y = y;
-	}
+        image.x = x;
+        image.y = y;
+    }
 
-	@Override
-	protected void onTouchDown() {
-		image.brightness( 1.5f );
-		Sample.INSTANCE.play( Assets.SND_CLICK );
-	}
-
-	@Override
-	protected void onTouchUp() {
-		image.resetColor();
-	}
-
-	@Override
-	protected void onClick() {
-		GirlsFrontlinePixelDungeon.switchNoFade(ChangesScene.class);
-	}
+    @Override
+    protected void onClick() {
+        GirlsFrontlinePixelDungeon.switchNoFade(ChangesScene.class);
+    }
 }

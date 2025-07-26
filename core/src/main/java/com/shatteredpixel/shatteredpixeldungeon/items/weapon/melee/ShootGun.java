@@ -279,7 +279,7 @@ public class ShootGun extends MeleeWeapon {
     @Override
     public int value() {
         //TODO 商店价格
-        return super.price();
+        return super.value();
     }
 
     public static String shootPrompt = "123";//TODO 自己改，选择格子时的提示

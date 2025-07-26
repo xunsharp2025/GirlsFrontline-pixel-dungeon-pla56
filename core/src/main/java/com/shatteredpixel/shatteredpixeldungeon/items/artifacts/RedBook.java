@@ -60,7 +60,7 @@ public class RedBook extends Artifact{
     public void deadBomb() {
 
         new Flare( 5, 32 ).color( 0xFF0000, true ).show( curUser.sprite, 2f );
-        Sample.INSTANCE.play( Assets.SND_READ );
+        Sample.INSTANCE.play( Assets.Sounds.READ );
         Invisibility.dispel();
 
         int count = 0;
@@ -84,7 +84,7 @@ public class RedBook extends Artifact{
                 GLog.i( Messages.get(ScrollOfTerror.class, "none") );
                 break;
             case 1:
-                GLog.i( Messages.get(ScrollOfTerror.class, "one", affected.name) );
+                GLog.i( Messages.get(ScrollOfTerror.class, "one", affected.name()) );
                 break;
             default:
                 GLog.i( Messages.get(ScrollOfTerror.class, "many") );
@@ -92,7 +92,7 @@ public class RedBook extends Artifact{
 
         GameScene.flash( 0xFFFFFF );
 
-        Sample.INSTANCE.play( Assets.SND_BLAST );
+        Sample.INSTANCE.play( Assets.Sounds.BLAST );
         Invisibility.dispel();
 
         for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {

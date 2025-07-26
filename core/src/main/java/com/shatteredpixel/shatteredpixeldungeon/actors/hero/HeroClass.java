@@ -44,6 +44,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Waterskin;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.RedBook;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
@@ -59,6 +60,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Dagger;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gloves;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun561;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun562;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WornShortsword;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingKnife;
@@ -72,7 +75,6 @@ public enum HeroClass {
 	MAGE( HeroSubClass.BATTLEMAGE, HeroSubClass.WARLOCK ),
 	ROGUE( HeroSubClass.ASSASSIN, HeroSubClass.FREERUNNER ),
 	HUNTRESS( HeroSubClass.SNIPER, HeroSubClass.WARDEN );
-
 	private HeroSubClass[] subClasses;
 
 	HeroClass( HeroSubClass...subClasses ) {
@@ -89,6 +91,17 @@ public enum HeroClass {
 
 		i = new Food();
 		if (!Challenges.isItemBlocked(i)) i.collect();
+
+		if (DeviceCompat.isDebug()) 	{
+			new Gun561().identify().collect();
+			new RedBook().identify().collect();
+			new ScrollOfMagicMapping().identify().quantity(100).collect();
+			new PotionOfMindVision().identify().quantity(100).collect();
+			new ScrollOfUpgrade().identify().quantity(100).collect();
+			Gun562 gun = new Gun562();
+			gun.identify().collect();
+			Dungeon.quickslot.setSlot(1,gun);
+		}
 
 		new VelvetPouch().collect();
 		Dungeon.LimitedDrops.VELVET_POUCH.drop();
@@ -154,15 +167,6 @@ public enum HeroClass {
 	}
 
 	private static void initMage( Hero hero ) {
-		MagesStaff staff;
-
-		staff = new MagesStaff(new WandOfMagicMissile());
-
-		(hero.belongings.weapon = staff).identify();
-		hero.belongings.weapon.activate(hero);
-
-		Dungeon.quickslot.setSlot(0, staff);
-
 		new ScrollOfUpgrade().identify();
 		new PotionOfLiquidFlame().identify();
 	}

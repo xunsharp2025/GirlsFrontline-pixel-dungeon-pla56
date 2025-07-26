@@ -36,7 +36,7 @@ public class WandofNukeBomb extends DamageWand {
     }
 
     @Override
-    protected void onZap( Ballistica bolt ) {
+    public void onZap( Ballistica bolt ) {
 
         Char ch = Actor.findChar( bolt.collisionPos );
 
@@ -75,19 +75,19 @@ public class WandofNukeBomb extends DamageWand {
                 }
             }
         } else {
-            Dungeon.level.press(bolt.collisionPos, null, true);
+            //Dungeon.level.seal(bolt.collisionPos, null, true);
         }
     }
 
 
     @Override
-    protected void fx(Ballistica bolt, Callback callback) {
+    public void fx(Ballistica bolt, Callback callback) {
         MagicMissile.boltFromChar(curUser.sprite.parent,
                 MagicMissile.FIRE_CONE,
                 curUser.sprite,
                 bolt.collisionPos,
                 callback);
-        Sample.INSTANCE.play(Assets.SND_ZAP);
+        Sample.INSTANCE.play(Assets.Sounds.ZAP);
     }
 
     @Override
@@ -105,7 +105,8 @@ public class WandofNukeBomb extends DamageWand {
 
         @Override
         public int icon() {
-            return BuffIndicator.SLOW;
+            //TODO
+            return BuffIndicator.DEGRADE;
         }
 
         @Override

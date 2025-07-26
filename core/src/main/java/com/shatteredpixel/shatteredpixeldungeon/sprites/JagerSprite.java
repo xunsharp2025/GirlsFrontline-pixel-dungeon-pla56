@@ -24,6 +24,6 @@ public class JagerSprite extends WarlockSprite {
                         ((Jager)ch).onZapComplete();
                     }
                 } );
-        Sample.INSTANCE.play( Assets.SND_ZAP );
+        Sample.INSTANCE.play( Assets.Sounds.ZAP );
     }
 }

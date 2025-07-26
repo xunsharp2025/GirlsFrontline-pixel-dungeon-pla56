@@ -45,7 +45,7 @@ public class WildEnergy extends TargetedSpell {
 	
 	//we rely on cursedWand to do fx instead
 	@Override
-	protected void fx(Ballistica bolt, Callback callback) {
+	public void fx(Ballistica bolt, Callback callback) {
 		CursedWand.cursedZap(this, curUser, bolt, callback);
 	}
 	

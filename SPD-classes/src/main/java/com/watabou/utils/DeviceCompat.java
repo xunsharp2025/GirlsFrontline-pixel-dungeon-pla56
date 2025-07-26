@@ -56,6 +56,10 @@ public class DeviceCompat {
 		return SharedLibraryLoader.isWindows || SharedLibraryLoader.isMac || SharedLibraryLoader.isLinux;
 	}
 
+	public static boolean openURI(String uri){
+		return Gdx.net.openURI( uri );
+	}
+
 	public static boolean hasHardKeyboard(){
 		return Gdx.input.isPeripheralAvailable(Input.Peripheral.HardwareKeyboard);
 	}

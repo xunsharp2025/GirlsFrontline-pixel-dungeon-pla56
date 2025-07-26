@@ -92,7 +92,7 @@ public class Boomerang extends MissileWeapon {
 	}
 	
 	@Override
-	protected float durabilityPerUse() {
+	public float durabilityPerUse() {
 		return 0;
 	}
 	

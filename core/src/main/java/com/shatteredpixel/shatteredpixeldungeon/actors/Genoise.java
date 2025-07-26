@@ -27,7 +27,7 @@ public class Genoise extends Actor {
         Level level = Dungeon.level;
 
         if (level != null) {
-            level.genoises.add(this);
+            //level.genoises.add(this);
         }
     }
 
@@ -57,7 +57,7 @@ public class Genoise extends Actor {
         }
         */
 
-        Sample.INSTANCE.play( Assets.SND_BLAST );
+        Sample.INSTANCE.play( Assets.Sounds.BLAST );
 
         if (target >= 0 && Dungeon.level.heroFOV[target]) {
             CellEmitter.center( target ).burst( BlastParticle.FACTORY, 30 );
@@ -102,7 +102,7 @@ public class Genoise extends Actor {
         }
 
         Actor.remove(this);
-        Dungeon.level.genoises.remove(this);
+        //Dungeon.level.genoises.remove(this);
         return true;
     }
 

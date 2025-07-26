@@ -23,11 +23,8 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bat;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bestiary;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Brute;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Noel;
-import com.shatteredpixel.shatteredpixeldungeon.effects.Halo;
+import com.watabou.noosa.Halo;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.RabbitPainter;
@@ -59,12 +56,12 @@ public class RabbitLevel extends RegularLevel {
 		color1 = 0x6a723d;
 		color2 = 0x88924c;
 
-		initMobRotations = Bestiary.MR_HUNTINGRABBIT;
-
-		RareMobs.put(Bat.class, 0.02f);
-		RareMobs.put(Brute.class, 0.005f);
-		RareMobFloor.add(3);
-		RareMobFloor.add(4);
+//		initMobRotations = Bestiary.MR_HUNTINGRABBIT;
+//
+//		//RareMobs.put(Bat.class, 0.02f);
+//		//RareMobs.put(Brute.class, 0.005f);
+//		RareMobFloor.add(3);
+//		RareMobFloor.add(4);
 	}
 	
 	@Override
@@ -73,13 +70,13 @@ public class RabbitLevel extends RegularLevel {
 	}
 	
 	@Override
-	protected int standardRooms() {
+	protected int standardRooms(boolean forceMax) {
 		//6 to 8, average 6.66
 		return 6+Random.chances(new float[]{4, 2, 2});
 	}
 	
 	@Override
-	protected int specialRooms() {
+	protected int specialRooms(boolean forceMax) {
 		//1 to 3, average 1.83
 		return 1+Random.chances(new float[]{3, 4, 3});
 	}
@@ -94,12 +91,12 @@ public class RabbitLevel extends RegularLevel {
 	
 	@Override
 	public String tilesTex() {
-		return Assets.TILES_TEMPLE;
+		return Assets.Environment.TILES_HALLS;
 	}
 	
 	@Override
 	public String waterTex() {
-		return Assets.WATER_PRISON;
+		return Assets.Environment.WATER_PRISON;
 	}
 	
 	@Override

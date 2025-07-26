@@ -113,7 +113,7 @@ public class G11 extends MeleeWeapon {
 		if (action.equals(AC_IMBUE)) {
 
 			curUser = hero;
-			GameScene.selectItem(itemSelector, WndBag.Mode.WAND, Messages.get(this, "prompt"));
+			GameScene.selectItem(itemSelector);
 
 		} else if (action.equals(AC_ZAP)){
 
@@ -304,7 +304,17 @@ public class G11 extends MeleeWeapon {
 		return 0;
 	}
 
-	private final WndBag.Listener itemSelector = new WndBag.Listener() {
+	private WndBag.ItemSelector itemSelector = new WndBag.ItemSelector() {
+		@Override
+		public String textPrompt() {
+			return "";
+		}
+
+		@Override
+		public boolean itemSelectable(Item item) {
+			return false;
+		}
+
 		@Override
 		public void onSelect( final Item item ) {
 			if (item != null) {
@@ -344,7 +354,7 @@ public class G11 extends MeleeWeapon {
 		}
 
 		private void applyWand(Wand wand){
-			Sample.INSTANCE.play(Assets.SND_BURNING);
+			Sample.INSTANCE.play(Assets.Sounds.BURNING);
 			curUser.sprite.emitter().burst( ElmoParticle.FACTORY, 12 );
 			evoke(curUser);
 

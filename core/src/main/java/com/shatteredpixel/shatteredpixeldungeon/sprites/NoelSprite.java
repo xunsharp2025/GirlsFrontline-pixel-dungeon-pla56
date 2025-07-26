@@ -2,7 +2,7 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.effects.Halo;
+import com.watabou.noosa.Halo;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
 import com.watabou.glwrap.Blending;
 import com.watabou.noosa.Game;
@@ -52,7 +52,7 @@ public class NoelSprite extends MobSprite {
         emitter().start( ElmoParticle.FACTORY, 0.03f, 60 );
 
         if (visible) {
-            Sample.INSTANCE.play( Assets.SND_BURNING );
+            Sample.INSTANCE.play( Assets.Sounds.BURNING );
         }
     }
 

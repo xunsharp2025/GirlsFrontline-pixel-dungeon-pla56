@@ -28,7 +28,6 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndLangs;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
-import com.watabou.noosa.ui.Button;
 
 public class LanguageButton extends Button {
 
@@ -42,23 +41,23 @@ public class LanguageButton extends Button {
 		add( image );
 		updateIcon();
 	}
-	
+
 	private boolean flashing;
 	private float time = 0;
-	
+
 	@Override
 	public void update() {
 		super.update();
-		
+
 		if (flashing){
 			image.am = (float)Math.abs(Math.cos( (time += Game.elapsed) ));
 			if (time >= Math.PI) {
 				time = 0;
 			}
 		}
-		
+
 	}
-	
+
 	private void updateIcon(){
 		image.resetColor();
 		flashing = false;
@@ -80,18 +79,6 @@ public class LanguageButton extends Button {
 		image.x = x + (width - image.width)/2f;
 		image.y = y + (height - image.height)/2f;
 		PixelScene.align(image);
-	}
-
-	@Override
-	protected void onTouchDown() {
-		image.brightness( 1.5f );
-		Sample.INSTANCE.play( Assets.SND_CLICK );
-	}
-
-	@Override
-	protected void onTouchUp() {
-		image.resetColor();
-		updateIcon();
 	}
 
 	@Override

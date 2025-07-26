@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -143,6 +144,11 @@ public class WandOfWarding extends Wand {
 	}
 
 	@Override
+	public void onHit(G11 staff, Char attacker, Char defender, int damage) {
+
+	}
+
+	@Override
 	public void fx(Ballistica bolt, Callback callback) {
 		MagicMissile m = MagicMissile.boltFromChar(curUser.sprite.parent,
 				MagicMissile.WARD,
@@ -154,24 +160,6 @@ public class WandOfWarding extends Wand {
 			m.setSpeed(bolt.dist*20);
 		}
 		Sample.INSTANCE.play(Assets.Sounds.ZAP);
-	}
-
-	@Override
-	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
-
-		int level = Math.max( 0, staff.buffedLvl() );
-
-		// lvl 0 - 20%
-		// lvl 1 - 33%
-		// lvl 2 - 43%
-		if (Random.Int( level + 5 ) >= 4) {
-			for (Char ch : Actor.chars()){
-				if (ch instanceof Ward){
-					((Ward) ch).wandHeal(staff.buffedLvl());
-					ch.sprite.emitter().burst(MagicMissile.WardParticle.UP, ((Ward) ch).tier);
-				}
-			}
-		}
 	}
 
 	@Override

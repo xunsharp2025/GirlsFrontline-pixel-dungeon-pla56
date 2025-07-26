@@ -70,12 +70,12 @@ public class ReCavesBossLevel extends Level {
 
     @Override
     public String tilesTex() {
-        return Assets.TILES_CAVES;
+        return Assets.Environment.TILES_CAVES;
     }
 
     @Override
     public String waterTex() {
-        return Assets.WATER_CAVES;
+        return Assets.Environment.WATER_CAVES;
     }
 
     private static final String DOOR	= "door";
@@ -207,7 +207,7 @@ public class ReCavesBossLevel extends Level {
     }
 
     @Override
-    public int randomRespawnCell() {
+    public int randomRespawnCell(Char ch) {
         int cell = entrance + PathFinder.NEIGHBOURS8[Random.Int(8)];
         while (!passable[cell]){
             cell = entrance + PathFinder.NEIGHBOURS8[Random.Int(8)];
@@ -215,44 +215,44 @@ public class ReCavesBossLevel extends Level {
         return cell;
     }
 
-    @Override
-    public void press( int cell, Char hero ) {
-
-        super.press( cell, hero );
-
-        if (!enteredArena && outsideEntraceRoom( cell ) && hero == Dungeon.hero) {
-
-            enteredArena = true;
-            seal();
-
-            for (Mob m : mobs){
-                //bring the first ally with you
-                if (m.alignment == Char.Alignment.ALLY){
-                    m.pos = Dungeon.hero.pos + (Random.Int(2) == 0 ? +1 : -1);
-                    m.sprite.place(m.pos);
-                    break;
-                }
-            }
-
-            Typhootin boss = new Typhootin();
-            boss.state = boss.WANDERING;
-            do {
-                boss.pos = Random.Int( length() );
-            } while (
-                    !passable[boss.pos] ||
-                            !outsideEntraceRoom( boss.pos ) ||
-                            heroFOV[boss.pos]);
-            GameScene.add( boss );
-
-            set( arenaDoor, Terrain.WALL );
-            GameScene.updateMap( arenaDoor );
-            Dungeon.observe();
-
-            CellEmitter.get( arenaDoor ).start( Speck.factory( Speck.ROCK ), 0.07f, 10 );
-            Camera.main.shake( 3, 0.7f );
-            Sample.INSTANCE.play( Assets.SND_ROCKS );
-        }
-    }
+//    @Override
+//    public void seal() {
+//
+//        super.seal();
+//
+//        if (!enteredArena && outsideEntraceRoom( cell ) && hero == Dungeon.hero) {
+//
+//            enteredArena = true;
+//            seal();
+//
+//            for (Mob m : mobs){
+//                //bring the first ally with you
+//                if (m.alignment == Char.Alignment.ALLY){
+//                    m.pos = Dungeon.hero.pos + (Random.Int(2) == 0 ? +1 : -1);
+//                    m.sprite.place(m.pos);
+//                    break;
+//                }
+//            }
+//
+//            Typhootin boss = new Typhootin();
+//            boss.state = boss.WANDERING;
+//            do {
+//                boss.pos = Random.Int( length() );
+//            } while (
+//                    !passable[boss.pos] ||
+//                            !outsideEntraceRoom( boss.pos ) ||
+//                            heroFOV[boss.pos]);
+//            GameScene.add( boss );
+//
+//            set( arenaDoor, Terrain.WALL );
+//            GameScene.updateMap( arenaDoor );
+//            Dungeon.observe();
+//
+//            CellEmitter.get( arenaDoor ).start( Speck.factory( Speck.ROCK ), 0.07f, 10 );
+//            Camera.main.shake( 3, 0.7f );
+//            Sample.INSTANCE.play( Assets.Sounds.ROCKS );
+//        }
+//    }
 
     @Override
     public Heap drop( Item item, int cell ) {

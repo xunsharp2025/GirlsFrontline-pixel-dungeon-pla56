@@ -26,42 +26,30 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndSettings;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
-import com.watabou.noosa.ui.Button;
 
 public class PrefsButton extends Button {
-	
-	private Image image;
-	
-	@Override
-	protected void createChildren() {
-		super.createChildren();
-		
-		image = Icons.PREFS.get();
-		add( image );
-	}
-	
-	@Override
-	protected void layout() {
-		super.layout();
-		
-		image.x = x + (width - image.width)/2f;
-		image.y = y + (height - image.height)/2f;
-		PixelScene.align(image);
-	}
-	
-	@Override
-	protected void onTouchDown() {
-		image.brightness( 1.5f );
-		Sample.INSTANCE.play( Assets.SND_CLICK );
-	}
-	
-	@Override
-	protected void onTouchUp() {
-		image.resetColor();
-	}
-	
-	@Override
-	protected void onClick() {
-		parent.add( new WndSettings() );
-	}
+
+    private Image image;
+
+    @Override
+    protected void createChildren() {
+        super.createChildren();
+
+        image = Icons.PREFS.get();
+        add( image );
+    }
+
+    @Override
+    protected void layout() {
+        super.layout();
+
+        image.x = x + (width - image.width)/2f;
+        image.y = y + (height - image.height)/2f;
+        PixelScene.align(image);
+    }
+
+    @Override
+    protected void onClick() {
+        parent.add( new WndSettings() );
+    }
 }

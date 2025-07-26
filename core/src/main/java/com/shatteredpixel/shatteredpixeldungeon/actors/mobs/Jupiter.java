@@ -78,15 +78,13 @@ public class Jupiter extends Mob {
 
     @Override
     public void move( int step ) {
-
-
     }
 
     @Override
     protected boolean canAttack( Char enemy ) {
 
         if (beamCooldown == 0) {
-            Ballistica aim = new Ballistica(pos, enemy.pos, Ballistica.STOP_TERRAIN);
+            Ballistica aim = new Ballistica(pos, enemy.pos, Ballistica.STOP_TARGET);
 
             if (enemy.invisible == 0 && !isCharmedBy(enemy) && fieldOfView[enemy.pos] && aim.subPath(1, aim.dist).contains(enemy.pos)){
                 beam = aim;
@@ -105,7 +103,7 @@ public class Jupiter extends Mob {
             beamCharged = false;
         }
         if (beam == null && beamTarget != -1) {
-            beam = new Ballistica(pos, beamTarget, Ballistica.STOP_TERRAIN);
+            beam = new Ballistica(pos, beamTarget, Ballistica.STOP_TARGET);
             sprite.turnTo(pos, beamTarget);
         }
         if (beamCooldown > 0)
@@ -127,7 +125,7 @@ public class Jupiter extends Mob {
 
             spend( attackDelay() );
 
-            beam = new Ballistica(pos, beamTarget, Ballistica.STOP_TERRAIN);
+            beam = new Ballistica(pos, beamTarget, Ballistica.STOP_TARGET);
             if (Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[beam.collisionPos] ) {
                 sprite.zap( beam.collisionPos );
                 return false;

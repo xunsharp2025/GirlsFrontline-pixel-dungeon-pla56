@@ -253,11 +253,11 @@ public abstract class Char extends Actor {
 		return false;
 	}
 	
-	protected static final String POS       = "pos";
-	protected static final String TAG_HP    = "HP";
-	protected static final String TAG_HT    = "HT";
-	protected static final String TAG_SHLD  = "SHLD";
-	protected static final String BUFFS	    = "buffs";
+	protected static  String POS       = "pos";
+	protected static  String TAG_HP    = "HP";
+	protected static  String TAG_HT    = "HT";
+	protected static  String TAG_SHLD  = "SHLD";
+	protected static  String BUFFS	    = "buffs";
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
@@ -286,7 +286,7 @@ public abstract class Char extends Actor {
 		}
 	}
 
-	final public boolean attack( Char enemy ){
+	 public boolean attack( Char enemy ){
 		return attack(enemy, 1f, 0f, 1f);
 	}
 	
@@ -435,7 +435,7 @@ public abstract class Char extends Actor {
 	public static int INFINITE_ACCURACY = 1_000_000;
 	public static int INFINITE_EVASION = 1_000_000;
 
-	final public static boolean hit( Char attacker, Char defender, boolean magic ) {
+	 public static boolean hit( Char attacker, Char defender, boolean magic ) {
 		return hit(attacker, defender, magic ? 2f : 1f);
 	}
 
@@ -786,7 +786,7 @@ public abstract class Char extends Actor {
 		return 0;
 	}
 
-	public final void move( int step ) {
+	public void move( int step ) {
 		move( step, true );
 	}
 
@@ -837,7 +837,7 @@ public abstract class Char extends Actor {
 		next();
 	}
 	
-	protected final HashSet<Class> resistances = new HashSet<>();
+	protected  HashSet<Class> resistances = new HashSet<>();
 	
 	//returns percent effectiveness after resistances
 	//TODO currently resistances reduce effectiveness by a static 50%, and do not stack.
@@ -859,7 +859,7 @@ public abstract class Char extends Actor {
 		return result * RingOfElements.resist(this, effect);
 	}
 	
-	protected final HashSet<Class> immunities = new HashSet<>();
+	protected  HashSet<Class> immunities = new HashSet<>();
 	
 	public boolean isImmune(Class effect ){
 		HashSet<Class> immunes = new HashSet<>(immunities);
@@ -913,7 +913,10 @@ public abstract class Char extends Actor {
 		ELECTRIC ( new HashSet<Class>( Arrays.asList(WandOfLightning.class, Shocking.class, Potential.class, Electricity.class, ShockingDart.class, Elemental.ShockElemental.class )),
 				new HashSet<Class>()),
 		LARGE,
-		IMMOVABLE;
+		IMMOVABLE,
+		// *********** //
+		ARMO
+		;
 		
 		private HashSet<Class> resistances;
 		private HashSet<Class> immunities;

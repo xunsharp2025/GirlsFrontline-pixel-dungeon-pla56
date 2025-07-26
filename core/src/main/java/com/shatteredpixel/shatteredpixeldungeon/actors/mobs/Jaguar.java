@@ -42,7 +42,7 @@ public class Jaguar extends Mob {
     private static final int RANGE = 8;
 
     @Override
-    protected float attackDelay() { return 3f; }
+    public float attackDelay() { return 3f; }
 
     @Override
     public boolean canAttack(Char enemy) {
@@ -151,7 +151,7 @@ public class Jaguar extends Mob {
                 return false;
             }
 
-            Sample.INSTANCE.play( Assets.SND_BLAST );
+            Sample.INSTANCE.play( Assets.Sounds.BLAST );
 
             if (target >= 0 && Dungeon.level.heroFOV[target]) {
                 CellEmitter.center( target ).burst( BlastParticle.FACTORY, 30 );

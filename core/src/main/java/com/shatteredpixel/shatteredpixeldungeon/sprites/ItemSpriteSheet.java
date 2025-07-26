@@ -206,6 +206,20 @@ public class ItemSpriteSheet {
 	public static final int RAPIER          = WEP_TIER1+3;
 	public static final int DAGGER          = WEP_TIER1+4;
 	public static final int MAGES_STAFF     = WEP_TIER1+5;
+
+
+	//TODO SP1 贴图需要调整
+	public static final int UMP45         	= WEP_TIER1+0;
+	public static final int DP             	= WEP_TIER1+1;
+	public static final int M9   = WEP_TIER1+2;
+	public static final int UMP40          	= WEP_TIER1+3;
+	public static final int G11             = WEP_TIER1+5;
+	public static final int SR3             = WEP_TIER1+6;
+	public static final int CANNON         	= WEP_TIER1+7;
+	public static final int SRS         	= WEP_TIER1+8;
+	public static final int THUNDER         	= WEP_TIER1+9;
+	public static final int M2HB        	= WEP_TIER1+10;
+
 	static{
 		assignItemRect(WORN_SHORTSWORD, 13, 13);
 		assignItemRect(GLOVES,          12, 16);
@@ -219,6 +233,18 @@ public class ItemSpriteSheet {
 	public static final int SPEAR           = WEP_TIER2+2;
 	public static final int QUARTERSTAFF    = WEP_TIER2+3;
 	public static final int DIRK            = WEP_TIER2+4;
+
+
+	//TODO SP2 贴图需要调整
+	public static final int M16      = WEP_TIER2+0;
+	public static final int M1911        = WEP_TIER2+1;
+	public static final int M1903           = WEP_TIER2+2;
+	public static final int M1A1    = WEP_TIER2+3;
+	public static final int NAGANTREVOLVER      = WEP_TIER2+4;
+	public static final int G36            = WEP_TIER2+5;
+	public static final int TRAVAILLER           = WEP_TIER2+6;
+	public static final int CONFIRE          = WEP_TIER2+7;
+	public static final int MAGNUMWEDDING	 = WEP_TIER2+8;
 	static{
 		assignItemRect(SHORTSWORD,      13, 13);
 		assignItemRect(HAND_AXE,        12, 14);
@@ -234,6 +260,16 @@ public class ItemSpriteSheet {
 	public static final int ROUND_SHIELD    = WEP_TIER3+3;
 	public static final int SAI             = WEP_TIER3+4;
 	public static final int WHIP            = WEP_TIER3+5;
+
+	//TODO SP3 贴图需要调整
+	public static final int KS23           = WEP_TIER3+0;
+	public static final int KAR98            = WEP_TIER3+1;
+	public static final int NEGEV        = WEP_TIER3+2;
+	public static final int MOS    = WEP_TIER3+3;
+	public static final int KRISS             = WEP_TIER3+4;
+	public static final int WA            = WEP_TIER3+5;
+	public static final int C96            = WEP_TIER3+6;
+
 	static{
 		assignItemRect(SWORD,           14, 14);
 		assignItemRect(MACE,            15, 15);
@@ -250,6 +286,16 @@ public class ItemSpriteSheet {
 	public static final int RUNIC_BLADE     = WEP_TIER4+3;
 	public static final int ASSASSINS_BLADE = WEP_TIER4+4;
 	public static final int CROSSBOW        = WEP_TIER4+5;
+
+
+	//TODO SP4 贴图需要调整
+	public static final int WIN97      		= WEP_TIER4+0;
+	public static final int DRAGUNOV      	= WEP_TIER4+1;
+	public static final int AK47         	= WEP_TIER4+2;
+	public static final int HK416     		= WEP_TIER4+3;
+	public static final int GUA91 			= WEP_TIER4+4;
+	public static final int AWP             = WEP_TIER4+5;
+
 	static{
 		assignItemRect(LONGSWORD,       15, 15);
 		assignItemRect(BATTLE_AXE,      16, 16);
@@ -266,6 +312,11 @@ public class ItemSpriteSheet {
 	public static final int GREATAXE        = WEP_TIER5+3;
 	public static final int GREATSHIELD     = WEP_TIER5+4;
 	public static final int GAUNTLETS       = WEP_TIER5+5;
+
+	//TODO SP5 贴图需要调整
+	public static final int USAS12      = WEP_TIER5+0;
+	public static final int SASS      = WEP_TIER5+1;
+	public static final int LAR              = WEP_TIER5+5;
 	static{
 		assignItemRect(GREATSWORD,  16, 16);
 		assignItemRect(WAR_HAMMER,  16, 16);
@@ -275,7 +326,22 @@ public class ItemSpriteSheet {
 		assignItemRect(GAUNTLETS,   13, 15);
 	}
 
-	                                                                                    //8 free slots
+	//TODO SP6 贴图需要调整
+	private static final int WEP_TIER6      =                               xy(1, 12);
+	public static final int GROZA            = WEP_TIER6+0;
+	public static final int MG42			= WEP_TIER6+1;
+	public static final int SAIGA			= WEP_TIER6+2;
+	public static final int NAGANT			= WEP_TIER6+3;
+	public static final int NTW20			= WEP_TIER6+4;
+	static{
+		assignItemRect(GROZA,     16, 17);
+		assignItemRect(MG42,     16, 17);
+		assignItemRect(SAIGA,     16, 17);
+		assignItemRect(NAGANT,     16, 17);
+		assignItemRect(NTW20,     19, 19);
+	}
+
+	//8 free slots
 
 	private static final int MISSILE_WEP    =                               xy(1, 10);  //16 slots. 3 per tier + boomerang
 	public static final int SPIRIT_BOW      = MISSILE_WEP+0;
@@ -380,6 +446,11 @@ public class ItemSpriteSheet {
 	public static final int WAND_WARDING        = WANDS+10;
 	public static final int WAND_REGROWTH       = WANDS+11;
 	public static final int WAND_TRANSFUSION    = WANDS+12;
+
+	//TODO 贴图需要优化
+	public static final int M79                   = WANDS+13;
+	public static final int M84                   = WANDS+14;
+
 	static {
 		for (int i = WANDS; i < WANDS+16; i++)
 			assignItemRect(i, 14, 14);
@@ -697,7 +768,18 @@ public class ItemSpriteSheet {
 		assignItemRect(VIAL,        12, 12);
 	}
 
-	                                                                                    //16 free slots
+	private static final int Gun561_NUKE   =                                       xy(1, 34);  //32 slots
+	public static final int  Gun561      	=  Gun561_NUKE+2;
+	public static final int    Gun562    	= Gun561_NUKE+3;
+
+	public static final int REDBOOK =	Gun561_NUKE+5;
+
+	static {
+		assignItemRect(REDBOOK, 13, 16);
+
+		assignItemRect(Gun561, 14, 16);
+		assignItemRect(Gun562, 16, 15);
+	}                                                               //16 free slots
 
 	//for smaller 8x8 icons that often accompany an item sprite
 	public static class Icons {

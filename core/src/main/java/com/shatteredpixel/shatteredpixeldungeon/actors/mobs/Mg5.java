@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -29,12 +30,12 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.Chains;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.GuardSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.Mg5Sprite;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
@@ -50,11 +51,11 @@ public class Mg5 extends Mob {
         HP = HT = 40;
         defenseSkill = 10;
 
-        EXP = 6;
+        EXP = 7;
         maxLvl = 14;
 
-        loot = null;    //see createloot.
-        lootChance = 0.25f;
+        loot = Generator.Category.ARMOR;
+        lootChance = 0.2f; //by default, see lootChance()
 
         properties.add(Property.UNDEAD);
 
@@ -90,61 +91,63 @@ public class Mg5 extends Mob {
             } else {
                 final int newPosFinal = newPos;
                 this.target = newPos;
-                yell( Messages.get(this, "scorpion") );
-                sprite.parent.add(new Chains(sprite.center(), enemy.sprite.center(), new Callback() {
-                    public void call() {
-                        Actor.addDelayed(new Pushing(enemy, enemy.pos, newPosFinal, new Callback(){
-                            public void call() {
-                                enemy.pos = newPosFinal;
-                                Dungeon.level.press(newPosFinal, enemy, true);
-                                Cripple.prolong(enemy, Cripple.class, 4f);
-                                if (enemy == Dungeon.hero) {
-                                    Dungeon.hero.interrupt();
-                                    Dungeon.observe();
-                                    GameScene.updateFog();
+
+                if (sprite.visible || enemy.sprite.visible) {
+                    yell(Messages.get(this, "scorpion"));
+                    new Item().throwSound();
+                    Sample.INSTANCE.play(Assets.Sounds.CHAINS);
+                    sprite.parent.add(new Chains(sprite.center(), enemy.sprite.destinationCenter(), new Callback() {
+                        public void call() {
+                            Actor.addDelayed(new Pushing(enemy, enemy.pos, newPosFinal, new Callback() {
+                                public void call() {
+                                    pullEnemy(enemy, newPosFinal);
                                 }
-                            }
-                        }), -1);
-                        next();
-                    }
-                }));
+                            }), -1);
+                            next();
+                        }
+                    }));
+                } else {
+                    pullEnemy(enemy, newPos);
+                }
             }
         }
         chainsUsed = true;
         return true;
     }
 
+    private void pullEnemy( Char enemy, int pullPos ){
+        enemy.pos = pullPos;
+        enemy.sprite.place(pullPos);
+        Dungeon.level.occupyCell(enemy);
+        Cripple.prolong(enemy, Cripple.class, 4f);
+        if (enemy == Dungeon.hero) {
+            Dungeon.hero.interrupt();
+            Dungeon.observe();
+            GameScene.updateFog();
+        }
+    }
+
     @Override
     public int attackSkill( Char target ) {
-        return 14;
+        return 12;
     }
 
     @Override
     public int drRoll() {
-        return Random.NormalIntRange(0, 8);
+        return Random.NormalIntRange(0, 7);
     }
 
     @Override
-    protected Item createLoot() {
-        //first see if we drop armor, overall chance is 1/8
-        if (Random.Int(2) == 0){
-            Armor loot;
-            do{
-                loot = Generator.randomArmor();
-                //50% chance of re-rolling tier 4 or 5 items
-            } while (loot.tier >= 4 && Random.Int(2) == 0);
-            loot.level(0);
-            return loot;
-            //otherwise, we may drop a health potion. overall chance is 1/8 * (6-potions dropped)/6
-            //with 0 potions dropped that simplifies to 1/8
-        } else {
-            if (Random.Float() < ((6f - Dungeon.LimitedDrops.GUARD_HP.count) / 6f)){
-                Dungeon.LimitedDrops.GUARD_HP.drop();
-                return new PotionOfHealing();
-            }
-        }
+    public float lootChance() {
+        //each drop makes future drops 1/2 as likely
+        // so loot chance looks like: 1/5, 1/10, 1/20, 1/40, etc.
+        return super.lootChance() * (float)Math.pow(1/2f, Dungeon.LimitedDrops.GUARD_ARM.count);
+    }
 
-        return null;
+    @Override
+    public Item createLoot() {
+        Dungeon.LimitedDrops.GUARD_ARM.count++;
+        return super.createLoot();
     }
 
     private final String CHAINSUSED = "chainsused";
@@ -171,10 +174,10 @@ public class Mg5 extends Mob {
                     && !isCharmedBy( enemy )
                     && !canAttack( enemy )
                     && Dungeon.level.distance( pos, enemy.pos ) < 5
-                    && Random.Int(3) == 0
+
 
                     && chain(enemy.pos)){
-                return false;
+                return !(sprite.visible || enemy.sprite.visible);
             } else {
                 return super.act( enemyInFOV, justAlerted );
             }

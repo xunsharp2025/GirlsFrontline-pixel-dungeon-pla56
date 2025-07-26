@@ -91,6 +91,42 @@ public class Item implements Bundlable {
 
 	// whether an item can be included in heroes remains
 	public boolean bones = false;
+
+	protected String name = Messages.get(this, "name");
+
+	@Override
+	public String toString() {
+
+		String name = name();
+
+		if (visiblyUpgraded() != 0)
+			name = Messages.format( TXT_TO_STRING_LVL, name, visiblyUpgraded()  );
+
+		if (quantity > 1)
+			name = Messages.format( TXT_TO_STRING_X, name, quantity );
+
+		return name;
+
+	}
+
+	public String defaultAction(){
+		return defaultAction;
+	}
+
+	public void execute( Hero hero ) {
+		String action = defaultAction();
+		if (action != null) {
+			execute(hero, defaultAction());
+		}
+	}
+
+	public String name() {
+		return name;
+	}
+
+	public final String trueName() {
+		return name;
+	}
 	
 	public static final Comparator<Item> itemComparator = new Comparator<Item>() {
 		@Override
@@ -110,7 +146,7 @@ public class Item implements Bundlable {
 		return Messages.get(this, "ac_" + action);
 	}
 
-	public final boolean doPickUp( Hero hero ) {
+	public boolean doPickUp( Hero hero ) {
 		return doPickUp( hero, hero.pos );
 	}
 
@@ -161,10 +197,6 @@ public class Item implements Bundlable {
 			}
 			
 		}
-	}
-	
-	public void execute( Hero hero ) {
-		execute( hero, defaultAction );
 	}
 	
 	protected void onThrow( int cell ) {
@@ -422,29 +454,6 @@ public class Item implements Bundlable {
 	
 	public static void evoke( Hero hero ) {
 		hero.sprite.emitter().burst( Speck.factory( Speck.EVOKE ), 5 );
-	}
-	
-	@Override
-	public String toString() {
-
-		String name = name();
-
-		if (visiblyUpgraded() != 0)
-			name = Messages.format( TXT_TO_STRING_LVL, name, visiblyUpgraded()  );
-
-		if (quantity > 1)
-			name = Messages.format( TXT_TO_STRING_X, name, quantity );
-
-		return name;
-
-	}
-	
-	public String name() {
-		return trueName();
-	}
-	
-	public final String trueName() {
-		return Messages.get(this, "name");
 	}
 	
 	public int image() {

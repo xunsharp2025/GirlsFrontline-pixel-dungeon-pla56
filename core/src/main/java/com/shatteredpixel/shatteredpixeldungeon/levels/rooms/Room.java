@@ -357,9 +357,9 @@ public abstract class Room extends Rect implements Graph.Node, Bundlable {
 	public void distance( int value ) {
 		distance = value;
 	}
-	
+
 	@Override
-	public int value() {
+	public int price() {
 		return price;
 	}
 
