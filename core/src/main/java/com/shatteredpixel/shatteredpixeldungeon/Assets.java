@@ -224,10 +224,10 @@ public class Assets {
 	}
 
 	public static class Music {
-		public static final String THEME_1      = "music/theme_1.ogg";
-		public static final String THEME_2      = "music/theme_2.ogg";
+		public static final String THEME_1      = "music/theme.ogg";
+		public static final String THEME_2      = "music/theme_2.mp3";
 
-		public static final String SEWERS_1     = "music/sewers_1.ogg";
+		public static final String SEWERS_1     = "music/s1.mp3";
 		public static final String SEWERS_2     = "music/sewers_2.ogg";
 		public static final String SEWERS_BOSS  = "music/sewers_boss.ogg";
 

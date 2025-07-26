@@ -194,11 +194,7 @@ public class WndStartGame extends Window {
 		public void update() {
 			super.update();
 			if (cl != GamesInProgress.selectedClass){
-				if (cl == HeroClass.HUNTRESS && !Badges.isUnlocked(Badges.Badge.BOSS_SLAIN_3)){
-					hero.brightness( 0f );
-				} else {
-					hero.brightness(0.6f);
-				}
+				hero.brightness(0.6f);
 			} else {
 				hero.brightness(1f);
 			}
@@ -208,12 +204,7 @@ public class WndStartGame extends Window {
 		protected void onClick() {
 			super.onClick();
 
-			if( cl == HeroClass.HUNTRESS && !Badges.isUnlocked(Badges.Badge.BOSS_SLAIN_3)){
-				GirlsFrontlinePixelDungeon.scene().add(
-						new WndMessage(Messages.get(WndStartGame.class, "ranger_unlock")));
-			} else {
-				GamesInProgress.selectedClass = cl;
-			}
+			GamesInProgress.selectedClass = cl;
 		}
 	}
 

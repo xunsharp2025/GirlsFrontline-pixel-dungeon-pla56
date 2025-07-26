@@ -48,7 +48,7 @@ import java.util.regex.Pattern;
 public class AndroidPlatformSupport extends PlatformSupport {
 	
 	public void updateDisplaySize(){
-		if (SPDSettings.landscape() != null) {
+		if (SPDSettings.landscape()) {
 			AndroidGame.instance.setRequestedOrientation( SPDSettings.landscape() ?
 					ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE :
 					ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT );
@@ -65,7 +65,7 @@ public class AndroidPlatformSupport extends PlatformSupport {
 		boolean fullscreen = Build.VERSION.SDK_INT < Build.VERSION_CODES.N
 				|| !AndroidGame.instance.isInMultiWindowMode();
 
-		if (fullscreen && SPDSettings.landscape() != null
+		if (fullscreen && SPDSettings.landscape()
 				&& (Game.dispWidth >= Game.dispHeight) != SPDSettings.landscape()){
 			int tmp = Game.dispWidth;
 			Game.dispWidth = Game.dispHeight;
@@ -206,12 +206,6 @@ public class AndroidPlatformSupport extends PlatformSupport {
 			//typefaces are 0-JP, 1-KR, 2-SC, 3-TC.
 			int typeFace;
 			switch (SPDSettings.language()) {
-				case JAPANESE:
-					typeFace = 0;
-					break;
-				case KOREAN:
-					typeFace = 1;
-					break;
 				case CHINESE:
 				default:
 					typeFace = 2;
