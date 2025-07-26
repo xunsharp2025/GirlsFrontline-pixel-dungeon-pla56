@@ -91,7 +91,18 @@ public class Item implements Bundlable {
 			return Generator.Category.order( lhs ) - Generator.Category.order( rhs );
 		}
 	};
-	
+
+
+	public String defaultAction(){
+		return defaultAction;
+	}
+	public void execute( Hero hero ) {
+		String action = defaultAction();
+		if (action != null) {
+			execute(hero, defaultAction());
+		}
+	}
+
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = new ArrayList<String>();
 		actions.add( AC_DROP );
@@ -144,10 +155,6 @@ public class Item implements Bundlable {
 			doThrow( hero );
 			
 		}
-	}
-	
-	public void execute( Hero hero ) {
-		execute( hero, defaultAction );
 	}
 	
 	protected void onThrow( int cell ) {

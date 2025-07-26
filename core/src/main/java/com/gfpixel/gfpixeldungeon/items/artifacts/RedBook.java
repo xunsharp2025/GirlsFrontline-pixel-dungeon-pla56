@@ -7,8 +7,10 @@ import com.gfpixel.gfpixeldungeon.actors.buffs.Blindness;
 import com.gfpixel.gfpixeldungeon.actors.buffs.Buff;
 import com.gfpixel.gfpixeldungeon.actors.buffs.Invisibility;
 import com.gfpixel.gfpixeldungeon.actors.buffs.Paralysis;
+import com.gfpixel.gfpixeldungeon.actors.buffs.Terror;
 import com.gfpixel.gfpixeldungeon.actors.hero.Hero;
 import com.gfpixel.gfpixeldungeon.actors.mobs.Mob;
+import com.gfpixel.gfpixeldungeon.effects.Flare;
 import com.gfpixel.gfpixeldungeon.items.scrolls.ScrollOfTerror;
 import com.gfpixel.gfpixeldungeon.messages.Messages;
 import com.gfpixel.gfpixeldungeon.scenes.GameScene;
@@ -32,8 +34,7 @@ public class RedBook extends Artifact{
         charge = 0;
         chargeCap = 0;
         cooldown = 0;
-
-        defaultAction = "NONE";
+        defaultAction = AC_CAST;
     }
 
     @Override
@@ -54,16 +55,46 @@ public class RedBook extends Artifact{
 
         super.execute(hero, action);
 
-        if (action.equals(AC_CAST) && cooldown == 0) {
-            new ScrollOfTerror().doRead();
+        if (action.equals(AC_CAST) && cooldown == 0 && isEquipped(hero) && !cursed) {
             deadBomb();
             cooldown = 350;
-        } else {
+        } else if(cooldown>0 && isEquipped(hero) && !cursed) {
             GLog.w(Messages.get(this, "colddown") );
         }
     }
 
     public void deadBomb() {
+
+        new Flare( 5, 32 ).color( 0xFF0000, true ).show( curUser.sprite, 2f );
+        Sample.INSTANCE.play( Assets.SND_READ );
+        Invisibility.dispel();
+
+        int count = 0;
+        Mob affected = null;
+        int heroPos = curUser.pos;
+        int range = 3;
+
+        for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
+            if (Dungeon.level.distance(heroPos, mob.pos) <= range) {
+                Buff.affect( mob, Terror.class, Terror.DURATION ).object = curUser.id();
+
+                if (mob.buff(Terror.class) != null){
+                    count++;
+                    affected = mob;
+                }
+            }
+        }
+
+        switch (count) {
+            case 0:
+                GLog.i( Messages.get(ScrollOfTerror.class, "none") );
+                break;
+            case 1:
+                GLog.i( Messages.get(ScrollOfTerror.class, "one", affected.name) );
+                break;
+            default:
+                GLog.i( Messages.get(ScrollOfTerror.class, "many") );
+        }
 
         GameScene.flash( 0xFFFFFF );
 
@@ -71,21 +102,12 @@ public class RedBook extends Artifact{
         Invisibility.dispel();
 
         for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
-            if (Dungeon.level.heroFOV[mob.pos]) {
+            if (Dungeon.level.distance(heroPos, mob.pos) <= range) {
                 mob.damage(mob.HP, this);
             }
         }
-        if (curUser.isAlive()) {
-            Buff.prolong(curUser, Paralysis.class, Random.Int(4, 6));
-            Buff.prolong(curUser, Blindness.class, Random.Int(6, 9));
-            Dungeon.observe();
-        }
-
-        if (!curUser.isAlive()) {
-            Dungeon.fail( getClass() );
-            GLog.n( Messages.get(this, "ondeath") );
-        }
     }
+
 
     public class Cooldowncharge extends ArtifactBuff{
         @Override

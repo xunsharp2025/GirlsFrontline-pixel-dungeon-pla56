@@ -23,11 +23,17 @@ package com.gfpixel.gfpixeldungeon.items.weapon.melee;
 import com.gfpixel.gfpixeldungeon.Assets;
 import com.gfpixel.gfpixeldungeon.Badges;
 import com.gfpixel.gfpixeldungeon.Dungeon;
+import com.gfpixel.gfpixeldungeon.actors.Actor;
 import com.gfpixel.gfpixeldungeon.actors.Char;
+import com.gfpixel.gfpixeldungeon.actors.buffs.Buff;
 import com.gfpixel.gfpixeldungeon.actors.hero.Hero;
 import com.gfpixel.gfpixeldungeon.actors.hero.HeroSubClass;
+import com.gfpixel.gfpixeldungeon.effects.CellEmitter;
+import com.gfpixel.gfpixeldungeon.effects.particles.BlastParticle;
 import com.gfpixel.gfpixeldungeon.effects.particles.ElmoParticle;
+import com.gfpixel.gfpixeldungeon.effects.particles.SmokeParticle;
 import com.gfpixel.gfpixeldungeon.effects.particles.StaffParticle;
+import com.gfpixel.gfpixeldungeon.items.Heap;
 import com.gfpixel.gfpixeldungeon.items.Item;
 import com.gfpixel.gfpixeldungeon.items.bags.Bag;
 import com.gfpixel.gfpixeldungeon.items.scrolls.ScrollOfRecharging;
@@ -39,6 +45,7 @@ import com.gfpixel.gfpixeldungeon.items.wands.WandOfRegrowth;
 import com.gfpixel.gfpixeldungeon.items.wands.WandofNukeBomb;
 import com.gfpixel.gfpixeldungeon.messages.Messages;
 import com.gfpixel.gfpixeldungeon.scenes.GameScene;
+import com.gfpixel.gfpixeldungeon.sprites.CharSprite;
 import com.gfpixel.gfpixeldungeon.sprites.ItemSpriteSheet;
 import com.gfpixel.gfpixeldungeon.utils.GLog;
 import com.gfpixel.gfpixeldungeon.windows.WndBag;
@@ -47,365 +54,139 @@ import com.gfpixel.gfpixeldungeon.windows.WndOptions;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.PathFinder;
+import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
-public class Gun561 extends G11 {
-
-	public Wand wand;
-	public static final String AC_ZAP	= "ZAP";
-
-	private static final float STAFF_SCALE_FACTOR = 0.75f;
-
+public class Gun561 extends ShootGun {
+	public static final String AC_CD = "CD";
 	{
+		curCharges = 0;
+		maxCharges = 1;
+		useMissileSprite = false;
+		effectIndex = 2;
+		shootPrompt = Messages.get(this, "prompt");
+		needEquip = false;
 		image = ItemSpriteSheet.Gun561;
-
-		tier = 1;
-
-		defaultAction = AC_ZAP;
-		usesTargeting = true;
-
-		unique = true;
-		bones = false;
 	}
-
-
 
 	@Override
 	public int min(int lvl) {
-		return 2 + lvl;
+		return curCharges == 0 ?  2 + lvl : 1;
 	}
 	@Override
 	public int max(int lvl) {
-		if(wand != null){
-			if(wand.curCharges >0 ){
-				return 6 + lvl * 2;
-			}
-
-		}
-		return 9 + lvl * 2;
-	}
-
-	public Gun561(Wand wand){
-		wand.identify();
-		wand.cursed = false;
-		this.wand = wand;
-		wand.maxCharges = Math.min(wand.maxCharges + 1, 10);
-		wand.curCharges = wand.maxCharges;
-		name = Messages.get(wand, "staff_name");
-	}
-
-	public Gun561(){
-		wand = null;
+		return curCharges == 0 ?  6 + lvl * 2 : 2;
 	}
 
 	@Override
-	public ArrayList<String> actions(Hero hero) {
-		ArrayList<String> actions = super.actions( hero );
-		if (wand!= null && wand.curCharges > 0) {
-			actions.add( AC_ZAP );
-		}
-		return actions;
-	}
-
-	@Override
-	public void activate( Char ch ) {
-		if(wand != null) wand.charge( ch, STAFF_SCALE_FACTOR );
-	}
-
-	@Override
-	public void execute(Hero hero, String action) {
-        switch (action) {
-            case AC_EQUIP:
-                //In addition to equipping itself, item reassigns itself to the quickslot
-                //This is a special case as the item is being removed from inventory, but is staying with the hero.
-                int slot = Dungeon.quickslot.getSlot(this);
-                doEquip(hero);
-                if (slot != -1) {
-                    Dungeon.quickslot.setSlot(slot, this);
-                    updateQuickslot();
-                }
-                break;
-            case AC_UNEQUIP:
-                doUnequip(hero, true);
-                break;
-            case AC_ZAP:
-
-                if (wand == null) {
-                    GameScene.show(new WndItem(null, this, true));
-                    return;
-                }
-
-                wand.execute(hero, AC_ZAP);
-                break;
-            case AC_IMBUE:
-                if (Dungeon.hero.buff(WandofNukeBomb.Cooldown.class) != null) {
-                    GLog.w(Messages.get(WandofNukeBomb.class, "cooldown"));
-                    return;
-                }
-
-                curUser = hero;
-                Wand wand1 = new WandofNukeBomb();
-                imbueWand(wand1, hero);
-                break;
-        }
-	}
-
-	@Override
-	public int proc(Char attacker, Char defender, int damage) {
-		if (wand != null && Dungeon.hero.subClass == HeroSubClass.BATTLEMAGE) {
-			if (wand.curCharges < wand.maxCharges) wand.partialCharge += 0.33f;
-			ScrollOfRecharging.charge((Hero)attacker);
-			wand.onHit(this, attacker, defender, damage);
-		}
-		return super.proc(attacker, defender, damage);
-	}
-
-	@Override
-	public int reachFactor(Char owner) {
-		int reach = super.reachFactor(owner);
-		if (owner instanceof Hero
-				&& wand instanceof WandOfDisintegration
-				&& ((Hero)owner).subClass == HeroSubClass.BATTLEMAGE){
-			reach++;
-		}
-		return reach;
-	}
-
-	@Override
-	public boolean collect( Bag container ) {
-		if (super.collect(container)) {
-			if (container.owner != null && wand != null) {
-				wand.charge(container.owner, STAFF_SCALE_FACTOR);
-			}
+	public boolean reload() {
+		if (curCharges < maxCharges) {
+			curUser.sprite.showStatus( CharSprite.POSITIVE, Messages.get(this, "reload") );
+			curCharges++;
+			curUser.busy();
+			curUser.sprite.operate( curUser.pos );
+			updateQuickslot();
 			return true;
 		} else {
+			GLog.w(Messages.get(this, "full"));
 			return false;
 		}
 	}
 
 	@Override
-	public void onDetach( ) {
-		if (wand != null) wand.stopCharging();
-	}
-
-	public Item imbueWand(Wand wand, Char owner){
-
-		wand.cursed = false;
-		this.wand = null;
-
-		//syncs the level of the two items.
-		int targetLevel = Math.max(this.level(), wand.level());
-
-		//if the staff's level is being overridden by the wand, preserve 1 upgrade
-		if (wand.level() >= this.level() && this.level() > 0) targetLevel++;
-
-		int staffLevelDiff = targetLevel - this.level();
-		if (staffLevelDiff > 0)
-			this.upgrade(staffLevelDiff);
-		else if (staffLevelDiff < 0)
-			this.degrade(Math.abs(staffLevelDiff));
-
-		int wandLevelDiff = targetLevel - wand.level();
-		if (wandLevelDiff > 0)
-			wand.upgrade(wandLevelDiff);
-		else if (wandLevelDiff < 0)
-			wand.degrade(Math.abs(wandLevelDiff));
-
-		this.wand = wand;
-		wand.maxCharges = Math.min(wand.maxCharges, 10);
-		wand.curCharges = wand.maxCharges;
-		wand.identify();
-
-		name = Messages.get(wand, "staff_name");
-
-		//This is necessary to reset any particles.
-		//FIXME this is gross, should implement a better way to fully reset quickslot visuals
-		int slot = Dungeon.quickslot.getSlot(this);
-		if (slot != -1){
-			Dungeon.quickslot.clearSlot(slot);
-			updateQuickslot();
-			Dungeon.quickslot.setSlot( slot, this );
-			updateQuickslot();
-		}
-
-		Badges.validateItemLevelAquired(this);
-
-		return this;
-	}
-
-	public void gainCharge( float amt ){
-		if (wand != null){
-			wand.gainCharge(amt);
-		}
-	}
-
-	public Class<?extends Wand> wandClass(){
-		return wand != null ? wand.getClass() : null;
-	}
-
-	@Override
-	public Item upgrade(boolean enchant) {
-		super.upgrade( enchant );
-
-		if (wand != null) {
-			int curCharges = wand.curCharges;
-			wand.upgrade();
-			//gives the wand one additional charge
-			wand.maxCharges = Math.min(wand.maxCharges + 1, 10);
-			wand.curCharges = Math.min(wand.curCharges + 1, 10);
-			updateQuickslot();
-		}
-
-		return this;
-	}
-
-	@Override
-	public Item degrade() {
-		super.degrade();
-
-		if (wand != null) {
-			int curCharges = wand.curCharges;
-			wand.degrade();
-			//gives the wand one additional charge
-			wand.maxCharges = Math.min(wand.maxCharges + 1, 10);
-			wand.curCharges = curCharges-1;
-			updateQuickslot();
-		}
-
-		return this;
-	}
-
-	@Override
-	public String status() {
-		if (wand == null) return super.status();
-		else return wand.status();
-	}
-
-	@Override
-	public String info() {
-		String info = super.info();
-
-		if (wand == null){
-			info += "\n\n" + Messages.get(this, "no_wand");
+	public ArrayList<String> actions(Hero hero) {
+		//动作列表
+		ArrayList<String> actions = super.actions(hero);
+		if (Dungeon.hero.buff(WandofNukeBomb.Cooldown.class) != null) {
+			actions.remove(AC_RELOAD);
+			actions.remove(AC_SHOOT);
+			actions.add(AC_CD);
 		} else {
-			info += "\n\n" + Messages.get(this, "has_wand", Messages.get(wand, "name")) + " " + wand.statsDesc();
+			actions.remove(AC_CD);
 		}
-
-		return info;
+		return actions;
 	}
 
 	@Override
-	public Emitter emitter() {
-		if (wand == null) return null;
-		Emitter emitter = new Emitter();
-		emitter.pos(12.5f, 3);
-		emitter.fillTarget = false;
-		emitter.pour(StaffParticleFactory, 0.1f);
-		return emitter;
-	}
-
-	private static final String WAND = "wand";
-
-	@Override
-	public void storeInBundle(Bundle bundle) {
-		super.storeInBundle(bundle);
-		bundle.put(WAND, wand);
+	public String defaultAction(){
+		if (Dungeon.hero.buff(WandofNukeBomb.Cooldown.class) != null && curCharges > 0 || curCharges > 0) {
+            defaultAction = AC_SHOOT;
+        } else if (Dungeon.hero.buff(WandofNukeBomb.Cooldown.class) != null) {
+			defaultAction = AC_CD;
+		} else {
+			defaultAction = AC_RELOAD;
+        }
+		return defaultAction;
 	}
 
 	@Override
-	public void restoreFromBundle(Bundle bundle) {
-		super.restoreFromBundle(bundle);
-		wand = (Wand) bundle.get(WAND);
-		if (wand != null) {
-			wand.maxCharges = Math.min(wand.maxCharges + 1, 10);
-			name = Messages.get(wand, "staff_name");
+	public void execute(Hero hero,String action) {
+		//按下按钮时检查动作
+		super.execute(hero,action);
+		if (action.equals(AC_CD)) {
+			GLog.n(Messages.get(this, "cd"));
 		}
 	}
 
+
 	@Override
-	public int price() {
-		return 0;
-	}
+	public void onShootComplete(int cell) {
+		//播放音效
+		Sample.INSTANCE.play(Assets.SND_BLAST);
 
-	private final WndBag.Listener itemSelector = new WndBag.Listener() {
-
-		@Override
-		public void onSelect( final Item item ) {
-			if (item != null) {
-
-				if (!item.isIdentified()) {
-					GLog.w(Messages.get(G11.class, "id_first"));
-					return;
-				} else if (item.cursed){
-					GLog.w(Messages.get(G11.class, "cursed"));
-					return;
+		//处理地形和物品互动
+		//爆炸特效
+		if (Dungeon.level.heroFOV[cell]) {
+			CellEmitter.center(cell).burst(BlastParticle.FACTORY,30);
+		}
+		for (int n : PathFinder.NEIGHBOURS9) {
+			int c =cell + n;
+			if (c >= 0 && c < Dungeon.level.length()) {
+				if (Dungeon.level.heroFOV[c]) {
+					CellEmitter.get(c).burst(SmokeParticle.FACTORY, 4);
 				}
 
-				if (wand == null){
-					applyWand((Wand)item);
-				} else {
-					final int newLevel =
-							item.level() >= level() ?
-									level() > 0 ?
-											item.level() + 1
-											: item.level()
-									: level();
-					GameScene.show(
-							new WndOptions("",
-									Messages.get(G11.class, "warning", newLevel),
-									Messages.get(G11.class, "yes"),
-									Messages.get(G11.class, "no")) {
-								@Override
-								protected void onSelect(int index) {
-									if (index == 0) {
-										applyWand((Wand)item);
-									}
-								}
-							}
-					);
+				if (Dungeon.level.flamable[c]) {
+					Dungeon.level.destroy(c);
+					GameScene.updateMap(c);
+				}
+
+				// destroys items / triggers bombs caught in the blast.
+				Heap heap = Dungeon.level.heaps.get(c);
+				if (heap != null)
+					heap.explode();
+
+				Char target = Actor.findChar(c);
+				if (target != null) {
+					// 如果是中心地格，则施加完整伤害
+					// 如果不是中心地格，则施加四分之三的伤害
+					int damage = n == 0 ?
+							Random.NormalIntRange(Dungeon.hero.HT/2+5,Dungeon.hero.HT/2+8) :
+							(int) (Random.NormalIntRange(Dungeon.hero.HT / 2 + 5, Dungeon.hero.HT / 2 + 8) * 0.75f);
+					target.damage(damage, this);
+
+					if (target == Dungeon.hero && !target.isAlive())
+						Dungeon.fail(getClass());
+				}
+				if(Dungeon.hero.buff(WandofNukeBomb.Cooldown.class)==null){
+					Buff.affect(Dungeon.hero, WandofNukeBomb.Cooldown.class,200f);
 				}
 			}
 		}
 
-		private void applyWand(Wand wand){
-			Sample.INSTANCE.play(Assets.SND_BURNING);
-			curUser.sprite.emitter().burst( ElmoParticle.FACTORY, 12 );
-			evoke(curUser);
-
-			Dungeon.quickslot.clearItem(wand);
-
-			wand.detach(curUser.belongings.backpack);
-
-			GLog.p( Messages.get(G11.class, "imbue", wand.name()));
-			imbueWand( wand, curUser );
-
-			updateQuickslot();
-		}
-	};
-
-	private final Emitter.Factory StaffParticleFactory = new Emitter.Factory() {
-		@Override
-		//reimplementing this is needed as instance creation of new staff particles must be within this class.
-		public void emit( Emitter emitter, int index, float x, float y ) {
-			StaffParticle c = (StaffParticle)emitter.getFirstAvailable(StaffParticle.class);
-			if (c == null) {
-				c = new StaffParticle();
-				emitter.add(c);
-			}
-			c.reset(x, y);
-		}
-
-		@Override
-		//some particles need light mode, others don't
-		public boolean lightMode() {
-			return !((wand instanceof WandOfDisintegration)
-					|| (wand instanceof WandOfCorruption)
-					|| (wand instanceof WandOfCorrosion)
-					|| (wand instanceof WandOfRegrowth));
-		}
-	};
+		super.onShootComplete(cell);
+	}
 
 
+	@Override
+	public void activate(Char ch) {
+		//
+	}
+
+	@Override
+	public void onDetach( ) {
+		//
+	}
 }
-

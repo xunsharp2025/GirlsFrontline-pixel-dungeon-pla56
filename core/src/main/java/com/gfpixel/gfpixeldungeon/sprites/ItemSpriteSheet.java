@@ -582,14 +582,16 @@ public class ItemSpriteSheet {
 
 	                                                                                    //64 free slots
 	private static final int Gun561_NUKE   =                                       xy(1, 34);  //32 slots
-	public static final int  Gun561      	=  Gun561_NUKE+1;
-	public static final int    Gun562    	= Gun561_NUKE+2;
-	public static final int   NEW_AK47    	= Gun561_NUKE+3;
+	public static final int  Gun561      	=  Gun561_NUKE+2;
+	public static final int    Gun562    	= Gun561_NUKE+3;
 
 	public static final int REDBOOK =	Gun561_NUKE+5;
 
 	static {
 		assignItemRect(REDBOOK, 13, 16);
+
+		assignItemRect(Gun561, 14, 16);
+		assignItemRect(Gun562, 16, 15);
 	}
 
 	private static void assignItemRect( int item, int width, int height){

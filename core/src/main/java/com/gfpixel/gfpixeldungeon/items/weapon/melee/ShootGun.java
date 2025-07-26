@@ -12,7 +12,6 @@ import com.gfpixel.gfpixeldungeon.scenes.CellSelector;
 import com.gfpixel.gfpixeldungeon.scenes.GameScene;
 import com.gfpixel.gfpixeldungeon.sprites.ItemSpriteSheet;
 import com.gfpixel.gfpixeldungeon.sprites.MissileSprite;
-import com.gfpixel.gfpixeldungeon.utils.GLog;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
@@ -26,10 +25,16 @@ public class ShootGun extends MeleeWeapon {
     public static final String AC_SHOOT = "SHOOT";
     //是否使用子弹贴图
     public boolean useMissileSprite = true;
-    //TODO 用于子弹贴图的物品，如果有需求的话
+    //TODO 用于子弹贴图的物品，如果有需求的话、
     public Item missileItem = new Food();
     public int curCharges = 999;
     public int maxCharges = 999;
+
+    //TODO 用于渲染子弹法杖特效
+    public int effectIndex = 0;
+
+    public boolean needEquip = false;
+
     //充能buff
     public Buff chargeBuff;
     public int reloadTime = 2;
@@ -89,9 +94,8 @@ public class ShootGun extends MeleeWeapon {
             if (reload()) {
                 curUser.spendAndNext(reloadTime);
             }
-
         } else if (action.equals(AC_SHOOT)) {
-            if (curUser.belongings.weapon != this) {
+            if (curUser.belongings.weapon != this && needEquip) {
                 //TODO 必须装备才能射击，可以提示装备
 //                GLog.i("You need to equip this item first.");
                 return;
@@ -127,6 +131,33 @@ public class ShootGun extends MeleeWeapon {
         }
     }
 
+    public int MagicEffect(int index){
+        switch (index){
+            case 0: // MAGIC_MISSILE
+                break;
+            case 1: // FROST
+                break;
+            case 2: // FIRE
+                break;
+            case 3: // CORROSION
+                break;
+            case 4: // FOLIAGE
+                break;
+            case 5: // FORCE
+                break;
+            case 6: // BEACON
+                break;
+            case 7: // SHADOW
+                break;
+            case 8: // RAINBOW
+                break;
+            default:
+                break;
+        }
+        return index;
+    }
+
+
     public void shoot(int cell) {
         //实现射击
         if (useMissileSprite && missileItem != null) {
@@ -143,7 +174,7 @@ public class ShootGun extends MeleeWeapon {
             //否则使用法杖特效
             //TODO 更改MAGIC_MISSILE
             MagicMissile.boltFromChar(curUser.sprite.parent,
-                    MagicMissile.MAGIC_MISSILE,curUser.sprite,cell,
+                    MagicEffect(effectIndex),curUser.sprite,cell,
                     new Callback() {
                         @Override
                         public void call() {
@@ -268,10 +299,9 @@ public class ShootGun extends MeleeWeapon {
                 }
 
                 if (shootGun.canShoot(cell)) {
-                    //设置忙碌,可以考虑播放角色动作
+                    curUser.sprite.zap(cell);
                     curUser.busy();
                     shootGun.shoot(cell);
-
                 } else {
 //                    GLog.i("You need to reload first.");//TODO 自己改，提示无法射击
                 }

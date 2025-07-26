@@ -3,10 +3,6 @@ android {
     namespace 'com.gfpixel.gfpixeldungeon'
     compileSdkVersion 26
     buildToolsVersion '28.0.3'
-    defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 23
-    }
 }
 dependencies {
 }
