@@ -11,7 +11,7 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))*/
 
 android {
-    namespace 'com.gfpixel.gfpixeldungeon'
+    namespace 'com.shatteredpixel.shatteredpixeldungeon'
     /*signingConfigs {
         gpd {
             keyAlias keystoreProperties['keyAlias']public void MagicEffect(int index){
