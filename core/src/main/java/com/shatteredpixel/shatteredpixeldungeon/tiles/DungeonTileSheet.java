@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,9 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.tiles;
 
-import android.util.SparseIntArray;
-
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.watabou.utils.Random;
+import com.watabou.utils.SparseArray;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -81,10 +80,10 @@ public class DungeonTileSheet {
 	public static HashSet<Integer> waterStitcheable = new HashSet<>(Arrays.asList(
 			Terrain.EMPTY, Terrain.GRASS, Terrain.EMPTY_WELL,
 			Terrain.ENTRANCE, Terrain.EXIT, Terrain.EMBERS,
-			Terrain.BARRICADE, Terrain.HIGH_GRASS, Terrain.SECRET_TRAP,
+			Terrain.BARRICADE, Terrain.HIGH_GRASS, Terrain.FURROWED_GRASS, Terrain.SECRET_TRAP,
 			Terrain.TRAP, Terrain.INACTIVE_TRAP, Terrain.EMPTY_DECO,
 			Terrain.SIGN, Terrain.WELL, Terrain.STATUE, Terrain.ALCHEMY,
-			Terrain.DOOR, Terrain.OPEN_DOOR, Terrain.LOCKED_DOOR
+			Terrain.DOOR, Terrain.OPEN_DOOR, Terrain.LOCKED_DOOR, Terrain.CRYSTAL_DOOR
 	));
 
 	//+1 for ground above, +2 for ground right, +4 for ground below, +8 for ground left.
@@ -115,7 +114,7 @@ public class DungeonTileSheet {
 	public static final int CHASM_WATER             = CHASM+4;
 
 	//tiles that can stitch with chasms (from above), and which visual represents the stitching
-	public static SparseIntArray chasmStitcheable = new SparseIntArray(32);
+	public static SparseArray<Integer> chasmStitcheable = new SparseArray<>();
 	static {
 		//floor
 		chasmStitcheable.put( Terrain.EMPTY,        CHASM_FLOOR );
@@ -123,6 +122,7 @@ public class DungeonTileSheet {
 		chasmStitcheable.put( Terrain.EMBERS,       CHASM_FLOOR );
 		chasmStitcheable.put( Terrain.EMPTY_WELL,   CHASM_FLOOR );
 		chasmStitcheable.put( Terrain.HIGH_GRASS,   CHASM_FLOOR );
+		chasmStitcheable.put( Terrain.FURROWED_GRASS,CHASM_FLOOR );
 		chasmStitcheable.put( Terrain.EMPTY_DECO,   CHASM_FLOOR );
 		chasmStitcheable.put( Terrain.SIGN,         CHASM_FLOOR );
 		chasmStitcheable.put( Terrain.EMPTY_WELL,   CHASM_FLOOR );
@@ -144,6 +144,7 @@ public class DungeonTileSheet {
 		chasmStitcheable.put( Terrain.DOOR,         CHASM_WALL );
 		chasmStitcheable.put( Terrain.OPEN_DOOR,    CHASM_WALL );
 		chasmStitcheable.put( Terrain.LOCKED_DOOR,  CHASM_WALL );
+		chasmStitcheable.put( Terrain.SECRET_DOOR,  CHASM_WALL );
 		chasmStitcheable.put( Terrain.WALL_DECO,    CHASM_WALL );
 
 		//water
@@ -171,8 +172,9 @@ public class DungeonTileSheet {
 	public static final int FLAT_DOOR           = FLAT_DOORS+0;
 	public static final int FLAT_DOOR_OPEN      = FLAT_DOORS+1;
 	public static final int FLAT_DOOR_LOCKED    = FLAT_DOORS+2;
-	public static final int UNLOCKED_EXIT       = FLAT_DOORS+3;
-	public static final int LOCKED_EXIT         = FLAT_DOORS+4;
+	public static final int FLAT_DOOR_CRYSTAL   = FLAT_DOORS+3;
+	public static final int UNLOCKED_EXIT       = FLAT_DOORS+4;
+	public static final int LOCKED_EXIT         = FLAT_DOORS+5;
 
 	public static final int FLAT_OTHER          =                           xy(1, 7);   //16 slots
 	public static final int FLAT_SIGN           = FLAT_OTHER+0;
@@ -181,8 +183,10 @@ public class DungeonTileSheet {
 	public static final int FLAT_ALCHEMY_POT    = FLAT_OTHER+3;
 	public static final int FLAT_BARRICADE      = FLAT_OTHER+4;
 	public static final int FLAT_HIGH_GRASS     = FLAT_OTHER+5;
+	public static final int FLAT_FURROWED_GRASS = FLAT_OTHER+6;
 
-	public static final int FLAT_HIGH_GRASS_ALT = FLAT_OTHER+7;
+	public static final int FLAT_HIGH_GRASS_ALT = FLAT_OTHER+8;
+	public static final int FLAT_FURROWED_ALT   = FLAT_OTHER+9;
 
 
 	/**********************************************************************
@@ -238,8 +242,9 @@ public class DungeonTileSheet {
 	public static final int RAISED_DOOR             = RAISED_DOORS+0;
 	public static final int RAISED_DOOR_OPEN        = RAISED_DOORS+1;
 	public static final int RAISED_DOOR_LOCKED      = RAISED_DOORS+2;
+	public static final int RAISED_DOOR_CRYSTAL     = RAISED_DOORS+3;
 	//floor tile that appears on a top/bottom doorway
-	public static final int RAISED_DOOR_SIDEWAYS    = RAISED_DOORS+3;
+	public static final int RAISED_DOOR_SIDEWAYS    = RAISED_DOORS+4;
 
 
 	public static int getRaisedDoorTile(int tile, int below){
@@ -247,11 +252,12 @@ public class DungeonTileSheet {
 		else if (tile == Terrain.DOOR)          return DungeonTileSheet.RAISED_DOOR;
 		else if (tile == Terrain.OPEN_DOOR)     return DungeonTileSheet.RAISED_DOOR_OPEN;
 		else if (tile == Terrain.LOCKED_DOOR)   return DungeonTileSheet.RAISED_DOOR_LOCKED;
+		else if (tile == Terrain.CRYSTAL_DOOR)   return DungeonTileSheet.RAISED_DOOR_CRYSTAL;
 		else return -1;
 	}
 
 	private static int[] doorTiles = new int[]{
-			Terrain.DOOR, Terrain.LOCKED_DOOR, Terrain.OPEN_DOOR
+			Terrain.DOOR, Terrain.LOCKED_DOOR, Terrain.CRYSTAL_DOOR, Terrain.OPEN_DOOR
 	};
 
 	public static boolean doorTile(int tile){
@@ -268,8 +274,10 @@ public class DungeonTileSheet {
 	public static final int RAISED_ALCHEMY_POT      = RAISED_OTHER+3;
 	public static final int RAISED_BARRICADE        = RAISED_OTHER+4;
 	public static final int RAISED_HIGH_GRASS       = RAISED_OTHER+5;
+	public static final int RAISED_FURROWED_GRASS   = RAISED_OTHER+6;
 
-	public static final int RAISED_HIGH_GRASS_ALT   = RAISED_OTHER+7;
+	public static final int RAISED_HIGH_GRASS_ALT   = RAISED_OTHER+9;
+	public static final int RAISED_FURROWED_ALT     = RAISED_OTHER+10;
 
 
 
@@ -301,13 +309,15 @@ public class DungeonTileSheet {
 	public static final int DOOR_SIDEWAYS_OVERHANG          = WALLS_OVERHANG+4;
 	public static final int DOOR_SIDEWAYS_OVERHANG_OPEN     = WALLS_OVERHANG+8;
 	public static final int DOOR_SIDEWAYS_OVERHANG_LOCKED   = WALLS_OVERHANG+12;
-	public static final int WALL_OVERHANG_WOODEN            = WALLS_OVERHANG+16;
+	public static final int DOOR_SIDEWAYS_OVERHANG_CRYSTAL  = WALLS_OVERHANG+16;
+	public static final int WALL_OVERHANG_WOODEN            = WALLS_OVERHANG+20;
 
 	public static int stitchWallOverhangTile(int tile, int rightBelow, int below, int leftBelow){
 		int visual;
 		if (tile == Terrain.DOOR)                                   visual = DOOR_SIDEWAYS_OVERHANG;
 		else if (tile == Terrain.OPEN_DOOR)                         visual = DOOR_SIDEWAYS_OVERHANG_OPEN;
 		else if (tile == Terrain.LOCKED_DOOR)                       visual = DOOR_SIDEWAYS_OVERHANG_LOCKED;
+		else if (tile == Terrain.CRYSTAL_DOOR)                      visual = DOOR_SIDEWAYS_OVERHANG_CRYSTAL;
 		else if (below == Terrain.BOOKSHELF)                        visual = WALL_OVERHANG_WOODEN;
 		else                                                        visual = WALL_OVERHANG;
 
@@ -318,24 +328,28 @@ public class DungeonTileSheet {
 	}
 
 	//no attachment to adjacent walls
-	public static final int DOOR_OVERHANG               = WALL_OVERHANG+21;
-	public static final int DOOR_OVERHANG_OPEN          = WALL_OVERHANG+22;
-	public static final int DOOR_SIDEWAYS               = WALL_OVERHANG+23;
-	public static final int DOOR_SIDEWAYS_LOCKED        = WALL_OVERHANG+24;
+	public static final int DOOR_OVERHANG               = WALL_OVERHANG+25;
+	public static final int DOOR_OVERHANG_OPEN          = WALL_OVERHANG+26;
+	public static final int DOOR_OVERHANG_CRYSTAL       = WALL_OVERHANG+27;
+	public static final int DOOR_SIDEWAYS               = WALL_OVERHANG+28;
+	public static final int DOOR_SIDEWAYS_LOCKED        = WALL_OVERHANG+29;
+	public static final int DOOR_SIDEWAYS_CRYSTAL       = WALL_OVERHANG+30;
 
-	public static final int STATUE_OVERHANG             = WALL_OVERHANG+26;
-	public static final int ALCHEMY_POT_OVERHAND        = WALL_OVERHANG+27;
-	public static final int BARRICADE_OVERHANG          = WALL_OVERHANG+28;
-	public static final int HIGH_GRASS_OVERHANG         = WALL_OVERHANG+29;
+	public static final int STATUE_OVERHANG             = WALL_OVERHANG+32;
+	public static final int ALCHEMY_POT_OVERHANG        = WALL_OVERHANG+33;
+	public static final int BARRICADE_OVERHANG          = WALL_OVERHANG+34;
+	public static final int HIGH_GRASS_OVERHANG         = WALL_OVERHANG+35;
+	public static final int FURROWED_OVERHANG           = WALL_OVERHANG+36;
 
-	public static final int HIGH_GRASS_OVERHANG_ALT     = WALL_OVERHANG+31;
+	public static final int HIGH_GRASS_OVERHANG_ALT     = WALL_OVERHANG+38;
+	public static final int FURROWED_OVERHANG_ALT       = WALL_OVERHANG+39;
 
 	/**********************************************************************
 	 * Logic for the selection of tile visuals
 	 **********************************************************************/
 
 	//These visuals always directly represent a game tile with no stitching required
-	public static SparseIntArray directVisuals = new SparseIntArray(32);
+	public static SparseArray<Integer> directVisuals = new SparseArray<>();
 	static {
 		directVisuals.put(Terrain.EMPTY,            FLOOR);
 		directVisuals.put(Terrain.GRASS,            GRASS);
@@ -358,12 +372,13 @@ public class DungeonTileSheet {
 	}
 
 	//These visuals directly represent game tiles (no stitching) when terrain is being shown as flat
-	public static SparseIntArray directFlatVisuals = new SparseIntArray(32);
+	public static SparseArray<Integer> directFlatVisuals = new SparseArray<>();
 	static {
 		directFlatVisuals.put(Terrain.WALL,             FLAT_WALL);
 		directFlatVisuals.put(Terrain.DOOR,             FLAT_DOOR);
 		directFlatVisuals.put(Terrain.OPEN_DOOR,        FLAT_DOOR_OPEN);
 		directFlatVisuals.put(Terrain.LOCKED_DOOR,      FLAT_DOOR_LOCKED);
+		directFlatVisuals.put(Terrain.CRYSTAL_DOOR,     FLAT_DOOR_CRYSTAL);
 		directFlatVisuals.put(Terrain.WALL_DECO,        FLAT_WALL_DECO);
 		directFlatVisuals.put(Terrain.BOOKSHELF,        FLAT_BOOKSHELF);
 		directFlatVisuals.put(Terrain.SIGN,             FLAT_SIGN);
@@ -372,6 +387,7 @@ public class DungeonTileSheet {
 		directFlatVisuals.put(Terrain.ALCHEMY,          FLAT_ALCHEMY_POT);
 		directFlatVisuals.put(Terrain.BARRICADE,        FLAT_BARRICADE);
 		directFlatVisuals.put(Terrain.HIGH_GRASS,       FLAT_HIGH_GRASS);
+		directFlatVisuals.put(Terrain.FURROWED_GRASS,   FLAT_FURROWED_GRASS);
 
 		directFlatVisuals.put(Terrain.SECRET_DOOR,      directFlatVisuals.get(Terrain.WALL));
 	}
@@ -384,15 +400,18 @@ public class DungeonTileSheet {
 	public static byte[] tileVariance;
 
 	public static void setupVariance(int size, long seed){
-		Random.seed( seed );
-		tileVariance = new byte[size];
-		for (int i = 0; i < tileVariance.length; i++)
-			tileVariance[i] = (byte)Random.Int(100);
-		Random.seed();
+		Random.pushGenerator( seed );
+
+			tileVariance = new byte[size];
+			for (int i = 0; i < tileVariance.length; i++) {
+				tileVariance[i] = (byte) Random.Int(100);
+			}
+
+		Random.popGenerator();
 	}
 
 	//These alt visuals will trigger 50% of the time (45% of the time if a rare alt is also present)
-	public static SparseIntArray commonAltVisuals = new SparseIntArray(32);
+	public static SparseArray<Integer> commonAltVisuals = new SparseArray<>();
 	static {
 		commonAltVisuals.put(FLOOR,                 FLOOR_ALT_1);
 		commonAltVisuals.put(GRASS,                 GRASS_ALT);
@@ -404,25 +423,28 @@ public class DungeonTileSheet {
 
 		commonAltVisuals.put(FLAT_BOOKSHELF,        FLAT_BOOKSHELF_ALT);
 		commonAltVisuals.put(FLAT_HIGH_GRASS,       FLAT_HIGH_GRASS_ALT);
+		commonAltVisuals.put(FLAT_FURROWED_GRASS,   FLAT_FURROWED_ALT);
 
 		commonAltVisuals.put(RAISED_WALL,           RAISED_WALL_ALT);
 		commonAltVisuals.put(RAISED_WALL_DECO,      RAISED_WALL_DECO_ALT);
 		commonAltVisuals.put(RAISED_WALL_BOOKSHELF, RAISED_WALL_BOOKSHELF_ALT);
 
 		commonAltVisuals.put(RAISED_HIGH_GRASS,     RAISED_HIGH_GRASS_ALT);
+		commonAltVisuals.put(RAISED_FURROWED_GRASS, RAISED_FURROWED_ALT);
 		commonAltVisuals.put(HIGH_GRASS_OVERHANG,   HIGH_GRASS_OVERHANG_ALT);
+		commonAltVisuals.put(FURROWED_OVERHANG,     FURROWED_OVERHANG_ALT);
 	}
 
 	//These alt visuals trigger 5% of the time (and also override common alts when they show up)
-	public static SparseIntArray rareAltVisuals = new SparseIntArray(32);
+	public static SparseArray<Integer> rareAltVisuals = new SparseArray<>();
 	static {
 		rareAltVisuals.put(FLOOR,               FLOOR_ALT_2);
 	}
 
 	public static int getVisualWithAlts(int visual, int pos){
-		if (tileVariance[pos] >= 95 && rareAltVisuals.indexOfKey(visual) >= 0)
+		if (tileVariance[pos] >= 95 && rareAltVisuals.containsKey(visual))
 			return rareAltVisuals.get(visual);
-		else if (tileVariance[pos] >= 50 && commonAltVisuals.indexOfKey(visual) >= 0)
+		else if (tileVariance[pos] >= 50 && commonAltVisuals.containsKey(visual))
 			return commonAltVisuals.get(visual);
 		else
 			return visual;

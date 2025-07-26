@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,17 +21,20 @@
 
 package com.watabou.glwrap;
 
-import android.opengl.GLES20;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.BufferUtils;
+
+import java.nio.IntBuffer;
 
 public class Shader {
 
-	public static final int VERTEX		= GLES20.GL_VERTEX_SHADER;
-	public static final int FRAGMENT	= GLES20.GL_FRAGMENT_SHADER;
+	public static final int VERTEX		= Gdx.gl.GL_VERTEX_SHADER;
+	public static final int FRAGMENT	= Gdx.gl.GL_FRAGMENT_SHADER;
 	
 	private int handle;
 	
 	public Shader( int type ) {
-		handle = GLES20.glCreateShader( type );
+		handle = Gdx.gl.glCreateShader( type );
 	}
 	
 	public int handle() {
@@ -39,21 +42,21 @@ public class Shader {
 	}
 	
 	public void source( String src ) {
-		GLES20.glShaderSource( handle, src );
+		Gdx.gl.glShaderSource( handle, src );
 	}
 	
 	public void compile() {
-		GLES20.glCompileShader( handle );
-
-		int[] status = new int[1];
-		GLES20.glGetShaderiv( handle, GLES20.GL_COMPILE_STATUS, status, 0 );
-		if (status[0] == GLES20.GL_FALSE) {
-			throw new Error( GLES20.glGetShaderInfoLog( handle ) );
+		Gdx.gl.glCompileShader( handle );
+		
+		IntBuffer status = BufferUtils.newIntBuffer(1);
+		Gdx.gl.glGetShaderiv( handle, Gdx.gl.GL_COMPILE_STATUS, status);
+		if (status.get() == Gdx.gl.GL_FALSE) {
+			throw new Error( Gdx.gl.glGetShaderInfoLog( handle ) );
 		}
 	}
 	
 	public void delete() {
-		GLES20.glDeleteShader( handle );
+		Gdx.gl.glDeleteShader( handle );
 	}
 	
 	public static Shader createCompiled( int type, String src ) {

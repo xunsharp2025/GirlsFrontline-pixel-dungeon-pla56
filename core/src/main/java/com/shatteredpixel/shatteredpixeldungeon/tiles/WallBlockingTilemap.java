@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +21,16 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.tiles;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.levels.HallsBossLevel;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.noosa.Tilemap;
 
 
 public class WallBlockingTilemap extends Tilemap {
 
-	public static final int SIZE = 24;
+	public static final int SIZE = 16;
 
 	private static final int CLEARED        = -2;
 	private static final int BLOCK_NONE     = -1;
@@ -38,15 +40,12 @@ public class WallBlockingTilemap extends Tilemap {
 	private static final int BLOCK_BELOW    = 3;
 
 	public WallBlockingTilemap() {
-		super("wall_blocking.png", new TextureFilm( "wall_blocking.png", SIZE, SIZE ) );
+		super(Assets.Environment.WALL_BLOCKING, new TextureFilm( Assets.Environment.WALL_BLOCKING, SIZE, SIZE ) );
 		map( new int[Dungeon.level.length()], Dungeon.level.width());
 	}
 
 	@Override
 	public synchronized void updateMap() {
-		super.updateMap();
-		data = new int[size]; //clears all values, including cleared tiles
-		
 		for (int cell = 0; cell < data.length; cell++) {
 			//force all top/bottom row, and none-discoverable cells to cleared
 			if (!Dungeon.level.discoverable[cell]
@@ -57,12 +56,22 @@ public class WallBlockingTilemap extends Tilemap {
 				updateMapCell(cell);
 			}
 		}
+
+		super.updateMap();
 	}
 
 	private int curr;
 	
 	@Override
 	public synchronized void updateMapCell(int cell) {
+
+		//FIXME this is to address the wall blocking looking odd on the new yog floor.
+		// The true solution is to improve the fog of war so the blockers aren't necessary.
+		if (Dungeon.level instanceof HallsBossLevel){
+			data[cell] = CLEARED;
+			super.updateMapCell(cell);
+			return;
+		}
 		
 		//TODO should doors be considered? currently the blocking is a bit permissive around doors
 
@@ -215,9 +224,5 @@ public class WallBlockingTilemap extends Tilemap {
 			}
 		}
 	}
-
-	@Override
-	protected boolean needsRender(int pos) {
-		return data[pos] > BLOCK_NONE;
-	}
+	
 }

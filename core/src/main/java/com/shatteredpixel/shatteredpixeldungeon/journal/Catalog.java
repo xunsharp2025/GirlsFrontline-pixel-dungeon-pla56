@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.journal;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.RangerArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.HuntressArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.LeatherArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.MageArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.MailArmor;
@@ -32,13 +32,12 @@ import com.shatteredpixel.shatteredpixeldungeon.items.armor.PlateArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.RogueArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ScaleArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.WarriorArmor;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CapeOfThorns;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.AlchemistsToolkit;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.ChaliceOfBlood;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.EtherealChains;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.LloydsBeacon;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.MasterThievesArmband;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.SandalsOfNature;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
@@ -46,11 +45,11 @@ import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourg
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.UnstableSpellbook;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfFrost;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHaste;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfInvisibility;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLevitation;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLiquidFlame;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfMight;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfMindVision;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfParalyticGas;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfPurity;
@@ -70,14 +69,14 @@ import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfWealth;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicalInfusion;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMirrorImage;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRage;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRetribution;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTerror;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfCorrosion;
@@ -86,52 +85,39 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfDisintegration
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfFireblast;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfFrost;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLightning;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLivingEarth;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfPrismaticLight;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfTransfusion;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.AK47;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun561;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SR.AWP;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG.C96;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MG.Dp;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.Dragunov;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.AR.G36;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SA.GROZA;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SA.GUA91;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Launcher.Gepard;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.AR.Hk416;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.Kar98;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.HB.Kriss;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SG.Ks23;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG.Lar;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.M16;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SR.M1903;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.LR.M1911;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.M1a1;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.M9;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.M99;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MG.Mg42;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.BP.Mos;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SA.NagantRevolver;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MG.Negev;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SR.Ntw20;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.SAIGA;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG.SR3;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Launcher.SRS;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.BP.SaigaPlate;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SakuraBlade;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.Sass;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Thunder;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.LR.Ump40;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.Ump45;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SG.Usas12;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.LR.Wa;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SA.Welrod;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SG.Win97;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.type562;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Boomerang;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfWarding;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.AssassinsBlade;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.BattleAxe;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Crossbow;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Dagger;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Dirk;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Flail;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gauntlet;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Glaive;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gloves;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Greataxe;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Greatshield;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Greatsword;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.HandAxe;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Longsword;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Mace;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Quarterstaff;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.RoundShield;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.RunicBlade;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Sai;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Scimitar;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Shortsword;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Spear;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Sword;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WarHammer;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Whip;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WornShortsword;
 import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;
@@ -166,48 +152,33 @@ public enum Catalog {
 	}
 	
 	static {
-		WEAPONS.seen.put( M9.class,                   false);
-		WEAPONS.seen.put( Welrod.class,                     false);
-		WEAPONS.seen.put( G11.class,                 false);
-		WEAPONS.seen.put( Ump45.class,                   false);
-		WEAPONS.seen.put( Ump40.class,                   false);
-		WEAPONS.seen.put( Dp.class,                   false);
-		WEAPONS.seen.put( SR3.class,                   false);
-		WEAPONS.seen.put( SRS.class,                   false);
-		WEAPONS.seen.put( Thunder.class,				false);
-		WEAPONS.seen.put( Boomerang.class,                  false);
-		WEAPONS.seen.put( M16.class,                 false);
-		WEAPONS.seen.put( M1911.class,                    false);
-		WEAPONS.seen.put( M1903.class,                      false);
-		WEAPONS.seen.put( M1a1.class,               false);
-		WEAPONS.seen.put( NagantRevolver.class,        false);
-		WEAPONS.seen.put( G36.class,                   false);
-		WEAPONS.seen.put( Ks23.class,                      false);
-		WEAPONS.seen.put( Kar98.class,                       false);
-		WEAPONS.seen.put( Negev.class,                   false);
-		WEAPONS.seen.put( Mos.class,                        false);
-		WEAPONS.seen.put( Kriss.class,                      false);
-		WEAPONS.seen.put( Wa.class,                         false);
-		WEAPONS.seen.put( C96.class,                        false);
-		WEAPONS.seen.put( Win97.class,                      false);
-		WEAPONS.seen.put( Dragunov.class,                  false);
-		WEAPONS.seen.put( AK47.class,                      false);
-		WEAPONS.seen.put( Hk416.class,                      false);
-		WEAPONS.seen.put( GUA91.class,             false);
-		WEAPONS.seen.put( AWP.class,                        false);
-		WEAPONS.seen.put( Gepard.class,                   false);
-		WEAPONS.seen.put( Usas12.class,                 false);
-		WEAPONS.seen.put( Sass.class,                       false);
-		WEAPONS.seen.put( M99.class,                     false);
-		WEAPONS.seen.put( SakuraBlade.class,                   false);
-		WEAPONS.seen.put( SaigaPlate.class,                false);
-		WEAPONS.seen.put( Lar.class,         			       false);
-		WEAPONS.seen.put( SAIGA.class,                        false);
-		WEAPONS.seen.put( Mg42.class,                     false);
-		WEAPONS.seen.put( Ntw20.class,                   false);
-		WEAPONS.seen.put( GROZA.class,                false);
-		WEAPONS.seen.put( Gun561.class,                false);
-		WEAPONS.seen.put( type562.class,                false);
+		WEAPONS.seen.put( WornShortsword.class,             false);
+		WEAPONS.seen.put( Gloves.class,                     false);
+		WEAPONS.seen.put( Dagger.class,                     false);
+		WEAPONS.seen.put( MagesStaff.class,                 false);
+		WEAPONS.seen.put( Shortsword.class,                 false);
+		WEAPONS.seen.put( HandAxe.class,                    false);
+		WEAPONS.seen.put( Spear.class,                      false);
+		WEAPONS.seen.put( Quarterstaff.class,               false);
+		WEAPONS.seen.put( Dirk.class,                       false);
+		WEAPONS.seen.put( Sword.class,                      false);
+		WEAPONS.seen.put( Mace.class,                       false);
+		WEAPONS.seen.put( Scimitar.class,                   false);
+		WEAPONS.seen.put( RoundShield.class,                false);
+		WEAPONS.seen.put( Sai.class,                        false);
+		WEAPONS.seen.put( Whip.class,                       false);
+		WEAPONS.seen.put( Longsword.class,                  false);
+		WEAPONS.seen.put( BattleAxe.class,                  false);
+		WEAPONS.seen.put( Flail.class,                      false);
+		WEAPONS.seen.put( RunicBlade.class,                 false);
+		WEAPONS.seen.put( AssassinsBlade.class,             false);
+		WEAPONS.seen.put( Crossbow.class,                   false);
+		WEAPONS.seen.put( Greatsword.class,                 false);
+		WEAPONS.seen.put( WarHammer.class,                  false);
+		WEAPONS.seen.put( Glaive.class,                     false);
+		WEAPONS.seen.put( Greataxe.class,                   false);
+		WEAPONS.seen.put( Greatshield.class,                false);
+		WEAPONS.seen.put( Gauntlet.class,                   false);
 	
 		ARMOR.seen.put( ClothArmor.class,                   false);
 		ARMOR.seen.put( LeatherArmor.class,                 false);
@@ -217,7 +188,7 @@ public enum Catalog {
 		ARMOR.seen.put( WarriorArmor.class,                 false);
 		ARMOR.seen.put( MageArmor.class,                    false);
 		ARMOR.seen.put( RogueArmor.class,                   false);
-		ARMOR.seen.put( RangerArmor.class,		            false);
+		ARMOR.seen.put( HuntressArmor.class,                false);
 	
 		WANDS.seen.put( WandOfMagicMissile.class,           false);
 		WANDS.seen.put( WandOfLightning.class,              false);
@@ -225,10 +196,10 @@ public enum Catalog {
 		WANDS.seen.put( WandOfFireblast.class,              false);
 		WANDS.seen.put( WandOfCorrosion.class,              false);
 		WANDS.seen.put( WandOfBlastWave.class,              false);
-		//WANDS.seen.put( WandOfLivingEarth.class,          false);
+		WANDS.seen.put( WandOfLivingEarth.class,            false);
 		WANDS.seen.put( WandOfFrost.class,                  false);
 		WANDS.seen.put( WandOfPrismaticLight.class,         false);
-		//WANDS.seen.put( WandOfWarding.class,              false);
+		WANDS.seen.put( WandOfWarding.class,                false);
 		WANDS.seen.put( WandOfTransfusion.class,            false);
 		WANDS.seen.put( WandOfCorruption.class,             false);
 		WANDS.seen.put( WandOfRegrowth.class,               false);
@@ -245,14 +216,14 @@ public enum Catalog {
 		RINGS.seen.put( RingOfTenacity.class,               false);
 		RINGS.seen.put( RingOfWealth.class,                 false);
 	
-		//ARTIFACTS.seen.put( AlchemistsToolkit.class,      false);
-		ARTIFACTS.seen.put( CapeOfThorns.class,             false);
+		ARTIFACTS.seen.put( AlchemistsToolkit.class,        false);
+		//ARTIFACTS.seen.put( CapeOfThorns.class,             false);
 		ARTIFACTS.seen.put( ChaliceOfBlood.class,           false);
 		ARTIFACTS.seen.put( CloakOfShadows.class,           false);
 		ARTIFACTS.seen.put( DriedRose.class,                false);
 		ARTIFACTS.seen.put( EtherealChains.class,           false);
 		ARTIFACTS.seen.put( HornOfPlenty.class,             false);
-		ARTIFACTS.seen.put( LloydsBeacon.class,             false);
+		//ARTIFACTS.seen.put( LloydsBeacon.class,             false);
 		ARTIFACTS.seen.put( MasterThievesArmband.class,     false);
 		ARTIFACTS.seen.put( SandalsOfNature.class,          false);
 		ARTIFACTS.seen.put( TalismanOfForesight.class,      false);
@@ -270,7 +241,7 @@ public enum Catalog {
 		POTIONS.seen.put( PotionOfMindVision.class,         false);
 		POTIONS.seen.put( PotionOfInvisibility.class,       false);
 		POTIONS.seen.put( PotionOfExperience.class,         false);
-		POTIONS.seen.put( PotionOfMight.class,              false);
+		POTIONS.seen.put( PotionOfHaste.class,              false);
 	
 		SCROLLS.seen.put( ScrollOfIdentify.class,           false);
 		SCROLLS.seen.put( ScrollOfUpgrade.class,            false);
@@ -282,8 +253,8 @@ public enum Catalog {
 		SCROLLS.seen.put( ScrollOfTerror.class,             false);
 		SCROLLS.seen.put( ScrollOfLullaby.class,            false);
 		SCROLLS.seen.put( ScrollOfRage.class,               false);
-		SCROLLS.seen.put( ScrollOfPsionicBlast.class,       false);
-		SCROLLS.seen.put( ScrollOfMagicalInfusion.class,    false);
+		SCROLLS.seen.put( ScrollOfRetribution.class,        false);
+		SCROLLS.seen.put( ScrollOfTransmutation.class,      false);
 	}
 	
 	public static LinkedHashMap<Catalog, Badges.Badge> catalogBadges = new LinkedHashMap<>();
@@ -316,26 +287,26 @@ public enum Catalog {
 		Badges.validateItemsIdentified();
 	}
 	
-	private static final String CATALOGS = "catalogs";
+	private static final String CATALOG_ITEMS = "catalog_items";
 	
 	public static void store( Bundle bundle ){
 		
 		Badges.loadGlobal();
 		
-		ArrayList<String> seen = new ArrayList<>();
+		ArrayList<Class> seen = new ArrayList<>();
 		
 		//if we have identified all items of a set, we use the badge to keep track instead.
 		if (!Badges.isUnlocked(Badges.Badge.ALL_ITEMS_IDENTIFIED)) {
 			for (Catalog cat : values()) {
 				if (!Badges.isUnlocked(catalogBadges.get(cat))) {
 					for (Class<? extends Item> item : cat.items()) {
-						if (cat.seen.get(item)) seen.add(item.getSimpleName());
+						if (cat.seen.get(item)) seen.add(item);
 					}
 				}
 			}
 		}
 		
-		bundle.put( CATALOGS, seen.toArray(new String[0]) );
+		bundle.put( CATALOG_ITEMS, seen.toArray(new Class[0]) );
 		
 	}
 	
@@ -363,18 +334,15 @@ public enum Catalog {
 		}
 		
 		//general save/load
-		if (bundle.contains(CATALOGS)) {
-			List<String> seen = Arrays.asList(bundle.getStringArray(CATALOGS));
-			
-			//pre-0.6.3 saves
-			//TODO should adjust this to tie into the bundling system's class array
-			if (seen.contains("WandOfVenom")){
-				WANDS.seen.put(WandOfCorrosion.class, true);
+		if (bundle.contains(CATALOG_ITEMS)) {
+			List<Class> seenClasses = new ArrayList<>();
+			if (bundle.contains(CATALOG_ITEMS)) {
+				seenClasses = Arrays.asList(bundle.getClassArray(CATALOG_ITEMS));
 			}
 			
 			for (Catalog cat : values()) {
 				for (Class<? extends Item> item : cat.items()) {
-					if (seen.contains(item.getSimpleName())) {
+					if (seenClasses.contains(item)) {
 						cat.seen.put(item, true);
 					}
 				}

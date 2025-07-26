@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,26 +21,33 @@
 
 package com.watabou.utils;
 
-import java.util.ArrayList;
+import com.badlogic.gdx.utils.IntMap;
+
+import java.util.Arrays;
 import java.util.List;
 
-public class SparseArray<T> extends android.util.SparseArray<T> {
-
-	public int[] keyArray() {
-		int size = size();
-		int[] array = new int[size];
-		for (int i=0; i < size; i++) {
-			array[i] = keyAt( i );
-		}
-		return array;
+public class SparseArray<T> extends IntMap<T> {
+	
+	@Override
+	public synchronized T put(int key, T value) {
+		return super.put(key, value);
 	}
 	
-	public List<T> values() {
-		int size = size();
-		ArrayList<T> list = new ArrayList<T>( size );
-		for (int i=0; i < size; i++) {
-			list.add( i, valueAt( i ) );
-		}
-		return list;
+	@Override
+	public synchronized T get(int key, T defaultValue) {
+		return super.get(key, defaultValue);
+	}
+	
+	@Override
+	public synchronized T remove(int key) {
+		return super.remove(key);
+	}
+	
+	public synchronized int[] keyArray() {
+		return keys().toArray().toArray();
+	}
+	
+	public synchronized List<T> valueList() {
+		return Arrays.asList(values().toArray().toArray());
 	}
 }

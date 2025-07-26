@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ public class CharHealthIndicator extends HealthBar {
 			x = sprite.x + sprite.width()/6f;
 			y = sprite.y - 2;
 			level( target );
-			visible = target.HP < target.HT;
+			visible = target.HP < target.HT || target.shielding() > 0;
 		} else {
 			visible = false;
 		}

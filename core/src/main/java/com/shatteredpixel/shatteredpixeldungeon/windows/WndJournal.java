@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
-import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClassArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
@@ -37,31 +37,33 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.ui.QuickRecipe;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
-import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextMultiline;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ScrollPane;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.ui.Component;
+import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-//FIXME a lot of cleanup and improvements to do here
 public class WndJournal extends WndTabbed {
 	
-	private static final int WIDTH_P    = 120;
-	private static final int HEIGHT_P   = 160;
+	public static final int WIDTH_P     = 126;
+	public static final int HEIGHT_P    = 180;
 	
-	private static final int WIDTH_L    = 160;
-	private static final int HEIGHT_L   = 128;
+	public static final int WIDTH_L     = 200;
+	public static final int HEIGHT_L    = 130;
 	
 	private static final int ITEM_HEIGHT	= 18;
 	
 	private GuideTab guideTab;
+	private AlchemyTab alchemyTab;
 	private NotesTab notesTab;
 	private CatalogTab catalogTab;
 	
@@ -69,8 +71,8 @@ public class WndJournal extends WndTabbed {
 	
 	public WndJournal(){
 		
-		int width = SPDSettings.landscape() ? WIDTH_L : WIDTH_P;
-		int height = SPDSettings.landscape() ? HEIGHT_L : HEIGHT_P;
+		int width = PixelScene.landscape() ? WIDTH_L : WIDTH_P;
+		int height = PixelScene.landscape() ? HEIGHT_L : HEIGHT_P;
 		
 		resize(width, height);
 		
@@ -78,6 +80,10 @@ public class WndJournal extends WndTabbed {
 		add(guideTab);
 		guideTab.setRect(0, 0, width, height);
 		guideTab.updateList();
+		
+		alchemyTab = new AlchemyTab();
+		add(alchemyTab);
+		alchemyTab.setRect(0, 0, width, height);
 		
 		notesTab = new NotesTab();
 		add(notesTab);
@@ -90,25 +96,32 @@ public class WndJournal extends WndTabbed {
 		catalogTab.updateList();
 		
 		Tab[] tabs = {
-				new LabeledTab( Messages.get(this, "guide") ) {
+				new IconTab( new ItemSprite(ItemSpriteSheet.GUIDE_PAGE, null) ) {
 					protected void select( boolean value ) {
 						super.select( value );
 						guideTab.active = guideTab.visible = value;
 						if (value) last_index = 0;
 					}
 				},
-				new LabeledTab( Messages.get(this, "notes") ) {
+				new IconTab( new ItemSprite(ItemSpriteSheet.ALCH_PAGE, null) ) {
 					protected void select( boolean value ) {
 						super.select( value );
-						notesTab.active = notesTab.visible = value;
+						alchemyTab.active = alchemyTab.visible = value;
 						if (value) last_index = 1;
 					}
 				},
-				new LabeledTab( Messages.get(this, "items") ) {
+				new IconTab( Icons.get(Icons.STAIRS) ) {
+					protected void select( boolean value ) {
+						super.select( value );
+						notesTab.active = notesTab.visible = value;
+						if (value) last_index = 2;
+					}
+				},
+				new IconTab( new ItemSprite(ItemSpriteSheet.WEAPON_HOLDER, null) ) {
 					protected void select( boolean value ) {
 						super.select( value );
 						catalogTab.active = catalogTab.visible = value;
-						if (value) last_index = 2;
+						if (value) last_index = 3;
 					}
 				}
 		};
@@ -121,10 +134,19 @@ public class WndJournal extends WndTabbed {
 		
 		select(last_index);
 	}
-	
+
+	@Override
+	public void offset(int xOffset, int yOffset) {
+		super.offset(xOffset, yOffset);
+		guideTab.layout();
+		alchemyTab.layout();
+		catalogTab.layout();
+		notesTab.layout();
+	}
+
 	private static class ListItem extends Component {
 		
-		protected RenderedTextMultiline label;
+		protected RenderedTextBlock label;
 		protected BitmapText depth;
 		protected ColorBlock line;
 		protected Image icon;
@@ -153,7 +175,7 @@ public class WndJournal extends WndTabbed {
 		
 		@Override
 		protected void createChildren() {
-			label = PixelScene.renderMultiline( 7 );
+			label = PixelScene.renderTextBlock( 7 );
 			add( label );
 			
 			icon = new Image();
@@ -171,6 +193,7 @@ public class WndJournal extends WndTabbed {
 		protected void layout() {
 			
 			icon.y = y + 1 + (height() - 1 - icon.height()) / 2f;
+			icon.x = x + (16 - icon.width())/2f;
 			PixelScene.align(icon);
 			
 			depth.x = icon.x + (icon.width - depth.width()) / 2f;
@@ -181,13 +204,13 @@ public class WndJournal extends WndTabbed {
 			line.x = 0;
 			line.y = y;
 			
-			label.maxWidth((int)(width - icon.width() /*- 8 - 1*/+500));
-			label.setPos(icon.x + icon.width() + 1, y + 1 + (height() - label.height()) / 2f);
+			label.maxWidth((int)(width - 16 - 1));
+			label.setPos(17, y + 1 + (height() - label.height()) / 2f);
 			PixelScene.align(label);
 		}
 	}
 	
-	private static class GuideTab extends Component {
+	public static class GuideTab extends Component {
 		
 		private ScrollPane list;
 		private ArrayList<GuideItem> pages = new ArrayList<>();
@@ -223,7 +246,7 @@ public class WndJournal extends WndTabbed {
 			line.y = pos;
 			content.add(line);
 			
-			RenderedTextMultiline title = PixelScene.renderMultiline(Document.ADVENTURERS_GUIDE.title(), 9);
+			RenderedTextBlock title = PixelScene.renderTextBlock(Document.ADVENTURERS_GUIDE.title(), 9);
 			title.hardlight(TITLE_COLOR);
 			title.maxWidth( (int)width() - 2 );
 			title.setPos( (width() - title.width())/2f, pos + 1 + ((ITEM_HEIGHT) - title.height())/2f);
@@ -232,7 +255,7 @@ public class WndJournal extends WndTabbed {
 			
 			pos += Math.max(ITEM_HEIGHT, title.height());
 			
-			for (String page : Document.ADVENTURERS_GUIDE.pages()){
+			for (String page : Document.ADVENTURERS_GUIDE.pageNames()){
 				GuideItem item = new GuideItem( page );
 				
 				item.setRect( 0, pos, width(), ITEM_HEIGHT );
@@ -252,11 +275,10 @@ public class WndJournal extends WndTabbed {
 			private String page;
 			
 			public GuideItem( String page ){
-				super( new ItemSprite( ItemSpriteSheet.GUIDE_PAGE, null),
-						Messages.titleCase(Document.ADVENTURERS_GUIDE.pageTitle(page)), -1);
+				super( iconForPage(page), Messages.titleCase(Document.ADVENTURERS_GUIDE.pageTitle(page)));
 				
 				this.page = page;
-				found = Document.ADVENTURERS_GUIDE.hasPage(page);
+				found = Document.ADVENTURERS_GUIDE.isPageFound(page);
 				
 				if (!found) {
 					icon.hardlight( 0.5f, 0.5f, 0.5f);
@@ -268,7 +290,10 @@ public class WndJournal extends WndTabbed {
 			
 			public boolean onClick( float x, float y ) {
 				if (inside( x, y ) && found) {
-					GameScene.show( new WndStory( Document.ADVENTURERS_GUIDE.pageBody(page) ));
+					GameScene.show( new WndStory( iconForPage(page),
+							Document.ADVENTURERS_GUIDE.pageTitle(page),
+							Document.ADVENTURERS_GUIDE.pageBody(page) ));
+					Document.ADVENTURERS_GUIDE.readPage(page);
 					return true;
 				} else {
 					return false;
@@ -276,7 +301,215 @@ public class WndJournal extends WndTabbed {
 			}
 			
 		}
+
+		//TODO might just want this to be part of the Document class
+		public static Image iconForPage( String page ){
+			if (!Document.ADVENTURERS_GUIDE.isPageFound(page)){
+				return new ItemSprite( ItemSpriteSheet.GUIDE_PAGE );
+			}
+			switch (page){
+				case Document.GUIDE_INTRO: default:
+					return new ItemSprite(ItemSpriteSheet.MASTERY);
+				case "Examining":
+					return Icons.get(Icons.MAGNIFY);
+				case "Surprise_Attacks":
+					return new ItemSprite( ItemSpriteSheet.ASSASSINS_BLADE );
+				case "Identifying":
+					return new ItemSprite( new ScrollOfIdentify() );
+				case "Food":
+					return new ItemSprite( ItemSpriteSheet.PASTY );
+				case "Dieing":
+					return new ItemSprite( ItemSpriteSheet.TOMB );
+				case Document.GUIDE_SEARCHING:
+					return Icons.get(Icons.MAGNIFY);
+				case "Strength":
+					return new ItemSprite( ItemSpriteSheet.GREATAXE );
+				case "Upgrades":
+					return new ItemSprite( ItemSpriteSheet.RING_EMERALD );
+				case "Looting":
+					return new ItemSprite( ItemSpriteSheet.CRYSTAL_KEY );
+				case "Levelling":
+					return Icons.get(Icons.TALENT);
+				case "Positioning":
+					return new ItemSprite( ItemSpriteSheet.SPIRIT_BOW );
+				case "Magic":
+					return new ItemSprite( ItemSpriteSheet.WAND_FIREBOLT );
+			}
+		}
+
+	}
+	
+	public static class AlchemyTab extends Component {
 		
+		private RedButton[] pageButtons;
+		private static final int NUM_BUTTONS = 10;
+		
+		private static final int[] spriteIndexes = {10, 12, 7, 9, 11, 8, 3, 13, 14, 15};
+		
+		public static int currentPageIdx   = -1;
+		
+		private IconTitle title;
+		private RenderedTextBlock body;
+		
+		private ScrollPane list;
+		private ArrayList<QuickRecipe> recipes = new ArrayList<>();
+		
+		@Override
+		protected void createChildren() {
+			pageButtons = new RedButton[NUM_BUTTONS];
+			for (int i = 0; i < NUM_BUTTONS; i++){
+				final int idx = i;
+				pageButtons[i] = new RedButton( "" ){
+					@Override
+					protected void onClick() {
+						currentPageIdx = idx;
+						updateList();
+					}
+				};
+				if (Document.ALCHEMY_GUIDE.isPageFound(i)) {
+					pageButtons[i].icon(new ItemSprite(ItemSpriteSheet.SOMETHING + spriteIndexes[i], null));
+				} else {
+					pageButtons[i].icon(new ItemSprite(ItemSpriteSheet.SOMETHING, null));
+					pageButtons[i].enable(false);
+				}
+				add( pageButtons[i] );
+			}
+			
+			title = new IconTitle();
+			title.icon( new ItemSprite(ItemSpriteSheet.ALCH_PAGE));
+			title.visible = false;
+
+			body = PixelScene.renderTextBlock(6);
+			
+			list = new ScrollPane(new Component());
+			add(list);
+		}
+		
+		@Override
+		protected void layout() {
+			super.layout();
+			
+			if (PixelScene.landscape()){
+				float buttonWidth = width()/pageButtons.length;
+				for (int i = 0; i < NUM_BUTTONS; i++) {
+					pageButtons[i].setRect(i*buttonWidth, 0, buttonWidth, ITEM_HEIGHT);
+					PixelScene.align(pageButtons[i]);
+				}
+			} else {
+				//for first row
+				float buttonWidth = width()/5;
+				float y = 0;
+				float x = 0;
+				for (int i = 0; i < NUM_BUTTONS; i++) {
+					pageButtons[i].setRect(x, y, buttonWidth, ITEM_HEIGHT);
+					PixelScene.align(pageButtons[i]);
+					x += buttonWidth;
+					if (i == 4){
+						y += ITEM_HEIGHT;
+						x = 0;
+						buttonWidth = width()/5;
+					}
+				}
+			}
+			
+			list.setRect(0, pageButtons[NUM_BUTTONS-1].bottom() + 1, width,
+					height - pageButtons[NUM_BUTTONS-1].bottom() - 1);
+			
+			updateList();
+		}
+		
+		private void updateList() {
+
+			for (int i = 0; i < NUM_BUTTONS; i++) {
+				if (i == currentPageIdx) {
+					pageButtons[i].icon().color(TITLE_COLOR);
+				} else {
+					pageButtons[i].icon().resetColor();
+				}
+			}
+			
+			if (currentPageIdx == -1){
+				return;
+			}
+			
+			for (QuickRecipe r : recipes){
+				if (r != null) {
+					r.killAndErase();
+					r.destroy();
+				}
+			}
+			recipes.clear();
+			
+			Component content = list.content();
+			
+			content.clear();
+			
+			title.visible = true;
+			title.label(Document.ALCHEMY_GUIDE.pageTitle(currentPageIdx));
+			title.setRect(0, 0, width(), 10);
+			content.add(title);
+			
+			body.maxWidth((int)width());
+			body.text(Document.ALCHEMY_GUIDE.pageBody(currentPageIdx));
+			body.setPos(0, title.bottom());
+			content.add(body);
+
+			Document.ALCHEMY_GUIDE.readPage(currentPageIdx);
+			
+			ArrayList<QuickRecipe> toAdd = QuickRecipe.getRecipes(currentPageIdx);
+			
+			float left;
+			float top = body.bottom()+2;
+			int w;
+			ArrayList<QuickRecipe> toAddThisRow = new ArrayList<>();
+			while (!toAdd.isEmpty()){
+				if (toAdd.get(0) == null){
+					toAdd.remove(0);
+					top += 6;
+				}
+				
+				w = 0;
+				while(!toAdd.isEmpty() && toAdd.get(0) != null
+						&& w + toAdd.get(0).width() <= width()){
+					toAddThisRow.add(toAdd.remove(0));
+					w += toAddThisRow.get(0).width();
+				}
+				
+				float spacing = (width() - w)/(toAddThisRow.size() + 1);
+				left = spacing;
+				while (!toAddThisRow.isEmpty()){
+					QuickRecipe r = toAddThisRow.remove(0);
+					r.setPos(left, top);
+					left += r.width() + spacing;
+					if (!toAddThisRow.isEmpty()) {
+						ColorBlock spacer = new ColorBlock(1, 16, 0xFF222222);
+						spacer.y = top;
+						spacer.x = left - spacing / 2 - 0.5f;
+						PixelScene.align(spacer);
+						content.add(spacer);
+					}
+					recipes.add(r);
+					content.add(r);
+				}
+				
+				if (!toAdd.isEmpty() && toAdd.get(0) == null){
+					toAdd.remove(0);
+				}
+				
+				if (!toAdd.isEmpty() && toAdd.get(0) != null) {
+					ColorBlock spacer = new ColorBlock(width(), 1, 0xFF222222);
+					spacer.y = top + 16;
+					spacer.x = 0;
+					content.add(spacer);
+				}
+				top += 17;
+				toAddThisRow.clear();
+			}
+			top -= 1;
+			content.setSize(width(), top);
+			list.setSize(list.width(), list.height());
+			list.scrollTo(0, 0);
+		}
 	}
 	
 	private static class NotesTab extends Component {
@@ -307,7 +540,7 @@ public class WndJournal extends WndTabbed {
 				line.y = pos;
 				content.add(line);
 				
-				RenderedTextMultiline title = PixelScene.renderMultiline(Messages.get(this, "keys"), 9);
+				RenderedTextBlock title = PixelScene.renderTextBlock(Messages.get(this, "keys"), 9);
 				title.hardlight(TITLE_COLOR);
 				title.maxWidth( (int)width() - 2 );
 				title.setPos( (width() - title.width())/2f, pos + 1 + ((ITEM_HEIGHT) - title.height())/2f);
@@ -317,7 +550,7 @@ public class WndJournal extends WndTabbed {
 				pos += Math.max(ITEM_HEIGHT, title.height());
 			}
 			for(Notes.Record rec : keys){
-				ListItem item = new ListItem( Icons.get(Icons.DEPTH),
+				ListItem item = new ListItem( Icons.get(Icons.STAIRS),
 						Messages.titleCase(rec.desc()), rec.depth() );
 				item.setRect( 0, pos, width(), ITEM_HEIGHT );
 				content.add( item );
@@ -332,7 +565,7 @@ public class WndJournal extends WndTabbed {
 				line.y = pos;
 				content.add(line);
 				
-				RenderedTextMultiline title = PixelScene.renderMultiline(Messages.get(this, "landmarks"), 9);
+				RenderedTextBlock title = PixelScene.renderTextBlock(Messages.get(this, "landmarks"), 9);
 				title.hardlight(TITLE_COLOR);
 				title.maxWidth( (int)width() - 2 );
 				title.setPos( (width() - title.width())/2f, pos + 1 + ((ITEM_HEIGHT) - title.height())/2f);
@@ -342,7 +575,7 @@ public class WndJournal extends WndTabbed {
 				pos += Math.max(ITEM_HEIGHT, title.height());
 			}
 			for (Notes.Record rec : landmarks) {
-				ListItem item = new ListItem( Icons.get(Icons.DEPTH),
+				ListItem item = new ListItem( Icons.get(Icons.STAIRS),
 						Messages.titleCase(rec.desc()), rec.depth() );
 				item.setRect( 0, pos, width(), ITEM_HEIGHT );
 				content.add( item );
@@ -363,6 +596,7 @@ public class WndJournal extends WndTabbed {
 		
 		private static int currentItemIdx   = 0;
 		
+		//sprite locations
 		private static final int WEAPON_IDX = 0;
 		private static final int ARMOR_IDX  = 1;
 		private static final int WAND_IDX   = 2;
@@ -370,6 +604,8 @@ public class WndJournal extends WndTabbed {
 		private static final int ARTIF_IDX  = 4;
 		private static final int POTION_IDX = 5;
 		private static final int SCROLL_IDX = 6;
+		
+		private static final int spriteIndexes[] = {1, 2, 4, 5, 6, 9, 11};
 		
 		private ScrollPane list;
 		
@@ -387,7 +623,7 @@ public class WndJournal extends WndTabbed {
 						updateList();
 					}
 				};
-				itemButtons[i].icon(new ItemSprite(ItemSpriteSheet.WEAPON_HOLDER + i, null));
+				itemButtons[i].icon(new ItemSprite(ItemSpriteSheet.SOMETHING + spriteIndexes[i], null));
 				add( itemButtons[i] );
 			}
 			
@@ -405,8 +641,6 @@ public class WndJournal extends WndTabbed {
 			add( list );
 		}
 		
-		private static final int BUTTON_HEIGHT = 17;
-		
 		@Override
 		protected void layout() {
 			super.layout();
@@ -415,8 +649,8 @@ public class WndJournal extends WndTabbed {
 			float buttonWidth = width()/perRow;
 			
 			for (int i = 0; i < NUM_BUTTONS; i++) {
-				itemButtons[i].setRect((i%perRow) * (buttonWidth), (i/perRow) * (BUTTON_HEIGHT + 1),
-						buttonWidth, BUTTON_HEIGHT);
+				itemButtons[i].setRect((i%perRow) * (buttonWidth), (i/perRow) * (ITEM_HEIGHT ),
+						buttonWidth, ITEM_HEIGHT);
 				PixelScene.align(itemButtons[i]);
 			}
 			
@@ -484,16 +718,12 @@ public class WndJournal extends WndTabbed {
 			
 			float pos = 0;
 			for (Class<? extends Item> itemClass : itemClasses) {
-				try{
-					CatalogItem item = new CatalogItem(itemClass.newInstance(), known.get(itemClass), Catalog.isSeen(itemClass));
-					item.setRect( 0, pos, width, ITEM_HEIGHT );
-					content.add( item );
-					items.add( item );
-					
-					pos += item.height();
-				} catch (Exception e) {
-					GirlsFrontlinePixelDungeon.reportException(e);
-				}
+				CatalogItem item = new CatalogItem(Reflection.newInstance(itemClass), known.get(itemClass), Catalog.isSeen(itemClass));
+				item.setRect( 0, pos, width, ITEM_HEIGHT );
+				content.add( item );
+				items.add( item );
+				
+				pos += item.height();
 			}
 			
 			content.setSize( width, pos );
@@ -510,13 +740,23 @@ public class WndJournal extends WndTabbed {
 				
 				this.item = item;
 				this.seen = seen;
+
+				if ( seen && !IDed ){
+					if (item instanceof Ring){
+						((Ring) item).anonymize();
+					} else if (item instanceof Potion){
+						((Potion) item).anonymize();
+					} else if (item instanceof Scroll){
+						((Scroll) item).anonymize();
+					}
+				}
 				
 				if (!seen) {
-					icon.copy( new ItemSprite( ItemSpriteSheet.WEAPON_HOLDER + currentItemIdx, null) );
+					icon.copy( new ItemSprite( ItemSpriteSheet.SOMETHING + spriteIndexes[currentItemIdx], null) );
 					label.text("???");
 					label.hardlight( 0x999999 );
 				} else if (!IDed) {
-					icon.copy( new ItemSprite( ItemSpriteSheet.WEAPON_HOLDER + currentItemIdx, null) );
+					icon.copy( new ItemSprite( ItemSpriteSheet.SOMETHING + spriteIndexes[currentItemIdx], null) );
 					label.hardlight( 0xCCCCCC );
 				}
 				
@@ -524,8 +764,13 @@ public class WndJournal extends WndTabbed {
 			
 			public boolean onClick( float x, float y ) {
 				if (inside( x, y ) && seen) {
-					GameScene.show(new WndTitledMessage( new Image(icon),
-								Messages.titleCase(item.trueName()), item.desc() ));
+					if (item instanceof ClassArmor){
+						GameScene.show(new WndTitledMessage(new Image(icon),
+								Messages.titleCase(item.trueName()), item.desc()));
+					} else {
+						GameScene.show(new WndTitledMessage(new Image(icon),
+								Messages.titleCase(item.trueName()), item.info()));
+					}
 					return true;
 				} else {
 					return false;

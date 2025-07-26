@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.WaterOfAwareness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.WaterOfHealth;
-import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.WaterOfTransmutation;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.WellWater;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
@@ -34,7 +33,7 @@ import com.watabou.utils.Random;
 public class MagicWellRoom extends SpecialRoom {
 
 	private static final Class<?>[] WATERS =
-		{WaterOfAwareness.class, WaterOfHealth.class, WaterOfTransmutation.class};
+		{WaterOfAwareness.class, WaterOfHealth.class};
 	
 	public Class<?extends WellWater> overrideWater = null;
 	
@@ -52,9 +51,6 @@ public class MagicWellRoom extends SpecialRoom {
 			overrideWater :
 			(Class<? extends WellWater>)Random.element( WATERS );
 			
-		if (waterClass == WaterOfTransmutation.class) {
-			SpecialRoom.disableGuaranteedWell();
-		}
 		
 		WellWater.seed(c.x + level.width() * c.y, 1, waterClass, level);
 		

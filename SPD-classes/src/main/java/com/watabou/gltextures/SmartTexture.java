@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,7 @@
 
 package com.watabou.gltextures;
 
-import android.graphics.Bitmap;
-
+import com.badlogic.gdx.graphics.Pixmap;
 import com.watabou.glwrap.Texture;
 import com.watabou.utils.RectF;
 
@@ -37,22 +36,15 @@ public class SmartTexture extends Texture {
 	public int wModeH;
 	public int wModeV;
 	
-	public Bitmap bitmap;
+	public Pixmap bitmap;
 	
 	public Atlas atlas;
 
-	protected SmartTexture( ) {
-		//useful for subclasses which want to manage their own texture data
-		// in cases where android.graphics.bitmap isn't fast enough.
-
-		//subclasses which use this MUST also override some mix of reload/generate/bind
-	}
-	
-	public SmartTexture( Bitmap bitmap ) {
+	public SmartTexture( Pixmap bitmap ) {
 		this( bitmap, NEAREST, CLAMP, false );
 	}
 
-	public SmartTexture( Bitmap bitmap, int filtering, int wrapping, boolean premultiplied ) {
+	public SmartTexture( Pixmap bitmap, int filtering, int wrapping, boolean premultiplied ) {
 
 		this.bitmap = bitmap;
 		width = bitmap.getWidth();
@@ -66,7 +58,7 @@ public class SmartTexture extends Texture {
 	@Override
 	protected void generate() {
 		super.generate();
-		bitmap( bitmap, premultiplied );
+		bitmap( bitmap );
 		filter( fModeMin, fModeMax );
 		wrap( wModeH, wModeV );
 	}
@@ -88,20 +80,16 @@ public class SmartTexture extends Texture {
 	}
 	
 	@Override
-	public void bitmap( Bitmap bitmap ) {
-		bitmap( bitmap, false );
-	}
-	
-	public void bitmap( Bitmap bitmap, boolean premultiplied ) {
-		if (premultiplied) {
-			super.bitmap( bitmap );
-		} else {
-			handMade( bitmap, true );
-		}
+	public void bitmap( Pixmap bitmap ) {
+		super.bitmap( bitmap );
 		
 		this.bitmap = bitmap;
 		width = bitmap.getWidth();
 		height = bitmap.getHeight();
+	}
+	
+	public int getPixel( int x, int y ){
+		return bitmap.getPixel(x, y);
 	}
 	
 	public void reload() {
@@ -115,15 +103,19 @@ public class SmartTexture extends Texture {
 		super.delete();
 
 		if (bitmap != null)
-			bitmap.recycle();
+			bitmap.dispose();
 		bitmap = null;
 	}
 	
 	public RectF uvRect( float left, float top, float right, float bottom ) {
 		return new RectF(
-			left		/ width,
+			left	/ width,
 			top		/ height,
 			right	/ width,
 			bottom	/ height );
+	}
+
+	public RectF uvRectBySize(float left, float top, float width, float height){
+		return uvRect(left, top, left+width, top+height);
 	}
 }

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,16 +22,17 @@
 package com.shatteredpixel.shatteredpixeldungeon.mechanics;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 
 //based on: http://www.roguebasin.com/index.php?title=FOV_using_recursive_shadowcasting
 public final class ShadowCaster {
 
-	public static final int MAX_DISTANCE = 8;
+	public static final int MAX_DISTANCE = 20;
 	
 	//max length of rows as FOV moves out, for each FOV distance
 	//This is used to make the overall FOV circular, instead of square
-	private static int[][] rounding;
+	public static int[][] rounding;
 	static {
 		rounding = new int[MAX_DISTANCE+1][];
 		for (int i=1; i <= MAX_DISTANCE; i++) {
@@ -45,28 +46,33 @@ public final class ShadowCaster {
 		}
 	}
 	
-	public static void castShadow( int x, int y, boolean[] fieldOfView, int distance ) {
+	public static void castShadow( int x, int y, boolean[] fieldOfView, boolean[] blocking, int distance ) {
+		
+		if (distance >= MAX_DISTANCE){
+			distance = MAX_DISTANCE;
+		}
 
 		BArray.setFalse(fieldOfView);
 
 		//set source cell to true
 		fieldOfView[y * Dungeon.level.width() + x] = true;
-
-		boolean[] losBlocking = Dungeon.level.losBlocking;
 		
 		//scans octants, clockwise
-		scanOctant(distance, fieldOfView, losBlocking, 1, x, y, 0.0, 1.0, +1, -1, false);
-		scanOctant(distance, fieldOfView, losBlocking, 1, x, y, 0.0, 1.0, -1, +1, true);
-		scanOctant(distance, fieldOfView, losBlocking, 1, x, y, 0.0, 1.0, +1, +1, true);
-		scanOctant(distance, fieldOfView, losBlocking, 1, x, y, 0.0, 1.0, +1, +1, false);
-		scanOctant(distance, fieldOfView, losBlocking, 1, x, y, 0.0, 1.0, -1, +1, false);
-		scanOctant(distance, fieldOfView, losBlocking, 1, x, y, 0.0, 1.0, +1, -1, true);
-		scanOctant(distance, fieldOfView, losBlocking, 1, x, y, 0.0, 1.0, -1, -1, true);
-		scanOctant(distance, fieldOfView, losBlocking, 1, x, y, 0.0, 1.0, -1, -1, false);
+		try {
+			scanOctant(distance, fieldOfView, blocking, 1, x, y, 0.0, 1.0, +1, -1, false);
+			scanOctant(distance, fieldOfView, blocking, 1, x, y, 0.0, 1.0, -1, +1, true);
+			scanOctant(distance, fieldOfView, blocking, 1, x, y, 0.0, 1.0, +1, +1, true);
+			scanOctant(distance, fieldOfView, blocking, 1, x, y, 0.0, 1.0, +1, +1, false);
+			scanOctant(distance, fieldOfView, blocking, 1, x, y, 0.0, 1.0, -1, +1, false);
+			scanOctant(distance, fieldOfView, blocking, 1, x, y, 0.0, 1.0, +1, -1, true);
+			scanOctant(distance, fieldOfView, blocking, 1, x, y, 0.0, 1.0, -1, -1, true);
+			scanOctant(distance, fieldOfView, blocking, 1, x, y, 0.0, 1.0, -1, -1, false);
+		} catch (Exception e){
+			ShatteredPixelDungeon.reportException(e);
+			BArray.setFalse(fieldOfView);
+		}
 
 	}
-	
-	//TODO this is slightly less permissive that the previous algorithm, decide if that's okay
 	
 	//scans a single 45 degree octant of the FOV.
 	//This can add up to a whole FOV by mirroring in X(mX), Y(mY), and X=Y(mXY)
@@ -82,6 +88,9 @@ public final class ShadowCaster {
 		
 		//for each row, starting with the current one
 		for (; row <= distance; row++){
+
+			//if we have negative space to traverse, just quit.
+			if (rSlope < lSlope) return;
 			
 			//we offset by slightly less than 0.5 to account for slopes just touching a cell
 			if (lSlope == 0)    start = 0;
@@ -100,6 +109,13 @@ public final class ShadowCaster {
 			
 			//for each column in this row, which
 			for (col = start; col <= end; col++){
+
+
+				//handles the error case of the slope value at the end of a cell being 1 farther
+				// along then at the beginning of the cell, and that earlier cell is vision blocking
+				if (col == end && inBlocking && (int)Math.ceil((row - 0.5) * rSlope - 0.499) != end){
+					break;
+				}
 				
 				fov[cell] = true;
 				

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@ import java.util.LinkedHashMap;
 
 public abstract class Room extends Rect implements Graph.Node, Bundlable {
 	
-	public ArrayList<Room> neigbours = new ArrayList<Room>();
-	public LinkedHashMap<Room, Door> connected = new LinkedHashMap<Room, Door>();
+	public ArrayList<Room> neigbours = new ArrayList<>();
+	public LinkedHashMap<Room, Door> connected = new LinkedHashMap<>();
 	
 	public int distance;
 	public int price = 1;
@@ -115,6 +115,20 @@ public abstract class Room extends Rect implements Graph.Node, Bundlable {
 			return true;
 		}
 	}
+
+	public Point pointInside(Point from, int n){
+		Point step = new Point(from);
+		if (from.x == left) {
+			step.offset( +n, 0 );
+		} else if (from.x == right) {
+			step.offset( -n, 0 );
+		} else if (from.y == top) {
+			step.offset( 0, +n );
+		} else if (from.y == bottom) {
+			step.offset( 0, -n );
+		}
+		return step;
+	}
 	
 	//Width and height are increased by 1 because rooms are inclusive to their right and bottom sides
 	@Override
@@ -156,8 +170,10 @@ public abstract class Room extends Rect implements Graph.Node, Bundlable {
 	public static final int RIGHT   = 3;
 	public static final int BOTTOM  = 4;
 	
-	//TODO make abstract
-	public int minConnections(int direction){ return -1; }
+	public int minConnections(int direction){
+		if (direction == ALL)   return 1;
+		else                    return 0;
+	}
 	
 	public int curConnections(int direction){
 		if (direction == ALL) {
@@ -181,8 +197,10 @@ public abstract class Room extends Rect implements Graph.Node, Bundlable {
 		else return maxConnections(direction) - curConnections(direction);
 	}
 	
-	//TODO make abstract
-	public int maxConnections(int direction){ return -1; }
+	public int maxConnections(int direction){
+		if (direction == ALL)   return 16;
+		else                    return 4;
+	}
 	
 	//only considers point-specific limits, not direction limits
 	public boolean canConnect(Point p){
@@ -209,15 +227,19 @@ public abstract class Room extends Rect implements Graph.Node, Bundlable {
 		if (!foundPoint) return false;
 		
 		if (i.width() == 0 && i.left == left)
-			return canConnect(LEFT) && r.canConnect(LEFT);
+			return canConnect(LEFT) && r.canConnect(RIGHT);
 		else if (i.height() == 0 && i.top == top)
-			return canConnect(TOP) && r.canConnect(TOP);
+			return canConnect(TOP) && r.canConnect(BOTTOM);
 		else if (i.width() == 0 && i.right == right)
-			return canConnect(RIGHT) && r.canConnect(RIGHT);
+			return canConnect(RIGHT) && r.canConnect(LEFT);
 		else if (i.height() == 0 && i.bottom == bottom)
-			return canConnect(BOTTOM) && r.canConnect(BOTTOM);
+			return canConnect(BOTTOM) && r.canConnect(TOP);
 		else
 			return false;
+	}
+
+	public boolean canMerge(Level l, Point p, int mergeTerrain){
+		return false;
 	}
 	
 	public boolean addNeigbour( Room other ) {
@@ -257,12 +279,11 @@ public abstract class Room extends Rect implements Graph.Node, Bundlable {
 	
 	// **** Painter Logic ****
 	
-	//TODO make abstract
-	public void paint(Level level){}
+	public abstract void paint(Level level);
 	
 	//whether or not a painter can make its own modifications to a specific point
 	public boolean canPlaceWater(Point p){
-		return inside(p);
+		return true;
 	}
 	
 	public final ArrayList<Point> waterPlaceablePoints(){
@@ -278,7 +299,7 @@ public abstract class Room extends Rect implements Graph.Node, Bundlable {
 
 	//whether or not a painter can make place grass at a specific point
 	public boolean canPlaceGrass(Point p){
-		return inside(p);
+		return true;
 	}
 
 	public final ArrayList<Point> grassPlaceablePoints(){
@@ -294,7 +315,7 @@ public abstract class Room extends Rect implements Graph.Node, Bundlable {
 	
 	//whether or not a painter can place a trap at a specific point
 	public boolean canPlaceTrap(Point p){
-		return inside(p);
+		return true;
 	}
 	
 	public final ArrayList<Point> trapPlaceablePoints(){
@@ -308,6 +329,22 @@ public abstract class Room extends Rect implements Graph.Node, Bundlable {
 		return points;
 	}
 	
+	//whether or not a character can be placed here (usually via spawn, tele, or wander)
+	public boolean canPlaceCharacter(Point p, Level l){
+		return inside(p);
+	}
+	
+	public final ArrayList<Point> charPlaceablePoints(Level l){
+		ArrayList<Point> points = new ArrayList<>();
+		for (int i = left; i <= right; i++) {
+			for (int j = top; j <= bottom; j++) {
+				Point p = new Point(i, j);
+				if (canPlaceCharacter(p, l)) points.add(p);
+			}
+		}
+		return points;
+	}
+
 	
 	// **** Graph.Node interface ****
 
@@ -345,16 +382,12 @@ public abstract class Room extends Rect implements Graph.Node, Bundlable {
 		return edges;
 	}
 	
-	public String legacyType = "NULL";
-	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		bundle.put( "left", left );
 		bundle.put( "top", top );
 		bundle.put( "right", right );
 		bundle.put( "bottom", bottom );
-		if (!legacyType.equals("NULL"))
-			bundle.put( "type", legacyType );
 	}
 	
 	@Override
@@ -363,21 +396,22 @@ public abstract class Room extends Rect implements Graph.Node, Bundlable {
 		top = bundle.getInt( "top" );
 		right = bundle.getInt( "right" );
 		bottom = bundle.getInt( "bottom" );
-		if (bundle.contains( "type" ))
-			legacyType = bundle.getString( "type" );
 	}
 
-	//Note that currently connections and neighbours are not preserved on load
+	//FIXME currently connections and neighbours are not preserved on load
 	public void onLevelLoad( Level level ){
 		//does nothing by default
 	}
 	
-	public static class Door extends Point {
+	public static class Door extends Point implements Bundlable {
 		
 		public enum Type {
-			EMPTY, TUNNEL, REGULAR, UNLOCKED, HIDDEN, BARRICADE, LOCKED
+			EMPTY, TUNNEL, WATER, REGULAR, UNLOCKED, HIDDEN, BARRICADE, LOCKED, CRYSTAL
 		}
 		public Type type = Type.EMPTY;
+		
+		public Door(){
+		}
 		
 		public Door( Point p ){
 			super(p);
@@ -391,6 +425,20 @@ public abstract class Room extends Rect implements Graph.Node, Bundlable {
 			if (type.compareTo( this.type ) > 0) {
 				this.type = type;
 			}
+		}
+		
+		@Override
+		public void storeInBundle(Bundle bundle) {
+			bundle.put("x", x);
+			bundle.put("y", y);
+			bundle.put("type", type);
+		}
+		
+		@Override
+		public void restoreFromBundle(Bundle bundle) {
+			x = bundle.getInt("x");
+			y = bundle.getInt("y");
+			type = bundle.getEnum("type", Type.class);
 		}
 	}
 }

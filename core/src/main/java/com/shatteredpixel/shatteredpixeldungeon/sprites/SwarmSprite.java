@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.watabou.noosa.TextureFilm;
 
 public class SwarmSprite extends MobSprite {
@@ -30,7 +29,7 @@ public class SwarmSprite extends MobSprite {
 	public SwarmSprite() {
 		super();
 		
-		texture( Assets.SWARM );
+		texture( Assets.Sprites.SWARM );
 		
 		TextureFilm frames = new TextureFilm( texture, 16, 16 );
 		
@@ -48,13 +47,9 @@ public class SwarmSprite extends MobSprite {
 		
 		play( idle );
 	}
+	
 	@Override
-	public void onComplete( Animation anim ) {
-
-		super.onComplete( anim );
-
-		if (anim == die) {
-			emitter().burst( Speck.factory( Speck.WOOL ), 15 );
-		}
+	public int blood() {
+		return 0xFF8BA077;
 	}
 }

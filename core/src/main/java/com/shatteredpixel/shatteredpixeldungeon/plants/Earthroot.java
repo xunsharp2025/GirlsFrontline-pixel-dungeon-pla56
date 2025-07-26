@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,32 +22,34 @@
 package com.shatteredpixel.shatteredpixeldungeon.plants;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barkskin;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.EarthParticle;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfParalyticGas;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.watabou.noosa.Camera;
-import com.watabou.noosa.Image;
 import com.watabou.utils.Bundle;
 
 public class Earthroot extends Plant {
 	
 	{
-		image = 5;
+		image = 8;
+		seedClass = Seed.class;
 	}
 	
 	@Override
-	public void activate() {
-		Char ch = Actor.findChar(pos);
+	public void activate( Char ch ) {
 		
 		if (ch == Dungeon.hero) {
-			Buff.affect( ch, Armor.class ).level(ch.HT);
+			if (Dungeon.hero.subClass == HeroSubClass.WARDEN){
+				Buff.affect(ch, Barkskin.class).set(Dungeon.hero.lvl + 5, 5);
+			} else {
+				Buff.affect(ch, Armor.class).level(ch.HT);
+			}
 		}
 		
 		if (Dungeon.level.heroFOV[pos]) {
@@ -61,7 +63,6 @@ public class Earthroot extends Plant {
 			image = ItemSpriteSheet.SEED_EARTHROOT;
 
 			plantClass = Earthroot.class;
-			alchemyClass = PotionOfParalyticGas.class;
 
 			bones = true;
 		}
@@ -76,6 +77,7 @@ public class Earthroot extends Plant {
 
 		{
 			type = buffType.POSITIVE;
+			announced = true;
 		}
 		
 		@Override
@@ -104,7 +106,6 @@ public class Earthroot extends Plant {
 				return damage - block;
 			} else {
 				level -= block;
-				BuffIndicator.refreshHero();
 				return damage - block;
 			}
 		}
@@ -112,7 +113,6 @@ public class Earthroot extends Plant {
 		public void level( int value ) {
 			if (level < value) {
 				level = value;
-				BuffIndicator.refreshHero();
 			}
 			pos = target.pos;
 		}
@@ -121,10 +121,15 @@ public class Earthroot extends Plant {
 		public int icon() {
 			return BuffIndicator.ARMOR;
 		}
-		
+
 		@Override
-		public void tintIcon(Image icon) {
-			FlavourBuff.greyIcon(icon, target.HT/4f, level);
+		public float iconFadePercent() {
+			return Math.max(0, (target.HT - level) / (float) target.HT);
+		}
+
+		@Override
+		public String iconTextDisplay() {
+			return Integer.toString(level);
 		}
 		
 		@Override

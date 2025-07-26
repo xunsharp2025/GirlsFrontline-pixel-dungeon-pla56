@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,10 +85,10 @@ public class CryptRoom extends SpecialRoom {
 			prize.upgrade();
 			//curse the armor, unless it has a glyph
 			if (!prize.hasGoodGlyph()){
-				prize.cursed = prize.cursedKnown = true;
 				prize.inscribe(Armor.Glyph.randomCurse());
 			}
 		}
+		prize.cursed = prize.cursedKnown = true;
 		
 		return prize;
 	}

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,20 +36,25 @@ public class Vampiric extends Weapon.Enchantment {
 	@Override
 	public int proc( Weapon weapon, Char attacker, Char defender, int damage ) {
 		
-		int level = Math.max( 0, weapon.level() );
+		//chance to heal scales from 5%-30% based on missing HP
+		float missingPercent = (attacker.HT - attacker.HP) / (float)attacker.HT;
+		float healChance = 0.05f + .25f*missingPercent;
+
+		healChance *= procChanceMultiplier(attacker);
 		
-		// lvl 0 - 16%
-		// lvl 1 - 17.65%
-		// lvl 2 - 19.23%
-		int maxValue = Math.round(damage * ((level + 8) / (float)(level + 50)));
-		int effValue = Math.min( Random.IntRange( 0, maxValue ), attacker.HT - attacker.HP );
-		
-		if (effValue > 0) {
-		
-			attacker.HP += effValue;
-			attacker.sprite.emitter().start( Speck.factory( Speck.HEALING ), 0.4f, 1 );
-			attacker.sprite.showStatus( CharSprite.POSITIVE, Integer.toString( effValue ) );
+		if (Random.Float() < healChance){
 			
+			//heals for 50% of damage dealt
+			int healAmt = Math.round(damage * 0.5f);
+			healAmt = Math.min( healAmt, attacker.HT - attacker.HP );
+			
+			if (healAmt > 0 && attacker.isAlive()) {
+				
+				attacker.HP += healAmt;
+				attacker.sprite.emitter().start( Speck.factory( Speck.HEALING ), 0.4f, 1 );
+				attacker.sprite.showStatus( CharSprite.POSITIVE, Integer.toString( healAmt ) );
+				
+			}
 		}
 
 		return damage;

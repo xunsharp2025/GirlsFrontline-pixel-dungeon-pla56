@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special;
 
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -38,12 +37,12 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.traps.FlockTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GrimTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GrippingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.PoisonDartTrap;
-import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ShockingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.TeleportationTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.WarpingTrap;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
 public class TrapsRoom extends SpecialRoom {
 
@@ -95,11 +94,7 @@ public class TrapsRoom extends SpecialRoom {
 		for(Point p : getPoints()) {
 			int cell = level.pointToCell(p);
 			if (level.map[cell] == Terrain.TRAP){
-				try {
-					level.setTrap(((Trap) trapClass.newInstance()).reveal(), cell);
-				} catch (Exception e) {
-					GirlsFrontlinePixelDungeon.reportException(e);
-				}
+				level.setTrap(Reflection.newInstance(trapClass).reveal(), cell);
 			}
 		}
 		
@@ -111,7 +106,7 @@ public class TrapsRoom extends SpecialRoom {
 			level.drop( prize( level ), pos ).type = Heap.Type.CHEST;
 		} else {
 			Painter.set( level, pos, Terrain.PEDESTAL );
-			level.drop( prize( level ), pos );
+			level.drop( prize( level ), pos ).type = Heap.Type.CHEST;
 		}
 		
 		level.addItemToSpawn( new PotionOfLevitation() );
@@ -121,6 +116,7 @@ public class TrapsRoom extends SpecialRoom {
 
 		Item prize;
 
+		//67% chance for prize item
 		if (Random.Int(3) != 0){
 			prize = level.findPrizeItem();
 			if (prize != null)
@@ -135,6 +131,7 @@ public class TrapsRoom extends SpecialRoom {
 				prize = Generator.randomArmor((Dungeon.depth / 5) + 1);
 			}
 		} while (prize.cursed || Challenges.isItemBlocked(prize));
+		prize.cursedKnown = true;
 
 		//33% chance for an extra update.
 		if (Random.Int(3) == 0){
@@ -154,8 +151,6 @@ public class TrapsRoom extends SpecialRoom {
 			{PoisonDartTrap.class, FlashingTrap.class, ExplosiveTrap.class},
 			//city
 			{WarpingTrap.class, FlashingTrap.class, DisintegrationTrap.class},
-			//recave
-			{GrimTrap.class, DisintegrationTrap.class, ShockingTrap.class},
 			//halls, muahahahaha
 			{GrimTrap.class}
 	};

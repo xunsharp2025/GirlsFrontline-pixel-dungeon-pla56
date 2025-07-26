@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,14 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
 public class RingOfForce extends Ring {
+
+	{
+		icon = ItemSpriteSheet.Icons.RING_FORCE;
+	}
 
 	@Override
 	protected RingBuff buff( ) {
@@ -35,7 +40,7 @@ public class RingOfForce extends Ring {
 	}
 	
 	public static int armedDamageBonus( Char ch ){
-		return getBonus( ch, Force.class);
+		return getBuffedBonus( ch, Force.class);
 	}
 	
 	
@@ -52,7 +57,7 @@ public class RingOfForce extends Ring {
 
 	public static int damageRoll( Hero hero ){
 		if (hero.buff(Force.class) != null) {
-			int level = getBonus(hero, Force.class);
+			int level = getBuffedBonus(hero, Force.class);
 			float tier = tier(hero.STR());
 			return Random.NormalIntRange(min(level, tier), max(level, tier));
 		} else {
@@ -63,31 +68,29 @@ public class RingOfForce extends Ring {
 
 	//same as equivalent tier weapon
 	private static int min(int lvl, float tier){
-		return Math.round(
+		return Math.max( 0, Math.round(
 				tier +  //base
 				lvl     //level scaling
-		);
+		));
 	}
 
 	//same as equivalent tier weapon
 	private static int max(int lvl, float tier){
-		return Math.round(
+		return Math.max( 0, Math.round(
 				5*(tier+1) +    //base
 				lvl*(tier+1)    //level scaling
-		);
+		));
 	}
 
 	@Override
-	public String desc() {
-		String desc = super.desc();
+	public String statsInfo() {
 		float tier = tier(Dungeon.hero.STR());
-		if (levelKnown) {
-			desc += "\n\n" + Messages.get(this, "avg_dmg", min(level(), tier), max(level(), tier));
+		if (isIdentified()) {
+			int level = soloBuffedBonus();
+			return Messages.get(this, "stats", min(level, tier), max(level, tier), level);
 		} else {
-			desc += "\n\n" + Messages.get(this, "typical_avg_dmg", min(1, tier), max(1, tier));
+			return Messages.get(this, "typical_stats", min(1, tier), max(1, tier), 1);
 		}
-
-		return desc;
 	}
 
 	public class Force extends RingBuff {

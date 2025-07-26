@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,12 @@ import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor.Glyph;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
@@ -34,7 +38,6 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite.Glowing;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.Random;
 
 public class Viscosity extends Glyph {
 	
@@ -45,13 +48,26 @@ public class Viscosity extends Glyph {
 
 		//FIXME this glyph should really just proc after DR is accounted for.
 		//should build in functionality for that, but this works for now
-		int realDamage = damage - Random.NormalIntRange( armor.DRMin(), armor.DRMax());
+		int realDamage = damage - defender.drRoll();
+
+		//account for icon stomach (just skip the glyph)
+		if (defender.buff(Talent.WarriorFoodImmunity.class) != null){
+			return damage;
+		}
+
+		//account for huntress armor piercing
+		if (attacker instanceof Hero
+				&& ((Hero) attacker).belongings.weapon() instanceof MissileWeapon
+				&& ((Hero) attacker).subClass == HeroSubClass.SNIPER
+				&& !Dungeon.level.adjacent(attacker.pos, defender.pos)){
+			realDamage = damage;
+		}
 
 		if (realDamage <= 0) {
 			return 0;
 		}
 
-		int level = Math.max( 0, armor.level() );
+		int level = Math.max( 0, armor.buffedLvl() );
 		
 		float percent = (level+1)/(float)(level+6);
 		int amount = (int)Math.ceil(realDamage * percent);
@@ -71,6 +87,10 @@ public class Viscosity extends Glyph {
 	}
 	
 	public static class DeferedDamage extends Buff {
+		
+		{
+			type = buffType.NEGATIVE;
+		}
 		
 		protected int damage = 0;
 		
@@ -107,6 +127,11 @@ public class Viscosity extends Glyph {
 		public int icon() {
 			return BuffIndicator.DEFERRED;
 		}
+
+		@Override
+		public String iconTextDisplay() {
+			return Integer.toString(damage);
+		}
 		
 		@Override
 		public String toString() {
@@ -121,10 +146,10 @@ public class Viscosity extends Glyph {
 				target.damage( damageThisTick, this );
 				if (target == Dungeon.hero && !target.isAlive()) {
 
+					Badges.validateDeathFromGlyph();
+
 					Dungeon.fail( getClass() );
 					GLog.n( Messages.get(this, "ondeath") );
-					
-					Badges.validateDeathFromGlyph();
 				}
 				spend( TICK );
 

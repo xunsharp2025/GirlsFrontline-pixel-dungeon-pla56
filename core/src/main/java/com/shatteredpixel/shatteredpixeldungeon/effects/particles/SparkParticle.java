@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,18 @@ public class SparkParticle extends PixelParticle {
 		@Override
 		public boolean lightMode() {
 			return true;
-		};
+		}
+	};
+	
+	public static final Emitter.Factory STATIC = new Factory() {
+		@Override
+		public void emit( Emitter emitter, int index, float x, float y ) {
+			((SparkParticle)emitter.recycle( SparkParticle.class )).resetStatic( x, y );
+		}
+		@Override
+		public boolean lightMode() {
+			return true;
+		}
 	};
 	
 	public SparkParticle() {
@@ -52,15 +63,29 @@ public class SparkParticle extends PixelParticle {
 		
 		this.x = x;
 		this.y = y;
+		size = 5;
 		
 		left = lifespan = Random.Float( 0.5f, 1.0f );
 		
 		speed.polar( -Random.Float( 3.1415926f ), Random.Float( 20, 40 ) );
 	}
 	
+	public void resetStatic( float x, float y){
+		reset(x, y);
+		
+		left = lifespan = Random.Float( 0.25f, 0.5f );
+		
+		acc.set( 0, 0 );
+		speed.set( 0, 0 );
+	}
+
+	public void setMaxSize( float value ){
+		size = value;
+	}
+	
 	@Override
 	public void update() {
 		super.update();
-		size( Random.Float( 5 * left / lifespan ) );
+		size( Random.Float( size * left / lifespan ) );
 	}
 }

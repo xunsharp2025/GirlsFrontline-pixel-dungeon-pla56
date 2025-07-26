@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,25 +21,30 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.plants;
 
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Levitation;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLevitation;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Stormvine extends Plant {
 
 	{
-		image = 9;
+		image = 5;
+		seedClass = Seed.class;
 	}
 
 	@Override
-	public void activate() {
-		Char ch = Actor.findChar(pos);
+	public void activate( Char ch ) {
 
 		if (ch != null) {
-			Buff.affect(ch, Vertigo.class, Vertigo.DURATION );
+			if (ch instanceof Hero && ((Hero) ch).subClass == HeroSubClass.WARDEN){
+				Buff.affect(ch, Levitation.class, Levitation.DURATION/2f);
+			} else {
+				Buff.affect(ch, Vertigo.class, Vertigo.DURATION);
+			}
 		}
 	}
 
@@ -48,7 +53,6 @@ public class Stormvine extends Plant {
 			image = ItemSpriteSheet.SEED_STORMVINE;
 
 			plantClass = Stormvine.class;
-			alchemyClass = PotionOfLevitation.class;
 		}
 	}
 }

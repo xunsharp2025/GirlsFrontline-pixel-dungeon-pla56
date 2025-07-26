@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ public class Atlas {
 		this.tx = tx;
 		tx.atlas = this;
 		
-		namedFrames = new HashMap<Object, RectF>();
+		namedFrames = new HashMap<>();
 	}
 	
 	public void add( Object key, int left, int top, int right, int bottom ) {

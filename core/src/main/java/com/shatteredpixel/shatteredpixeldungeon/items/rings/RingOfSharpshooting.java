@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,17 +22,32 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.rings;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+
+import java.text.DecimalFormat;
 
 public class RingOfSharpshooting extends Ring {
 
+	{
+		icon = ItemSpriteSheet.Icons.RING_SHARPSHOOT;
+	}
+
+	public String statsInfo() {
+		if (isIdentified()){
+			return Messages.get(this, "stats", soloBuffedBonus(), new DecimalFormat("#.##").format(100f * (Math.pow(1.2, soloBonus()) - 1f)));
+		} else {
+			return Messages.get(this, "typical_stats", 1, new DecimalFormat("#.##").format(20f));
+		}
+	}
+	
 	@Override
 	protected RingBuff buff( ) {
 		return new Aim();
 	}
 	
-	//roughly in line with the boost a weapon gets from an upgrade
-	public static float damageMultiplier( Char target ){
-		return 1f + 0.2f * getBonus(target, Aim.class);
+	public static int levelDamageBonus( Char target ){
+		return getBuffedBonus(target, RingOfSharpshooting.Aim.class);
 	}
 	
 	public static float durabilityMultiplier( Char target ){

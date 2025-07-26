@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,39 +23,41 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Shuriken;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.utils.Callback;
 
 public class TenguSprite extends MobSprite {
 	
-	private Animation cast;
-	
 	public TenguSprite() {
 		super();
 		
-		texture( Assets.URO );
+		texture( Assets.Sprites.TENGU );
 		
-		TextureFilm frames = new TextureFilm( texture, 26, 21 );
+		TextureFilm frames = new TextureFilm( texture, 14, 16 );
 		
-		idle = new Animation( 5, true );
-		idle.frames( frames, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2 );
+		idle = new Animation( 2, true );
+		idle.frames( frames, 0, 0, 0, 1 );
 		
 		run = new Animation( 15, false );
-		run.frames( frames, 0 );
+		run.frames( frames, 2, 3, 4, 5, 0 );
 		
 		attack = new Animation( 15, false );
-		attack.frames( frames, 3, 3, 4, 4, 3, 0  );
+		attack.frames( frames, 6, 7, 7, 0 );
 		
-		cast = attack.clone();
+		zap = attack.clone();
 		
-		die = new Animation( 5, false );
-		die.frames( frames, 5, 5, 5, 6, 6, 7, 7, 8 );
+		die = new Animation( 8, false );
+		die.frames( frames, 8, 9, 10, 10, 10, 10, 10, 10 );
 		
 		play( run.clone() );
+	}
+	
+	@Override
+	public void idle() {
+		isMoving = false;
+		super.idle();
 	}
 	
 	@Override
@@ -78,18 +80,15 @@ public class TenguSprite extends MobSprite {
 	public void attack( int cell ) {
 		if (!Dungeon.level.adjacent( cell, ch.pos )) {
 
-			final Char enemy = Actor.findChar(cell);
-
 			((MissileSprite)parent.recycle( MissileSprite.class )).
-				reset( ch.pos, cell, new Shuriken(), new Callback() {
+				reset( this, cell, new TenguShuriken(), new Callback() {
 					@Override
 					public void call() {
-						ch.next();
-						if (enemy != null) ch.attack(enemy);
+						ch.onAttackComplete();
 					}
 				} );
 			
-			play( cast );
+			play( zap );
 			turnTo( ch.pos , cell );
 			
 		} else {
@@ -110,6 +109,12 @@ public class TenguSprite extends MobSprite {
 			}
 		} else {
 			super.onComplete( anim );
+		}
+	}
+	
+	public static class TenguShuriken extends Item {
+		{
+			image = ItemSpriteSheet.SHURIKEN;
 		}
 	}
 }

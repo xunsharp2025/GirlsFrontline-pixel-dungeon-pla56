@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ public class CorrosionParticle extends PixelParticle {
 		@Override
 		public boolean lightMode() {
 			return false;
-		};
+		}
 	};
 	
 	public static final Emitter.Factory SPLASH = new Emitter.Factory() {
@@ -47,7 +47,7 @@ public class CorrosionParticle extends PixelParticle {
 		@Override
 		public boolean lightMode() {
 			return false;
-		};
+		}
 	};
 	
 	public CorrosionParticle() {

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,14 +23,13 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bee;
-import com.shatteredpixel.shatteredpixeldungeon.items.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.Honeypot;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.watabou.utils.Point;
-import com.watabou.utils.Random;
 
 public class SecretHoneypotRoom extends SecretRoom {
 	
@@ -53,16 +52,11 @@ public class SecretHoneypotRoom extends SecretRoom {
 		bee.pos = level.pointToCell(brokenPotPos);
 		level.mobs.add( bee );
 		
-		pot.setBee(bee);
 		bee.setPotInfo(level.pointToCell(brokenPotPos), null);
 		
 		placeItem(new Honeypot(), level);
 		
-		placeItem( Random.Int(3) == 0 ? new Bomb.DoubleBomb() : new Bomb(), level);
-		
-		if (Random.Int(2) == 0){
-			placeItem( new Bomb(), level);
-		}
+		placeItem( new Bomb().random(), level);
 		
 		entrance().set(Door.Type.HIDDEN);
 	}

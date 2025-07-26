@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportat
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.PathFinder;
 
 public class TeleportationTrap extends Trap {
 
@@ -46,48 +47,26 @@ public class TeleportationTrap extends Trap {
 	@Override
 	public void activate() {
 
-		CellEmitter.get(pos).start(Speck.factory(Speck.LIGHT), 0.2f, 3);
-		Sample.INSTANCE.play( Assets.SND_TELEPORT );
-
-		Char ch = Actor.findChar( pos);
-		if (ch instanceof Hero){
-			ScrollOfTeleportation.teleportHero( (Hero)ch);
-		} else if (ch != null){
-			int count = 10;
-			int pos;
-			do {
-				pos = Dungeon.level.randomRespawnCell();
-				if (count-- <= 0) {
-					break;
+		for (int i : PathFinder.NEIGHBOURS9){
+			Char ch = Actor.findChar(pos + i);
+			if (ch != null){
+				if (ScrollOfTeleportation.teleportChar(ch)) {
+					if (ch instanceof Mob && ((Mob) ch).state == ((Mob) ch).HUNTING) {
+						((Mob) ch).state = ((Mob) ch).WANDERING;
+					}
 				}
-			} while (pos == -1);
+			}
+			Heap heap = Dungeon.level.heaps.get(pos + i);
+			if (heap != null && heap.type == Heap.Type.HEAP){
+				int cell = Dungeon.level.randomRespawnCell( null );
 
-			if (pos == -1 || Dungeon.bossLevel()) {
+				Item item = heap.pickUp();
 
-				GLog.w( Messages.get(ScrollOfTeleportation.class, "no_tele") );
-
-			} else {
-
-				ch.pos = pos;
-				if (ch instanceof Mob && ((Mob) ch).state == ((Mob) ch).HUNTING){
-					((Mob) ch).state = ((Mob) ch).WANDERING;
+				if (cell != -1) {
+					Dungeon.level.drop( item, cell );
 				}
-				ch.sprite.place(ch.pos);
-				ch.sprite.visible = Dungeon.level.heroFOV[pos];
-
 			}
 		}
 
-		Heap heap = Dungeon.level.heaps.get(pos);
-
-		if (heap != null){
-			int cell = Dungeon.level.randomRespawnCell();
-
-			Item item = heap.pickUp();
-
-			if (cell != -1) {
-				Dungeon.level.drop( item, cell );
-			}
-		}
 	}
 }

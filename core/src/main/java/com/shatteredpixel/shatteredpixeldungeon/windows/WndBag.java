@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,127 +23,123 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
+import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.EquipableItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.PotionBandolier;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.ScrollHolder;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
-import com.shatteredpixel.shatteredpixeldungeon.items.food.Blandfruit;
-import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandofNukeBomb;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Boomerang;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Dart;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.plants.BlandfruitBush;
-import com.shatteredpixel.shatteredpixeldungeon.plants.Plant.Seed;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.ui.InventorySlot;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ItemSlot;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RightClickMenu;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.watabou.gltextures.TextureCache;
+import com.watabou.input.GameAction;
+import com.watabou.input.KeyBindings;
+import com.watabou.input.KeyEvent;
+import com.watabou.input.PointerEvent;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.ColorBlock;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
-import com.watabou.noosa.RenderedText;
 import com.watabou.noosa.audio.Sample;
-import com.watabou.utils.RectF;
+import com.watabou.utils.PointF;
 
 public class WndBag extends WndTabbed {
 	
-	//FIXME this is getting cumbersome, there should be a better way to manage this
-	public static enum Mode {
-		ALL,
-		UNIDENTIFED,
-		UNIDED_OR_CURSED,
-		UPGRADEABLE,
-		QUICKSLOT,
-		FOR_SALE,
-		WEAPON,
-		ARMOR,
-		ENCHANTABLE,
-		WAND,
-		WAND_NUKE,
-		SEED,
-		FOOD,
-		POTION,
-		SCROLL,
-		UNIDED_POTION_OR_SCROLL,
-		EQUIPMENT,
-		ALCHEMY
-	}
+	//only one bag window can appear at a time
+	public static Window INSTANCE;
 
-	protected static final int COLS_P    = 4;
-	protected static final int COLS_L    = 6;
+	protected static final int COLS_P   = 5;
+	protected static final int COLS_L   = 5;
 	
-	protected static final int SLOT_WIDTH	= 28;
-	protected static final int SLOT_HEIGHT	= 28;
+	protected static int SLOT_WIDTH_P   = 28;
+	protected static int SLOT_WIDTH_L   = 28;
+
+	protected static int SLOT_HEIGHT_P	= 28;
+	protected static int SLOT_HEIGHT_L	= 28;
+
 	protected static final int SLOT_MARGIN	= 1;
 	
 	protected static final int TITLE_HEIGHT	= 14;
 	
-	private Listener listener;
-	private WndBag.Mode mode;
-	private String title;
+	private ItemSelector selector;
 
 	private int nCols;
 	private int nRows;
+
+	private int slotWidth;
+	private int slotHeight;
 
 	protected int count;
 	protected int col;
 	protected int row;
 	
-	private static Mode lastMode;
 	private static Bag lastBag;
-	
-	public WndBag( Bag bag, Listener listener, Mode mode, String title ) {
+
+	public WndBag( Bag bag ) {
+		this(bag, null);
+	}
+
+	public WndBag( Bag bag, ItemSelector selector ) {
 		
 		super();
 		
-		this.listener = listener;
-		this.mode = mode;
-		this.title = title;
+		if( INSTANCE != null ){
+			INSTANCE.hide();
+		}
+		INSTANCE = this;
 		
-		lastMode = mode;
+		this.selector = selector;
+		
 		lastBag = bag;
 
-		nCols = SPDSettings.landscape() ? COLS_L : COLS_P;
-		nRows = (int)Math.ceil((Belongings.BACKPACK_SIZE + 4) / (float)nCols);
+		slotWidth = PixelScene.landscape() ? SLOT_WIDTH_L : SLOT_WIDTH_P;
+		slotHeight = PixelScene.landscape() ? SLOT_HEIGHT_L : SLOT_HEIGHT_P;
 
-		int slotsWidth = SLOT_WIDTH * nCols + SLOT_MARGIN * (nCols - 1);
-		int slotsHeight = SLOT_HEIGHT * nRows + SLOT_MARGIN * (nRows - 1);
+		nCols = PixelScene.landscape() ? COLS_L : COLS_P;
+		nRows = (int)Math.ceil(25/(float)nCols); //we expect to lay out 25 slots in all cases
 
-		placeTitle( bag, slotsWidth );
+		int windowWidth = slotWidth * nCols + SLOT_MARGIN * (nCols - 1);
+		int windowHeight = TITLE_HEIGHT + slotHeight * nRows + SLOT_MARGIN * (nRows - 1);
+
+		if (PixelScene.landscape()){
+			while (slotHeight >= 24 && (windowHeight + 20 + chrome.marginTop()) > PixelScene.uiCamera.height){
+				slotHeight--;
+				windowHeight -= nRows;
+			}
+		} else {
+			while (slotWidth >= 26 && (windowWidth + chrome.marginHor()) > PixelScene.uiCamera.width){
+				slotWidth--;
+				windowWidth -= nCols;
+			}
+		}
+
+		placeTitle( bag, windowWidth );
 		
 		placeItems( bag );
 
-		resize( slotsWidth, slotsHeight + TITLE_HEIGHT );
+		resize( windowWidth, windowHeight );
 
-		Belongings stuff = Dungeon.hero.belongings;
-		Bag[] bags = {
-			stuff.backpack,
-			stuff.getItem( VelvetPouch.class ),
-			stuff.getItem( ScrollHolder.class ),
-			stuff.getItem( PotionBandolier.class ),
-			stuff.getItem( MagicalHolster.class )};
-
-		for (Bag b : bags) {
+		int i = 1;
+		for (Bag b : Dungeon.hero.belongings.getBags()) {
 			if (b != null) {
-				BagTab tab = new BagTab( b );
+				BagTab tab = new BagTab( b, i++ );
 				add( tab );
 				tab.select( b == bag );
 			}
@@ -152,50 +148,96 @@ public class WndBag extends WndTabbed {
 		layoutTabs();
 	}
 	
-	public static WndBag lastBag( Listener listener, Mode mode, String title ) {
+	public static WndBag lastBag( ItemSelector selector ) {
 		
-		if (mode == lastMode && lastBag != null &&
-			Dungeon.hero.belongings.backpack.contains( lastBag )) {
+		if (lastBag != null && Dungeon.hero.belongings.backpack.contains( lastBag )) {
 			
-			return new WndBag( lastBag, listener, mode, title );
+			return new WndBag( lastBag, selector );
 			
 		} else {
 			
-			return new WndBag( Dungeon.hero.belongings.backpack, listener, mode, title );
+			return new WndBag( Dungeon.hero.belongings.backpack, selector );
 			
 		}
 	}
 
-	public static WndBag getBag( Class<? extends Bag> bagClass, Listener listener, Mode mode, String title ) {
-		Bag bag = Dungeon.hero.belongings.getItem( bagClass );
-		return bag != null ?
-				new WndBag( bag, listener, mode, title ) :
-				lastBag( listener, mode, title );
+	public static WndBag getBag( ItemSelector selector ) {
+		if (selector.preferredBag() == Belongings.Backpack.class){
+			return new WndBag( Dungeon.hero.belongings.backpack, selector );
+
+		} else if (selector.preferredBag() != null){
+			Bag bag = Dungeon.hero.belongings.getItem( selector.preferredBag() );
+			if (bag != null) return new WndBag( bag, selector );
+		}
+
+		return lastBag( selector );
 	}
 	
 	protected void placeTitle( Bag bag, int width ){
-		
-		RenderedText txtTitle = PixelScene.renderText(
-				title != null ? Messages.titleCase(title) : Messages.titleCase( bag.name() ), 9 );
+
+		float titleWidth;
+		if (Dungeon.energy == 0) {
+			ItemSprite gold = new ItemSprite(ItemSpriteSheet.GOLD, null);
+			gold.x = width - gold.width();
+			gold.y = (TITLE_HEIGHT - gold.height()) / 2f;
+			PixelScene.align(gold);
+			add(gold);
+
+			BitmapText amt = new BitmapText(Integer.toString(Dungeon.gold), PixelScene.pixelFont);
+			amt.hardlight(TITLE_COLOR);
+			amt.measure();
+			amt.x = width - gold.width() - amt.width() - 1;
+			amt.y = (TITLE_HEIGHT - amt.baseLine()) / 2f - 1;
+			PixelScene.align(amt);
+			add(amt);
+
+			titleWidth = amt.x;
+		} else {
+
+			Image gold = Icons.get(Icons.COIN_SML);
+			gold.x = width - gold.width() - 0.5f;
+			gold.y = 0;
+			PixelScene.align(gold);
+			add(gold);
+
+			BitmapText amt = new BitmapText(Integer.toString(Dungeon.gold), PixelScene.pixelFont);
+			amt.hardlight(TITLE_COLOR);
+			amt.measure();
+			amt.x = width - gold.width() - amt.width() - 2f;
+			amt.y = 0;
+			PixelScene.align(amt);
+			add(amt);
+
+			titleWidth = amt.x;
+
+			Image energy = Icons.get(Icons.ENERGY_SML);
+			energy.x = width - energy.width();
+			energy.y = gold.height();
+			PixelScene.align(energy);
+			add(energy);
+
+			amt = new BitmapText(Integer.toString(Dungeon.energy), PixelScene.pixelFont);
+			amt.hardlight(0x44CCFF);
+			amt.measure();
+			amt.x = width - energy.width() - amt.width() - 1;
+			amt.y = energy.y;
+			PixelScene.align(amt);
+			add(amt);
+
+			titleWidth = Math.min(titleWidth, amt.x);
+		}
+
+		String title = selector != null ? selector.textPrompt() : null;
+		RenderedTextBlock txtTitle = PixelScene.renderTextBlock(
+				title != null ? Messages.titleCase(title) : Messages.titleCase( bag.name() ), 8 );
 		txtTitle.hardlight( TITLE_COLOR );
-		txtTitle.x = 1;
-		txtTitle.y = (int)(TITLE_HEIGHT - txtTitle.baseLine()) / 2f - 1;
+		txtTitle.maxWidth( (int)titleWidth - 2 );
+		txtTitle.setPos(
+				1,
+				(TITLE_HEIGHT - txtTitle.height()) / 2f - 1
+		);
 		PixelScene.align(txtTitle);
 		add( txtTitle );
-		
-		ItemSprite gold = new ItemSprite(ItemSpriteSheet.GOLD, null);
-		gold.x = width - gold.width() - 1;
-		gold.y = (TITLE_HEIGHT - gold.height())/2f - 1;
-		PixelScene.align(gold);
-		add(gold);
-		
-		BitmapText amt = new BitmapText( Integer.toString(Dungeon.gold), PixelScene.pixelFont );
-		amt.hardlight(TITLE_COLOR);
-		amt.measure();
-		amt.x = width - gold.width() - amt.width() - 2;
-		amt.y = (TITLE_HEIGHT - amt.baseLine())/2f - 1;
-		PixelScene.align(amt);
-		add(amt);
 	}
 	
 	protected void placeItems( Bag container ) {
@@ -204,46 +246,128 @@ public class WndBag extends WndTabbed {
 		Belongings stuff = Dungeon.hero.belongings;
 		placeItem( stuff.weapon != null ? stuff.weapon : new Placeholder( ItemSpriteSheet.WEAPON_HOLDER ) );
 		placeItem( stuff.armor != null ? stuff.armor : new Placeholder( ItemSpriteSheet.ARMOR_HOLDER ) );
-		placeItem( stuff.misc1 != null ? stuff.misc1 : new Placeholder( ItemSpriteSheet.RING_HOLDER ) );
-		placeItem( stuff.misc2 != null ? stuff.misc2 : new Placeholder( ItemSpriteSheet.RING_HOLDER ) );
+		placeItem( stuff.artifact != null ? stuff.artifact : new Placeholder( ItemSpriteSheet.ARTIFACT_HOLDER ) );
+		placeItem( stuff.misc != null ? stuff.misc : new Placeholder( ItemSpriteSheet.SOMETHING ) );
+		placeItem( stuff.ring != null ? stuff.ring : new Placeholder( ItemSpriteSheet.RING_HOLDER ) );
 
-		// Items in the bag
+		//the container itself if it's not the root backpack
+		if (container != Dungeon.hero.belongings.backpack){
+			placeItem(container);
+			count--; //don't count this one, as it's not actually inside of itself
+		}
+
+		// Items in the bag, except other containers (they have tags at the bottom)
 		for (Item item : container.items.toArray(new Item[0])) {
-			placeItem( item );
+			if (!(item instanceof Bag)) {
+				placeItem( item );
+			} else {
+				count++;
+			}
 		}
 		
 		// Free Space
-		while ((count - 4) < container.size) {
+		while ((count - 5) < container.capacity()) {
 			placeItem( null );
 		}
 	}
 	
 	protected void placeItem( final Item item ) {
+
+		count++;
 		
-		int x = col * (SLOT_WIDTH + SLOT_MARGIN);
-		int y = TITLE_HEIGHT + row * (SLOT_HEIGHT + SLOT_MARGIN);
-		
-		add( new ItemButton( item ).setPos( x, y ) );
+		int x = col * (slotWidth + SLOT_MARGIN);
+		int y = TITLE_HEIGHT + row * (slotHeight + SLOT_MARGIN);
+
+		InventorySlot slot = new InventorySlot( item ){
+			@Override
+			protected void onClick() {
+				if (lastBag != item && !lastBag.contains(item) && !item.isEquipped(Dungeon.hero)){
+
+					hide();
+
+				} else if (selector != null) {
+
+					hide();
+					selector.onSelect( item );
+
+				} else {
+
+					Game.scene().addToFront(new WndUseItem( WndBag.this, item ) );
+
+				}
+			}
+
+			@Override
+			protected void onRightClick() {
+				if (lastBag != item && !lastBag.contains(item) && !item.isEquipped(Dungeon.hero)){
+
+					hide();
+
+				} else if (selector != null) {
+
+					hide();
+					selector.onSelect( item );
+
+				} else {
+
+					RightClickMenu r = new RightClickMenu(item){
+						@Override
+						public void onSelect(int index) {
+							WndBag.this.hide();
+						}
+					};
+					parent.addToFront(r);
+					r.camera = camera();
+					PointF mousePos = PointerEvent.currentHoverPos();
+					mousePos = camera.screenToCamera((int)mousePos.x, (int)mousePos.y);
+					r.setPos(mousePos.x-3, mousePos.y-3);
+
+				}
+			}
+
+			@Override
+			protected boolean onLongClick() {
+				if (selector == null && item.defaultAction != null) {
+					hide();
+					Dungeon.quickslot.setSlot( 0 , item );
+					QuickSlotButton.refresh();
+					return true;
+				} else if (selector != null) {
+					Game.scene().addToFront(new WndInfoItem(item));
+					return true;
+				} else {
+					return false;
+				}
+			}
+		};
+		slot.setRect( x, y, slotWidth, slotHeight );
+		add(slot);
+
+		if (item == null || (selector != null && !selector.itemSelectable(item))){
+			slot.enable(false);
+		}
 		
 		if (++col >= nCols) {
 			col = 0;
 			row++;
 		}
-		
-		count++;
+
 	}
-	
+
 	@Override
-	public void onMenuPressed() {
-		if (listener == null) {
+	public boolean onSignal(KeyEvent event) {
+		if (event.pressed && KeyBindings.getActionForKey( event ) == SPDAction.INVENTORY) {
 			hide();
+			return true;
+		} else {
+			return super.onSignal(event);
 		}
 	}
 	
 	@Override
 	public void onBackPressed() {
-		if (listener != null) {
-			listener.onSelect( null );
+		if (selector != null) {
+			selector.onSelect( null );
 		}
 		super.onBackPressed();
 	}
@@ -251,7 +375,20 @@ public class WndBag extends WndTabbed {
 	@Override
 	protected void onClick( Tab tab ) {
 		hide();
-		GameScene.show( new WndBag( ((BagTab)tab).bag, listener, mode, title ) );
+		Window w = new WndBag(((BagTab) tab).bag, selector);
+		if (Game.scene() instanceof GameScene){
+			GameScene.show(w);
+		} else {
+			Game.scene().addToFront(w);
+		}
+	}
+	
+	@Override
+	public void hide() {
+		super.hide();
+		if (INSTANCE == this){
+			INSTANCE = null;
+		}
 	}
 	
 	@Override
@@ -259,66 +396,65 @@ public class WndBag extends WndTabbed {
 		return 20;
 	}
 	
-	private class BagTab extends Tab {
-		
-		private Image icon;
+	private Image icon( Bag bag ) {
+		if (bag instanceof VelvetPouch) {
+			return Icons.get( Icons.SEED_POUCH );
+		} else if (bag instanceof ScrollHolder) {
+			return Icons.get( Icons.SCROLL_HOLDER );
+		} else if (bag instanceof MagicalHolster) {
+			return Icons.get( Icons.WAND_HOLSTER );
+		} else if (bag instanceof PotionBandolier) {
+			return Icons.get( Icons.POTION_BANDOLIER );
+		} else {
+			return Icons.get( Icons.BACKPACK );
+		}
+	}
+	
+	private class BagTab extends IconTab {
 
 		private Bag bag;
+		private int index;
 		
-		public BagTab( Bag bag ) {
-			super();
+		public BagTab( Bag bag, int index ) {
+			super( icon(bag) );
 			
 			this.bag = bag;
-			
-			icon = icon();
-			add( icon );
+			this.index = index;
 		}
-		
+
 		@Override
-		protected void select( boolean value ) {
-			super.select( value );
-			icon.am = selected ? 1.0f : 0.6f;
-		}
-		
-		@Override
-		protected void layout() {
-			super.layout();
-			
-			icon.copy( icon() );
-			icon.x = x + (width - icon.width) / 2;
-			icon.y = y + (height - icon.height) / 2 - 2 - (selected ? 0 : 1);
-			if (!selected && icon.y < y + CUT) {
-				RectF frame = icon.frame();
-				frame.top += (y + CUT - icon.y) / icon.texture.height;
-				icon.frame( frame );
-				icon.y = y + CUT;
+		public GameAction keyAction() {
+			switch (index){
+				case 1: default:
+					return SPDAction.BAG_1;
+				case 2:
+					return SPDAction.BAG_2;
+				case 3:
+					return SPDAction.BAG_3;
+				case 4:
+					return SPDAction.BAG_4;
+				case 5:
+					return SPDAction.BAG_5;
 			}
 		}
-		
-		private Image icon() {
-			if (bag instanceof VelvetPouch) {
-				return Icons.get( Icons.SEED_POUCH );
-			} else if (bag instanceof ScrollHolder) {
-				return Icons.get( Icons.SCROLL_HOLDER );
-			} else if (bag instanceof MagicalHolster) {
-				return Icons.get( Icons.WAND_HOLSTER );
-			} else if (bag instanceof PotionBandolier) {
-				return Icons.get( Icons.POTION_BANDOLIER );
-			} else {
-				return Icons.get( Icons.BACKPACK );
-			}
+
+		@Override
+		protected String hoverText() {
+			return Messages.titleCase(bag.name());
 		}
 	}
 	
 	public static class Placeholder extends Item {
-		{
-			name = null;
-		}
-		
-		public Placeholder( int image ) {
+
+		public Placeholder(int image ) {
 			this.image = image;
 		}
-		
+
+		@Override
+		public String name() {
+			return null;
+		}
+
 		@Override
 		public boolean isIdentified() {
 			return true;
@@ -329,142 +465,13 @@ public class WndBag extends WndTabbed {
 			return true;
 		}
 	}
-	
-	private class ItemButton extends ItemSlot {
-		
-		private static final int NORMAL		= 0x9953564D;
-		private static final int EQUIPPED	= 0x9991938C;
-		
-		private Item item;
-		private ColorBlock bg;
-		
-		public ItemButton( Item item ) {
-			
-			super( item );
 
-			this.item = item;
-			if (item instanceof Gold) {
-				bg.visible = false;
-			}
-			
-			width = SLOT_WIDTH;
-			height = SLOT_HEIGHT;
+	public abstract static class ItemSelector {
+		public abstract String textPrompt();
+		public Class<?extends Bag> preferredBag(){
+			return null; //defaults to last bag opened
 		}
-		
-		@Override
-		protected void createChildren() {
-			bg = new ColorBlock( SLOT_WIDTH, SLOT_HEIGHT, NORMAL );
-			add( bg );
-			
-			super.createChildren();
-		}
-		
-		@Override
-		protected void layout() {
-			bg.x = x;
-			bg.y = y;
-			
-			super.layout();
-		}
-		
-		@Override
-		public void item( Item item ) {
-			
-			super.item( item );
-			if (item != null) {
-
-				bg.texture( TextureCache.createSolid( item.isEquipped( Dungeon.hero ) ? EQUIPPED : NORMAL ) );
-				if (item.cursed && item.cursedKnown) {
-					bg.ra = +0.3f;
-					bg.ga = -0.15f;
-				} else if (!item.isIdentified()) {
-					bg.ra = 0.2f;
-					bg.ba = 0.2f;
-				}
-
-				if (item.name() == null) {
-					enable( false );
-				} else {
-					enable(
-						mode == Mode.FOR_SALE && !item.unique && (item.price() > 0) && (!item.isEquipped( Dungeon.hero ) || !item.cursed) ||
-						mode == Mode.UPGRADEABLE && item.isUpgradable() ||
-						mode == Mode.UNIDENTIFED && !item.isIdentified() ||
-						mode == Mode.UNIDED_OR_CURSED && ((item instanceof EquipableItem || item instanceof Wand) && (!item.isIdentified() || item.cursed)) ||
-						mode == Mode.QUICKSLOT && (item.defaultAction != null) ||
-						mode == Mode.WEAPON && (item instanceof MeleeWeapon || item instanceof Boomerang) ||
-						mode == Mode.ARMOR && (item instanceof Armor) ||
-						mode == Mode.ENCHANTABLE && (item instanceof MeleeWeapon || item instanceof Boomerang || item instanceof Armor) ||
-						mode == Mode.WAND && (item instanceof Wand) ||
-								//TODO 远古版本判定方式 需要优化
-						mode == Mode.WAND_NUKE && (item instanceof WandofNukeBomb) ||
-						mode == Mode.SEED && (item instanceof Seed) ||
-						mode == Mode.FOOD && (item instanceof Food) ||
-						mode == Mode.POTION && (item instanceof Potion) ||
-						mode == Mode.SCROLL && (item instanceof Scroll) ||
-						mode == Mode.UNIDED_POTION_OR_SCROLL && (!item.isIdentified() && (item instanceof Scroll || item instanceof Potion)) ||
-						mode == Mode.EQUIPMENT && (item instanceof EquipableItem) ||
-						mode == Mode.ALCHEMY && ((item instanceof Seed && !(item instanceof BlandfruitBush.Seed)) || (item instanceof Blandfruit && ((Blandfruit) item).potionAttrib == null) || (item.getClass() == Dart.class)) ||
-						mode == Mode.ALL
-					);
-					//extra logic for cursed weapons or armor
-					if (!active && mode == Mode.UNIDED_OR_CURSED){
-						if (item instanceof Weapon){
-							Weapon w = (Weapon) item;
-							enable(w.hasCurseEnchant());
-						}
-						if (item instanceof Armor){
-							Armor a = (Armor) item;
-							enable(a.hasCurseGlyph());
-						}
-					}
-				}
-			} else {
-				bg.color( NORMAL );
-			}
-		}
-		
-		@Override
-		protected void onTouchDown() {
-			bg.brightness( 1.5f );
-			Sample.INSTANCE.play( Assets.SND_CLICK, 0.7f, 0.7f, 1.2f );
-		};
-		
-		protected void onTouchUp() {
-			bg.brightness( 1.0f );
-		};
-		
-		@Override
-		protected void onClick() {
-			if (!lastBag.contains(item) && !item.isEquipped(Dungeon.hero)){
-
-				hide();
-
-			} else if (listener != null) {
-				
-				hide();
-				listener.onSelect( item );
-				
-			} else {
-				
-				GameScene.show(new WndItem( WndBag.this, item ) );
-				
-			}
-		}
-		
-		@Override
-		protected boolean onLongClick() {
-			if (listener == null && item.defaultAction != null) {
-				hide();
-				Dungeon.quickslot.setSlot( 0 , item );
-				QuickSlotButton.refresh();
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
-	
-	public interface Listener {
-		void onSelect( Item item );
+		public abstract boolean itemSelectable( Item item );
+		public abstract void onSelect( Item item );
 	}
 }

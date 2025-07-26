@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,17 +25,46 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 public class Ooze extends Buff {
 
+	public static final float DURATION = 20f;
+
 	{
 		type = buffType.NEGATIVE;
+		announced = true;
+	}
+	
+	private float left;
+	private static final String LEFT	= "left";
+	
+	@Override
+	public void storeInBundle( Bundle bundle ) {
+		super.storeInBundle( bundle );
+		bundle.put( LEFT, left );
+	}
+	
+	@Override
+	public void restoreFromBundle( Bundle bundle ) {
+		super.restoreFromBundle(bundle);
+		left = bundle.getFloat(LEFT);
 	}
 	
 	@Override
 	public int icon() {
 		return BuffIndicator.OOZE;
+	}
+
+	@Override
+	public float iconFadePercent() {
+		return Math.max(0, (DURATION - left) / DURATION);
+	}
+
+	@Override
+	public String iconTextDisplay() {
+		return Integer.toString((int)left);
 	}
 	
 	@Override
@@ -50,21 +79,35 @@ public class Ooze extends Buff {
 
 	@Override
 	public String desc() {
-		return Messages.get(this, "desc");
+		return Messages.get(this, "desc", dispTurns(left));
+	}
+	
+	public void set(float left){
+		this.left = left;
 	}
 
 	@Override
 	public boolean act() {
 		if (target.isAlive()) {
-			if (Dungeon.depth > 4)
-				target.damage( Dungeon.depth/5, this );
-			else if (Random.Int(2) == 0)
-				target.damage( 1, this );
+			if (Dungeon.depth > 5) {
+				target.damage(1 + Dungeon.depth / 5, this);
+			} else if (Dungeon.depth == 5){
+				target.damage(1, this); //1 dmg per turn vs Goo
+			} else if (Random.Int(2) == 0) {
+				target.damage(1, this); //0.5 dmg per turn in sewers
+			}
+
 			if (!target.isAlive() && target == Dungeon.hero) {
 				Dungeon.fail( getClass() );
 				GLog.n( Messages.get(this, "ondeath") );
 			}
 			spend( TICK );
+			left -= TICK;
+			if (left <= 0){
+				detach();
+			}
+		} else {
+			detach();
 		}
 		if (Dungeon.level.water[target.pos]) {
 			detach();

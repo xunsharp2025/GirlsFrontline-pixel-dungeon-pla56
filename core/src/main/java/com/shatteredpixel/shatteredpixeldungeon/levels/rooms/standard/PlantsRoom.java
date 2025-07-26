@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,14 +94,12 @@ public class PlantsRoom extends StandardRoom {
 		for (Door door : connected.values()) {
 			door.set( Door.Type.REGULAR );
 		}
-		
-		super.paint(level);
 	}
 	
 	private static Plant.Seed randomSeed(){
 		Plant.Seed result;
 		do {
-			result = (Plant.Seed) Generator.random(Generator.Category.SEED);
+			result = (Plant.Seed) Generator.randomUsingDefaults(Generator.Category.SEED);
 		} while (result instanceof Firebloom.Seed);
 		return result;
 	}

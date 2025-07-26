@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,8 +58,8 @@ public class Artifact extends KindofMisc {
 	@Override
 	public boolean doEquip( final Hero hero ) {
 
-		if ((hero.belongings.misc1 != null && hero.belongings.misc1.getClass() == this.getClass())
-				|| (hero.belongings.misc2 != null && hero.belongings.misc2.getClass() == this.getClass())){
+		if ((hero.belongings.artifact != null && hero.belongings.artifact.getClass() == this.getClass())
+				|| (hero.belongings.misc != null && hero.belongings.misc.getClass() == this.getClass())){
 
 			GLog.w( Messages.get(Artifact.class, "cannot_wear_two") );
 			return false;
@@ -90,12 +90,9 @@ public class Artifact extends KindofMisc {
 	public boolean doUnequip( Hero hero, boolean collect, boolean single ) {
 		if (super.doUnequip( hero, collect, single )) {
 
-			passiveBuff.detach();
-			passiveBuff = null;
-
-			if (activeBuff != null){
-				activeBuff.detach();
-				activeBuff = null;
+			if (passiveBuff != null) {
+				passiveBuff.detach();
+				passiveBuff = null;
 			}
 
 			return true;
@@ -117,21 +114,33 @@ public class Artifact extends KindofMisc {
 		return levelKnown ? Math.round((level()*10)/(float)levelCap): 0;
 	}
 
+	@Override
+	public int buffedVisiblyUpgraded() {
+		return visiblyUpgraded();
+	}
+
+	@Override
+	public int buffedLvl() {
+		//level isn't affected by buffs/debuffs
+		return level();
+	}
+
 	//transfers upgrades from another artifact, transfer level will equal the displayed level
 	public void transferUpgrade(int transferLvl) {
-		upgrade(Math.round((float)(transferLvl*levelCap)/10));
+		upgrade(Math.round((transferLvl*levelCap)/10f));
 	}
 
 	@Override
 	public String info() {
 		if (cursed && cursedKnown && !isEquipped( Dungeon.hero )) {
-
 			return desc() + "\n\n" + Messages.get(Artifact.class, "curse_known");
-
+			
+		} else if (!isIdentified() && cursedKnown && !isEquipped( Dungeon.hero)) {
+			return desc()+ "\n\n" + Messages.get(Artifact.class, "not_cursed");
+			
 		} else {
-
 			return desc();
-
+			
 		}
 	}
 
@@ -164,17 +173,6 @@ public class Artifact extends KindofMisc {
 		return null;
 	}
 
-	//converts class names to be more concise and readable.
-	protected String convertName(String className){
-		//removes known redundant parts of names.
-		className = className.replaceFirst("ScrollOf|PotionOf", "");
-
-		//inserts a space infront of every uppercase character
-		className = className.replaceAll("(\\p{Ll})(\\p{Lu})", "$1 $2");
-
-		return className;
-	};
-
 	@Override
 	public Item random() {
 		//always +0
@@ -187,7 +185,7 @@ public class Artifact extends KindofMisc {
 	}
 
 	@Override
-	public int price() {
+	public int value() {
 		int price = 100;
 		if (level() > 0)
 			price += 20*visiblyUpgraded();
@@ -206,6 +204,10 @@ public class Artifact extends KindofMisc {
 	}
 
 	protected ArtifactBuff activeBuff() {return null; }
+	
+	public void charge(Hero target, float amount){
+		//do nothing by default;
+	}
 
 	public class ArtifactBuff extends Buff {
 
@@ -217,20 +219,22 @@ public class Artifact extends KindofMisc {
 			return cursed;
 		}
 
-	}
+		public void charge(Hero target, float amount){
+			Artifact.this.charge(target, amount);
+		}
 
-	private static final String IMAGE = "image";
+	}
+	
 	private static final String EXP = "exp";
 	private static final String CHARGE = "charge";
 	private static final String PARTIALCHARGE = "partialcharge";
-	private static final String COLD = "cold";
+
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle(bundle);
 		bundle.put( EXP , exp );
 		bundle.put( CHARGE , charge );
 		bundle.put( PARTIALCHARGE , partialCharge );
-		bundle.put(COLD,cooldown);
 	}
 
 	@Override
@@ -240,6 +244,5 @@ public class Artifact extends KindofMisc {
 		if (chargeCap > 0)  charge = Math.min( chargeCap, bundle.getInt( CHARGE ));
 		else                charge = bundle.getInt( CHARGE );
 		partialCharge = bundle.getFloat( PARTIALCHARGE );
-		cooldown = bundle.getInt(COLD);
 	}
 }

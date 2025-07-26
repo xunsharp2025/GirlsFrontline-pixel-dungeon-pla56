@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret;
 
+import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLiquidFlame;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfEnchantment;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
@@ -63,6 +64,17 @@ public class SecretRunestoneRoom extends SecretRoom {
 		level.addItemToSpawn(new PotionOfLiquidFlame());
 		
 		int dropPos;
+		
+		do{
+			dropPos = level.pointToCell(random());
+		} while (level.map[dropPos] != Terrain.EMPTY);
+		level.drop( Generator.random(Generator.Category.STONE), dropPos);
+		
+		do{
+			dropPos = level.pointToCell(random());
+		} while (level.map[dropPos] != Terrain.EMPTY || level.heaps.get(dropPos) != null);
+		level.drop( Generator.random(Generator.Category.STONE), dropPos);
+		
 		do{
 			dropPos = level.pointToCell(random());
 		} while (level.map[dropPos] != Terrain.EMPTY_SP);
@@ -79,5 +91,10 @@ public class SecretRunestoneRoom extends SecretRoom {
 	@Override
 	public boolean canPlaceGrass(Point p) {
 		return false;
+	}
+	
+	@Override
+	public boolean canPlaceCharacter(Point p, Level l) {
+		return super.canPlaceCharacter(p, l) && l.map[l.pointToCell(p)] != Terrain.EMPTY_SP;
 	}
 }

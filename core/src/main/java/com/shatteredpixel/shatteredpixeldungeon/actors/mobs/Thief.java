@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,15 +23,16 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AllyBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Dread;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
+import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Honeypot;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.MasterThievesArmband;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ThiefSprite;
@@ -50,11 +51,10 @@ public class Thief extends Mob {
 		defenseSkill = 12;
 		
 		EXP = 5;
-		maxLvl = 10;
-		
-		//see createloot
-		loot = null;
-		lootChance = 0.01f;
+		maxLvl = 11;
+
+		loot = Random.oneOf(Generator.Category.RING, Generator.Category.ARTIFACT);
+		lootChance = 0.03f; //initially, see lootChance()
 
 		WANDERING = new Wandering();
 		FLEEING = new Fleeing();
@@ -88,28 +88,32 @@ public class Thief extends Mob {
 	}
 
 	@Override
-	protected float attackDelay() {
-		return 0.5f;
+	public float attackDelay() {
+		return super.attackDelay()*0.5f;
 	}
-	
+
+	@Override
+	public float lootChance() {
+		//each drop makes future drops 1/3 as likely
+		// so loot chance looks like: 1/33, 1/100, 1/300, 1/900, etc.
+		return super.lootChance() * (float)Math.pow(1/3f, Dungeon.LimitedDrops.THEIF_MISC.count);
+	}
+
 	@Override
 	public void rollToDropLoot() {
 		if (item != null) {
 			Dungeon.level.drop( item, pos ).sprite.drop();
 			//updates position
-			if (item instanceof Honeypot.ShatteredPot) ((Honeypot.ShatteredPot)item).setHolder( this );
+			if (item instanceof Honeypot.ShatteredPot) ((Honeypot.ShatteredPot)item).dropPot( this, pos );
 			item = null;
 		}
 		super.rollToDropLoot();
 	}
-	
+
 	@Override
-	protected Item createLoot(){
-		if (!Dungeon.LimitedDrops.THIEVES_ARMBAND.dropped()) {
-			Dungeon.LimitedDrops.THIEVES_ARMBAND.drop();
-			return new MasterThievesArmband().identify();
-		} else
-			return new Gold(Random.NormalIntRange(100, 250));
+	public Item createLoot() {
+		Dungeon.LimitedDrops.THEIF_MISC.count++;
+		return super.createLoot();
 	}
 
 	@Override
@@ -126,7 +130,8 @@ public class Thief extends Mob {
 	public int attackProc( Char enemy, int damage ) {
 		damage = super.attackProc( enemy, damage );
 		
-		if (item == null && enemy instanceof Hero && steal( (Hero)enemy )) {
+		if (alignment == Alignment.ENEMY && item == null
+				&& enemy instanceof Hero && steal( (Hero)enemy )) {
 			state = FLEEING;
 		}
 
@@ -144,23 +149,21 @@ public class Thief extends Mob {
 
 	protected boolean steal( Hero hero ) {
 
-		Item item = hero.belongings.randomUnequipped();
+		Item toSteal = hero.belongings.randomUnequipped();
 
-		if (item != null && !item.unique && item.level() < 1 ) {
+		if (toSteal != null && !toSteal.unique && toSteal.level() < 1 ) {
 
-			GLog.w( Messages.get(Thief.class, "stole", item.name()) );
-			if (!item.stackable || hero.belongings.getSimilar(item) == null) {
-				Dungeon.quickslot.convertToPlaceholder(item);
+			GLog.w( Messages.get(Thief.class, "stole", toSteal.name()) );
+			if (!toSteal.stackable) {
+				Dungeon.quickslot.convertToPlaceholder(toSteal);
 			}
-			item.updateQuickslot();
+			Item.updateQuickslot();
 
+			item = toSteal.detach( hero.belongings.backpack );
 			if (item instanceof Honeypot){
-				this.item = ((Honeypot)item).shatter(this, this.pos);
-				item.detach( hero.belongings.backpack );
-			} else {
-				this.item = item.detach( hero.belongings.backpack );
-				if ( item instanceof Honeypot.ShatteredPot)
-					((Honeypot.ShatteredPot)item).setHolder(this);
+				item = ((Honeypot)item).shatter(this, this.pos);
+			} else if (item instanceof Honeypot.ShatteredPot) {
+				((Honeypot.ShatteredPot)item).pickupPot(this);
 			}
 
 			return true;
@@ -198,16 +201,20 @@ public class Thief extends Mob {
 	private class Fleeing extends Mob.Fleeing {
 		@Override
 		protected void nowhereToRun() {
-			if (buff( Terror.class ) == null && buff( Corruption.class ) == null) {
+			if (buff( Terror.class ) == null
+					&& buff( Dread.class ) == null
+					&& buffs( AllyBuff.class ).isEmpty() ) {
 				if (enemySeen) {
 					sprite.showStatus(CharSprite.NEGATIVE, Messages.get(Mob.class, "rage"));
 					state = HUNTING;
-				} else if (item != null && !Dungeon.level.heroFOV[pos]) {
+				} else if (item != null
+						&& !Dungeon.level.heroFOV[pos]
+						&& Dungeon.level.distance(Dungeon.hero.pos, pos) >= 6) {
 
 					int count = 32;
 					int newPos;
 					do {
-						newPos = Dungeon.level.randomRespawnCell();
+						newPos = Dungeon.level.randomRespawnCell( Thief.this );
 						if (count-- <= 0) {
 							break;
 						}

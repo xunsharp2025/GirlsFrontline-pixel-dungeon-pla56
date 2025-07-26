@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ public class Graph {
 			node.distance( Integer.MAX_VALUE );
 		}
 		
-		LinkedList<Node> queue = new LinkedList<Node>();
+		LinkedList<Node> queue = new LinkedList<>();
 		
 		focus.distance( 0 );
 		queue.add( focus );
@@ -63,7 +63,7 @@ public class Graph {
 	@SuppressWarnings("unchecked")
 	public static <T extends Node> List<T> buildPath( Collection<T> nodes, T from, T to ) {
 		
-		List<T> path = new ArrayList<T>();
+		List<T> path = new ArrayList<>();
 		
 		T room = from;
 		while (room != to) {

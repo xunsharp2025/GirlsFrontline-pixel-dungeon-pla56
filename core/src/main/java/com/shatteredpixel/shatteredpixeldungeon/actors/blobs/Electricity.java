@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,9 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SparkParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Cypros;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
@@ -70,9 +70,15 @@ public class Electricity extends Blob {
 				if (cur[cell] > 0) {
 					Char ch = Actor.findChar( cell );
 					if (ch != null && !ch.isImmune(this.getClass())) {
-						Buff.prolong( ch, Paralysis.class, 1f);
+						if (ch.buff(Paralysis.class) == null){
+							Buff.prolong( ch, Paralysis.class, cur[cell]);
+						}
 						if (cur[cell] % 2 == 1) {
 							ch.damage(Math.round(Random.Float(2 + Dungeon.depth / 5f)), this);
+							if (!ch.isAlive() && ch == Dungeon.hero){
+								Dungeon.fail( getClass() );
+								GLog.n( Messages.get(this, "ondeath") );
+							}
 						}
 					}
 					
@@ -81,10 +87,8 @@ public class Electricity extends Blob {
 						Item toShock = h.peek();
 						if (toShock instanceof Wand){
 							((Wand) toShock).gainCharge(0.333f);
-						} else if (toShock instanceof G11){
-							((G11) toShock).gainCharge(0.333f);
-						} else if (toShock instanceof Cypros) {
-							((Cypros)toShock).gainCharge( 0.1f);
+						} else if (toShock instanceof MagesStaff){
+							((MagesStaff) toShock).gainCharge(0.333f);
 						}
 					}
 					

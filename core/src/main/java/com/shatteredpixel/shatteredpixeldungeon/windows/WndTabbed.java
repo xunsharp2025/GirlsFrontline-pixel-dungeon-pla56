@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,18 +24,21 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.watabou.noosa.Game;
+import com.watabou.noosa.Image;
 import com.watabou.noosa.NinePatch;
-import com.watabou.noosa.RenderedText;
+import com.watabou.noosa.PointerArea;
 import com.watabou.noosa.audio.Sample;
-import com.watabou.noosa.ui.Button;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Button;
+import com.watabou.utils.RectF;
 
 import java.util.ArrayList;
 
 public class WndTabbed extends Window {
 
-	protected ArrayList<Tab> tabs = new ArrayList<WndTabbed.Tab>();
+	protected ArrayList<Tab> tabs = new ArrayList<>();
 	protected Tab selected;
 	
 	public WndTabbed() {
@@ -47,11 +50,11 @@ public class WndTabbed extends Window {
 		tab.setPos( tabs.size() == 0 ?
 			-chrome.marginLeft() + 1 :
 			tabs.get( tabs.size() - 1 ).right(), height );
-		tab.select( false );
+		tab.select( tab.selected );
 		super.add( tab );
 		
 		tabs.add( tab );
-		
+
 		return tab;
 	}
 	
@@ -83,7 +86,7 @@ public class WndTabbed extends Window {
 			width + chrome.marginHor(),
 			height + chrome.marginVer() );
 		
-		camera.resize( (int)chrome.width, (int)(chrome.marginTop() + height + tabHeight()) );
+		camera.resize( (int)chrome.width, chrome.marginTop() + height + tabHeight() );
 		camera.x = (int)(Game.width - camera.screenWidth()) / 2;
 		camera.y = (int)(Game.height - camera.screenHeight()) / 2;
 		camera.y += yOffset * camera.zoom;
@@ -98,7 +101,7 @@ public class WndTabbed extends Window {
 			remove( tab );
 		}
 		
-		ArrayList<Tab> tabs = new ArrayList<WndTabbed.Tab>( this.tabs );
+		ArrayList<Tab> tabs = new ArrayList<>(this.tabs);
 		this.tabs.clear();
 		
 		for (Tab tab : tabs) {
@@ -107,39 +110,18 @@ public class WndTabbed extends Window {
 	}
 
 	public void layoutTabs(){
-		//subract two as there's extra horizontal space for those nobs on the top.
+		//subtract two as that horizontal space is transparent at the bottom
 		int fullWidth = width+chrome.marginHor()-2;
-		int numTabs = tabs.size();
+		float numTabs = tabs.size();
+		float tabWidth = (fullWidth - (numTabs-1))/numTabs;
 
-		if (numTabs == 0)
-			return;
-		if (numTabs == 1) {
-			tabs.get(0).setSize(fullWidth, tabHeight());
-			return;
+		float pos = -chrome.marginLeft() + 1;
+		for (Tab tab : tabs){
+			tab.setSize(tabWidth, tabHeight());
+			tab.setPos(pos, height);
+			pos = tab.right() + 1;
+			PixelScene.align(tab);
 		}
-
-		int spaces = numTabs-1;
-		int spacing = -1;
-
-		while (spacing == -1) {
-			for (int i = 0; i <= 3; i++){
-				if ((fullWidth - i*(spaces)) % numTabs == 0) {
-					spacing = i;
-					break;
-				}
-			}
-			if (spacing == -1) fullWidth--;
-		}
-
-		int tabWidth = (fullWidth - spacing*(numTabs-1)) / numTabs;
-
-		for (int i = 0; i < tabs.size(); i++){
-			tabs.get(i).setSize(tabWidth, tabHeight());
-			tabs.get(i).setPos( i == 0 ?
-					-chrome.marginLeft() + 1 :
-					tabs.get( i - 1 ).right() + spacing, height );
-		}
-
 	}
 	
 	protected int tabHeight() {
@@ -157,6 +139,10 @@ public class WndTabbed extends Window {
 		protected boolean selected;
 		
 		protected NinePatch bg;
+
+		{
+			hotArea.blockLevel = PointerArea.ALWAYS_BLOCK;
+		}
 		
 		@Override
 		protected void layout() {
@@ -172,6 +158,8 @@ public class WndTabbed extends Window {
 		protected void select( boolean value ) {
 			
 			active = !(selected = value);
+
+			if (!active) killTooltip();
 			
 			if (bg != null) {
 				remove( bg );
@@ -187,14 +175,14 @@ public class WndTabbed extends Window {
 		
 		@Override
 		protected void onClick() {
-			Sample.INSTANCE.play( Assets.SND_CLICK, 0.7f, 0.7f, 1.2f );
+			Sample.INSTANCE.play( Assets.Sounds.CLICK, 0.7f, 0.7f, 1.2f );
 			WndTabbed.this.onClick( this );
 		}
 	}
 	
 	protected class LabeledTab extends Tab {
 		
-		private RenderedText btLabel;
+		private RenderedTextBlock btLabel;
 		
 		public LabeledTab( String label ) {
 			
@@ -207,7 +195,7 @@ public class WndTabbed extends Window {
 		protected void createChildren() {
 			super.createChildren();
 			
-			btLabel = PixelScene.renderText( 9 );
+			btLabel = PixelScene.renderTextBlock( 9 );
 			add( btLabel );
 		}
 		
@@ -215,18 +203,64 @@ public class WndTabbed extends Window {
 		protected void layout() {
 			super.layout();
 			
-			btLabel.x = x + (width - btLabel.width()) / 2;
-			btLabel.y = y + (height - btLabel.baseLine()) / 2 - 1;
-			if (!selected) {
-				btLabel.y -= 2;
-			}
+			btLabel.setPos(
+					x + (width - btLabel.width()) / 2,
+					y + (height - btLabel.height()) / 2 - (selected ? 1 : 3)
+			);
 			PixelScene.align(btLabel);
 		}
 		
 		@Override
 		protected void select( boolean value ) {
 			super.select( value );
-			btLabel.am = selected ? 1.0f : 0.6f;
+			btLabel.alpha( selected ? 1.0f : 0.6f );
+		}
+	}
+	
+	protected class IconTab extends Tab {
+		
+		protected Image icon;
+		private RectF defaultFrame;
+		
+		public IconTab( Image icon ){
+			super();
+			
+			this.icon.copy(icon);
+			this.defaultFrame = icon.frame();
+		}
+		
+		@Override
+		protected void createChildren() {
+			super.createChildren();
+			
+			icon = new Image();
+			add( icon );
+		}
+		
+		@Override
+		protected void layout() {
+			super.layout();
+			
+			icon.frame(defaultFrame);
+			icon.x = x + (width - icon.width) / 2;
+			icon.y = y + (height - icon.height) / 2 - 1;
+			if (!selected) {
+				icon.y -= 2;
+				//if some of the icon is going into the window, cut it off
+				if (icon.y < y + CUT) {
+					RectF frame = icon.frame();
+					frame.top += (y + CUT - icon.y) / icon.texture.height;
+					icon.frame( frame );
+					icon.y = y + CUT;
+				}
+			}
+			PixelScene.align(icon);
+		}
+		
+		@Override
+		protected void select( boolean value ) {
+			super.select( value );
+			icon.am = selected ? 1.0f : 0.6f;
 		}
 	}
 

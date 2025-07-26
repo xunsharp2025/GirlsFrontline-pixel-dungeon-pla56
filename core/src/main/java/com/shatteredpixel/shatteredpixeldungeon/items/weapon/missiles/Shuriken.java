@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -29,31 +30,22 @@ public class Shuriken extends MissileWeapon {
 
 	{
 		image = ItemSpriteSheet.SHURIKEN;
+		hitSound = Assets.Sounds.HIT_STAB;
+		hitSoundPitch = 1.2f;
+		
+		tier = 2;
+		baseUses = 5;
 	}
-
-	@Override
-	public int min(int lvl) {
-		return 6;
-	}
-
+	
 	@Override
 	public int max(int lvl) {
-		return 9;
-	}
-
-	@Override
-	public int STRReq(int lvl) {
-		return 11;
+		return  4 * tier +                      //8 base, down from 10
+				(tier == 1 ? 2*lvl : tier*lvl); //scaling unchanged
 	}
 	
 	@Override
-	public float speedFactor(Char owner) {
+	public float delayFactor(Char owner) {
 		if (owner instanceof Hero && ((Hero) owner).justMoved)  return 0;
-		else                                                    return super.speedFactor(owner);
-	}
-	
-	@Override
-	public int price() {
-		return 12 * quantity;
+		else                                                    return super.delayFactor(owner);
 	}
 }

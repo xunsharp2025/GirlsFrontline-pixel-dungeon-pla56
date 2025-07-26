@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bleeding;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -30,37 +31,28 @@ public class Tomahawk extends MissileWeapon {
 
 	{
 		image = ItemSpriteSheet.TOMAHAWK;
+		hitSound = Assets.Sounds.HIT_SLASH;
+		hitSoundPitch = 0.9f;
 
+		tier = 4;
+		baseUses = 5;
 	}
 
 	@Override
 	public int min(int lvl) {
-		return 6;
+		return  Math.round(1.5f * tier) +   //6 base, down from 8
+				2 * lvl;                    //scaling unchanged
 	}
-
+	
 	@Override
 	public int max(int lvl) {
-		return 15;
-	}
-
-	@Override
-	public int STRReq(int lvl) {
-		return 15;
+		return  Math.round(3.75f * tier) +  //15 base, down from 20
+				(tier)*lvl;                 //scaling unchanged
 	}
 	
 	@Override
 	public int proc( Char attacker, Char defender, int damage ) {
-		Buff.affect( defender, Bleeding.class ).set( damage );
+		Buff.affect( defender, Bleeding.class ).set( Math.round(damage*0.6f) );
 		return super.proc( attacker, defender, damage );
-	}
-	
-	@Override
-	protected float durabilityPerUse() {
-		return super.durabilityPerUse()*2f;
-	}
-	
-	@Override
-	public int price() {
-		return 24 * quantity;
 	}
 }

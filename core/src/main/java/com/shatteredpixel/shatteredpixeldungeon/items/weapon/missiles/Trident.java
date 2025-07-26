@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,32 +21,17 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Trident extends MissileWeapon {
 	
 	{
 		image = ItemSpriteSheet.TRIDENT;
-	}
-	
-	@Override
-	public int min(int lvl) {
-		return 10;
-	}
-	
-	@Override
-	public int max(int lvl) {
-		return 25;
-	}
-	
-	@Override
-	public int STRReq(int lvl) {
-		return 17;
-	}
-	
-	@Override
-	public int price() {
-		return 30 * quantity;
+		hitSound = Assets.Sounds.HIT_SLASH;
+		hitSoundPitch = 0.9f;
+		
+		tier = 5;
 	}
 	
 }

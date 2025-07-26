@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,50 +22,60 @@
 package com.shatteredpixel.shatteredpixeldungeon.plants;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfMindVision;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.watabou.noosa.Game;
 
 public class Fadeleaf extends Plant {
 	
 	{
-		image = 6;
+		image = 10;
+		seedClass = Seed.class;
 	}
 	
 	@Override
-	public void activate() {
-		Char ch = Actor.findChar(pos);
+	public void activate( final Char ch ) {
 		
 		if (ch instanceof Hero) {
 			
-			ScrollOfTeleportation.teleportHero( (Hero)ch );
 			((Hero)ch).curAction = null;
+			
+			if (((Hero) ch).subClass == HeroSubClass.WARDEN){
+				
+				if (Dungeon.level.locked) {
+					GLog.w( Messages.get(ScrollOfTeleportation.class, "no_tele") );
+					return;
+					
+				}
+
+				TimekeepersHourglass.timeFreeze timeFreeze = Dungeon.hero.buff(TimekeepersHourglass.timeFreeze.class);
+				if (timeFreeze != null) timeFreeze.disarmPressedTraps();
+				Swiftthistle.TimeBubble timeBubble = Dungeon.hero.buff(Swiftthistle.TimeBubble.class);
+				if (timeBubble != null) timeBubble.disarmPressedTraps();
+				
+				InterlevelScene.mode = InterlevelScene.Mode.RETURN;
+				InterlevelScene.returnDepth = Math.max(1, (Dungeon.depth - 1));
+				InterlevelScene.returnPos = -2;
+				Game.switchScene( InterlevelScene.class );
+				
+			} else {
+				ScrollOfTeleportation.teleportChar((Hero) ch);
+			}
 			
 		} else if (ch instanceof Mob && !ch.properties().contains(Char.Property.IMMOVABLE)) {
 
-			int count = 10;
-			int newPos;
-			do {
-				newPos = Dungeon.level.randomRespawnCell();
-				if (count-- <= 0) {
-					break;
-				}
-			} while (newPos == -1);
-			
-			if (newPos != -1 && !Dungeon.bossLevel()) {
-			
-				ch.pos = newPos;
-				if (((Mob) ch).state == ((Mob) ch).HUNTING) ((Mob) ch).state = ((Mob) ch).WANDERING;
-				ch.sprite.place( ch.pos );
-				ch.sprite.visible = Dungeon.level.heroFOV[ch.pos];
-				
-			}
+			ScrollOfTeleportation.teleportChar(ch);
 
 		}
 		
@@ -79,7 +89,6 @@ public class Fadeleaf extends Plant {
 			image = ItemSpriteSheet.SEED_FADELEAF;
 
 			plantClass = Fadeleaf.class;
-			alchemyClass = PotionOfMindVision.class;
 		}
 	}
 }

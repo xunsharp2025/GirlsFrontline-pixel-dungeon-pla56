@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,16 @@ public class Statistics {
 	public static int deepestFloor;
 	public static int enemiesSlain;
 	public static int foodEaten;
-	public static int potionsCooked;
+	public static int itemsCrafted;
 	public static int piranhasKilled;
 	public static int ankhsUsed;
+	
+	//used for hero unlock badges
+	public static int upgradesUsed;
+	public static int sneakAttacks;
+	public static int thrownAssists;
+
+	public static int spawnersAlive;
 	
 	public static float duration;
 	
@@ -46,9 +53,15 @@ public class Statistics {
 		deepestFloor	= 0;
 		enemiesSlain	= 0;
 		foodEaten		= 0;
-		potionsCooked	= 0;
+		itemsCrafted    = 0;
 		piranhasKilled	= 0;
 		ankhsUsed		= 0;
+		
+		upgradesUsed    = 0;
+		sneakAttacks    = 0;
+		thrownAssists   = 0;
+
+		spawnersAlive   = 0;
 		
 		duration	= 0;
 		
@@ -65,7 +78,17 @@ public class Statistics {
 	private static final String ALCHEMY		= "potionsCooked";
 	private static final String PIRANHAS	= "priranhas";
 	private static final String ANKHS		= "ankhsUsed";
+	
+	private static final String UPGRADES	= "upgradesUsed";
+	private static final String SNEAKS		= "sneakAttacks";
+	private static final String THROWN		= "thrownAssists";
+
+	private static final String SPAWNERS	= "spawnersAlive";
+	
 	private static final String DURATION	= "duration";
+
+	private static final String NO_KILLING_QUALIFIED	= "qualifiedForNoKilling";
+	
 	private static final String AMULET		= "amuletObtained";
 	
 	public static void storeInBundle( Bundle bundle ) {
@@ -73,10 +96,20 @@ public class Statistics {
 		bundle.put( DEEPEST,	deepestFloor );
 		bundle.put( SLAIN,		enemiesSlain );
 		bundle.put( FOOD,		foodEaten );
-		bundle.put( ALCHEMY,	potionsCooked );
+		bundle.put( ALCHEMY,    itemsCrafted );
 		bundle.put( PIRANHAS,	piranhasKilled );
 		bundle.put( ANKHS,		ankhsUsed );
+		
+		bundle.put( UPGRADES,   upgradesUsed );
+		bundle.put( SNEAKS,		sneakAttacks );
+		bundle.put( THROWN,		thrownAssists );
+
+		bundle.put( SPAWNERS,	spawnersAlive );
+		
 		bundle.put( DURATION,	duration );
+
+		bundle.put(NO_KILLING_QUALIFIED, qualifiedForNoKilling);
+		
 		bundle.put( AMULET,		amuletObtained );
 	}
 	
@@ -85,10 +118,20 @@ public class Statistics {
 		deepestFloor	= bundle.getInt( DEEPEST );
 		enemiesSlain	= bundle.getInt( SLAIN );
 		foodEaten		= bundle.getInt( FOOD );
-		potionsCooked	= bundle.getInt( ALCHEMY );
+		itemsCrafted    = bundle.getInt( ALCHEMY );
 		piranhasKilled	= bundle.getInt( PIRANHAS );
 		ankhsUsed		= bundle.getInt( ANKHS );
+		
+		upgradesUsed    = bundle.getInt( UPGRADES );
+		sneakAttacks    = bundle.getInt( SNEAKS );
+		thrownAssists   = bundle.getInt( THROWN );
+
+		spawnersAlive   = bundle.getInt( SPAWNERS );
+		
 		duration		= bundle.getFloat( DURATION );
+
+		qualifiedForNoKilling = bundle.getBoolean( NO_KILLING_QUALIFIED );
+		
 		amuletObtained	= bundle.getBoolean( AMULET );
 	}
 	

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,20 +22,27 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels.painters;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Patch;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
-import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard.EmptyRoom;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.connection.ConnectionRoom;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard.EntranceRoom;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard.StandardRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
+import com.watabou.noosa.Game;
 import com.watabou.utils.Graph;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 import com.watabou.utils.Rect;
+import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class RegularPainter extends Painter {
 	
@@ -109,7 +116,11 @@ public abstract class RegularPainter extends Painter {
 		
 		Random.shuffle(rooms);
 		
-		for (Room r : rooms) {
+		for (Room r : rooms.toArray(new Room[0])) {
+			if (r.connected.isEmpty()){
+				Game.reportException( new RuntimeException("Painting a room with no connections! Room:" + r.getClass().getSimpleName() + " Seed:" + Dungeon.seed + " Depth:" + Dungeon.depth));
+				if (r instanceof SpecialRoom) return false;
+			}
 			placeDoors( r );
 			r.paint( level );
 		}
@@ -147,7 +158,7 @@ public abstract class RegularPainter extends Painter {
 						doorSpots.add(p);
 				}
 				if (doorSpots.isEmpty()){
-					GirlsFrontlinePixelDungeon.reportException(
+					ShatteredPixelDungeon.reportException(
 							new RuntimeException("Could not place a door! " +
 									"r=" + r.getClass().getSimpleName() +
 									" n=" + n.getClass().getSimpleName()));
@@ -162,10 +173,29 @@ public abstract class RegularPainter extends Painter {
 	}
 	
 	protected void paintDoors( Level l, ArrayList<Room> rooms ) {
+
+		float hiddenDoorChance = 0;
+		if (Dungeon.depth > 1){
+			//chance for a hidden door scales from 2/20 on floor 2 to 20/20 on floor 20
+			hiddenDoorChance = Math.min(1f, Dungeon.depth / 20f);
+		}
+		if (l.feeling == Level.Feeling.SECRETS){
+			//pull the value of extra secret doors toward 50% on secrets level feel
+			hiddenDoorChance = (0.5f + hiddenDoorChance)/2f;
+		}
+
+		HashMap<Room, Room> roomMerges = new HashMap<>();
+
 		for (Room r : rooms) {
 			for (Room n : r.connected.keySet()) {
-				
-				if (joinRooms(l, r, n)) {
+
+				//normal sized rooms can be merged at most once. Large and Giant rooms can be merged many times
+				if (roomMerges.get(r) == n || roomMerges.get(n) == r){
+					continue;
+				} else if (!roomMerges.containsKey(r) && !roomMerges.containsKey(n) &&
+						mergeRooms(l, r, n, r.connected.get(n), Terrain.EMPTY)) {
+					if (((StandardRoom) r).sizeCat == StandardRoom.SizeCategory.NORMAL) roomMerges.put(r, n);
+					if (((StandardRoom) n).sizeCat == StandardRoom.SizeCategory.NORMAL) roomMerges.put(n, r);
 					continue;
 				}
 				
@@ -173,17 +203,55 @@ public abstract class RegularPainter extends Painter {
 				int door = d.x + d.y * l.width();
 				
 				if (d.type == Room.Door.Type.REGULAR){
-					//chance for a hidden door scales from 3/21 on floor 2 to 3/3 on floor 20
-					if (Dungeon.depth > 1 &&
-							(Dungeon.depth >= 20 || Random.Int(23 - Dungeon.depth) < Dungeon.depth)) {
+					if (Random.Float() < hiddenDoorChance) {
 						d.type = Room.Door.Type.HIDDEN;
+						//all standard rooms must have an unbroken path to all other standard rooms
+						if (l.feeling != Level.Feeling.SECRETS){
+							Graph.buildDistanceMap(rooms, r);
+							if (n.distance == Integer.MAX_VALUE){
+								d.type = Room.Door.Type.UNLOCKED;
+							}
+						//on a secrets level, rooms just have to not be totally isolated
+						} else {
+							int roomsInGraph = 0;
+							Graph.buildDistanceMap(rooms, r);
+							for (Room rDest : rooms){
+								if (rDest.distance != Integer.MAX_VALUE
+										&& !(rDest instanceof ConnectionRoom)){
+									roomsInGraph++;
+								}
+							}
+							if (roomsInGraph < 2){
+								d.type = Room.Door.Type.UNLOCKED;
+							} else {
+								roomsInGraph = 0;
+								Graph.buildDistanceMap(rooms, n);
+								for (Room nDest : rooms){
+									if (nDest.distance != Integer.MAX_VALUE
+											&& !(nDest instanceof ConnectionRoom)){
+										roomsInGraph++;
+									}
+								}
+								if (roomsInGraph < 2){
+									d.type = Room.Door.Type.UNLOCKED;
+								}
+							}
+						}
 						Graph.buildDistanceMap(rooms, r);
 						//don't hide if it would make this room only accessible by hidden doors
-						if (n.distance == Integer.MAX_VALUE){
+						//unless we're on a secrets depth
+						if (l.feeling != Level.Feeling.SECRETS && n.distance == Integer.MAX_VALUE){
 							d.type = Room.Door.Type.UNLOCKED;
 						}
 					} else {
 						d.type = Room.Door.Type.UNLOCKED;
+					}
+
+					//entrance doors on floor 2 are hidden if the player hasn't picked up 2nd guidebook page
+					if (Dungeon.depth == 2
+							&& !Document.ADVENTURERS_GUIDE.isPageFound(Document.GUIDE_SEARCHING)
+							&& r instanceof EntranceRoom){
+						d.type = Room.Door.Type.HIDDEN;
 					}
 				}
 				
@@ -193,6 +261,9 @@ public abstract class RegularPainter extends Painter {
 						break;
 					case TUNNEL:
 						l.map[door] = l.tunnelTile();
+						break;
+					case WATER:
+						l.map[door] = Terrain.WATER;
 						break;
 					case UNLOCKED:
 						l.map[door] = Terrain.DOOR;
@@ -206,63 +277,68 @@ public abstract class RegularPainter extends Painter {
 					case LOCKED:
 						l.map[door] = Terrain.LOCKED_DOOR;
 						break;
+					case CRYSTAL:
+						l.map[door] = Terrain.CRYSTAL_DOOR;
+						break;
 				}
 			}
 		}
 	}
-	
-	protected boolean joinRooms( Level l, Room r, Room n ) {
-		
-		if (!(r instanceof EmptyRoom && n instanceof EmptyRoom)) {
+
+	protected boolean mergeRooms( Level l, Room r, Room n, Point start, int mergeTerrain){
+
+		Rect intersect = r.intersect( n );
+		if (intersect.left == intersect.right) {
+
+			Rect merge = new Rect();
+			merge.left = merge.right = intersect.left;
+			merge.top = merge.bottom = start != null ? start.y : intersect.center().y;
+
+			Point p = new Point(merge.left, merge.top);
+			while(merge.top > intersect.top && n.canMerge(l, p, mergeTerrain) && r.canMerge(l, p, mergeTerrain)) {
+				merge.top--;
+				p.y--;
+			}
+			p.y = merge.bottom;
+			while(merge.bottom < intersect.bottom && n.canMerge(l, p, mergeTerrain) && r.canMerge(l, p, mergeTerrain)) {
+				merge.bottom++;
+				p.y++;
+			}
+
+			if (merge.height() >= 3) {
+				Painter.fill(l, merge.left, merge.top + 1, 1, merge.height()-1, mergeTerrain);
+				return true;
+			} else {
+				return false;
+			}
+
+		} else if (intersect.top == intersect.bottom) {
+
+			Rect merge = new Rect();
+			merge.left = merge.right = start != null ? start.x : intersect.center().x;
+			merge.top = merge.bottom = intersect.top;
+
+			Point p = new Point(merge.left, merge.top);
+			while(merge.left > intersect.left && n.canMerge(l, p, mergeTerrain) && r.canMerge(l, p, mergeTerrain)) {
+				merge.left--;
+				p.x--;
+			}
+			p.x = merge.right;
+			while(merge.right < intersect.right && n.canMerge(l, p, mergeTerrain) && r.canMerge(l, p, mergeTerrain)) {
+				merge.right++;
+				p.x++;
+			}
+
+			if (merge.width() >= 3) {
+				Painter.fill(l, merge.left + 1, merge.top, merge.width()-1, 1, mergeTerrain);
+				return true;
+			} else {
+				return false;
+			}
+		} else {
 			return false;
 		}
-		
-		//TODO decide on good probabilities and dimension restrictions
-		Rect w = r.intersect( n );
-		if (w.left == w.right) {
-			
-			if (w.bottom - w.top < 3) {
-				return false;
-			}
-			
-			if (w.height()+1 == Math.max( r.height(), n.height() )) {
-				return false;
-			}
-			
-			if (r.width() + n.width() > 10) {
-				return false;
-			}
-			
-			w.top += 1;
-			w.bottom -= 0;
-			
-			w.right++;
-			
-			Painter.fill( l, w.left, w.top, 1, w.height(), Terrain.EMPTY );
-			
-		} else {
-			
-			if (w.right - w.left < 3) {
-				return false;
-			}
-			
-			if (w.width()+1 == Math.max( r.width(), n.width() )) {
-				return false;
-			}
-			
-			if (r.height() + n.height() > 10) {
-				return false;
-			}
-			
-			w.left += 1;
-			w.right -= 0;
-			
-			w.bottom++;
-			
-			Painter.fill( l, w.left, w.top, w.width(), 1, Terrain.EMPTY );
-		}
-		
-		return true;
+
 	}
 	
 	protected void paintWater( Level l, ArrayList<Room> rooms ){
@@ -350,20 +426,46 @@ public abstract class RegularPainter extends Painter {
 		
 		//no more than one trap every 5 valid tiles.
 		nTraps = Math.min(nTraps, validCells.size()/5);
-		
-		for (int i = 0; i < nTraps; i++) {
-			
-			Integer trapPos = Random.element(validCells);
-			validCells.remove(trapPos); //removes the integer object, not at the index
-			
-			try {
-				Trap trap = trapClasses[Random.chances( trapChances )].newInstance().hide();
-				l.setTrap( trap, trapPos );
-				//some traps will not be hidden
-				l.map[trapPos] = trap.visible ? Terrain.TRAP : Terrain.SECRET_TRAP;
-			} catch (Exception e) {
-				throw new RuntimeException(e);
+
+		//for traps that want to avoid being in hallways
+		ArrayList<Integer> validNonHallways = new ArrayList<>();
+
+		//temporarily use the passable array for the next step
+		for (int i = 0; i < l.length(); i++){
+			l.passable[i] = (Terrain.flags[l.map[i]] & Terrain.PASSABLE) != 0;
+		}
+
+		for (int i : validCells){
+			if ((l.passable[i+PathFinder.CIRCLE4[0]] || l.passable[i+PathFinder.CIRCLE4[2]])
+					&& (l.passable[i+PathFinder.CIRCLE4[1]] || l.passable[i+PathFinder.CIRCLE4[3]])){
+				validNonHallways.add(i);
 			}
+		}
+
+		//no more than one trap every 5 valid tiles.
+		nTraps = Math.min(nTraps, validCells.size()/5);
+
+		//5x traps on traps level feeling, but the extra traps are all visible
+		for (int i = 0; i < (l.feeling == Level.Feeling.TRAPS ? 5*nTraps : nTraps); i++) {
+
+			Trap trap = Reflection.newInstance(trapClasses[Random.chances( trapChances )]);
+
+			Integer trapPos;
+			if (trap.avoidsHallways && !validNonHallways.isEmpty()){
+				trapPos = Random.element(validNonHallways);
+			} else {
+				trapPos = Random.element(validCells);
+			}
+			//removes the integer object, not at the index
+			validCells.remove(trapPos);
+			validNonHallways.remove(trapPos);
+
+			if (i < nTraps) trap.hide();
+			else            trap.reveal();
+
+			l.setTrap( trap, trapPos );
+			//some traps will not be hidden
+			l.map[trapPos] = trap.visible ? Terrain.TRAP : Terrain.SECRET_TRAP;
 		}
 	}
 	

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,15 +21,14 @@
 
 package com.watabou.noosa;
 
-import android.opengl.GLES20;
-import android.os.Build;
-
+import com.badlogic.gdx.Gdx;
 import com.watabou.glscripts.Script;
 import com.watabou.glwrap.Attribute;
 import com.watabou.glwrap.Quad;
 import com.watabou.glwrap.Uniform;
 import com.watabou.glwrap.Vertexbuffer;
 
+import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
@@ -74,30 +73,27 @@ public class NoosaScript extends Script {
 	}
 
 	public void drawElements( FloatBuffer vertices, ShortBuffer indices, int size ) {
-		
-		vertices.position( 0 );
+
+		((Buffer)vertices).position( 0 );
 		aXY.vertexPointer( 2, 4, vertices );
-		
-		vertices.position( 2 );
+
+		((Buffer)vertices).position( 2 );
 		aUV.vertexPointer( 2, 4, vertices );
 
 		Quad.releaseIndices();
-		GLES20.glDrawElements( GLES20.GL_TRIANGLES, size, GLES20.GL_UNSIGNED_SHORT, indices );
+		Gdx.gl20.glDrawElements( Gdx.gl20.GL_TRIANGLES, size, Gdx.gl20.GL_UNSIGNED_SHORT, indices );
 		Quad.bindIndices();
 	}
 
 	public void drawQuad( FloatBuffer vertices ) {
-		
-		vertices.position( 0 );
-		aXY.vertexPointer( 2, 4, vertices );
-		
-		vertices.position( 2 );
-		aUV.vertexPointer( 2, 4, vertices );
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			GLES20.glDrawElements( GLES20.GL_TRIANGLES, Quad.SIZE, GLES20.GL_UNSIGNED_SHORT, 0 );
-		}
+		((Buffer)vertices).position( 0 );
+		aXY.vertexPointer( 2, 4, vertices );
+
+		((Buffer)vertices).position( 2 );
+		aUV.vertexPointer( 2, 4, vertices );
 		
+		Gdx.gl20.glDrawElements( Gdx.gl20.GL_TRIANGLES, Quad.SIZE, Gdx.gl20.GL_UNSIGNED_SHORT, 0 );
 	}
 
 	public void drawQuad( Vertexbuffer buffer ) {
@@ -110,10 +106,8 @@ public class NoosaScript extends Script {
 		aUV.vertexBuffer( 2, 4, 2 );
 
 		buffer.release();
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			GLES20.glDrawElements( GLES20.GL_TRIANGLES, Quad.SIZE, GLES20.GL_UNSIGNED_SHORT, 0 );
-		}
+		
+		Gdx.gl20.glDrawElements( Gdx.gl20.GL_TRIANGLES, Quad.SIZE, Gdx.gl20.GL_UNSIGNED_SHORT, 0 );
 	}
 	
 	public void drawQuadSet( FloatBuffer vertices, int size ) {
@@ -121,17 +115,14 @@ public class NoosaScript extends Script {
 		if (size == 0) {
 			return;
 		}
-		
-		vertices.position( 0 );
-		aXY.vertexPointer( 2, 4, vertices );
-		
-		vertices.position( 2 );
-		aUV.vertexPointer( 2, 4, vertices );
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			GLES20.glDrawElements( GLES20.GL_TRIANGLES, Quad.SIZE * size, GLES20.GL_UNSIGNED_SHORT, 0 );
-		}
+		((Buffer)vertices).position( 0 );
+		aXY.vertexPointer( 2, 4, vertices );
+
+		((Buffer)vertices).position( 2 );
+		aUV.vertexPointer( 2, 4, vertices );
 		
+		Gdx.gl20.glDrawElements( Gdx.gl20.GL_TRIANGLES, Quad.SIZE * size, Gdx.gl20.GL_UNSIGNED_SHORT, 0 );
 	}
 
 	public void drawQuadSet( Vertexbuffer buffer, int length, int offset ){
@@ -148,10 +139,8 @@ public class NoosaScript extends Script {
 		aUV.vertexBuffer( 2, 4, 2 );
 
 		buffer.release();
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			GLES20.glDrawElements( GLES20.GL_TRIANGLES, Quad.SIZE * length, GLES20.GL_UNSIGNED_SHORT, Quad.SIZE * Short.SIZE/8 * offset );
-		}
+		
+		Gdx.gl20.glDrawElements( Gdx.gl20.GL_TRIANGLES, Quad.SIZE * length, Gdx.gl20.GL_UNSIGNED_SHORT, Quad.SIZE * Short.SIZE/8 * offset );
 	}
 	
 	public void lighting( float rm, float gm, float bm, float am, float ra, float ga, float ba, float aa ) {
@@ -172,14 +161,21 @@ public class NoosaScript extends Script {
 			uCamera.valueM4( camera.matrix );
 
 			if (!camera.fullScreen) {
-				GLES20.glEnable( GLES20.GL_SCISSOR_TEST );
-				GLES20.glScissor(
-						camera.x,
-						Game.height - camera.screenHeight - camera.y,
-						camera.screenWidth,
-						camera.screenHeight);
+				Gdx.gl20.glEnable( Gdx.gl20.GL_SCISSOR_TEST );
+
+				//This fixes pixel scaling issues on some hidpi displays (mainly on macOS)
+				// because for some reason all other openGL operations work on virtual pixels
+				// but glScissor operations work on real pixels
+				float xScale = (Gdx.graphics.getBackBufferWidth() / (float)Game.width );
+				float yScale = ((Gdx.graphics.getBackBufferHeight()-Game.bottomInset) / (float)Game.height );
+
+				Gdx.gl20.glScissor(
+						Math.round(camera.x * xScale),
+						Math.round((Game.height - camera.screenHeight - camera.y) * yScale) + Game.bottomInset,
+						Math.round(camera.screenWidth * xScale),
+						Math.round(camera.screenHeight * yScale));
 			} else {
-				GLES20.glDisable( GLES20.GL_SCISSOR_TEST );
+				Gdx.gl20.glDisable( Gdx.gl20.GL_SCISSOR_TEST );
 			}
 		}
 	}
@@ -195,23 +191,30 @@ public class NoosaScript extends Script {
 	
 	private static final String SHADER =
 		
-		"uniform mat4 uCamera;" +
-		"uniform mat4 uModel;" +
-		"attribute vec4 aXYZW;" +
-		"attribute vec2 aUV;" +
-		"varying vec2 vUV;" +
-		"void main() {" +
-		"  gl_Position = uCamera * uModel * aXYZW;" +
-		"  vUV = aUV;" +
-		"}" +
+		//vertex shader
+		"uniform mat4 uCamera;\n" +
+		"uniform mat4 uModel;\n" +
+		"attribute vec4 aXYZW;\n" +
+		"attribute vec2 aUV;\n" +
+		"varying vec2 vUV;\n" +
+		"void main() {\n" +
+		"  gl_Position = uCamera * uModel * aXYZW;\n" +
+		"  vUV = aUV;\n" +
+		"}\n" +
 		
+		//this symbol separates the vertex and fragment shaders (see Script.compile)
 		"//\n" +
-
-		"varying mediump vec2 vUV;" +
-		"uniform lowp sampler2D uTex;" +
-		"uniform lowp vec4 uColorM;" +
-		"uniform lowp vec4 uColorA;" +
-		"void main() {" +
-		"  gl_FragColor = texture2D( uTex, vUV ) * uColorM + uColorA;" +
-		"}";
+		
+		//fragment shader
+		//preprocessor directives let us define precision on GLES platforms, and ignore it elsewhere
+		"#ifdef GL_ES\n" +
+		"  precision mediump float;\n" +
+		"#endif\n" +
+		"varying vec2 vUV;\n" +
+		"uniform sampler2D uTex;\n" +
+		"uniform vec4 uColorM;\n" +
+		"uniform vec4 uColorA;\n" +
+		"void main() {\n" +
+		"  gl_FragColor = texture2D( uTex, vUV ) * uColorM + uColorA;\n" +
+		"}\n";
 }

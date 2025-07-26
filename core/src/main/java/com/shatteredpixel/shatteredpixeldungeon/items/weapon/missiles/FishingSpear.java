@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Piranha;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -29,21 +30,10 @@ public class FishingSpear extends MissileWeapon {
 	
 	{
 		image = ItemSpriteSheet.FISHING_SPEAR;
-	}
-	
-	@Override
-	public int min(int lvl) {
-		return 4;
-	}
-	
-	@Override
-	public int max(int lvl) {
-		return 10;
-	}
-	
-	@Override
-	public int STRReq(int lvl) {
-		return 11;
+		hitSound = Assets.Sounds.HIT_STAB;
+		hitSoundPitch = 1.1f;
+		
+		tier = 2;
 	}
 	
 	@Override
@@ -53,10 +43,4 @@ public class FishingSpear extends MissileWeapon {
 		}
 		return super.proc(attacker, defender, damage);
 	}
-	
-	@Override
-	public int price() {
-		return 12 * quantity;
-	}
-	
 }

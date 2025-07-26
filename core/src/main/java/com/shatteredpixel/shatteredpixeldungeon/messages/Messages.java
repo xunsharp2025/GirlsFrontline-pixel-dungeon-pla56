@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,21 +21,20 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.messages;
 
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.I18NBundle;
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
-import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.watabou.noosa.Game;
-import com.watabou.utils.DeviceCompat;
+import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IllegalFormatException;
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 /*
-	Simple wrapper class for java resource bundles.
+	Simple wrapper class for libGDX I18NBundles.
 
 	The core idea here is that each string resource's key is a combination of the class definition and a local value.
 	An object or static method would usually call this with an object/class reference (usually its own) and a local key.
@@ -43,14 +42,7 @@ import java.util.ResourceBundle;
  */
 public class Messages {
 
-	/*
-		use hashmap for two reasons. Firstly because android 2.2 doesn't support resourcebundle.containskey(),
-		secondly so I can read in and combine multiple properties files,
-		resulting in a more clean structure for organizing all the strings, instead of one big file.
-
-		..Yes R.string would do this for me, but that's not multiplatform
-	 */
-	private static HashMap<String, String> strings;
+	private static ArrayList<I18NBundle> bundles;
 	private static Languages lang;
 
 	public static Languages lang(){
@@ -64,49 +56,31 @@ public class Messages {
 	 */
 
 	private static String[] prop_files = new String[]{
-			"com.shatteredpixel.shatteredpixeldungeon.messages.actors.actors",
-			"com.shatteredpixel.shatteredpixeldungeon.messages.items.items",
-			"com.shatteredpixel.shatteredpixeldungeon.messages.journal.journal",
-			"com.shatteredpixel.shatteredpixeldungeon.messages.levels.levels",
-			"com.shatteredpixel.shatteredpixeldungeon.messages.plants.plants",
-			"com.shatteredpixel.shatteredpixeldungeon.messages.scenes.scenes",
-			"com.shatteredpixel.shatteredpixeldungeon.messages.ui.ui",
-			"com.shatteredpixel.shatteredpixeldungeon.messages.windows.windows",
-			"com.shatteredpixel.shatteredpixeldungeon.messages.misc.misc"
+			Assets.Messages.ACTORS,
+			Assets.Messages.ITEMS,
+			Assets.Messages.JOURNAL,
+			Assets.Messages.LEVELS,
+			Assets.Messages.MISC,
+			Assets.Messages.PLANTS,
+			Assets.Messages.SCENES,
+			Assets.Messages.UI,
+			Assets.Messages.WINDOWS
 	};
-
-	private static ResourceBundle[] bundles;
 
 	static{
 		setup(SPDSettings.language());
 	}
 
 	public static void setup( Languages lang ){
-		strings = new HashMap<>();
+		//seeing as missing keys are part of our process, this is faster than throwing an exception
+		I18NBundle.setExceptionOnMissingKey(false);
+
+		bundles = new ArrayList<>();
 		Messages.lang = lang;
 		Locale locale = new Locale(lang.code());
 
-		bundles = new ResourceBundle[prop_files.length];
-		for (int i = 0; i < prop_files.length; i++) {
-			bundles[i] = ResourceBundle.getBundle(prop_files[i], locale);
-		}
-
-		for (ResourceBundle bundle : bundles) {
-			Enumeration<String> keys = bundle.getKeys();
-			while (keys.hasMoreElements()) {
-				String key = keys.nextElement();
-				String value = bundle.getString(key);
-
-				if (DeviceCompat.usesISO_8859_1()) {
-					try {
-						value = new String(value.getBytes("ISO-8859-1"), "UTF-8");
-					} catch (Exception e) {
-						GirlsFrontlinePixelDungeon.reportException(e);
-					}
-				}
-
-				strings.put(key, value);
-			}
+		for (String file : prop_files) {
+			bundles.add(I18NBundle.createBundle(Gdx.files.internal(file), locale));
 		}
 	}
 
@@ -124,61 +98,55 @@ public class Messages {
 		return get(o.getClass(), k, args);
 	}
 
-	public static String get(Class c, String k, Object...args) {
-		return get(c, k, null, args);
-	}
-
-	private static String get(Class c, String k, String baseName, Object...args){
+	public static String get(Class c, String k, Object...args){
 		String key;
 		if (c != null){
-			key = c.getName();
-			key = key.replace("com.shatteredpixel.shatteredpixeldungeon.", "");
+			key = c.getName().replace("com.shatteredpixel.shatteredpixeldungeon.", "");
 			key += "." + k;
 		} else
 			key = k;
 
-		String value = getFromBundle(key.toLowerCase(Locale.CHINA));
+		String value = getFromBundle(key.toLowerCase(Locale.ENGLISH));
 		if (value != null){
 			if (args.length > 0) return format(value, args);
 			else return value;
-		}  else {
-			//Use baseName so the missing string is clear what exactly needs replacing. Otherwise, it just says java.lang.Object.[key]
-			if (baseName == null) {
-				baseName = key;
-				//转换为小写
-				baseName = baseName.toLowerCase();
-			}
+		} else {
 			//this is so child classes can inherit properties from their parents.
 			//in cases where text is commonly grabbed as a utility from classes that aren't mean to be instantiated
 			//(e.g. flavourbuff.dispTurns()) using .class directly is probably smarter to prevent unnecessary recursive calls.
 			if (c != null && c.getSuperclass() != null){
-				return get(c.getSuperclass(), k, baseName, args);
+				return get(c.getSuperclass(), k, args);
 			} else {
-				if (Game.version.contains("DevlopmentVersion")) {
-					System.out.println("Missing translation: " + baseName);
-				}
-				return "Ms:"+baseName;
+				return "!!!NO TEXT FOUND!!!";
 			}
 		}
 	}
 
 	private static String getFromBundle(String key){
 		String result;
-		for (ResourceBundle b : bundles){
-			if (b.containsKey(key)){
-				result = b.getString(key);
+		for (I18NBundle b : bundles){
+			result = b.get(key);
+			//if it isn't the return string for no key found, return it
+			if (result.length() != key.length()+6 || !result.contains(key)){
 				return result;
 			}
 		}
 		return null;
 	}
 
+
+
 	/**
 	 * String Utility Methods
 	 */
 
 	public static String format( String format, Object...args ) {
-		return String.format( Locale.ENGLISH, format, args );
+		try {
+			return String.format(Locale.ENGLISH, format, args);
+		} catch (IllegalFormatException e) {
+			ShatteredPixelDungeon.reportException( e );
+			return format;
+		}
 	}
 
 	public static String capitalize( String str ){

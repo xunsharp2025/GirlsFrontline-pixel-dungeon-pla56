@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,22 +23,21 @@ package com.shatteredpixel.shatteredpixeldungeon.ui;
 
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
-import com.watabou.input.Touchscreen;
+import com.watabou.input.PointerEvent;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.NinePatch;
-import com.watabou.noosa.RenderedText;
-import com.watabou.noosa.TouchArea;
+import com.watabou.noosa.PointerArea;
 import com.watabou.noosa.ui.Component;
 import com.watabou.utils.GameMath;
 import com.watabou.utils.PointF;
 
 public abstract class OptionSlider extends Component {
 
-	private TouchArea touchArea;
+	private PointerArea pointerArea;
 
-	private RenderedText title;
-	private RenderedText minTxt;
-	private RenderedText maxTxt;
+	private RenderedTextBlock title;
+	private RenderedTextBlock minTxt;
+	private RenderedTextBlock maxTxt;
 
 	//values are expressed internally as ints, but they can easily be interpreted as something else externally.
 	private int minVal;
@@ -91,59 +90,62 @@ public abstract class OptionSlider extends Component {
 	protected void createChildren() {
 		super.createChildren();
 
-		add( BG = Chrome.get(Chrome.Type.BUTTON));
+		add( BG = Chrome.get(Chrome.Type.RED_BUTTON));
 		BG.alpha(0.5f);
 
-		add(title = PixelScene.renderText(9));
-		add(this.minTxt = PixelScene.renderText(6));
-		add(this.maxTxt = PixelScene.renderText(6));
+		add(title = PixelScene.renderTextBlock(9));
+		add(this.minTxt = PixelScene.renderTextBlock(6));
+		add(this.maxTxt = PixelScene.renderTextBlock(6));
 
 		add(sliderBG = new ColorBlock(1, 1, 0xFF222222));
-		sliderNode = Chrome.get(Chrome.Type.BUTTON);
+		sliderNode = Chrome.get(Chrome.Type.RED_BUTTON);
 		sliderNode.size(5, 9);
 
-		touchArea = new TouchArea(0, 0, 0, 0){
+		pointerArea = new PointerArea(0, 0, 0, 0){
 			boolean pressed = false;
 
 			@Override
-			protected void onTouchDown(Touchscreen.Touch touch) {
+			protected void onPointerDown( PointerEvent event ) {
 				pressed = true;
-				PointF p = camera().screenToCamera((int) touch.current.x, (int) touch.current.y);
-				sliderNode.x = GameMath.gate(sliderBG.x-2, p.x, sliderBG.x+sliderBG.width()-2);
+				PointF p = camera().screenToCamera((int) event.current.x, (int) event.current.y);
+				sliderNode.x = GameMath.gate(sliderBG.x-2, p.x - sliderNode.width()/2, sliderBG.x+sliderBG.width()-2);
 				sliderNode.brightness(1.5f);
 			}
 
 			@Override
-			protected void onDrag(Touchscreen.Touch touch) {
+			protected void onPointerUp( PointerEvent event ) {
 				if (pressed) {
-					PointF p = camera().screenToCamera((int) touch.current.x, (int) touch.current.y);
-					sliderNode.x = GameMath.gate(sliderBG.x - 2, p.x, sliderBG.x + sliderBG.width() - 2);
-				}
-			}
-
-			@Override
-			protected void onTouchUp(Touchscreen.Touch touch) {
-				if (pressed) {
-					PointF p = camera().screenToCamera((int) touch.current.x, (int) touch.current.y);
-					sliderNode.x = GameMath.gate(sliderBG.x - 2, p.x, sliderBG.x + sliderBG.width() - 2);
+					PointF p = camera().screenToCamera((int) event.current.x, (int) event.current.y);
+					sliderNode.x = GameMath.gate(sliderBG.x - 2, p.x - sliderNode.width()/2, sliderBG.x + sliderBG.width() - 2);
 					sliderNode.resetColor();
-
+					
 					//sets the selected value
-					selectedVal = minVal + Math.round(sliderNode.x / tickDist);
-					sliderNode.x = (int) (x + tickDist * (selectedVal - minVal));
+					selectedVal = minVal + Math.round((sliderNode.x - x) / tickDist);
+					sliderNode.x = x + tickDist * (selectedVal - minVal);
+					PixelScene.align(sliderNode);
 					onChange();
 					pressed = false;
 				}
 			}
+
+			@Override
+			protected void onDrag( PointerEvent event ) {
+				if (pressed) {
+					PointF p = camera().screenToCamera((int) event.current.x, (int) event.current.y);
+					sliderNode.x = GameMath.gate(sliderBG.x - 2, p.x - sliderNode.width()/2, sliderBG.x + sliderBG.width() - 2);
+				}
+			}
 		};
-		add(touchArea);
+		add(pointerArea);
 
 	}
 
 	@Override
 	protected void layout() {
-		title.x = x + (width-title.width())/2;
-		title.y = y+2;
+		title.setPos(
+				x + (width-title.width())/2,
+				y+2
+		);
 		PixelScene.align(title);
 		sliderBG.y = y + height() - 8;
 		sliderBG.x = x+2;
@@ -151,21 +153,27 @@ public abstract class OptionSlider extends Component {
 		tickDist = sliderBG.width()/(maxVal - minVal);
 		for (int i = 0; i < sliderTicks.length; i++){
 			sliderTicks[i].y = sliderBG.y-5;
-			sliderTicks[i].x = (int)(x + 2 + (tickDist*i));
+			sliderTicks[i].x = x + 2 + (tickDist*i);
+			PixelScene.align(sliderTicks[i]);
 		}
 
-		minTxt.y = maxTxt.y = sliderBG.y-6-minTxt.baseLine();
-		minTxt.x = x+1;
-		maxTxt.x = x+width()-maxTxt.width()-1;
+		minTxt.setPos(
+				x+1,
+				sliderBG.y-6-minTxt.height()
+		);
+		maxTxt.setPos(
+				x+width()-maxTxt.width()-1,
+				sliderBG.y-6-minTxt.height()
+		);
 
-
-		sliderNode.x = (int)(x + tickDist*(selectedVal-minVal));
+		sliderNode.x = x + tickDist*(selectedVal-minVal);
 		sliderNode.y = sliderBG.y-4;
+		PixelScene.align(sliderNode);
 
-		touchArea.x = x;
-		touchArea.y = y;
-		touchArea.width = width();
-		touchArea.height = height();
+		pointerArea.x = x;
+		pointerArea.y = y;
+		pointerArea.width = width();
+		pointerArea.height = height();
 
 		BG.size(width(), height());
 		BG.x = x;

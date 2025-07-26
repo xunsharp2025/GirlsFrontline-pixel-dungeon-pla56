@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,20 +21,26 @@
 
 package com.watabou.utils;
 
-import android.content.SharedPreferences;
-import android.os.Build;
-
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.watabou.noosa.Game;
 
 public class GameSettings {
 	
-	private static SharedPreferences prefs;
+	public static final String DEFAULT_PREFS_FILE = "settings.xml";
 	
-	private static SharedPreferences get() {
+	private static Preferences prefs;
+	
+	private static Preferences get() {
 		if (prefs == null) {
-			prefs = Game.instance.getPreferences( Game.MODE_PRIVATE );
+			prefs = Gdx.app.getPreferences( DEFAULT_PREFS_FILE );
 		}
 		return prefs;
+	}
+	
+	//allows setting up of preferences directly during game initialization
+	public static void set( Preferences prefs ){
+		GameSettings.prefs = prefs;
 	}
 	
 	public static boolean contains( String key ){
@@ -47,7 +53,7 @@ public class GameSettings {
 	
 	public static int getInt( String key, int defValue, int min, int max ) {
 		try {
-			int i = get().getInt( key, defValue );
+			int i = get().getInteger( key, defValue );
 			if (i < min || i > max){
 				int val = (int)GameMath.gate(min, i, max);
 				put(key, val);
@@ -55,8 +61,29 @@ public class GameSettings {
 			} else {
 				return i;
 			}
-		} catch (ClassCastException e) {
-			//ShatteredPixelDungeon.reportException(e);
+		} catch (Exception e) {
+			Game.reportException(e);
+			put(key, defValue);
+			return defValue;
+		}
+	}
+
+	public static long getLong( String key, long defValue ) {
+		return getLong(key, defValue, Long.MIN_VALUE, Long.MAX_VALUE);
+	}
+
+	public static long getLong( String key, long defValue, long min, long max ) {
+		try {
+			long i = get().getLong( key, defValue );
+			if (i < min || i > max){
+				long val = (long)GameMath.gate(min, i, max);
+				put(key, val);
+				return val;
+			} else {
+				return i;
+			}
+		} catch (Exception e) {
+			Game.reportException(e);
 			put(key, defValue);
 			return defValue;
 		}
@@ -65,9 +92,8 @@ public class GameSettings {
 	public static boolean getBoolean( String key, boolean defValue ) {
 		try {
 			return get().getBoolean(key, defValue);
-		} catch (ClassCastException e) {
-			//ShatteredPixelDungeon.reportException(e);
-			put(key, defValue);
+		} catch (Exception e) {
+			Game.reportException(e);
 			return defValue;
 		}
 	}
@@ -85,37 +111,31 @@ public class GameSettings {
 			} else {
 				return s;
 			}
-		} catch (ClassCastException e) {
-			//ShatteredPixelDungeon.reportException(e);
+		} catch (Exception e) {
+			Game.reportException(e);
 			put(key, defValue);
 			return defValue;
 		}
 	}
 	
-	//android 2.3+ supports apply, which is asyncronous, much nicer
-	
 	public static void put( String key, int value ) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			get().edit().putInt(key, value).apply();
-		} else {
-			get().edit().putInt(key, value).commit();
-		}
+		get().putInteger(key, value);
+		get().flush();
+	}
+
+	public static void put( String key, long value ) {
+		get().putLong(key, value);
+		get().flush();
 	}
 	
 	public static void put( String key, boolean value ) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			get().edit().putBoolean(key, value).apply();
-		} else {
-			get().edit().putBoolean(key, value).commit();
-		}
+		get().putBoolean(key, value);
+		get().flush();
 	}
 	
 	public static void put( String key, String value ) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			get().edit().putString(key, value).apply();
-		} else {
-			get().edit().putString(key, value).commit();
-		}
+		get().putString(key, value);
+		get().flush();
 	}
 	
 }

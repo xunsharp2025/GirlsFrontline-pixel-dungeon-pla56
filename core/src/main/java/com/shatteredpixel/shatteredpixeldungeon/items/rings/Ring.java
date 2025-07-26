@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,10 @@ import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EnhancedRings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.ItemStatusHandler;
 import com.shatteredpixel.shatteredpixeldungeon.items.KindofMisc;
@@ -41,24 +44,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class Ring extends KindofMisc {
-
-	private static final int TICKS_TO_KNOW    = 200;
 	
 	protected Buff buff;
-	
-	private static final Class<?>[] rings = {
-		RingOfAccuracy.class,
-		RingOfEvasion.class,
-		RingOfElements.class,
-		RingOfForce.class,
-		RingOfFuror.class,
-		RingOfHaste.class,
-		RingOfEnergy.class,
-		RingOfMight.class,
-		RingOfSharpshooting.class,
-		RingOfTenacity.class,
-		RingOfWealth.class,
-	};
 
 	private static final HashMap<String, Integer> gems = new HashMap<String, Integer>() {
 		{
@@ -81,11 +68,12 @@ public class Ring extends KindofMisc {
 	
 	private String gem;
 	
-	private int ticksToKnow = TICKS_TO_KNOW;
+	//rings cannot be 'used' like other equipment, so they ID purely based on exp
+	private float levelsToID = 1;
 	
 	@SuppressWarnings("unchecked")
 	public static void initGems() {
-		handler = new ItemStatusHandler<>( (Class<? extends Ring>[])rings, gems );
+		handler = new ItemStatusHandler<>( (Class<? extends Ring>[])Generator.Category.RING.classes, gems );
 	}
 	
 	public static void save( Bundle bundle ) {
@@ -98,17 +86,27 @@ public class Ring extends KindofMisc {
 	
 	@SuppressWarnings("unchecked")
 	public static void restore( Bundle bundle ) {
-		handler = new ItemStatusHandler<>( (Class<? extends Ring>[])rings, gems, bundle );
+		handler = new ItemStatusHandler<>( (Class<? extends Ring>[])Generator.Category.RING.classes, gems, bundle );
 	}
 	
 	public Ring() {
 		super();
 		reset();
 	}
+
+	//anonymous rings are always IDed, do not affect ID status,
+	//and their sprite is replaced by a placeholder if they are not known,
+	//useful for items that appear in UIs, or which are only spawned for their effects
+	protected boolean anonymous = false;
+	public void anonymize(){
+		if (!isKnown()) image = ItemSpriteSheet.RING_HOLDER;
+		anonymous = true;
+	}
 	
 	public void reset() {
 		super.reset();
-		if (handler != null){
+		levelsToID = 1;
+		if (handler != null && handler.contains(this)){
 			image = handler.image(this);
 			gem = handler.label(this);
 		}
@@ -136,16 +134,18 @@ public class Ring extends KindofMisc {
 	}
 	
 	public boolean isKnown() {
-		return handler.isKnown( this );
+		return anonymous || (handler != null && handler.isKnown( this ));
 	}
 	
-	protected void setKnown() {
-		if (!isKnown()) {
-			handler.know( this );
-		}
-		
-		if (Dungeon.hero.isAlive()) {
-			Catalog.setSeen(getClass());
+	public void setKnown() {
+		if (!anonymous) {
+			if (!isKnown()) {
+				handler.know(this);
+			}
+
+			if (Dungeon.hero.isAlive()) {
+				Catalog.setSeen(getClass());
+			}
 		}
 	}
 	
@@ -155,28 +155,37 @@ public class Ring extends KindofMisc {
 	}
 	
 	@Override
-	public String info() {
-
-		String desc = isKnown()? desc() : Messages.get(this, "unknown_desc");
-
+	public String info(){
+		
+		String desc = isKnown() ? super.desc() : Messages.get(this, "unknown_desc");
+		
 		if (cursed && isEquipped( Dungeon.hero )) {
-			
 			desc += "\n\n" + Messages.get(Ring.class, "cursed_worn");
 			
 		} else if (cursed && cursedKnown) {
-
 			desc += "\n\n" + Messages.get(Ring.class, "curse_known");
-
+			
+		} else if (!isIdentified() && cursedKnown){
+			desc += "\n\n" + Messages.get(Ring.class, "not_cursed");
+			
 		}
-
+		
+		if (isKnown()) {
+			desc += "\n\n" + statsInfo();
+		}
+		
 		return desc;
+	}
+	
+	protected String statsInfo(){
+		return "";
 	}
 	
 	@Override
 	public Item upgrade() {
 		super.upgrade();
 		
-		if (Random.Float() > Math.pow(0.8, level())) {
+		if (Random.Int(3) == 0) {
 			cursed = false;
 		}
 		
@@ -189,9 +198,10 @@ public class Ring extends KindofMisc {
 	}
 	
 	@Override
-	public Item identify() {
+	public Item identify( boolean byHero ) {
 		setKnown();
-		return super.identify();
+		levelsToID = 0;
+		return super.identify(byHero);
 	}
 	
 	@Override
@@ -225,11 +235,11 @@ public class Ring extends KindofMisc {
 	}
 	
 	public static boolean allKnown() {
-		return handler.known().size() == rings.length - 2;
+		return handler.known().size() == Generator.Category.RING.classes.length;
 	}
 	
 	@Override
-	public int price() {
+	public int value() {
 		int price = 75;
 		if (cursed && cursedKnown) {
 			price /= 2;
@@ -251,25 +261,39 @@ public class Ring extends KindofMisc {
 		return null;
 	}
 
-	private static final String UNFAMILIRIARITY    = "unfamiliarity";
+	private static final String LEVELS_TO_ID    = "levels_to_ID";
 
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
-		bundle.put( UNFAMILIRIARITY, ticksToKnow );
+		bundle.put( LEVELS_TO_ID, levelsToID );
 	}
 
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
-		if ((ticksToKnow = bundle.getInt( UNFAMILIRIARITY )) == 0) {
-			ticksToKnow = TICKS_TO_KNOW;
+		levelsToID = bundle.getFloat( LEVELS_TO_ID );
+	}
+	
+	public void onHeroGainExp( float levelPercent, Hero hero ){
+		if (isIdentified() || !isEquipped(hero)) return;
+		levelPercent *= Talent.itemIDSpeedFactor(hero, this);
+		//becomes IDed after 1 level
+		levelsToID -= levelPercent;
+		if (levelsToID <= 0){
+			identify();
+			GLog.p( Messages.get(Ring.class, "identify", toString()) );
+			Badges.validateItemLevelAquired( this );
 		}
-		
-		//pre-0.6.1 saves
-		if (level() < 0){
-			upgrade(-level());
+	}
+
+	@Override
+	public int buffedLvl() {
+		int lvl = super.buffedLvl();
+		if (Dungeon.hero.buff(EnhancedRings.class) != null){
+			lvl++;
 		}
+		return lvl;
 	}
 
 	public static int getBonus(Char target, Class<?extends RingBuff> type){
@@ -280,16 +304,34 @@ public class Ring extends KindofMisc {
 		return bonus;
 	}
 
+	public static int getBuffedBonus(Char target, Class<?extends RingBuff> type){
+		int bonus = 0;
+		for (RingBuff buff : target.buffs(type)) {
+			bonus += buff.buffedLvl();
+		}
+		return bonus;
+	}
+	
+	public int soloBonus(){
+		if (cursed){
+			return Math.min( 0, Ring.this.level()-2 );
+		} else {
+			return Ring.this.level()+1;
+		}
+	}
+
+	public int soloBuffedBonus(){
+		if (cursed){
+			return Math.min( 0, Ring.this.buffedLvl()-2 );
+		} else {
+			return Ring.this.buffedLvl()+1;
+		}
+	}
+
 	public class RingBuff extends Buff {
 		
 		@Override
 		public boolean act() {
-			
-			if (!isIdentified() && --ticksToKnow <= 0) {
-				identify();
-				GLog.w( Messages.get(Ring.class, "identify", Ring.this.toString()) );
-				Badges.validateItemLevelAquired( Ring.this );
-			}
 			
 			spend( TICK );
 			
@@ -297,11 +339,11 @@ public class Ring extends KindofMisc {
 		}
 
 		public int level(){
-			if (Ring.this.cursed){
-				return Math.min( 0, Ring.this.level()-2 );
-			} else {
-				return Ring.this.level()+1;
-			}
+			return Ring.this.soloBonus();
+		}
+
+		public int buffedLvl(){
+			return Ring.this.soloBuffedBonus();
 		}
 
 	}

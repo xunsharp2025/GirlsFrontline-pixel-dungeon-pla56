@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor.Glyph;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite.Glowing;
+import com.watabou.utils.Random;
 
 public class Potential extends Glyph {
 	
@@ -36,12 +37,15 @@ public class Potential extends Glyph {
 	@Override
 	public int proc( Armor armor, Char attacker, Char defender, int damage) {
 
-		int level = Math.max( 0, armor.level() );
+		int level = Math.max( 0, armor.buffedLvl() );
 		
-		if (defender instanceof Hero) {
-			int wands = ((Hero) defender).belongings.charge(0.1f + level*0.05f);
+		// lvl 0 - 16.7%
+		// lvl 1 - 28.6%
+		// lvl 2 - 37.5%
+		if (defender instanceof Hero && Random.Int( level + 6 ) >= 5 ) {
+			int wands = ((Hero) defender).belongings.charge( 1f );
 			if (wands > 0) {
-				defender.sprite.centerEmitter().burst(EnergyParticle.FACTORY, wands * (level + 2));
+				defender.sprite.centerEmitter().burst(EnergyParticle.FACTORY, 10);
 			}
 		}
 		

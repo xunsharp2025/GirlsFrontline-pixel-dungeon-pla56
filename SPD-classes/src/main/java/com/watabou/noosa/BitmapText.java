@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,15 +21,14 @@
 
 package com.watabou.noosa;
 
-import android.graphics.Bitmap;
-
+import com.badlogic.gdx.graphics.Pixmap;
 import com.watabou.gltextures.SmartTexture;
-import com.watabou.gltextures.TextureCache;
 import com.watabou.glwrap.Matrix;
 import com.watabou.glwrap.Quad;
 import com.watabou.glwrap.Vertexbuffer;
 import com.watabou.utils.RectF;
 
+import java.nio.Buffer;
 import java.nio.FloatBuffer;
 
 public class BitmapText extends Visual {
@@ -76,7 +75,7 @@ public class BitmapText extends Visual {
 
 		if (dirty) {
 			updateVertices();
-			quads.limit(quads.position());
+			((Buffer)quads).limit(quads.position());
 			if (buffer == null)
 				buffer = new Vertexbuffer(quads);
 			else
@@ -126,29 +125,29 @@ public class BitmapText extends Visual {
 			float w = font.width( rect );
 			float h = font.height( rect );
 
-			vertices[0] 	= width;
-			vertices[1] 	= 0;
+			vertices[0]     = width;
+			vertices[1]     = 0;
 
-			vertices[2]		= rect.left;
-			vertices[3]		= rect.top;
+			vertices[2]     = rect.left;
+			vertices[3]     = rect.top;
 
-			vertices[4] 	= width + w;
-			vertices[5] 	= 0;
+			vertices[4]     = width + w;
+			vertices[5]     = 0;
 
-			vertices[6]		= rect.right;
-			vertices[7]		= rect.top;
+			vertices[6]     = rect.right;
+			vertices[7]     = rect.top;
 
-			vertices[8] 	= width + w;
-			vertices[9] 	= h;
+			vertices[8]     = width + w;
+			vertices[9]     = h;
 
-			vertices[10]	= rect.right;
-			vertices[11]	= rect.bottom;
+			vertices[10]    = rect.right;
+			vertices[11]    = rect.bottom;
 
-			vertices[12]	= width;
-			vertices[13]	= h;
+			vertices[12]    = width;
+			vertices[13]    = h;
 
-			vertices[14]	= rect.left;
-			vertices[15]	= rect.bottom;
+			vertices[14]    = rect.left;
+			vertices[15]    = rect.bottom;
 
 			quads.put( vertices );
 			realLength++;
@@ -211,8 +210,10 @@ public class BitmapText extends Visual {
 	}
 
 	public synchronized void text( String str ) {
-		text = str;
-		dirty = true;
+		if (str == null || !str.equals(text)) {
+			text = str;
+			dirty = true;
+		}
 	}
 	
 	public static class Font extends TextureFilm {
@@ -264,8 +265,8 @@ public class BitmapText extends Visual {
 			lineHeight = baseLine = height;
 		}
 
-		protected void splitBy( Bitmap bitmap, int height, int color, String chars ) {
-
+		protected void splitBy( Pixmap bitmap, int height, int color, String chars ) {
+			
 			int length = chars.length();
 			
 			int width = bitmap.getWidth();
@@ -302,7 +303,7 @@ public class BitmapText extends Visual {
 						}
 						found = false;
 						for (int j=line; j < line + height; j++) {
-							if (bitmap.getPixel( separator, j ) != color) {
+							if (colorNotMatch( bitmap, separator, j, color)) {
 								found = true;
 								break;
 							}
@@ -320,7 +321,7 @@ public class BitmapText extends Visual {
 						}
 						found = true;
 						for (int j=line; j < line + height; j++) {
-							if (bitmap.getPixel( separator, j ) != color) {
+							if (colorNotMatch( bitmap, separator, j, color)) {
 								found = false;
 								break;
 							}
@@ -335,15 +336,23 @@ public class BitmapText extends Visual {
 			lineHeight = baseLine = height( frames.get( chars.charAt( 0 ) ) );
 		}
 		
-		public static Font colorMarked( Bitmap bmp, int color, String chars ) {
-			Font font = new Font( TextureCache.get( bmp ) );
-			font.splitBy( bmp, bmp.getHeight(), color, chars );
+		private boolean colorNotMatch(Pixmap pixmap, int x, int y, int color) {
+			int pixel = pixmap.getPixel(x, y);
+			if ((pixel & 0xFF) == 0) {
+				return color != 0;
+			}
+			return pixel != color;
+		}
+		
+		public static Font colorMarked( SmartTexture tex, int color, String chars ) {
+			Font font = new Font( tex );
+			font.splitBy( tex.bitmap, tex.height, color, chars );
 			return font;
 		}
 		 
-		public static Font colorMarked( Bitmap bmp, int height, int color, String chars ) {
-			Font font = new Font( TextureCache.get( bmp ) );
-			font.splitBy( bmp, height, color, chars );
+		public static Font colorMarked( SmartTexture tex, int height, int color, String chars ) {
+			Font font = new Font( tex );
+			font.splitBy( tex.bitmap, height, color, chars );
 			return font;
 		}
 		

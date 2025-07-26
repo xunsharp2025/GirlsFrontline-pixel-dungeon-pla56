@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,22 +27,18 @@ import com.watabou.utils.RectF;
 
 import java.util.HashMap;
 
-import static java.lang.Math.round;
-
 public class TextureFilm {
 	
 	private static final RectF FULL = new RectF( 0, 0, 1, 1 );
 	
 	private int texWidth;
 	private int texHeight;
-
-	private SmartTexture texture;
 	
-	protected HashMap<Object,RectF> frames = new HashMap<Object, RectF>();
+	protected HashMap<Object,RectF> frames = new HashMap<>();
 	
 	public TextureFilm( Object tx ) {
-		
-		texture = TextureCache.get( tx );
+
+		SmartTexture texture = TextureCache.get( tx );
 		
 		texWidth = texture.width;
 		texHeight = texture.height;
@@ -55,8 +51,8 @@ public class TextureFilm {
 	}
 	
 	public TextureFilm( Object tx, int width, int height ) {
-		
-		texture = TextureCache.get( tx );
+
+		SmartTexture texture = TextureCache.get( tx );
 		
 		texWidth = texture.width;
 		texHeight = texture.height;
@@ -75,8 +71,6 @@ public class TextureFilm {
 	}
 	
 	public TextureFilm( TextureFilm atlas, Object key, int width, int height ) {
-
-		texture = atlas.texture;
 	
 		texWidth = atlas.texWidth;
 		texHeight = atlas.texHeight;
@@ -85,7 +79,6 @@ public class TextureFilm {
 		
 		float uw = (float)width / texWidth;
 		float vh = (float)height / texHeight;
-
 		int cols = (int)(width( patch ) / width);
 		int rows = (int)(height( patch ) / height);
 		
@@ -102,8 +95,13 @@ public class TextureFilm {
 		frames.put( id, rect );
 	}
 
-	public void add( Object id, int left, int top, int right, int bottom){
-		frames.put( id, texture.uvRect(left, top, right, bottom));
+	public void add( Object id, float left, float top, float right, float bottom){
+		frames.put( id,
+				new RectF(
+				left	/ texWidth,
+				top		/ texHeight,
+				right	/ texWidth,
+				bottom	/ texHeight ));
 	}
 	
 	public RectF get( Object id ) {
@@ -123,11 +121,6 @@ public class TextureFilm {
 	}
 	
 	public float height( RectF frame ) {
-		// 부동 소수점 연산의 부정확성(0.70897654 - 0.56790125 = 0.14197529) 으로 인해서 5번째 행
-		// (4티어 스프라이트 영역)의 높이가 23이 아닌 22.96 픽셀로 판정되어 줄의 수를 계산하는 과정에서
-		// (int)를 통한 강제 형변환 때문에 22.96/23 = 0으로 버림되어 버림. 임시로 반올림하여
-		// 계산하도록 바꾸었지만 혹시라도 다른 곳에서 문제가 생길 수 있음. 문제가 없다면 width 계산
-		// 에도 반영할 것
-		return round(frame.height() * texHeight);
+		return frame.height() * texHeight;
 	}
 }

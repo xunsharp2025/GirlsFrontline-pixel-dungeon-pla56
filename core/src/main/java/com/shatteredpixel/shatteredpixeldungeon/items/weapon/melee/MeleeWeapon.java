@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,9 +45,7 @@ public class MeleeWeapon extends Weapon {
 	}
 
 	public int STRReq(int lvl){
-		lvl = Math.max(0, lvl);
-		//strength req decreases at +1,+3,+6,+10,etc.
-		return (8 + tier * 2) - (int)(Math.sqrt(8 * lvl + 1) - 1)/2;
+		return STRReq(tier, lvl);
 	}
 	
 	@Override
@@ -83,15 +81,15 @@ public class MeleeWeapon extends Weapon {
 			}
 		}
 
-		String stats_desc = Messages.get(this, "stats_desc");
-		if (!stats_desc.equals("")) info+= "\n\n" + stats_desc;
+		String statsInfo = statsInfo();
+		if (!statsInfo.equals("")) info += "\n\n" + statsInfo;
 
 		switch (augment) {
 			case SPEED:
-				info += "\n\n" + Messages.get(Weapon.class, "faster");
+				info += " " + Messages.get(Weapon.class, "faster");
 				break;
 			case DAMAGE:
-				info += "\n\n" + Messages.get(Weapon.class, "stronger");
+				info += " " + Messages.get(Weapon.class, "stronger");
 				break;
 			case NONE:
 		}
@@ -105,13 +103,19 @@ public class MeleeWeapon extends Weapon {
 			info += "\n\n" + Messages.get(Weapon.class, "cursed_worn");
 		} else if (cursedKnown && cursed) {
 			info += "\n\n" + Messages.get(Weapon.class, "cursed");
+		} else if (!isIdentified() && cursedKnown){
+			info += "\n\n" + Messages.get(Weapon.class, "not_cursed");
 		}
 		
 		return info;
 	}
 	
+	public String statsInfo(){
+		return Messages.get(this, "stats_desc");
+	}
+	
 	@Override
-	public int price() {
+	public int value() {
 		int price = 20 * tier;
 		if (hasGoodEnchant()) {
 			price *= 1.5;

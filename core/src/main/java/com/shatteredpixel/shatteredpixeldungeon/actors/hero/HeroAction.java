@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 
 public class HeroAction {
 	
@@ -53,9 +52,9 @@ public class HeroAction {
 	}
 	
 	public static class Interact extends HeroAction {
-		public NPC npc;
-		public Interact( NPC npc ) {
-			this.npc = npc;
+		public Char ch;
+		public Interact( Char ch ) {
+			this.ch = ch;
 		}
 	}
 	

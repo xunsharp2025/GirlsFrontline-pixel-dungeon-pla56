@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,8 @@
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
-import com.watabou.noosa.BitmapTextMultiline;
-import com.watabou.noosa.RenderedText;
 
 public class WndList extends Window {
 	
@@ -46,19 +45,9 @@ public class WndList extends Window {
 				pos += GAP;
 			}
 			
-			RenderedText dot = PixelScene.renderText( "-", 6 );
-			dot.x = MARGIN;
-			dot.y = pos;
-			if (dotWidth == 0) {
-				dotWidth = dot.width();
-			}
-			add( dot );
-			
-			BitmapTextMultiline item = PixelScene.createMultiline( items[i], 6 );
-			item.x = dot.x + dotWidth;
-			item.y = pos;
-			item.maxWidth = (int)(WIDTH - MARGIN * 2 - dotWidth);
-			item.measure();
+			RenderedTextBlock item = PixelScene.renderTextBlock( "-" + items[i], 6 );
+			item.setPos( MARGIN, pos );
+			item.maxWidth(WIDTH - MARGIN*2);
 			add( item );
 			
 			pos += item.height();

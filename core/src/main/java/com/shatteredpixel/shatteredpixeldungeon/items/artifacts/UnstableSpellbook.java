@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,24 +24,36 @@ package com.shatteredpixel.shatteredpixeldungeon.items.artifacts;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.ScrollHolder;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ExoticScroll;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,9 +65,9 @@ public class UnstableSpellbook extends Artifact {
 
 		levelCap = 10;
 
-		charge = (int)(level()*0.4f)+2;
+		charge = (int)(level()*0.6f)+2;
 		partialCharge = 0;
-		chargeCap = (int)(level()*0.4f)+2;
+		chargeCap = (int)(level()*0.6f)+2;
 
 		defaultAction = AC_READ;
 	}
@@ -65,13 +77,11 @@ public class UnstableSpellbook extends Artifact {
 
 	private final ArrayList<Class> scrolls = new ArrayList<>();
 
-	protected WndBag.Mode mode = WndBag.Mode.SCROLL;
-
 	public UnstableSpellbook() {
 		super();
 
 		Class<?>[] scrollClasses = Generator.Category.SCROLL.classes;
-		float[] probs = Generator.Category.SCROLL.probs.clone(); //array of primitives, clone gives deep copy.
+		float[] probs = Generator.Category.SCROLL.defaultProbs.clone(); //array of primitives, clone gives deep copy.
 		int i = Random.chances(probs);
 
 		while (i != -1){
@@ -79,7 +89,8 @@ public class UnstableSpellbook extends Artifact {
 			probs[i] = 0;
 
 			i = Random.chances(probs);
-		};
+		}
+		scrolls.remove(ScrollOfTransmutation.class);
 	}
 
 	@Override
@@ -101,37 +112,102 @@ public class UnstableSpellbook extends Artifact {
 
 			if (hero.buff( Blindness.class ) != null) GLog.w( Messages.get(this, "blinded") );
 			else if (!isEquipped( hero ))             GLog.i( Messages.get(Artifact.class, "need_to_equip") );
-			else if (charge == 0)                     GLog.i( Messages.get(this, "no_charge") );
+			else if (charge <= 0)                     GLog.i( Messages.get(this, "no_charge") );
 			else if (cursed)                          GLog.i( Messages.get(this, "cursed") );
 			else {
 				charge--;
 
 				Scroll scroll;
 				do {
-					scroll = (Scroll) Generator.random(Generator.Category.SCROLL);
+					scroll = (Scroll) Generator.randomUsingDefaults(Generator.Category.SCROLL);
 				} while (scroll == null
 						//reduce the frequency of these scrolls by half
 						||((scroll instanceof ScrollOfIdentify ||
 							scroll instanceof ScrollOfRemoveCurse ||
 							scroll instanceof ScrollOfMagicMapping) && Random.Int(2) == 0)
-						//don't roll teleportation scrolls on boss floors
-						|| (scroll instanceof ScrollOfTeleportation && Dungeon.bossLevel()));
+						//cannot roll transmutation
+						|| (scroll instanceof ScrollOfTransmutation));
 				
-				scroll.ownedByBook = true;
+				scroll.anonymize();
 				curItem = scroll;
 				curUser = hero;
-				
-				//if this scroll hasn't been given to the book
-				if (scrolls.contains(scroll.getClass())) {
-					scroll.doRead();
+
+				//if there are charges left and the scroll has been given to the book
+				if (charge > 0 && !scrolls.contains(scroll.getClass())) {
+					final Scroll fScroll = scroll;
+
+					final ExploitHandler handler = Buff.affect(hero, ExploitHandler.class);
+					handler.scroll = scroll;
+
+					GameScene.show(new WndOptions(new ItemSprite(this),
+							Messages.get(this, "prompt"),
+							Messages.get(this, "read_empowered"),
+							scroll.trueName(),
+							Messages.get(ExoticScroll.regToExo.get(scroll.getClass()), "name")){
+						@Override
+						protected void onSelect(int index) {
+							handler.detach();
+							if (index == 1){
+								Scroll scroll = Reflection.newInstance(ExoticScroll.regToExo.get(fScroll.getClass()));
+								charge--;
+								scroll.doRead();
+								Talent.onArtifactUsed(Dungeon.hero);
+							} else {
+								fScroll.doRead();
+								Talent.onArtifactUsed(Dungeon.hero);
+							}
+							updateQuickslot();
+						}
+						
+						@Override
+						public void onBackPressed() {
+							//do nothing
+						}
+					});
 				} else {
-					scroll.empoweredRead();
+					scroll.doRead();
+					Talent.onArtifactUsed(Dungeon.hero);
 				}
 				updateQuickslot();
 			}
 
 		} else if (action.equals( AC_ADD )) {
-			GameScene.selectItem(itemSelector, mode, Messages.get(this, "prompt"));
+			GameScene.selectItem(itemSelector);
+		}
+	}
+
+	//forces the reading of a regular scroll if the player tried to exploit by quitting the game when the menu was up
+	public static class ExploitHandler extends Buff {
+		{ actPriority = VFX_PRIO; }
+
+		public Scroll scroll;
+
+		@Override
+		public boolean act() {
+			curUser = Dungeon.hero;
+			curItem = scroll;
+			scroll.anonymize();
+			Game.runOnRenderThread(new Callback() {
+				@Override
+				public void call() {
+					scroll.doRead();
+					Item.updateQuickslot();
+				}
+			});
+			detach();
+			return true;
+		}
+
+		@Override
+		public void storeInBundle(Bundle bundle) {
+			super.storeInBundle(bundle);
+			bundle.put( "scroll", scroll );
+		}
+
+		@Override
+		public void restoreFromBundle(Bundle bundle) {
+			super.restoreFromBundle(bundle);
+			scroll = (Scroll)bundle.get("scroll");
 		}
 	}
 
@@ -139,13 +215,25 @@ public class UnstableSpellbook extends Artifact {
 	protected ArtifactBuff passiveBuff() {
 		return new bookRecharge();
 	}
+	
+	@Override
+	public void charge(Hero target, float amount) {
+		if (charge < chargeCap){
+			partialCharge += 0.1f*amount;
+			if (partialCharge >= 1){
+				partialCharge--;
+				charge++;
+				updateQuickslot();
+			}
+		}
+	}
 
 	@Override
 	public Item upgrade() {
-		chargeCap = (int)((level()+1)*0.4f)+2;
+		chargeCap = (int)((level()+1)*0.6f)+2;
 
 		//for artifact transmutation.
-		while (scrolls.size() > (levelCap-1-level()))
+		while (!scrolls.isEmpty() && scrolls.size() > (levelCap-1-level()))
 			scrolls.remove(0);
 
 		return super.upgrade();
@@ -195,7 +283,10 @@ public class UnstableSpellbook extends Artifact {
 		public boolean act() {
 			LockedFloor lock = target.buff(LockedFloor.class);
 			if (charge < chargeCap && !cursed && (lock == null || lock.regenOn())) {
-				partialCharge += 1 / (160f - (chargeCap - charge)*15f);
+				//120 turns to charge at full, 80 turns to charge at 0/8
+				float chargeGain = 1 / (120f - (chargeCap - charge)*5f);
+				chargeGain *= RingOfEnergy.artifactChargeMultiplier(target);
+				partialCharge += chargeGain;
 
 				if (partialCharge >= 1) {
 					partialCharge --;
@@ -215,7 +306,23 @@ public class UnstableSpellbook extends Artifact {
 		}
 	}
 
-	protected WndBag.Listener itemSelector = new WndBag.Listener() {
+	protected WndBag.ItemSelector itemSelector = new WndBag.ItemSelector() {
+
+		@Override
+		public String textPrompt() {
+			return Messages.get(UnstableSpellbook.class, "prompt");
+		}
+
+		@Override
+		public Class<?extends Bag> preferredBag(){
+			return ScrollHolder.class;
+		}
+
+		@Override
+		public boolean itemSelectable(Item item) {
+			return item instanceof Scroll && item.isIdentified() && scrolls.contains(item.getClass());
+		}
+
 		@Override
 		public void onSelect(Item item) {
 			if (item != null && item instanceof Scroll && item.isIdentified()){
@@ -225,7 +332,7 @@ public class UnstableSpellbook extends Artifact {
 						hero.sprite.operate( hero.pos );
 						hero.busy();
 						hero.spend( 2f );
-						Sample.INSTANCE.play(Assets.SND_BURNING);
+						Sample.INSTANCE.play(Assets.Sounds.BURNING);
 						hero.sprite.emitter().burst( ElmoParticle.FACTORY, 12 );
 
 						scrolls.remove(i);
@@ -237,8 +344,9 @@ public class UnstableSpellbook extends Artifact {
 					}
 				}
 				GLog.w( Messages.get(UnstableSpellbook.class, "unable_scroll") );
-			} else if (item instanceof Scroll && !item.isIdentified())
+			} else if (item instanceof Scroll && !item.isIdentified()) {
 				GLog.w( Messages.get(UnstableSpellbook.class, "unknown_scroll") );
+			}
 		}
 	};
 }

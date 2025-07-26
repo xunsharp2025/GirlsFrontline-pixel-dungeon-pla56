@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,16 +21,14 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors;
 
-import android.util.SparseArray;
-
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.SparseArray;
 
 import java.util.HashSet;
 
@@ -48,7 +46,7 @@ public abstract class Actor implements Bundlable {
 	protected static final int VFX_PRIO    = 100;   //visual effects take priority
 	protected static final int HERO_PRIO   = 0;     //positive is before hero, negative after
 	protected static final int BLOB_PRIO   = -10;   //blobs act after hero, before mobs
-	protected static final int MOB_PRIO    = -20;   //mobs act between buffs and blob
+	protected static final int MOB_PRIO    = -20;   //mobs act between buffs and blobs
 	protected static final int BUFF_PRIO   = -30;   //buffs act last in a turn
 	private static final int   DEFAULT     = -100;  //if no priority is given, act after all else
 
@@ -59,22 +57,41 @@ public abstract class Actor implements Bundlable {
 	
 	protected void spend( float time ) {
 		this.time += time;
+		//if time is very close to a whole number, round to a whole number to fix errors
+		float ex = Math.abs(this.time % 1f);
+		if (ex < .001f){
+			this.time = Math.round(this.time);
+		}
+	}
+
+	public void spendToWhole(){
+		time = (float)Math.ceil(time);
 	}
 	
 	protected void postpone( float time ) {
 		if (this.time < now + time) {
 			this.time = now + time;
+			//if time is very close to a whole number, round to a whole number to fix errors
+			float ex = Math.abs(this.time % 1f);
+			if (ex < .001f){
+				this.time = Math.round(this.time);
+			}
 		}
 	}
-
-	public final float getTime() { return time; }
-	public final float getNow() { return now; }
-
+	
 	public float cooldown() {
 		return time - now;
 	}
+
+	public void clearTime() {
+		time = 0;
+	}
+
+	public void timeToNow() {
+		time = now;
+	}
 	
-	protected void deactivate() {
+	protected void diactivate() {
 		time = Float.MAX_VALUE;
 	}
 	
@@ -94,10 +111,14 @@ public abstract class Actor implements Bundlable {
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		time = bundle.getFloat( TIME );
-		id = bundle.getInt( ID );
+		int incomingID = bundle.getInt( ID );
+		if (Actor.findById(incomingID) == null){
+			id = incomingID;
+		} else {
+			id = nextID++;
+		}
 	}
 
-	private static int nextID = 1;
 	public int id() {
 		if (id > 0) {
 			return id;
@@ -108,14 +129,20 @@ public abstract class Actor implements Bundlable {
 
 	// **********************
 	// *** Static members ***
+	// **********************
 	
 	private static HashSet<Actor> all = new HashSet<>();
 	private static HashSet<Char> chars = new HashSet<>();
 	private static volatile Actor current;
 
 	private static SparseArray<Actor> ids = new SparseArray<>();
+	private static int nextID = 1;
 
 	private static float now = 0;
+	
+	public static float now(){
+		return now;
+	}
 	
 	public static synchronized void clear() {
 		
@@ -126,12 +153,10 @@ public abstract class Actor implements Bundlable {
 
 		ids.clear();
 	}
-	
+
 	public static synchronized void fixTime() {
 		
-		if (Dungeon.hero != null && all.contains( Dungeon.hero )) {
-			Statistics.duration += now;
-		}
+		if (all.isEmpty()) return;
 		
 		float min = Float.MAX_VALUE;
 		for (Actor a : all) {
@@ -139,10 +164,18 @@ public abstract class Actor implements Bundlable {
 				min = a.time;
 			}
 		}
+
+		//Only pull everything back by whole numbers
+		//So that turns always align with a whole number
+		min = (int)min;
 		for (Actor a : all) {
 			a.time -= min;
 		}
-		now = 0;
+
+		if (Dungeon.hero != null && all.contains( Dungeon.hero )) {
+			Statistics.duration += min;
+		}
+		now -= min;
 	}
 	
 	public static void init() {
@@ -183,6 +216,12 @@ public abstract class Actor implements Bundlable {
 	public static boolean processing(){
 		return current != null;
 	}
+
+	public static int curActorPriority() {
+		return current != null ? current.actPriority : DEFAULT;
+	}
+	
+	public static boolean keepActorThreadAlive = true;
 	
 	public static void process() {
 		
@@ -193,14 +232,14 @@ public abstract class Actor implements Bundlable {
 			
 			current = null;
 			if (!interrupted) {
-				now = Float.MAX_VALUE;
-				
+				float earliest = Float.MAX_VALUE;
+
 				for (Actor actor : all) {
 					
 					//some actors will always go before others if time is equal.
-					if (actor.time < now ||
-							actor.time == now && (current == null || actor.actPriority > current.actPriority)) {
-						now = actor.time;
+					if (actor.time < earliest ||
+							actor.time == earliest && (current == null || actor.actPriority > current.actPriority)) {
+						earliest = actor.time;
 						current = actor;
 					}
 					
@@ -209,6 +248,7 @@ public abstract class Actor implements Bundlable {
 
 			if  (current != null) {
 
+				now = current.time;
 				Actor acting = current;
 
 				if (acting instanceof Char && ((Char) acting).sprite != null) {
@@ -250,11 +290,9 @@ public abstract class Actor implements Bundlable {
 						current = null;
 						interrupted = false;
 					}
-					
-					synchronized (GameScene.class){
-						//signals to the gamescene that actor processing is finished for now
-						GameScene.class.notify();
-					}
+
+					//signals to the gamescene that actor processing is finished for now
+					Thread.currentThread().notify();
 					
 					try {
 						Thread.currentThread().wait();
@@ -264,7 +302,7 @@ public abstract class Actor implements Bundlable {
 				}
 			}
 
-		} while (true);
+		} while (keepActorThreadAlive);
 	}
 	
 	public static void add( Actor actor ) {
@@ -291,8 +329,7 @@ public abstract class Actor implements Bundlable {
 			Char ch = (Char)actor;
 			chars.add( ch );
 			for (Buff buff : ch.buffs()) {
-				all.add( buff );
-				buff.onAdd();
+				add(buff);
 			}
 		}
 	}
@@ -323,8 +360,8 @@ public abstract class Actor implements Bundlable {
 	}
 
 	public static synchronized HashSet<Actor> all() {
-		return new HashSet<Actor>(all);
+		return new HashSet<>(all);
 	}
 
-	public static synchronized HashSet<Char> chars() { return new HashSet<Char>(chars); }
+	public static synchronized HashSet<Char> chars() { return new HashSet<>(chars); }
 }

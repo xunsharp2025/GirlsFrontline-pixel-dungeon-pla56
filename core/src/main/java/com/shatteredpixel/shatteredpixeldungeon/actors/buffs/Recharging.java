@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,14 +27,25 @@ import com.watabou.noosa.Image;
 
 public class Recharging extends FlavourBuff {
 
+	public static final float DURATION = 30f;
+
+	{
+		type = buffType.POSITIVE;
+	}
+
 	@Override
 	public int icon() {
 		return BuffIndicator.RECHARGING;
 	}
-	
+
 	@Override
 	public void tintIcon(Image icon) {
-		FlavourBuff.greyIcon(icon, 5f, cooldown());
+		icon.hardlight(1, 1, 0);
+	}
+
+	@Override
+	public float iconFadePercent() {
+		return Math.max(0, (DURATION - visualcooldown()) / DURATION);
 	}
 	
 	@Override

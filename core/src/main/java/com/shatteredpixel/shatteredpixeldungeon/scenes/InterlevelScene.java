@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,18 +22,28 @@
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.LostBackpack;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.services.updates.Updates;
 import com.shatteredpixel.shatteredpixeldungeon.ui.GameLog;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
+import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndError;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndStory;
 import com.watabou.gltextures.TextureCache;
@@ -43,12 +53,12 @@ import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.NoosaScript;
 import com.watabou.noosa.NoosaScriptNoLighting;
-import com.watabou.noosa.RenderedText;
 import com.watabou.noosa.SkinnedBlock;
-import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.DeviceCompat;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class InterlevelScene extends PixelScene {
 	
@@ -79,11 +89,17 @@ public class InterlevelScene extends PixelScene {
 	private Phase phase;
 	private float timeLeft;
 	
-	private RenderedText message;
+	private RenderedTextBlock message;
 	
 	private static Thread thread;
 	private static Exception error = null;
 	private float waitingTime;
+
+	public static int lastRegion = -1;
+
+	{
+		inGameScene = true;
+	}
 	
 	@Override
 	public void create() {
@@ -111,7 +127,7 @@ public class InterlevelScene extends PixelScene {
 					if (!(Statistics.deepestFloor < loadingDepth)) {
 						fadeTime = FAST_FADE;
 					} else if (loadingDepth == 6 || loadingDepth == 11
-							|| loadingDepth == 16 || loadingDepth == 22) {
+							|| loadingDepth == 16 || loadingDepth == 21) {
 						fadeTime = SLOW_FADE;
 					}
 				}
@@ -131,12 +147,28 @@ public class InterlevelScene extends PixelScene {
 				scrollSpeed = returnDepth > Dungeon.depth ? 15 : -15;
 				break;
 		}
-		if (loadingDepth <= 5)          loadingAsset = Assets.LOADING_SEWERS;
-		else if (loadingDepth <= 10)    loadingAsset = Assets.LOADING_PRISON;
-		else if (loadingDepth <= 15)    loadingAsset = Assets.LOADING_CAVES;
-		else if (loadingDepth <= 21)    loadingAsset = Assets.LOADING_CITY;
-		else if (loadingDepth <= 25)    loadingAsset = Assets.LOADING_HALLS;
-		else                            loadingAsset = Assets.SHADOW;
+
+		//flush the texture cache whenever moving between regions, helps reduce memory load
+		int region = (int)Math.ceil(loadingDepth / 5f);
+		if (region != lastRegion){
+			TextureCache.clear();
+			lastRegion = region;
+		}
+
+		if      (lastRegion == 1)    loadingAsset = Assets.Interfaces.LOADING_SEWERS;
+		else if (lastRegion == 2)    loadingAsset = Assets.Interfaces.LOADING_PRISON;
+		else if (lastRegion == 3)    loadingAsset = Assets.Interfaces.LOADING_CAVES;
+		else if (lastRegion == 4)    loadingAsset = Assets.Interfaces.LOADING_CITY;
+		else if (lastRegion == 5)    loadingAsset = Assets.Interfaces.LOADING_HALLS;
+		else                         loadingAsset = Assets.Interfaces.SHADOW;
+		
+		//slow down transition when displaying an install prompt
+		if (Updates.isInstallable()){
+			fadeTime += 0.5f; //adds 1 second total
+		//speed up transition when debugging
+		} else if (DeviceCompat.isDebug()){
+			fadeTime = 0f;
+		}
 		
 		SkinnedBlock bg = new SkinnedBlock(Camera.main.width, Camera.main.height, loadingAsset ){
 			@Override
@@ -158,6 +190,7 @@ public class InterlevelScene extends PixelScene {
 			}
 		};
 		bg.scale(4, 4);
+		bg.autoAdjust = true;
 		add(bg);
 		
 		Image im = new Image(TextureCache.createGradient(0xAA000000, 0xBB000000, 0xCC000000, 0xDD000000, 0xFF000000)){
@@ -177,11 +210,37 @@ public class InterlevelScene extends PixelScene {
 
 		String text = Messages.get(Mode.class, mode.name());
 		
-		message = PixelScene.renderText( text, 9 );
-		message.x = (Camera.main.width - message.width()) / 2;
-		message.y = (Camera.main.height - message.height()) / 2;
+		message = PixelScene.renderTextBlock( text, 9 );
+		message.setPos(
+				(Camera.main.width - message.width()) / 2,
+				(Camera.main.height - message.height()) / 2
+		);
 		align(message);
 		add( message );
+
+		if (Updates.isInstallable()){
+			StyledButton install = new StyledButton(Chrome.Type.GREY_BUTTON_TR, Messages.get(this, "install")){
+				@Override
+				public void update() {
+					super.update();
+					float p = timeLeft / fadeTime;
+					if (phase == Phase.FADE_IN)         alpha(1 - p);
+					else if (phase == Phase.FADE_OUT)   alpha(p);
+					else                                alpha(1);
+				}
+
+				@Override
+				protected void onClick() {
+					super.onClick();
+					Updates.launchInstall();
+				}
+			};
+			install.icon(Icons.get(Icons.CHANGES));
+			install.textColor(Window.SHPX_COLOR);
+			install.setSize(install.reqWidth()+5, 20);
+			install.setPos((Camera.main.width - install.width())/2, (Camera.main.height - message.bottom())/3 + message.bottom());
+			add(install);
+		}
 		
 		phase = Phase.FADE_IN;
 		timeLeft = fadeTime;
@@ -192,7 +251,12 @@ public class InterlevelScene extends PixelScene {
 				public void run() {
 					
 					try {
-						
+
+						if (Dungeon.hero != null){
+							Dungeon.hero.spendToWhole();
+						}
+						Actor.fixTime();
+
 						switch (mode) {
 							case DESCEND:
 								descend();
@@ -215,10 +279,6 @@ public class InterlevelScene extends PixelScene {
 							case RESET:
 								reset();
 								break;
-						}
-						
-						if ((Dungeon.depth % 5) == 0) {
-							Sample.INSTANCE.load(Assets.SND_BOSS);
 						}
 						
 					} catch (Exception e) {
@@ -278,7 +338,8 @@ public class InterlevelScene extends PixelScene {
 				else if (error.getMessage() != null &&
 						error.getMessage().equals("old save")) errorMsg = Messages.get(this, "io_error");
 
-				else throw new RuntimeException("fatal error occured while moving between floors", error);
+				else throw new RuntimeException("fatal error occured while moving between floors. " +
+							"Seed:" + Dungeon.seed + " depth:" + Dungeon.depth, error);
 
 				add( new WndError( errorMsg ) {
 					public void onBackPressed() {
@@ -288,14 +349,14 @@ public class InterlevelScene extends PixelScene {
 				} );
 				thread = null;
 				error = null;
-			} else if ((int)waitingTime == 10){
+			} else if (thread != null && (int)waitingTime == 10){
 				waitingTime = 11f;
 				String s = "";
 				for (StackTraceElement t : thread.getStackTrace()){
 					s += "\n";
 					s += t.toString();
 				}
-				GirlsFrontlinePixelDungeon.reportException(
+				ShatteredPixelDungeon.reportException(
 						new RuntimeException("waited more than 10 seconds on levelgen. " +
 								"Seed:" + Dungeon.seed + " depth:" + Dungeon.depth + " trace:" +
 								s)
@@ -307,10 +368,8 @@ public class InterlevelScene extends PixelScene {
 
 	private void descend() throws IOException {
 
-		Actor.fixTime();
-		
 		if (Dungeon.hero == null) {
-			DriedRose.clearHeldGhostHero();
+			Mob.clearHeldAllies();
 			Dungeon.init();
 			if (noStory) {
 				Dungeon.chapters.add( WndStory.ID_SEWERS );
@@ -318,7 +377,7 @@ public class InterlevelScene extends PixelScene {
 			}
 			GameLog.wipe();
 		} else {
-			DriedRose.holdGhostHero( Dungeon.level );
+			Mob.holdAllies( Dungeon.level );
 			Dungeon.saveAll();
 		}
 
@@ -333,9 +392,8 @@ public class InterlevelScene extends PixelScene {
 	}
 	
 	private void fall() throws IOException {
-
-		Actor.fixTime();
-		DriedRose.holdGhostHero( Dungeon.level );
+		
+		Mob.holdAllies( Dungeon.level );
 		
 		Buff.affect( Dungeon.hero, Chasm.Falling.class );
 		Dungeon.saveAll();
@@ -352,8 +410,7 @@ public class InterlevelScene extends PixelScene {
 	
 	private void ascend() throws IOException {
 		
-		Actor.fixTime();
-		DriedRose.holdGhostHero( Dungeon.level );
+		Mob.holdAllies( Dungeon.level );
 
 		Dungeon.saveAll();
 		Dungeon.depth--;
@@ -363,8 +420,7 @@ public class InterlevelScene extends PixelScene {
 	
 	private void returnTo() throws IOException {
 		
-		Actor.fixTime();
-		DriedRose.holdGhostHero( Dungeon.level );
+		Mob.holdAllies( Dungeon.level );
 
 		Dungeon.saveAll();
 		Dungeon.depth = returnDepth;
@@ -374,8 +430,7 @@ public class InterlevelScene extends PixelScene {
 	
 	private void restore() throws IOException {
 		
-		Actor.fixTime();
-		DriedRose.clearHeldGhostHero();
+		Mob.clearHeldAllies();
 
 		GameLog.wipe();
 
@@ -389,26 +444,54 @@ public class InterlevelScene extends PixelScene {
 		}
 	}
 	
-	private void resurrect() throws IOException {
+	private void resurrect() {
 		
-		Actor.fixTime();
-		DriedRose.holdGhostHero( Dungeon.level );
-		
+		Mob.holdAllies( Dungeon.level );
+
+		Level level;
 		if (Dungeon.level.locked) {
-			Dungeon.hero.resurrect( Dungeon.depth );
+			ArrayList<Item> preservedItems = Dungeon.level.getItemsToPreserveFromSealedResurrect();
+
+			Dungeon.hero.resurrect();
 			Dungeon.depth--;
-			Level level = Dungeon.newLevel();
-			Dungeon.switchLevel( level, level.entrance );
+			level = Dungeon.newLevel();
+			Dungeon.hero.pos = level.randomRespawnCell(Dungeon.hero);
+
+			for (Item i : preservedItems){
+				level.drop(i, level.randomRespawnCell(null));
+			}
+			level.drop(new LostBackpack(), level.randomRespawnCell(null));
+
 		} else {
-			Dungeon.hero.resurrect( -1 );
-			Dungeon.resetLevel();
+			level = Dungeon.level;
+			BArray.setFalse(level.heroFOV);
+			BArray.setFalse(level.visited);
+			BArray.setFalse(level.mapped);
+			int invPos = Dungeon.hero.pos;
+			int tries = 0;
+			do {
+				Dungeon.hero.pos = level.randomRespawnCell(Dungeon.hero);
+				tries++;
+
+			//prevents spawning on traps or plants, prefers farther locations first
+			} while (level.traps.get(Dungeon.hero.pos) != null
+					|| (level.plants.get(Dungeon.hero.pos) != null && tries < 500)
+					|| level.trueDistance(invPos, Dungeon.hero.pos) <= 30 - (tries/10));
+
+			//directly trample grass
+			if (level.map[Dungeon.hero.pos] == Terrain.HIGH_GRASS || level.map[Dungeon.hero.pos] == Terrain.FURROWED_GRASS){
+				level.map[Dungeon.hero.pos] = Terrain.GRASS;
+			}
+			Dungeon.hero.resurrect();
+			level.drop(new LostBackpack(), invPos);
 		}
+
+		Dungeon.switchLevel( level, Dungeon.hero.pos );
 	}
 
 	private void reset() throws IOException {
-
-		Actor.fixTime();
-		DriedRose.holdGhostHero( Dungeon.level );
+		
+		Mob.holdAllies( Dungeon.level );
 
 		SpecialRoom.resetPitRoom(Dungeon.depth+1);
 

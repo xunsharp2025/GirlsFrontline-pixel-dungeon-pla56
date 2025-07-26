@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,13 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.watabou.noosa.audio.Sample;
-import com.watabou.utils.Bundle;
 
 public class Camouflage extends Armor.Glyph {
 
@@ -40,58 +40,16 @@ public class Camouflage extends Armor.Glyph {
 		return damage;
 	}
 
+	public static void activate(Char ch, int level){
+		Buff.prolong(ch, Invisibility.class, 3 + level/2);
+		if ( Dungeon.level.heroFOV[ch.pos] ) {
+			Sample.INSTANCE.play( Assets.Sounds.MELD );
+		}
+	}
+
 	@Override
 	public ItemSprite.Glowing glowing() {
 		return GREEN;
-	}
-
-	public static class Camo extends Invisibility {
-		private int pos;
-		private int left;
-
-		@Override
-		public boolean act() {
-			left--;
-			if (left == 0 || target.pos != pos) {
-				detach();
-			} else {
-				spend(TICK);
-			}
-			return true;
-		}
-
-		public void set(int time){
-			left = time;
-			pos = target.pos;
-			Sample.INSTANCE.play( Assets.SND_MELD );
-		}
-
-		@Override
-		public String toString() {
-			return Messages.get(this, "name");
-		}
-
-		@Override
-		public String desc() {
-			return Messages.get(this, "desc", dispTurns(left));
-		}
-
-		private static final String POS     = "pos";
-		private static final String LEFT	= "left";
-
-		@Override
-		public void storeInBundle( Bundle bundle ) {
-			super.storeInBundle( bundle );
-			bundle.put( POS, pos );
-			bundle.put( LEFT, left );
-		}
-
-		@Override
-		public void restoreFromBundle( Bundle bundle ) {
-			super.restoreFromBundle( bundle );
-			pos = bundle.getInt( POS );
-			left = bundle.getInt( LEFT );
-		}
 	}
 
 }

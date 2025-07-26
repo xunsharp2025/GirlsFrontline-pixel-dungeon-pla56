@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,13 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Launcher.Launcher;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Crossbow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Bolas;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Boomerang;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.FishingSpear;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.HeavyBoomerang;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Javelin;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Kunai;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Shuriken;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingKnife;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingSpear;
@@ -49,26 +51,32 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
 	private Callback callback;
 	
 	public void reset( int from, int to, Item item, Callback listener ) {
-		reset( DungeonTilemap.tileToWorld( from ), DungeonTilemap.tileToWorld( to ), item, listener);
-	}
-
-	public void reset( Visual from, Visual to, Item item, Callback listener ) {
-		reset(from.center(this), to.center(this), item, listener );
+		reset(Dungeon.level.solid[from] ? DungeonTilemap.raisedTileCenterToWorld(from) : DungeonTilemap.raisedTileCenterToWorld(from),
+				Dungeon.level.solid[to] ? DungeonTilemap.raisedTileCenterToWorld(to) : DungeonTilemap.raisedTileCenterToWorld(to),
+				item, listener);
 	}
 
 	public void reset( Visual from, int to, Item item, Callback listener ) {
-		reset(from.center(this), DungeonTilemap.tileToWorld( to ), item, listener );
+		reset(from.center(),
+				Dungeon.level.solid[to] ? DungeonTilemap.raisedTileCenterToWorld(to) : DungeonTilemap.raisedTileCenterToWorld(to),
+				item, listener );
 	}
-	
+
 	public void reset( int from, Visual to, Item item, Callback listener ) {
-		reset(DungeonTilemap.tileToWorld( from ), to.center(this), item, listener );
+		reset(Dungeon.level.solid[from] ? DungeonTilemap.raisedTileCenterToWorld(from) : DungeonTilemap.raisedTileCenterToWorld(from),
+				to.center(),
+				item, listener );
+	}
+
+	public void reset( Visual from, Visual to, Item item, Callback listener ) {
+		reset(from.center(), to.center(), item, listener );
 	}
 
 	public void reset( PointF from, PointF to, Item item, Callback listener) {
 		revive();
 
 		if (item == null)   view(0, null);
-		else                view(item.image(), item.glowing());
+		else                view( item );
 
 		setup( from,
 				to,
@@ -84,21 +92,33 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
 		ANGULAR_SPEEDS.put(ThrowingKnife.class, 0);
 		ANGULAR_SPEEDS.put(FishingSpear.class,  0);
 		ANGULAR_SPEEDS.put(ThrowingSpear.class, 0);
+		ANGULAR_SPEEDS.put(Kunai.class,         0);
 		ANGULAR_SPEEDS.put(Javelin.class,       0);
 		ANGULAR_SPEEDS.put(Trident.class,       0);
 		
+		ANGULAR_SPEEDS.put(SpiritBow.SpiritArrow.class,       0);
+		ANGULAR_SPEEDS.put(ScorpioSprite.ScorpioShot.class,   0);
+		
 		//720 is default
 		
-		ANGULAR_SPEEDS.put(Boomerang.class,     1440);
+		ANGULAR_SPEEDS.put(HeavyBoomerang.class,1440);
 		ANGULAR_SPEEDS.put(Bolas.class,         1440);
 		
 		ANGULAR_SPEEDS.put(Shuriken.class,      2160);
+		
+		ANGULAR_SPEEDS.put(TenguSprite.TenguShuriken.class,      2160);
 	}
 
 	//TODO it might be nice to have a source and destination angle, to improve thrown weapon visuals
 	private void setup( PointF from, PointF to, Item item, Callback listener ){
 
 		originToCenter();
+
+		//adjust points so they work with the center of the missile sprite, not the corner
+		from.x -= width()/2;
+		to.x -= width()/2;
+		from.y -= height()/2;
+		to.y -= height()/2;
 
 		this.callback = listener;
 
@@ -129,9 +149,15 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
 		}
 		
 		float speed = SPEED;
-		if (item instanceof Dart && Dungeon.hero.belongings.weapon instanceof Launcher){
+		if (item instanceof Dart && Dungeon.hero.belongings.weapon() instanceof Crossbow){
 			speed *= 3f;
+			
+		} else if (item instanceof SpiritBow.SpiritArrow
+				|| item instanceof ScorpioSprite.ScorpioShot
+				|| item instanceof TenguSprite.TenguShuriken){
+			speed *= 1.5f;
 		}
+		
 		PosTweener tweener = new PosTweener( this, to, d.length() / speed );
 		tweener.listener = this;
 		parent.add( tweener );

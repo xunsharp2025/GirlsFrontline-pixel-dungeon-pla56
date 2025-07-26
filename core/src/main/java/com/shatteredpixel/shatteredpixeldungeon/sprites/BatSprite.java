@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,21 +29,21 @@ public class BatSprite extends MobSprite {
 	public BatSprite() {
 		super();
 		
-		texture( Assets.SCOUT );
+		texture( Assets.Sprites.BAT );
 		
-		TextureFilm frames = new TextureFilm( texture, 18, 19 );
+		TextureFilm frames = new TextureFilm( texture, 15, 15 );
 		
 		idle = new Animation( 8, true );
-		idle.frames( frames, 0 );
+		idle.frames( frames, 0, 1 );
 		
 		run = new Animation( 12, true );
-		run.frames( frames, 0 );
+		run.frames( frames, 0, 1 );
 		
-		attack = new Animation( 15, false );
-		attack.frames( frames, 1, 0, 2, 0 );
+		attack = new Animation( 12, false );
+		attack.frames( frames, 2, 3, 0, 1 );
 		
 		die = new Animation( 12, false );
-		die.frames( frames, 3, 4, 5 );
+		die.frames( frames, 4, 5, 6 );
 		
 		play( idle );
 	}

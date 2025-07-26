@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.blobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BlobEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Rect;
+import com.watabou.utils.Reflection;
 
 public class Blob extends Actor {
 
@@ -43,6 +43,8 @@ public class Blob extends Actor {
 	public BlobEmitter emitter;
 
 	public Rect area = new Rect();
+	
+	public boolean alwaysVisible = false;
 
 	private static final String CUR		= "cur";
 	private static final String START	= "start";
@@ -119,7 +121,11 @@ public class Blob extends Actor {
 			cur = tmp;
 			
 		} else {
-			area.setEmpty();
+			if (!area.isEmpty()) {
+				area.setEmpty();
+				//clear any values remaining in off
+				System.arraycopy(cur, 0, off, 0, cur.length);
+			}
 		}
 		
 		return true;
@@ -212,6 +218,10 @@ public class Blob extends Actor {
 		cur = new int[Dungeon.level.length()];
 		off = new int[Dungeon.level.length()];
 	}
+
+	public void onBuildFlagMaps( Level l ){
+		//do nothing by default, only some blobs affect flags
+	}
 	
 	public String tileDesc() {
 		return null;
@@ -223,22 +233,23 @@ public class Blob extends Actor {
 	
 	@SuppressWarnings("unchecked")
 	public static<T extends Blob> T seed( int cell, int amount, Class<T> type, Level level ) {
-		try {
-			
-			T gas = (T)level.blobs.get( type );
-			if (gas == null) {
-				gas = type.newInstance();
-				level.blobs.put( type, gas );
+		
+		T gas = (T)level.blobs.get( type );
+		
+		if (gas == null) {
+			gas = Reflection.newInstance(type);
+			//this ensures that gasses do not get an 'extra turn' if they are added by a mob or buff
+			if (Actor.curActorPriority() < gas.actPriority) {
+				gas.spend(1f);
 			}
-			
-			gas.seed( level, cell, amount );
-			
-			return gas;
-			
-		} catch (Exception e) {
-			GirlsFrontlinePixelDungeon.reportException(e);
-			return null;
 		}
+		
+		if (gas != null){
+			level.blobs.put( type, gas );
+			gas.seed( level, cell, amount );
+		}
+		
+		return gas;
 	}
 
 	public static int volumeAt( int cell, Class<? extends Blob> type){

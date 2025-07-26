@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Dart;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.utils.Callback;
 
@@ -34,7 +34,7 @@ public class ScorpioSprite extends MobSprite {
 	public ScorpioSprite() {
 		super();
 		
-		texture( Assets.SCORPIO );
+		texture( Assets.Sprites.SCORPIO );
 		
 		TextureFilm frames = new TextureFilm( texture, 18, 17 );
 		
@@ -81,7 +81,7 @@ public class ScorpioSprite extends MobSprite {
 			idle();
 			
 			((MissileSprite)parent.recycle( MissileSprite.class )).
-			reset( ch.pos, cellToAttack, new Dart(), new Callback() {
+			reset( this, cellToAttack, new ScorpioShot(), new Callback() {
 				@Override
 				public void call() {
 					ch.onAttackComplete();
@@ -89,6 +89,12 @@ public class ScorpioSprite extends MobSprite {
 			} );
 		} else {
 			super.onComplete( anim );
+		}
+	}
+	
+	public class ScorpioShot extends Item {
+		{
+			image = ItemSpriteSheet.FISHING_SPEAR;
 		}
 	}
 }

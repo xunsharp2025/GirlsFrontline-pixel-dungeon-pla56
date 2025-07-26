@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.tiles;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
@@ -28,7 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 public class GridTileMap extends DungeonTilemap {
 
 	public GridTileMap() {
-		super("visual_grid.png");
+		super( Assets.Environment.VISUAL_GRID );
 
 		map( Dungeon.level.map, Dungeon.level.width() );
 	}
@@ -45,7 +46,7 @@ public class GridTileMap extends DungeonTilemap {
 	protected int getTileVisual(int pos, int tile, boolean flat) {
 		if (gridSetting == -1 || (pos % mapWidth) % 2 != (pos / mapWidth) % 2){
 			return -1;
-		} else if (DungeonTileSheet.floorTile(tile) || tile == Terrain.HIGH_GRASS) {
+		} else if (DungeonTileSheet.floorTile(tile) || tile == Terrain.HIGH_GRASS || tile == Terrain.FURROWED_GRASS) {
 			return gridSetting;
 		} else if (DungeonTileSheet.doorTile(tile)){
 			if (DungeonTileSheet.wallStitcheable(map[pos - mapWidth])){
@@ -58,11 +59,6 @@ public class GridTileMap extends DungeonTilemap {
 		} else {
 			return -1;
 		}
-	}
-
-	@Override
-	protected boolean needsRender(int pos) {
-		return data[pos] != -1;
 	}
 
 }

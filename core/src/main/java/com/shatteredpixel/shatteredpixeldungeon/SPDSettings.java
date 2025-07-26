@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,13 @@ package com.shatteredpixel.shatteredpixeldungeon;
 
 import com.shatteredpixel.shatteredpixeldungeon.messages.Languages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.watabou.noosa.Game;
-import com.watabou.noosa.RenderedText;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.GameSettings;
+import com.watabou.utils.Point;
 
 import java.util.Locale;
 
@@ -58,30 +60,31 @@ public class SPDSettings extends GameSettings {
 	public static void fullscreen( boolean value ) {
 		put( KEY_FULLSCREEN, value );
 		
-		GirlsFrontlinePixelDungeon.instance.runOnUiThread( new Runnable() {
-			@Override
-			public void run() {
-				GirlsFrontlinePixelDungeon.updateSystemUI();
-			}
-		} );
+		ShatteredPixelDungeon.updateSystemUI();
 	}
 	
 	public static boolean fullscreen() {
-		return getBoolean( KEY_FULLSCREEN, false );
+		return getBoolean( KEY_FULLSCREEN, DeviceCompat.isDesktop() );
 	}
 	
 	public static void landscape( boolean value ){
 		put( KEY_LANDSCAPE, value );
-		((GirlsFrontlinePixelDungeon)GirlsFrontlinePixelDungeon.instance).updateDisplaySize();
+		((ShatteredPixelDungeon)ShatteredPixelDungeon.instance).updateDisplaySize();
 	}
 	
-	public static boolean landscape() {
-		return getBoolean(KEY_LANDSCAPE, Game.dispWidth > Game.dispHeight);
+	//can return null because we need to directly handle the case of landscape not being set
+	// as there are different defaults for different devices
+	public static Boolean landscape(){
+		if (contains(KEY_LANDSCAPE)){
+			return getBoolean(KEY_LANDSCAPE, false);
+		} else {
+			return null;
+		}
 	}
 	
 	public static void powerSaver( boolean value ){
 		put( KEY_POWER_SAVER, value );
-		((GirlsFrontlinePixelDungeon)GirlsFrontlinePixelDungeon.instance).updateDisplaySize();
+		((ShatteredPixelDungeon)ShatteredPixelDungeon.instance).updateDisplaySize();
 	}
 	
 	public static boolean powerSaver(){
@@ -110,7 +113,7 @@ public class SPDSettings extends GameSettings {
 	}
 	
 	public static int brightness() {
-		return getInt( KEY_BRIGHTNESS, 0, -2, 2 );
+		return getInt( KEY_BRIGHTNESS, 0, -1, 1 );
 	}
 	
 	public static void visualGrid( int value ){
@@ -119,15 +122,34 @@ public class SPDSettings extends GameSettings {
 	}
 	
 	public static int visualGrid() {
-		return getInt( KEY_GRID, 0, -1, 3 );
+		return getInt( KEY_GRID, 0, -1, 2 );
 	}
 	
 	//Interface
-	
+
+	public static final String KEY_UI_SIZE 	    = "full_ui";
 	public static final String KEY_QUICKSLOTS	= "quickslots";
 	public static final String KEY_FLIPTOOLBAR	= "flipped_ui";
 	public static final String KEY_FLIPTAGS 	= "flip_tags";
 	public static final String KEY_BARMODE		= "toolbar_mode";
+
+	//0 = mobile, 1 = mixed (large without inventory in main UI), 2 = large
+	public static void interfaceSize( int value ){
+		put( KEY_UI_SIZE, value );
+	}
+
+	public static int interfaceSize(){
+		int size = getInt( KEY_UI_SIZE, DeviceCompat.isDesktop() ? 2 : 0 );
+		if (size > 0){
+			//force mobile UI if there is not enough space for full UI
+			float wMin = Game.width / PixelScene.MIN_WIDTH_FULL;
+			float hMin = Game.height / PixelScene.MIN_HEIGHT_FULL;
+			if (Math.min(wMin, hMin) < 2*Game.density){
+				size = 0;
+			}
+		}
+		return size;
+	}
 	
 	public static void quickSlots( int value ){ put( KEY_QUICKSLOTS, value ); }
 	
@@ -150,7 +172,7 @@ public class SPDSettings extends GameSettings {
 	}
 	
 	public static String toolbarMode() {
-		return getString(KEY_BARMODE, !SPDSettings.landscape() ? "SPLIT" : "GROUP");
+		return getString(KEY_BARMODE, PixelScene.landscape() ? "GROUP" : "SPLIT");
 	}
 	
 	//Game State
@@ -158,6 +180,8 @@ public class SPDSettings extends GameSettings {
 	public static final String KEY_LAST_CLASS	= "last_class";
 	public static final String KEY_CHALLENGES	= "challenges";
 	public static final String KEY_INTRO		= "intro";
+
+	public static final String KEY_SUPPORT_NAGGED= "support_nagged";
 	
 	public static void intro( boolean value ) {
 		put( KEY_INTRO, value );
@@ -182,6 +206,14 @@ public class SPDSettings extends GameSettings {
 	public static int challenges() {
 		return getInt( KEY_CHALLENGES, 0, 0, Challenges.MAX_VALUE );
 	}
+
+	public static void supportNagged( boolean value ) {
+		put( KEY_SUPPORT_NAGGED, value );
+	}
+
+	public static boolean supportNagged() {
+		return getBoolean(KEY_SUPPORT_NAGGED, false);
+	}
 	
 	//Audio
 	
@@ -189,6 +221,7 @@ public class SPDSettings extends GameSettings {
 	public static final String KEY_MUSIC_VOL    = "music_vol";
 	public static final String KEY_SOUND_FX		= "soundfx";
 	public static final String KEY_SFX_VOL      = "sfx_vol";
+	public static final String KEY_IGNORE_SILENT= "ignore_silent";
 	
 	public static void music( boolean value ) {
 		Music.INSTANCE.enable( value );
@@ -200,7 +233,7 @@ public class SPDSettings extends GameSettings {
 	}
 	
 	public static void musicVol( int value ){
-		Music.INSTANCE.volume(value/10f);
+		Music.INSTANCE.volume(value*value/100f);
 		put( KEY_MUSIC_VOL, value );
 	}
 	
@@ -218,12 +251,21 @@ public class SPDSettings extends GameSettings {
 	}
 	
 	public static void SFXVol( int value ) {
-		Sample.INSTANCE.volume(value/10f);
+		Sample.INSTANCE.volume(value*value/100f);
 		put( KEY_SFX_VOL, value );
 	}
 	
 	public static int SFXVol() {
 		return getInt( KEY_SFX_VOL, 10, 0, 10 );
+	}
+
+	public static void ignoreSilentMode( boolean value ){
+		put( KEY_IGNORE_SILENT, value);
+		Game.platform.setHonorSilentSwitch(!value);
+	}
+
+	public static boolean ignoreSilentMode(){
+		return getBoolean( KEY_IGNORE_SILENT, false);
 	}
 	
 	//Languages and Font
@@ -246,16 +288,86 @@ public class SPDSettings extends GameSettings {
 	
 	public static void systemFont(boolean value){
 		put(KEY_SYSTEMFONT, value);
-		if (!value) {
-			RenderedText.setFont("pixelfont.ttf");
-		} else {
-			RenderedText.setFont( null );
-		}
 	}
 	
 	public static boolean systemFont(){
 		return getBoolean(KEY_SYSTEMFONT,
-				(/*language() == Languages.KOREAN ||*/ language() == Languages.CHINESE));
+				(language() == Languages.KOREAN || language() == Languages.CHINESE || language() == Languages.JAPANESE));
+	}
+
+	//Connectivity
+
+	public static final String KEY_NEWS     = "news";
+	public static final String KEY_UPDATES	= "updates";
+	public static final String KEY_BETAS	= "betas";
+	public static final String KEY_WIFI     = "wifi";
+
+	public static final String KEY_NEWS_LAST_READ = "news_last_read";
+
+	public static void news(boolean value){
+		put(KEY_NEWS, value);
+	}
+
+	public static boolean news(){
+		return getBoolean(KEY_NEWS, true);
+	}
+
+	public static void updates(boolean value){
+		put(KEY_UPDATES, value);
+	}
+
+	public static boolean updates(){
+		return getBoolean(KEY_UPDATES, true);
+	}
+
+	public static void betas(boolean value){
+		put(KEY_BETAS, value);
+	}
+
+	public static boolean betas(){
+		return getBoolean(KEY_BETAS, Game.version.contains("BETA") || Game.version.contains("RC"));
+	}
+
+	public static void WiFi(boolean value){
+		put(KEY_WIFI, value);
+	}
+
+	public static boolean WiFi(){
+		return getBoolean(KEY_WIFI, true);
+	}
+
+	public static void newsLastRead(long lastRead){
+		put(KEY_NEWS_LAST_READ, lastRead);
+	}
+
+	public static long newsLastRead(){
+		return getLong(KEY_NEWS_LAST_READ, 0);
 	}
 	
+	//Window management (desktop only atm)
+	
+	public static final String KEY_WINDOW_WIDTH     = "window_width";
+	public static final String KEY_WINDOW_HEIGHT    = "window_height";
+	public static final String KEY_WINDOW_MAXIMIZED = "window_maximized";
+	
+	public static void windowResolution( Point p ){
+		put(KEY_WINDOW_WIDTH, p.x);
+		put(KEY_WINDOW_HEIGHT, p.y);
+	}
+	
+	public static Point windowResolution(){
+		return new Point(
+				getInt( KEY_WINDOW_WIDTH, 800, 720, Integer.MAX_VALUE ),
+				getInt( KEY_WINDOW_HEIGHT, 600, 400, Integer.MAX_VALUE )
+		);
+	}
+	
+	public static void windowMaximized( boolean value ){
+		put( KEY_WINDOW_MAXIMIZED, value );
+	}
+	
+	public static boolean windowMaximized(){
+		return getBoolean( KEY_WINDOW_MAXIMIZED, false );
+	}
+
 }

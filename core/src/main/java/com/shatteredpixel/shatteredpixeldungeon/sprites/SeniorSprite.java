@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,25 +32,25 @@ public class SeniorSprite extends MobSprite {
 	public SeniorSprite() {
 		super();
 		
-		texture( Assets.ESTRIKER );
-
-		TextureFilm frames = new TextureFilm( texture, 21, 20 );
-
+		texture( Assets.Sprites.MONK );
+		
+		TextureFilm frames = new TextureFilm( texture, 15, 14 );
+		
 		idle = new Animation( 6, true );
-		idle.frames( frames, 0 );
-
+		idle.frames( frames, 18, 17, 18, 19 );
+		
 		run = new Animation( 15, true );
-		run.frames( frames, 5, 6, 7, 8, 9, 10 );
-
-		attack = new Animation( 18, false );
-		attack.frames( frames, 4, 1, 4, 2, 4, 3, 4, 4 );
-
-		kick = new Animation( 18, false );
-		kick.frames( frames, 4, 1, 4, 2, 4, 3, 4, 4 );
-
+		run.frames( frames, 28, 29, 30, 31, 32, 33 );
+		
+		attack = new Animation( 12, false );
+		attack.frames( frames, 20, 21, 20, 21 );
+		
+		kick = new Animation( 10, false );
+		kick.frames( frames, 22, 23, 22 );
+		
 		die = new Animation( 15, false );
-		die.frames( frames, 1, 11, 12, 13 );
-
+		die.frames( frames, 18, 24, 25, 25, 26, 27 );
+		
 		play( idle );
 	}
 	

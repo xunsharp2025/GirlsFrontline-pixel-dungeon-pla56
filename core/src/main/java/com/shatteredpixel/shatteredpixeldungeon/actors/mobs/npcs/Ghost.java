@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,9 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.DialogInfo;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Roots;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.FetidRat;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GnollTrickster;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GreatCrab;
@@ -42,7 +38,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.armor.MailArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.PlateArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ScaleArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.M16;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerLevel;
@@ -50,13 +45,14 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.GhostSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuest;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndSadGhost;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
-import com.watabou.utils.SparseArray;
-
+import com.watabou.utils.Reflection;
 
 public class Ghost extends NPC {
 
@@ -68,22 +64,20 @@ public class Ghost extends NPC {
 		state = WANDERING;
 	}
 
-	public Ghost() {
-		super();
-
-		Sample.INSTANCE.load( Assets.SND_GHOST );
-	}
-
 	@Override
 	protected boolean act() {
-		if (Quest.processed())
+		if (Quest.processed()) {
 			target = Dungeon.hero.pos;
+		}
+		if (Dungeon.level.heroFOV[pos] && !Quest.completed()){
+			Notes.add( Notes.Landmark.GHOST );
+		}
 		return super.act();
 	}
 
 	@Override
 	public int defenseSkill( Char enemy ) {
-		return 1000;
+		return INFINITE_EVASION;
 	}
 	
 	@Override
@@ -110,33 +104,46 @@ public class Ghost extends NPC {
 	}
 	
 	@Override
-	public boolean interact() {
-		sprite.turnTo( pos, Dungeon.hero.pos );
+	public boolean interact(Char c) {
+		sprite.turnTo( pos, c.pos );
 		
-		Sample.INSTANCE.play( Assets.SND_GHOST );
+		Sample.INSTANCE.play( Assets.Sounds.GHOST );
 
+		if (c != Dungeon.hero){
+			return super.interact(c);
+		}
+		
 		if (Quest.given) {
 			if (Quest.weapon != null) {
 				if (Quest.processed) {
-					int DialogID = DialogInfo.ID_STAR15_QUEST + DialogInfo.COMPLETE;
-					WndDialog wnd = new WndDialog( DialogID ) {
+					Game.runOnRenderThread(new Callback() {
 						@Override
-						protected void onFinish()
-						{
-							GameScene.show(new WndSadGhost((Ghost)this.npc));
+						public void call() {
+							GameScene.show(new WndSadGhost(Ghost.this, Quest.type));
 						}
-					};
-
-					wnd.npc = this;
-					GameScene.show(wnd);
-
+					});
 				} else {
-					int DialogID = DialogInfo.ID_STAR15_QUEST + DialogInfo.INPROGRESS;
-					WndDialog.ShowChapter(DialogID);
+					Game.runOnRenderThread(new Callback() {
+						@Override
+						public void call() {
+							switch (Quest.type) {
+								case 1:
+								default:
+									GameScene.show(new WndQuest(Ghost.this, Messages.get(Ghost.this, "rat_2")));
+									break;
+								case 2:
+									GameScene.show(new WndQuest(Ghost.this, Messages.get(Ghost.this, "gnoll_2")));
+									break;
+								case 3:
+									GameScene.show(new WndQuest(Ghost.this, Messages.get(Ghost.this, "crab_2")));
+									break;
+							}
+						}
+					});
 
 					int newPos = -1;
 					for (int i = 0; i < 10; i++) {
-						newPos = Dungeon.level.randomRespawnCell();
+						newPos = Dungeon.level.randomRespawnCell( this );
 						if (newPos != -1) {
 							break;
 						}
@@ -151,48 +158,42 @@ public class Ghost extends NPC {
 				}
 			}
 		} else {
+			Mob questBoss;
+			String txt_quest;
 
-			try {
-				Mob questBoss;
+			switch (Quest.type){
+				case 1: default:
+					questBoss = new FetidRat();
+					txt_quest = Messages.get(this, "rat_1", Dungeon.hero.name()); break;
+				case 2:
+					questBoss = new GnollTrickster();
+					txt_quest = Messages.get(this, "gnoll_1", Dungeon.hero.name()); break;
+				case 3:
+					questBoss = new GreatCrab();
+					txt_quest = Messages.get(this, "crab_1", Dungeon.hero.name()); break;
+			}
 
-				questBoss = Quest.TARGETS.get(Quest.type).newInstance();
+			questBoss.pos = Dungeon.level.randomRespawnCell( this );
 
-				questBoss.pos = Dungeon.level.randomRespawnCell();
-
-				WndDialog.setBRANCH(DialogInfo.ID_STAR15_QUEST, Quest.type);
-
-				if (questBoss.pos != -1) {
-					GameScene.add(questBoss);
-					WndDialog.ShowChapter(DialogInfo.ID_STAR15_QUEST);
-					//GameScene.show( new WndQuest( this, txt_quest ) );
-					Quest.given = true;
-					Notes.add( Notes.Landmark.GHOST );
-				}
-
-			} catch (Exception e) {
-				GirlsFrontlinePixelDungeon.reportException(e);
+			if (questBoss.pos != -1) {
+				GameScene.add(questBoss);
+				Quest.given = true;
+				Notes.add( Notes.Landmark.GHOST );
+				Game.runOnRenderThread(new Callback() {
+					@Override
+					public void call() {
+						GameScene.show( new WndQuest( Ghost.this, txt_quest ) );
+					}
+				});
 			}
 
 		}
 
-		return false;
-	}
-	
-	{
-		immunities.add( Paralysis.class );
-		immunities.add( Roots.class );
+		return true;
 	}
 
 	public static class Quest {
-
-		private static final SparseArray<Class<? extends Mob>> TARGETS = new SparseArray<>();
-
-		static {
-			TARGETS.put(1, FetidRat.class);
-			TARGETS.put(2, GnollTrickster.class);
-			TARGETS.put(3, GreatCrab.class);
-		}
-
+		
 		private static boolean spawned;
 
 		private static int type;
@@ -204,12 +205,16 @@ public class Ghost extends NPC {
 		
 		public static Weapon weapon;
 		public static Armor armor;
+		public static Weapon.Enchantment enchant;
+		public static Armor.Glyph glyph;
 		
 		public static void reset() {
 			spawned = false;
 			
 			weapon = null;
 			armor = null;
+			enchant = null;
+			glyph = null;
 		}
 		
 		private static final String NODE		= "sadGhost";
@@ -221,6 +226,8 @@ public class Ghost extends NPC {
 		private static final String DEPTH		= "depth";
 		private static final String WEAPON		= "weapon";
 		private static final String ARMOR		= "armor";
+		private static final String ENCHANT		= "enchant";
+		private static final String GLYPH		= "glyph";
 		
 		public static void storeInBundle( Bundle bundle ) {
 			
@@ -234,10 +241,15 @@ public class Ghost extends NPC {
 				
 				node.put( GIVEN, given );
 				node.put( DEPTH, depth );
-				node.put( PROCESSED, processed);
+				node.put( PROCESSED, processed );
 				
 				node.put( WEAPON, weapon );
 				node.put( ARMOR, armor );
+
+				if (enchant != null) {
+					node.put(ENCHANT, enchant);
+					node.put(GLYPH, glyph);
+				}
 			}
 			
 			bundle.put( NODE, node );
@@ -257,6 +269,11 @@ public class Ghost extends NPC {
 				
 				weapon	= (Weapon)node.get( WEAPON );
 				armor	= (Armor)node.get( ARMOR );
+
+				if (node.contains(ENCHANT)) {
+					enchant = (Weapon.Enchantment) node.get(ENCHANT);
+					glyph   = (Armor.Glyph) node.get(GLYPH);
+				}
 			} else {
 				reset();
 			}
@@ -267,45 +284,31 @@ public class Ghost extends NPC {
 				
 				Ghost ghost = new Ghost();
 				do {
-					ghost.pos = level.randomRespawnCell();
+					ghost.pos = level.randomRespawnCell( ghost );
 				} while (ghost.pos == -1);
 				level.mobs.add( ghost );
 				
 				spawned = true;
 				//dungeon depth determines type of quest.
 				//depth2=fetid rat, 3=gnoll trickster, 4=great crab
-				type = Dungeon.depth - 1;
+				type = Dungeon.depth-1;
 				
 				given = false;
 				processed = false;
 				depth = Dungeon.depth;
 
 				//50%:tier2, 30%:tier3, 15%:tier4, 5%:tier5
-				float itemTierRoll = Random.Float();
-				int wepTier;
-
-				if (itemTierRoll < 0.5f) {
-					wepTier = 2;
-					armor = new LeatherArmor();
-				} else if (itemTierRoll < 0.8f) {
-					wepTier = 3;
-					armor = new MailArmor();
-				} else if (itemTierRoll < 0.95f) {
-					wepTier = 4;
-					armor = new ScaleArmor();
-				} else {
-					wepTier = 5;
-					armor = new PlateArmor();
+				switch (Random.chances(new float[]{0, 0, 10, 6, 3, 1})){
+					default:
+					case 2: armor = new LeatherArmor(); break;
+					case 3: armor = new MailArmor();    break;
+					case 4: armor = new ScaleArmor();   break;
+					case 5: armor = new PlateArmor();   break;
 				}
-
-				try {
-					do {
-						weapon = (Weapon) Generator.wepTiers[wepTier - 1].classes[Random.chances(Generator.wepTiers[wepTier - 1].probs)].newInstance();
-					} while (!(weapon instanceof MeleeWeapon));
-				} catch (Exception e){
-					GirlsFrontlinePixelDungeon.reportException(e);
-					weapon = new M16();
-				}
+				//50%:tier2, 30%:tier3, 15%:tier4, 5%:tier5
+				int wepTier = Random.chances(new float[]{0, 0, 10, 6, 3, 1});
+				Generator.Category c = Generator.wepTiers[wepTier - 1];
+				weapon = (MeleeWeapon) Reflection.newInstance(c.classes[Random.chances(c.probs)]);
 
 				//50%:+0, 30%:+1, 15%:+2, 5%:+3
 				float itemLevelRoll = Random.Float();
@@ -322,10 +325,10 @@ public class Ghost extends NPC {
 				weapon.upgrade(itemLevel);
 				armor.upgrade(itemLevel);
 
-				//10% to be enchanted
+				//10% to be enchanted. We store it separately so enchant status isn't revealed early
 				if (Random.Int(10) == 0){
-					weapon.enchant();
-					armor.inscribe();
+					enchant = Weapon.Enchantment.random();
+					glyph = Armor.Glyph.random();
 				}
 
 			}
@@ -334,7 +337,7 @@ public class Ghost extends NPC {
 		public static void process() {
 			if (spawned && given && !processed && (depth == Dungeon.depth)) {
 				GLog.n( Messages.get(Ghost.class, "find_me") );
-				Sample.INSTANCE.play( Assets.SND_GHOST );
+				Sample.INSTANCE.play( Assets.Sounds.GHOST );
 				processed = true;
 			}
 		}
@@ -354,5 +357,4 @@ public class Ghost extends NPC {
 			return processed() && weapon == null && armor == null;
 		}
 	}
-
 }

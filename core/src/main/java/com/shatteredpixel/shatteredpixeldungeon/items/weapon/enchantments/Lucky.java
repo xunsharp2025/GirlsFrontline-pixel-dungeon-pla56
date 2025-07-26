@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,10 +23,12 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfWealth;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite.Glowing;
-import com.watabou.utils.Bundle;
+import com.watabou.noosa.Visual;
 import com.watabou.utils.Random;
 
 public class Lucky extends Weapon.Enchantment {
@@ -35,30 +37,27 @@ public class Lucky extends Weapon.Enchantment {
 	
 	@Override
 	public int proc( Weapon weapon, Char attacker, Char defender, int damage ) {
-		int level = Math.max( 0, weapon.level() );
-		
-		float zeroChance = 0.5f;
-		
-		Luck buff = attacker.buff(Luck.class);
-		if (buff != null){
-			zeroChance = buff.zeroChance;
-		}
-		
-		if (Random.Float() >= zeroChance){
-			
-			if (buff != null) {
-				buff.detach();
-			}
-			
-			return 2*damage;
-		} else {
-			
-			buff = Buff.affect(attacker, Luck.class);
-			buff.zeroChance = zeroChance * (0.5f - 0.001f*level);
-			
-			return 0;
-		}
+		int level = Math.max( 0, weapon.buffedLvl() );
 
+		// lvl 0 - 10%
+		// lvl 1 ~ 12%
+		// lvl 2 ~ 14%
+		float procChance = (level+4f)/(level+40f) * procChanceMultiplier(attacker);
+		if (defender.HP <= damage && Random.Float() < procChance){
+			Buff.affect(defender, LuckProc.class);
+		}
+		
+		return damage;
+
+	}
+	
+	public static Item genLoot(){
+		//80% common, 20% uncommon, 0% rare
+		return RingOfWealth.genConsumableDrop(-5);
+	}
+
+	public static void showFlare( Visual vis ){
+		RingOfWealth.showFlareForBonusDrop(vis);
 	}
 
 	@Override
@@ -66,39 +65,14 @@ public class Lucky extends Weapon.Enchantment {
 		return GREEN;
 	}
 	
-	
-	public static class Luck extends Buff {
-		
-		float zeroChance;
+	//used to keep track of whether a luck proc is incoming. see Mob.die()
+	public static class LuckProc extends Buff {
 		
 		@Override
 		public boolean act() {
-			
-			zeroChance += 0.01f;
-			
-			if (zeroChance >= 0.5f){
-				detach();
-			} else {
-				spend(TICK);
-			}
-			
+			detach();
 			return true;
 		}
-		
-		private static final String CHANCE = "chance";
-		
-		@Override
-		public void restoreFromBundle(Bundle bundle) {
-			super.restoreFromBundle(bundle);
-			zeroChance = bundle.getFloat(CHANCE);
-		}
-		
-		@Override
-		public void storeInBundle(Bundle bundle) {
-			super.storeInBundle(bundle);
-			bundle.put(CHANCE, zeroChance);
-		}
-		
 	}
 	
 }

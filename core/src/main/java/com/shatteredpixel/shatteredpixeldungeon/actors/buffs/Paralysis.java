@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
-import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
@@ -36,6 +35,7 @@ public class Paralysis extends FlavourBuff {
 
 	{
 		type = buffType.NEGATIVE;
+		announced = true;
 	}
 	
 	@Override
@@ -56,10 +56,10 @@ public class Paralysis extends FlavourBuff {
 		}
 		resist.damage += damage;
 		if (Random.NormalIntRange(0, resist.damage) >= Random.NormalIntRange(0, target.HP)){
-			detach();
 			if (Dungeon.level.heroFOV[target.pos]) {
-				GLog.i( Messages.get(this, "out", target.name) );
+				target.sprite.showStatus(CharSprite.NEUTRAL, Messages.get(this, "out"));
 			}
+			detach();
 		}
 	}
 	
@@ -76,9 +76,14 @@ public class Paralysis extends FlavourBuff {
 	}
 
 	@Override
+	public float iconFadePercent() {
+		return Math.max(0, (DURATION - visualcooldown()) / DURATION);
+	}
+
+	@Override
 	public void fx(boolean on) {
-		if (on) target.sprite.add(CharSprite.State.PARALYSED);
-		else target.sprite.remove(CharSprite.State.PARALYSED);
+		if (on)                         target.sprite.add(CharSprite.State.PARALYSED);
+		else if (target.paralysed <= 1) target.sprite.remove(CharSprite.State.PARALYSED);
 	}
 
 	@Override
@@ -96,11 +101,12 @@ public class Paralysis extends FlavourBuff {
 		return Messages.get(this, "desc", dispTurns());
 	}
 
-	public static float duration( Char ch ) {
-		return DURATION;
-	}
 	
 	public static class ParalysisResist extends Buff {
+		
+		{
+			type = buffType.POSITIVE;
+		}
 		
 		private int damage;
 		

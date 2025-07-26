@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,34 +21,12 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.armor;
 
-import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Speed;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
-import com.watabou.noosa.audio.Sample;
 
 public class MageArmor extends ClassArmor {
 	
 	{
 		image = ItemSpriteSheet.ARMOR_MAGE;
-	}
-	
-	@Override
-	public void doSpecial() {
-
-		curUser.HP -= (curUser.HP * 7 / 10);
-
-		Buff.prolong(Dungeon.hero, Speed.class,  + curUser.HP * 10 / curUser.HT );
-		
-		curUser.spend( Actor.TICK );
-		curUser.sprite.operate( curUser.pos );
-		curUser.busy();
-
-		curUser.sprite.centerEmitter().start( ElmoParticle.FACTORY, 0.15f, 4 );
-		Sample.INSTANCE.play( Assets.SND_READ );
 	}
 
 }

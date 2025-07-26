@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBadge;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
-import com.watabou.noosa.RenderedText;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.ui.Component;
 
@@ -36,12 +35,12 @@ import java.util.ArrayList;
 
 public class BadgesList extends ScrollPane {
 
-	private ArrayList<ListItem> items = new ArrayList<ListItem>();
+	private ArrayList<ListItem> items = new ArrayList<>();
 	
 	public BadgesList( boolean global ) {
 		super( new Component() );
 		
-		for (Badges.Badge badge : Badges.filtered( global )) {
+		for (Badges.Badge badge : Badges.filterReplacedBadges( global )) {
 			
 			if (badge.image == -1) {
 				continue;
@@ -86,14 +85,14 @@ public class BadgesList extends ScrollPane {
 		private Badges.Badge badge;
 		
 		private Image icon;
-		private RenderedText label;
+		private RenderedTextBlock label;
 		
 		public ListItem( Badges.Badge badge ) {
 			super();
 			
 			this.badge = badge;
 			icon.copy( BadgeBanner.image( badge.image ));
-			label.text( badge.desc() );
+			label.text( badge.title() );
 		}
 		
 		@Override
@@ -101,7 +100,7 @@ public class BadgesList extends ScrollPane {
 			icon = new Image();
 			add( icon );
 			
-			label = PixelScene.renderText( 6 );
+			label = PixelScene.renderTextBlock( 6 );
 			add( label );
 		}
 		
@@ -111,15 +110,17 @@ public class BadgesList extends ScrollPane {
 			icon.y = y + (height - icon.height) / 2;
 			PixelScene.align(icon);
 			
-			label.x = icon.x + icon.width + 2;
-			label.y = y + (height - label.baseLine()) / 2;
+			label.setPos(
+					icon.x + icon.width + 2,
+					y + (height - label.height()) / 2
+			);
 			PixelScene.align(label);
 		}
 		
 		public boolean onClick( float x, float y ) {
 			if (inside( x, y )) {
-				Sample.INSTANCE.play( Assets.SND_CLICK, 0.7f, 0.7f, 1.2f );
-				Game.scene().add( new WndBadge( badge ) );
+				Sample.INSTANCE.play( Assets.Sounds.CLICK, 0.7f, 0.7f, 1.2f );
+				Game.scene().add( new WndBadge( badge, true ) );
 				return true;
 			} else {
 				return false;

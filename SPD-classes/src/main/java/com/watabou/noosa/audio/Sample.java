@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,115 +21,152 @@
 
 package com.watabou.noosa.audio;
 
-import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
-import android.media.AudioManager;
-import android.media.SoundPool;
-
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.watabou.noosa.Game;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.HashSet;
 
-public enum Sample implements SoundPool.OnLoadCompleteListener {
+public enum Sample {
 
 	INSTANCE;
 
-	public static final int MAX_STREAMS = 8;
-
-	protected SoundPool pool =
-			new SoundPool( MAX_STREAMS, AudioManager.STREAM_MUSIC, 0 );
-
-	protected HashMap<Object, Integer> ids =
-			new HashMap<>();
+	protected HashMap<Object, Sound> ids = new HashMap<>();
 
 	private boolean enabled = true;
-	private float volume = 1f;
+	private float globalVolume = 1f;
 
-	private LinkedList<String> loadingQueue = new LinkedList<>();
+	public synchronized void reset() {
 
-	public void reset() {
-
+		for (Sound sound : ids.values()){
+			sound.dispose();
+		}
+		
 		ids.clear();
-		loadingQueue = new LinkedList<>();
-		pool.release();
-
-		pool = new SoundPool( MAX_STREAMS, AudioManager.STREAM_MUSIC, 0 );
-		pool.setOnLoadCompleteListener( this );
+		delayedSFX.clear();
 
 	}
 
-	public void pause() {
-		if (pool != null) {
-			pool.autoPause();
+	public synchronized void pause() {
+		for (Sound sound : ids.values()) {
+			sound.pause();
 		}
 	}
 
-	public void resume() {
-		if (pool != null) {
-			pool.autoResume();
+	public synchronized void resume() {
+		for (Sound sound : ids.values()) {
+			sound.resume();
 		}
 	}
 
-	public void load( String... assets ) {
+	public synchronized void load( final String... assets ) {
 
-		for (String asset : assets) {
-			loadingQueue.add( asset );
-		}
-		loadNext();
-	}
+		final ArrayList<String> toLoad = new ArrayList<>();
 
-	private void loadNext() {
-		final String asset = loadingQueue.poll();
-		if (asset != null) {
-			if (!ids.containsKey( asset )) {
-				try {
-					pool.setOnLoadCompleteListener( new SoundPool.OnLoadCompleteListener() {
-						@Override
-						public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
-							loadNext();
-						}
-					} );
-
-					AssetManager manager = Game.instance.getAssets();
-					AssetFileDescriptor fd = manager.openFd( asset );
-					int streamID = pool.load( fd, 1 ) ;
-					ids.put( asset, streamID );
-					fd.close();
-				} catch (IOException e) {
-					loadNext();
-				} catch (NullPointerException e) {
-					// Do nothing (stop loading sounds)
-				}
-			} else {
-				loadNext();
+		for (String asset : assets){
+			if (!ids.containsKey(asset)){
+				toLoad.add(asset);
 			}
 		}
+
+		//don't make a new thread of all assets are already loaded
+		if (toLoad.isEmpty()) return;
+
+		//load in a separate thread to prevent this blocking the UI
+		new Thread(){
+			@Override
+			public void run() {
+				for (String asset : toLoad) {
+					Sound newSound = Gdx.audio.newSound(Gdx.files.internal(asset));
+					synchronized (INSTANCE) {
+						ids.put(asset, newSound);
+					}
+				}
+			}
+		}.start();
+		
 	}
 
-	public void unload( Object src ) {
-
+	public synchronized void unload( Object src ) {
 		if (ids.containsKey( src )) {
-
-			pool.unload( ids.get( src ) );
+			ids.get( src ).dispose();
 			ids.remove( src );
 		}
 	}
 
-	public int play( Object id ) {
+	public long play( Object id ) {
 		return play( id, 1 );
 	}
 
-	public int play( Object id, float volume ) {
+	public long play( Object id, float volume ) {
 		return play( id, volume, volume, 1 );
 	}
-
-	public int play( Object id, float leftVolume, float rightVolume, float rate ) {
+	
+	public long play( Object id, float volume, float pitch ) {
+		return play( id, volume, volume, pitch );
+	}
+	
+	public synchronized long play( Object id, float leftVolume, float rightVolume, float pitch ) {
+		float volume = Math.max(leftVolume, rightVolume);
+		float pan = rightVolume - leftVolume;
 		if (enabled && ids.containsKey( id )) {
-			return pool.play( ids.get( id ), leftVolume*volume, rightVolume*volume, 0, 0, rate );
+			return ids.get(id).play( globalVolume*volume, pitch, pan );
 		} else {
 			return -1;
+		}
+	}
+
+	private class DelayedSoundEffect{
+		Object id;
+		float delay;
+
+		float leftVol;
+		float rightVol;
+		float pitch;
+	}
+
+	private static final HashSet<DelayedSoundEffect> delayedSFX = new HashSet<>();
+
+	public void playDelayed( Object id, float delay ){
+		playDelayed( id, delay, 1 );
+	}
+
+	public void playDelayed( Object id, float delay, float volume ) {
+		playDelayed( id, delay, volume, volume, 1 );
+	}
+
+	public void playDelayed( Object id, float delay, float volume, float pitch ) {
+		playDelayed( id, delay, volume, volume, pitch );
+	}
+
+	public void playDelayed( Object id, float delay, float leftVolume, float rightVolume, float pitch ) {
+		if (delay <= 0) {
+			play(id, leftVolume, rightVolume, pitch);
+			return;
+		}
+		DelayedSoundEffect sfx = new DelayedSoundEffect();
+		sfx.id = id;
+		sfx.delay = delay;
+		sfx.leftVol = leftVolume;
+		sfx.rightVol = rightVolume;
+		sfx.pitch = pitch;
+		synchronized (delayedSFX) {
+			delayedSFX.add(sfx);
+		}
+	}
+
+	public void update(){
+		synchronized (delayedSFX) {
+			if (delayedSFX.isEmpty()) return;
+			for (DelayedSoundEffect sfx : delayedSFX.toArray(new DelayedSoundEffect[0])) {
+				sfx.delay -= Game.elapsed;
+				if (sfx.delay <= 0) {
+					delayedSFX.remove(sfx);
+					play(sfx.id, sfx.leftVol, sfx.rightVol, sfx.pitch);
+				}
+			}
 		}
 	}
 
@@ -138,14 +175,11 @@ public enum Sample implements SoundPool.OnLoadCompleteListener {
 	}
 
 	public void volume( float value ) {
-		this.volume = value;
+		globalVolume = value;
 	}
 
 	public boolean isEnabled() {
 		return enabled;
 	}
-
-	@Override
-	public void onLoadComplete( SoundPool soundPool, int sampleId, int status ) {
-	}
+	
 }

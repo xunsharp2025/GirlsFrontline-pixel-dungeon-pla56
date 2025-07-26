@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,7 @@
 
 package com.watabou.glwrap;
 
-import android.opengl.GLES20;
-import android.os.Build;
+import com.badlogic.gdx.Gdx;
 
 import java.nio.FloatBuffer;
 
@@ -39,20 +38,18 @@ public class Attribute {
 	}
 	
 	public void enable() {
-		GLES20.glEnableVertexAttribArray( location );
+		Gdx.gl.glEnableVertexAttribArray( location );
 	}
 	
 	public void disable() {
-		GLES20.glDisableVertexAttribArray( location );
+		Gdx.gl.glDisableVertexAttribArray( location );
 	}
 	
 	public void vertexPointer( int size, int stride, FloatBuffer ptr ) {
-		GLES20.glVertexAttribPointer( location, size, GLES20.GL_FLOAT, false, stride * 4, ptr );
+		Gdx.gl.glVertexAttribPointer( location, size, Gdx.gl.GL_FLOAT, false, stride * 4, ptr );
 	}
 
 	public void vertexBuffer( int size, int stride, int offset) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			GLES20.glVertexAttribPointer(location, size, GLES20.GL_FLOAT, false, stride * 4, offset * 4);
-		}
+		Gdx.gl.glVertexAttribPointer(location, size, Gdx.gl.GL_FLOAT, false, stride * 4, offset * 4);
 	}
 }

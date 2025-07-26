@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,43 +21,47 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments;
 
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
 public class Unstable extends Weapon.Enchantment {
 
-	private static ItemSprite.Glowing WHITE = new ItemSprite.Glowing( 0xFFFFFF );
+	private static ItemSprite.Glowing GREY = new ItemSprite.Glowing( 0x999999 );
 
 	private static Class<?extends Weapon.Enchantment>[] randomEnchants = new Class[]{
 			Blazing.class,
+			Blocking.class,
+			Blooming.class,
 			Chilling.class,
-			Dazzling.class,
-			Eldritch.class,
+			Kinetic.class,
+			Corrupting.class,
+			Elastic.class,
 			Grim.class,
 			Lucky.class,
 			//projecting not included, no on-hit effect
 			Shocking.class,
-			Stunning.class,
-			Vampiric.class,
-			Venomous.class,
-			Vorpal.class
+			Vampiric.class
 	};
 
 	@Override
 	public int proc( Weapon weapon, Char attacker, Char defender, int damage ) {
-		try {
-			return Random.oneOf(randomEnchants).newInstance().proc( weapon, attacker, defender, damage );
-		} catch (Exception e) {
-			GirlsFrontlinePixelDungeon.reportException(e);
-			return damage;
+		
+		int conservedDamage = 0;
+		if (attacker.buff(Kinetic.ConservedDamage.class) != null) {
+			conservedDamage = attacker.buff(Kinetic.ConservedDamage.class).damageBonus();
+			attacker.buff(Kinetic.ConservedDamage.class).detach();
 		}
+		
+		damage = Reflection.newInstance(Random.oneOf(randomEnchants)).proc( weapon, attacker, defender, damage );
+		
+		return damage + conservedDamage;
 	}
 
 	@Override
 	public ItemSprite.Glowing glowing() {
-		return WHITE;
+		return GREY;
 	}
 }

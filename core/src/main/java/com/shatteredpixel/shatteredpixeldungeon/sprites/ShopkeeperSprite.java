@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ public class ShopkeeperSprite extends MobSprite {
 	public ShopkeeperSprite() {
 		super();
 		
-		texture( Assets.KEEPER );
-		TextureFilm film = new TextureFilm( texture, 27, 20 );
+		texture( Assets.Sprites.KEEPER );
+		TextureFilm film = new TextureFilm( texture, 14, 14 );
 		
 		idle = new Animation( 10, true );
 		idle.frames( film, 1, 1, 1, 1, 1, 0, 0, 0, 0 );
@@ -57,8 +57,7 @@ public class ShopkeeperSprite extends MobSprite {
 				coin = new PixelParticle();
 				parent.add( coin );
 			}
-			//TODO 추후 타일맵 크기에 맞추어 일정 비율에 해당하는 위치로 세팅하도록 리팩토링 할 것
-			coin.reset( x + (flipHorizontal ? 7 : 19), y + 11, 0xFFFF00, 1, 0.5f );
+			coin.reset( x + (flipHorizontal ? 0 : 13), y + 7, 0xFFFF00, 1, 0.5f );
 			coin.speed.y = -40;
 			coin.acc.y = +160;
 		}

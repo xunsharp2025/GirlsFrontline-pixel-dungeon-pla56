@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,24 +28,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 public class ItemStatusHandler<T extends Item> {
 
 	private Class<? extends T>[] items;
-	private HashMap<Class<? extends T>, String> itemLabels;
-	private HashMap<String, Integer> labelImages;
-	private HashSet<Class<? extends T>> known;
+	private LinkedHashMap<Class<? extends T>, String> itemLabels;
+	private LinkedHashMap<String, Integer> labelImages;
+	private LinkedHashSet<Class<? extends T>> known;
 
 	public ItemStatusHandler( Class<? extends T>[] items, HashMap<String, Integer> labelImages ) {
 
 		this.items = items;
 
-		this.itemLabels = new HashMap<>();
-		this.labelImages = new HashMap<>(labelImages);
-		known = new HashSet<Class<? extends T>>();
+		this.itemLabels = new LinkedHashMap<>();
+		this.labelImages = new LinkedHashMap<>(labelImages);
+		known = new LinkedHashSet<>();
 
-		ArrayList<String> labelsLeft = new ArrayList<String>( labelImages.keySet() );
+		ArrayList<String> labelsLeft = new ArrayList<>(labelImages.keySet());
 
 		for (int i=0; i < items.length; i++) {
 
@@ -63,11 +65,11 @@ public class ItemStatusHandler<T extends Item> {
 
 		this.items = items;
 
-		this.itemLabels = new HashMap<>();
-		this.labelImages = new HashMap<>(labelImages);
-		known = new HashSet<>();
+		this.itemLabels = new LinkedHashMap<>();
+		this.labelImages = new LinkedHashMap<>(labelImages);
+		known = new LinkedHashSet<>();
 
-		ArrayList<String> allLabels = new ArrayList<String>( labelImages.keySet() );
+		ArrayList<String> allLabels = new ArrayList<>(labelImages.keySet());
 
 		restore(bundle, allLabels);
 	}
@@ -91,6 +93,18 @@ public class ItemStatusHandler<T extends Item> {
 				String itemName = cls.toString();
 				bundle.put( itemName + PFX_LABEL, itemLabels.get( cls ) );
 				bundle.put( itemName + PFX_KNOWN, known.contains( cls ) );
+			}
+		}
+	}
+	
+	public void saveClassesSelectively( Bundle bundle, ArrayList<Class<?extends Item>> clsToSave ){
+		List<Class<? extends T>> items = Arrays.asList(this.items);
+		for (Class<?extends Item> cls : clsToSave){
+			if (items.contains(cls)){
+				Class<? extends T> toSave = items.get(items.indexOf(cls));
+				String itemName = toSave.toString();
+				bundle.put( itemName + PFX_LABEL, itemLabels.get( toSave ) );
+				bundle.put( itemName + PFX_KNOWN, known.contains( toSave ) );
 			}
 		}
 	}
@@ -136,20 +150,54 @@ public class ItemStatusHandler<T extends Item> {
 		}
 	}
 	
+	public boolean contains( T item ){
+		for (Class<?extends Item> i : items){
+			if (item.getClass().equals(i)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean contains( Class<?extends T> itemCls ){
+		for (Class<?extends Item> i : items){
+			if (itemCls.equals(i)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public int image( T item ) {
 		return labelImages.get(label(item));
+	}
+	
+	public int image( Class<?extends T> itemCls ) {
+		return labelImages.get(label(itemCls));
 	}
 	
 	public String label( T item ) {
 		return itemLabels.get(item.getClass());
 	}
 	
+	public String label( Class<?extends T> itemCls ){
+		return itemLabels.get( itemCls );
+	}
+	
 	public boolean isKnown( T item ) {
 		return known.contains( item.getClass() );
 	}
 	
+	public boolean isKnown( Class<?extends T> itemCls ){
+		return known.contains( itemCls );
+	}
+	
 	public void know( T item ) {
 		known.add( (Class<? extends T>)item.getClass() );
+	}
+	
+	public void know( Class<?extends T> itemCls ){
+		known.add( itemCls );
 	}
 	
 	public HashSet<Class<? extends T>> known() {
@@ -157,7 +205,7 @@ public class ItemStatusHandler<T extends Item> {
 	}
 	
 	public HashSet<Class<? extends T>> unknown() {
-		HashSet<Class<? extends T>> result = new HashSet<Class<? extends T>>();
+		LinkedHashSet<Class<? extends T>> result = new LinkedHashSet<>();
 		for (Class<? extends T> i : items) {
 			if (!known.contains( i )) {
 				result.add( i );

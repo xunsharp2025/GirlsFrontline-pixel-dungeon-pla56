@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard;
 
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -29,7 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.watabou.utils.Random;
 
-public class SuspiciousChestRoom extends EmptyRoom {
+public class SuspiciousChestRoom extends StandardRoom {
 
 	@Override
 	public int minWidth() {
@@ -43,7 +44,12 @@ public class SuspiciousChestRoom extends EmptyRoom {
 
 	@Override
 	public void paint(Level level) {
-		super.paint(level);
+		Painter.fill( level, this, Terrain.WALL );
+		Painter.fill( level, this, 1 , Terrain.EMPTY );
+
+		for (Door door : connected.values()) {
+			door.set( Door.Type.REGULAR );
+		}
 
 		Item i = level.findPrizeItem();
 
@@ -56,7 +62,7 @@ public class SuspiciousChestRoom extends EmptyRoom {
 		Painter.set(level, center, Terrain.PEDESTAL);
 
 		if (Random.Int(3) == 0) {
-			level.drop(i, center).type = Heap.Type.MIMIC;
+			level.mobs.add(Mimic.spawnAt(center, i));
 		} else {
 			level.drop(i, center).type = Heap.Type.CHEST;
 		}

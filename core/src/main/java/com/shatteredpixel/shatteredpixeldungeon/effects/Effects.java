@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,10 +35,10 @@ public class Effects {
 		DEATH_RAY,
 		LIGHT_RAY,
 		HEALTH_RAY
-	};
+	}
 	
 	public static Image get( Type type ) {
-		Image icon = new Image( Assets.EFFECTS );
+		Image icon = new Image( Assets.Effects.EFFECTS );
 		switch (type) {
 			case RIPPLE:
 				icon.frame(icon.texture.uvRect(0, 0, 16, 16));
@@ -56,13 +56,13 @@ public class Effects {
 				icon.frame(icon.texture.uvRect(6, 16, 11, 22));
 				break;
 			case DEATH_RAY:
-				icon.frame(icon.texture.uvRect(16, 16, 32, 25));
+				icon.frame(icon.texture.uvRect(16, 16, 32, 24));
 				break;
 			case LIGHT_RAY:
-				icon.frame(icon.texture.uvRect(16, 26, 32, 34));
+				icon.frame(icon.texture.uvRect(16, 23, 32, 31));
 				break;
 			case HEALTH_RAY:
-				icon.frame(icon.texture.uvRect(16, 35, 32, 43));
+				icon.frame(icon.texture.uvRect(16, 30, 32, 38));
 				break;
 		}
 		return icon;

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,37 +23,28 @@ package com.watabou.glscripts;
 
 import com.watabou.glwrap.Program;
 import com.watabou.glwrap.Shader;
-import com.watabou.noosa.Game;
+import com.watabou.utils.Reflection;
 
 import java.util.HashMap;
 
 public class Script extends Program {
 
 	private static final HashMap<Class<? extends Script>,Script> all =
-		new HashMap<Class<? extends Script>, Script>();
+			new HashMap<>();
 	
 	private static Script curScript = null;
 	private static Class<? extends Script> curScriptClass = null;
 	
 	@SuppressWarnings("unchecked")
 	public synchronized static<T extends Script> T use( Class<T> c ) {
-		
 		if (c != curScriptClass) {
 			
 			Script script = all.get( c );
 			if (script == null) {
-				try {
-					script = c.newInstance();
-				} catch (Exception e) {
-					Game.reportException(e);
-				}
+				script = Reflection.newInstance( c );
 				all.put( c, script );
 			}
-			
-			if (curScript != null) {
-				curScript.unuse();
-			}
-			
+
 			curScript = script;
 			curScriptClass = c;
 			curScript.use();
@@ -62,8 +53,13 @@ public class Script extends Program {
 		
 		return (T)curScript;
 	}
+
+	public synchronized static void unuse(){
+		curScript = null;
+		curScriptClass = null;
+	}
 	
-	public static void reset() {
+	public synchronized static void reset() {
 		for (Script script:all.values()) {
 			script.delete();
 		}
@@ -80,8 +76,5 @@ public class Script extends Program {
 		attach( Shader.createCompiled( Shader.FRAGMENT, srcShaders[1] ) );
 		link();
 
-	}
-	
-	public void unuse() {
 	}
 }

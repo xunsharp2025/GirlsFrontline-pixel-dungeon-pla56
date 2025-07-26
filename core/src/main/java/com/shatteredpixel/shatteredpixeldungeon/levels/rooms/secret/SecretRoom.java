@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +21,11 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret;
 
-import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
+import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,18 +44,12 @@ public abstract class SecretRoom extends SpecialRoom {
 
 	//this is the number of secret rooms per region (whole value),
 	// plus the chance for an extra secret room (fractional value)
-	private static float[] baseRegionSecrets = new float[]{1.4f, 1.8f, 2.2f, 2.6f, 2.8f, 3.0f};
-	private static int[] regionSecretsThisRun = new int[6];
+	private static float[] baseRegionSecrets = new float[]{2f, 2.25f, 2.5f, 2.75f, 3.0f};
+	private static int[] regionSecretsThisRun = new int[5];
 	
 	public static void initForRun(){
 		
 		float[] regionChances = baseRegionSecrets.clone();
-		
-		if (GamesInProgress.selectedClass == HeroClass.ROGUE){
-			for (int i = 0; i < regionChances.length; i++){
-				regionChances[i] += 0.6f;
-			}
-		}
 		
 		for (int i = 0; i < regionSecretsThisRun.length; i++){
 			regionSecretsThisRun[i] = (int)regionChances[i];
@@ -82,7 +75,7 @@ public abstract class SecretRoom extends SpecialRoom {
 		if (floorsLeft == 0) {
 			secrets = regionSecretsThisRun[region];
 		} else {
-			secrets = regionSecretsThisRun[region] / floorsLeft;
+			secrets = regionSecretsThisRun[region] / (float)floorsLeft;
 			if (Random.Float() < secrets % 1f){
 				secrets = (float)Math.ceil(secrets);
 			} else {
@@ -102,11 +95,8 @@ public abstract class SecretRoom extends SpecialRoom {
 			int newidx = Random.Int( runSecrets.size() );
 			if (newidx < index) index = newidx;
 		}
-		try {
-			r = runSecrets.get( index ).newInstance();
-		} catch (Exception e) {
-			GirlsFrontlinePixelDungeon.reportException(e);
-		}
+		
+		r = Reflection.newInstance(runSecrets.get( index ));
 		
 		runSecrets.add(runSecrets.remove(index));
 		
@@ -125,7 +115,7 @@ public abstract class SecretRoom extends SpecialRoom {
 			regionSecretsThisRun = bundle.getIntArray(REGIONS);
 		} else {
 			initForRun();
-			GirlsFrontlinePixelDungeon.reportException(new Exception("secrets array didn't exist!"));
+			ShatteredPixelDungeon.reportException(new Exception("secrets array didn't exist!"));
 		}
 	}
 	

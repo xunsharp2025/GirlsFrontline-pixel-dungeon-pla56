@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,14 +27,14 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.HealthBar;
-import com.watabou.noosa.RenderedText;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.watabou.noosa.ui.Component;
 
 public class WndInfoMob extends WndTitledMessage {
 	
 	public WndInfoMob( Mob mob ) {
-		
-		super( new MobTitle( mob ), mob.description() );
+
+		super( new MobTitle( mob ), mob.info() );
 		
 	}
 	
@@ -43,13 +43,13 @@ public class WndInfoMob extends WndTitledMessage {
 		private static final int GAP	= 2;
 		
 		private CharSprite image;
-		private RenderedText name;
+		private RenderedTextBlock name;
 		private HealthBar health;
 		private BuffIndicator buffs;
 		
 		public MobTitle( Mob mob ) {
 			
-			name = PixelScene.renderText( Messages.titleCase( mob.name ), 9 );
+			name = PixelScene.renderTextBlock( Messages.titleCase( mob.name() ), 9 );
 			name.hardlight( TITLE_COLOR );
 			add( name );
 			
@@ -60,7 +60,7 @@ public class WndInfoMob extends WndTitledMessage {
 			health.level(mob);
 			add( health );
 
-			buffs = new BuffIndicator( mob );
+			buffs = new BuffIndicator( mob, false );
 			add( buffs );
 		}
 		
@@ -68,18 +68,20 @@ public class WndInfoMob extends WndTitledMessage {
 		protected void layout() {
 			
 			image.x = 0;
-			image.y = Math.max( 0, name.height() + health.height() - image.height );
+			image.y = Math.max( 0, name.height() + health.height() - image.height() );
 
-			name.x = image.width + GAP;
-			name.y = Math.max( 0, image.height - health.height() - name.height());
+			float w = width - image.width() - GAP;
 
-			float w = width - image.width - GAP;
+			name.maxWidth((int)w);
+			name.setPos(x + image.width + GAP,
+					image.height() > name.height() ? y +(image.height() - name.height()) / 2 : y);
 
-			health.setRect(image.width + GAP, name.y + name.height(), w, health.height());
+			health.setRect(image.width() + GAP, name.bottom() + GAP, w, health.height());
 
 			buffs.setPos(
-				name.x + name.width() + GAP-1,
-				name.y + name.baseLine() - BuffIndicator.SIZE-2 );
+				name.right() + GAP-1,
+				name.bottom() - BuffIndicator.SIZE_SMALL-2
+			);
 
 			height = health.bottom();
 		}

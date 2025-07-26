@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,41 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.rings;
 
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+
+import java.text.DecimalFormat;
+
 public class RingOfEnergy extends Ring {
+
+	{
+		icon = ItemSpriteSheet.Icons.RING_ENERGY;
+	}
+
+	public String statsInfo() {
+		if (isIdentified()){
+			return Messages.get(this, "stats",
+					new DecimalFormat("#.##").format(100f * (Math.pow(1.20f, soloBuffedBonus()) - 1f)),
+					new DecimalFormat("#.##").format(100f * (Math.pow(1.15f, soloBuffedBonus()) - 1f)));
+		} else {
+			return Messages.get(this, "typical_stats",
+					new DecimalFormat("#.##").format(20f),
+					new DecimalFormat("#.##").format(15f));
+		}
+	}
 	
 	@Override
 	protected RingBuff buff( ) {
 		return new Energy();
+	}
+	
+	public static float wandChargeMultiplier( Char target ){
+		return (float)Math.pow(1.20, getBuffedBonus(target, Energy.class));
+	}
+
+	public static float artifactChargeMultiplier( Char target ){
+		return (float)Math.pow(1.15, getBuffedBonus(target, Energy.class));
 	}
 	
 	public class Energy extends RingBuff {

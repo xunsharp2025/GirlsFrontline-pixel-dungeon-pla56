@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,45 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items;
 
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.AlchemistsToolkit;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Blandfruit;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.MeatPie;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.StewedMeat;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.AlchemicalCatalyst;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.TippedDart;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.BlizzardBrew;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.CausticBrew;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.InfernalBrew;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.ShockingBrew;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfAquaticRejuvenation;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfArcaneArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfDragonsBlood;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfHoneyedHealing;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfIcyTouch;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfMight;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfToxicEssence;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.ExoticPotion;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ExoticScroll;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.Alchemize;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.AquaBlast;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.ArcaneCatalyst;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.BeaconOfReturning;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.CurseInfusion;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.FeatherFall;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.MagicalInfusion;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.MagicalPorter;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.PhaseShift;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.ReclaimTrap;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.Recycle;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.SummonElemental;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.TelekineticGrab;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.WildEnergy;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
+import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
 
@@ -32,7 +67,6 @@ public abstract class Recipe {
 	
 	public abstract boolean testIngredients(ArrayList<Item> ingredients);
 	
-	//not currently used
 	public abstract int cost(ArrayList<Item> ingredients);
 	
 	public abstract Item brew(ArrayList<Item> ingredients);
@@ -43,7 +77,7 @@ public abstract class Recipe {
 	public static abstract class SimpleRecipe extends Recipe {
 		
 		//*** These elements must be filled in by subclasses
-		protected Class<?extends Item>[] inputs;
+		protected Class<?extends Item>[] inputs; //each class should be unique
 		protected int[] inQuantity;
 		
 		protected int cost;
@@ -52,22 +86,38 @@ public abstract class Recipe {
 		protected int outQuantity;
 		//***
 		
+		//gets a simple list of items based on inputs
+		public ArrayList<Item> getIngredients() {
+			ArrayList<Item> result = new ArrayList<>();
+			for (int i = 0; i < inputs.length; i++) {
+				Item ingredient = Reflection.newInstance(inputs[i]);
+				ingredient.quantity(inQuantity[i]);
+				result.add(ingredient);
+			}
+			return result;
+		}
+		
 		@Override
 		public final boolean testIngredients(ArrayList<Item> ingredients) {
-			boolean found;
-			for(int i = 0; i < inputs.length; i++){
-				found = false;
-				for (Item ingredient : ingredients){
-					if (ingredient.getClass() == inputs[i]
-							&& ingredient.quantity() >= inQuantity[i]){
-						found = true;
+			
+			int[] needed = inQuantity.clone();
+			
+			for (Item ingredient : ingredients){
+				if (!ingredient.isIdentified()) return false;
+				for (int i = 0; i < inputs.length; i++){
+					if (ingredient.getClass() == inputs[i]){
+						needed[i] -= ingredient.quantity();
 						break;
 					}
 				}
-				if (!found){
+			}
+			
+			for (int i : needed){
+				if (i > 0){
 					return false;
 				}
 			}
+			
 			return true;
 		}
 		
@@ -79,11 +129,18 @@ public abstract class Recipe {
 		public final Item brew(ArrayList<Item> ingredients) {
 			if (!testIngredients(ingredients)) return null;
 			
-			for(int i = 0; i < inputs.length; i++){
-				for (Item ingredient : ingredients){
-					if (ingredient.getClass() == inputs[i]){
-						ingredient.quantity( ingredient.quantity()-inQuantity[i]);
-						break;
+			int[] needed = inQuantity.clone();
+			
+			for (Item ingredient : ingredients){
+				for (int i = 0; i < inputs.length; i++) {
+					if (ingredient.getClass() == inputs[i] && needed[i] > 0) {
+						if (needed[i] <= ingredient.quantity()) {
+							ingredient.quantity(ingredient.quantity() - needed[i]);
+							needed[i] = 0;
+						} else {
+							needed[i] -= ingredient.quantity();
+							ingredient.quantity(0);
+						}
 					}
 				}
 			}
@@ -95,11 +152,11 @@ public abstract class Recipe {
 		//ingredients are ignored, as output doesn't vary
 		public final Item sampleOutput(ArrayList<Item> ingredients){
 			try {
-				Item result = output.newInstance();
+				Item result = Reflection.newInstance(output);
 				result.quantity(outQuantity);
 				return result;
 			} catch (Exception e) {
-				GirlsFrontlinePixelDungeon.reportException( e );
+				ShatteredPixelDungeon.reportException( e );
 				return null;
 			}
 		}
@@ -109,47 +166,103 @@ public abstract class Recipe {
 	//*******
 	// Static members
 	//*******
+
+	private static Recipe[] variableRecipes = new Recipe[]{
+			new LiquidMetal.Recipe()
+	};
 	
 	private static Recipe[] oneIngredientRecipes = new Recipe[]{
-	
+		new Scroll.ScrollToStone(),
+		new ExoticPotion.PotionToExotic(),
+		new ExoticScroll.ScrollToExotic(),
+		new ArcaneResin.Recipe(),
+		new Alchemize.Recipe(),
+		new StewedMeat.oneMeat()
 	};
 	
 	private static Recipe[] twoIngredientRecipes = new Recipe[]{
 		new Blandfruit.CookFruit(),
-		new TippedDart.TipDart()
+		new Bomb.EnhanceBomb(),
+		new AlchemicalCatalyst.Recipe(),
+		new ArcaneCatalyst.Recipe(),
+		new ElixirOfArcaneArmor.Recipe(),
+		new ElixirOfAquaticRejuvenation.Recipe(),
+		new ElixirOfDragonsBlood.Recipe(),
+		new ElixirOfIcyTouch.Recipe(),
+		new ElixirOfMight.Recipe(),
+		new ElixirOfHoneyedHealing.Recipe(),
+		new ElixirOfToxicEssence.Recipe(),
+		new BlizzardBrew.Recipe(),
+		new InfernalBrew.Recipe(),
+		new ShockingBrew.Recipe(),
+		new CausticBrew.Recipe(),
+		new AquaBlast.Recipe(),
+		new BeaconOfReturning.Recipe(),
+		new CurseInfusion.Recipe(),
+		new FeatherFall.Recipe(),
+		new MagicalInfusion.Recipe(),
+		new MagicalPorter.Recipe(),
+		new PhaseShift.Recipe(),
+		new ReclaimTrap.Recipe(),
+		new Recycle.Recipe(),
+		new WildEnergy.Recipe(),
+		new TelekineticGrab.Recipe(),
+		new SummonElemental.Recipe(),
+		new StewedMeat.twoMeat()
 	};
 	
 	private static Recipe[] threeIngredientRecipes = new Recipe[]{
-		new Potion.RandomPotion()
+		new Potion.SeedToPotion(),
+		new StewedMeat.threeMeat(),
+		new MeatPie.Recipe()
 	};
 	
-	public static Recipe findRecipe(ArrayList<Item> ingredients){
-		
+	public static ArrayList<Recipe> findRecipes(ArrayList<Item> ingredients){
+
+		ArrayList<Recipe> result = new ArrayList<>();
+
+		for (Recipe recipe : variableRecipes){
+			if (recipe.testIngredients(ingredients)){
+				result.add(recipe);
+			}
+		}
+
 		if (ingredients.size() == 1){
 			for (Recipe recipe : oneIngredientRecipes){
 				if (recipe.testIngredients(ingredients)){
-					return recipe;
+					result.add(recipe);
 				}
 			}
 			
 		} else if (ingredients.size() == 2){
 			for (Recipe recipe : twoIngredientRecipes){
 				if (recipe.testIngredients(ingredients)){
-					return recipe;
+					result.add(recipe);
 				}
 			}
 			
 		} else if (ingredients.size() == 3){
 			for (Recipe recipe : threeIngredientRecipes){
 				if (recipe.testIngredients(ingredients)){
-					return recipe;
+					result.add(recipe);
 				}
 			}
 		}
 		
-		return null;
+		return result;
 	}
 	
+	public static boolean usableInRecipe(Item item){
+		if (item instanceof EquipableItem){
+			//only thrown weapons and wands allowed among equipment items
+			return item.isIdentified() && !item.cursed && item instanceof MissileWeapon;
+		} else if (item instanceof Wand) {
+			return item.isIdentified() && !item.cursed;
+		} else {
+			//other items can be unidentified, but not cursed
+			return !item.cursed;
+		}
+	}
 }
 
 

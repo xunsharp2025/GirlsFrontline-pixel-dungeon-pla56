@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bleeding;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfParalyticGas;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.AlbinoSprite;
 import com.watabou.utils.Random;
 
@@ -32,11 +32,12 @@ public class Albino extends Rat {
 
 	{
 		spriteClass = AlbinoSprite.class;
-
-		loot = new PotionOfParalyticGas();
-		lootChance = 1;
 		
 		HP = HT = 15;
+		EXP = 2;
+		
+		loot = new MysteryMeat();
+		lootChance = 1f;
 	}
 	
 	@Override
@@ -47,12 +48,5 @@ public class Albino extends Rat {
 		}
 		
 		return damage;
-	}
-
-	// 춘전이 잡으면 부동액 드랍되는거 명시할지 판단 필요
-	@Override
-	public void die( Object cause ) {
-		super.die(cause);
-		new PotionOfParalyticGas().identify();
 	}
 }

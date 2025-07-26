@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,19 +25,15 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
-import com.shatteredpixel.shatteredpixeldungeon.items.keys.Key;
-import com.shatteredpixel.shatteredpixeldungeon.items.keys.SkeletonKey;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Image;
-import com.watabou.noosa.ui.Button;
+import com.watabou.utils.Rect;
 
 public class ItemSlot extends Button {
 
@@ -45,48 +41,48 @@ public class ItemSlot extends Button {
 	public static final int UPGRADED	= 0x44FF44;
 	public static final int FADED       = 0x999999;
 	public static final int WARNING		= 0xFF8800;
+	public static final int ENHANCED	= 0x3399FF;
 	
 	private static final float ENABLED	= 1.0f;
 	private static final float DISABLED	= 0.3f;
-	
-	protected ItemSprite icon;
+
+	private Rect margin = new Rect();
+
+	protected ItemSprite sprite;
 	protected Item       item;
-	protected BitmapText topLeft;
-	protected BitmapText topRight;
-	protected BitmapText bottomRight;
-	protected Image      bottomRightIcon;
-	protected boolean    iconVisible = true;
+	protected BitmapText status;
+	protected BitmapText extra;
+	protected Image      itemIcon;
+	protected BitmapText level;
 	
 	private static final String TXT_STRENGTH	= ":%d";
 	private static final String TXT_TYPICAL_STR	= "%d?";
-	private static final String TXT_KEY_DEPTH	= "\u007F%d";
 
 	private static final String TXT_LEVEL	= "%+d";
-	private static final String TXT_CURSED    = "";//"-";
 
 	// Special "virtual items"
 	public static final Item CHEST = new Item() {
-		public int image() { return ItemSpriteSheet.CHEST; };
+		public int image() { return ItemSpriteSheet.CHEST; }
 	};
 	public static final Item LOCKED_CHEST = new Item() {
-		public int image() { return ItemSpriteSheet.LOCKED_CHEST; };
+		public int image() { return ItemSpriteSheet.LOCKED_CHEST; }
 	};
 	public static final Item CRYSTAL_CHEST = new Item() {
-		public int image() { return ItemSpriteSheet.CRYSTAL_CHEST; };
+		public int image() { return ItemSpriteSheet.CRYSTAL_CHEST; }
 	};
 	public static final Item TOMB = new Item() {
-		public int image() { return ItemSpriteSheet.TOMB; };
+		public int image() { return ItemSpriteSheet.TOMB; }
 	};
 	public static final Item SKELETON = new Item() {
-		public int image() { return ItemSpriteSheet.BONES; };
+		public int image() { return ItemSpriteSheet.BONES; }
 	};
 	public static final Item REMAINS = new Item() {
-		public int image() { return ItemSpriteSheet.REMAINS; };
+		public int image() { return ItemSpriteSheet.REMAINS; }
 	};
 	
 	public ItemSlot() {
 		super();
-		icon.visible(false);
+		sprite.visible(false);
 		enable(false);
 	}
 	
@@ -100,63 +96,77 @@ public class ItemSlot extends Button {
 		
 		super.createChildren();
 		
-		icon = new ItemSprite();
-		add( icon );
+		sprite = new ItemSprite();
+		add(sprite);
 		
-		topLeft = new BitmapText( PixelScene.pixelFont);
-		add( topLeft );
+		status = new BitmapText( PixelScene.pixelFont);
+		add(status);
 		
-		topRight = new BitmapText( PixelScene.pixelFont);
-		add( topRight );
+		extra = new BitmapText( PixelScene.pixelFont);
+		add(extra);
 		
-		bottomRight = new BitmapText( PixelScene.pixelFont);
-		add( bottomRight );
+		level = new BitmapText( PixelScene.pixelFont);
+		add(level);
 	}
 	
 	@Override
 	protected void layout() {
 		super.layout();
 		
-		icon.x = x + (width - icon.width) / 2f;
-		icon.y = y + (height - icon.height) / 2f;
-		PixelScene.align(icon);
+		sprite.x = x + margin.left + (width - sprite.width - (margin.left + margin.right)) / 2f;
+		sprite.y = y + margin.top + (height - sprite.height - (margin.top + margin.bottom)) / 2f;
+		PixelScene.align(sprite);
 		
-		if (topLeft != null) {
-			topLeft.measure();
-			if (topLeft.width > width){
-				topLeft.scale.set(PixelScene.align(0.8f));
+		if (status != null) {
+			status.measure();
+			if (status.width > width - (margin.left + margin.right)){
+				status.scale.set(PixelScene.align(0.8f));
 			} else {
-				topLeft.scale.set(1f);
+				status.scale.set(1f);
 			}
-			topLeft.x = x;
-			topLeft.y = y;
-			PixelScene.align(topLeft);
+			status.x = x + margin.left;
+			status.y = y + margin.top;
+			PixelScene.align(status);
 		}
 		
-		if (topRight != null) {
-			topRight.x = x + (width - topRight.width());
-			topRight.y = y;
-			PixelScene.align(topRight);
-		}
-		
-		if (bottomRight != null) {
-			bottomRight.x = x + (width - bottomRight.width());
-			bottomRight.y = y + (height - bottomRight.height());
-			PixelScene.align(bottomRight);
+		if (extra != null) {
+			extra.x = x + (width - extra.width()) - margin.right;
+			extra.y = y + margin.top;
+			PixelScene.align(extra);
+
+			if ((status.width() + extra.width()) > width){
+				extra.visible = false;
+			} else if (item != null) {
+				extra.visible = true;
+			}
 		}
 
-		if (bottomRightIcon != null) {
-			bottomRightIcon.x = x + (width - bottomRightIcon.width()) -1;
-			bottomRightIcon.y = y + (height - bottomRightIcon.height());
-			PixelScene.align(bottomRightIcon);
+		if (itemIcon != null){
+			itemIcon.x = x + width - (ItemSpriteSheet.Icons.SIZE + itemIcon.width())/2f - margin.right;
+			itemIcon.y = y + (ItemSpriteSheet.Icons.SIZE - itemIcon.height)/2f + margin.top;
+			PixelScene.align(itemIcon);
 		}
+		
+		if (level != null) {
+			level.x = x + (width - level.width()) - margin.right;
+			level.y = y + (height - level.baseLine() - 1) - margin.bottom;
+			PixelScene.align(level);
+		}
+
+	}
+
+	public void clear(){
+		item(null);
+		enable(true);
+		sprite.visible(true);
+		sprite.view(ItemSpriteSheet.SOMETHING, null);
+		layout();
 	}
 	
 	public void item( Item item ) {
 		if (this.item == item) {
 			if (item != null) {
-				icon.frame(item.image());
-				icon.glow(item.glowing());
+				sprite.view( item );
 			}
 			updateText();
 			return;
@@ -167,94 +177,79 @@ public class ItemSlot extends Button {
 		if (item == null) {
 
 			enable(false);
-			icon.visible(false);
+			sprite.visible(false);
 
 			updateText();
 			
 		} else {
 			
 			enable(true);
-			icon.visible(true);
+			sprite.visible(true);
 
-			icon.view( item );
+			sprite.view( item );
 			updateText();
 		}
 	}
 
-	private void updateText(){
+	public void updateText(){
 
-		if (bottomRightIcon != null){
-			remove(bottomRightIcon);
-			bottomRightIcon = null;
+		if (itemIcon != null){
+			remove(itemIcon);
+			itemIcon = null;
 		}
 
 		if (item == null){
-			topLeft.visible = topRight.visible = bottomRight.visible = false;
+			status.visible = extra.visible = level.visible = false;
 			return;
 		} else {
-			topLeft.visible = topRight.visible = bottomRight.visible = true;
+			status.visible = extra.visible = level.visible = true;
 		}
 
-		topLeft.text( item.status() );
+		status.text( item.status() );
 
-		boolean isArmor = item instanceof Armor;
-		boolean isWeapon = item instanceof Weapon;
-		if (isArmor || isWeapon) {
+		if (item.icon != -1 && (item.isIdentified() || (item instanceof Ring && ((Ring) item).isKnown()))){
+			extra.text( null );
 
-			if (item.levelKnown || (isWeapon && !(item instanceof MeleeWeapon))) {
+			itemIcon = new Image(Assets.Sprites.ITEM_ICONS);
+			itemIcon.frame(ItemSpriteSheet.Icons.film.get(item.icon));
+			add(itemIcon);
 
-				int str = isArmor ? ((Armor)item).STRReq() : ((Weapon)item).STRReq();
-				topRight.text( Messages.format( TXT_STRENGTH, str ) );
+		} else if (item instanceof Weapon || item instanceof Armor) {
+
+			if (item.levelKnown){
+				int str = item instanceof Weapon ? ((Weapon)item).STRReq() : ((Armor)item).STRReq();
+				extra.text( Messages.format( TXT_STRENGTH, str ) );
 				if (str > Dungeon.hero.STR()) {
-					topRight.hardlight( DEGRADED );
+					extra.hardlight( DEGRADED );
 				} else {
-					topRight.resetColor();
+					extra.resetColor();
 				}
-
 			} else {
-
-				topRight.text( Messages.format( TXT_TYPICAL_STR, isArmor ?
-						((Armor)item).STRReq(0) :
-						((Weapon)item).STRReq(0) ) );
-				topRight.hardlight( WARNING );
-
+				int str = item instanceof Weapon ? ((Weapon)item).STRReq(0) : ((Armor)item).STRReq(0);
+				extra.text( Messages.format( TXT_TYPICAL_STR, str ) );
+				extra.hardlight( WARNING );
 			}
-			topRight.measure();
+			extra.measure();
 
-		} else if (item instanceof Key && !(item instanceof SkeletonKey)) {
-			topRight.text(Messages.format(TXT_KEY_DEPTH, ((Key) item).depth));
-			topRight.measure();
 		} else {
 
-			topRight.text( null );
+			extra.text( null );
 
 		}
 
-		int level = item.visiblyUpgraded();
+		int trueLvl = item.visiblyUpgraded();
+		int buffedLvl = item.buffedVisiblyUpgraded();
 
-		if (level != 0) {
-			bottomRight.text( item.levelKnown ? Messages.format( TXT_LEVEL, level ) : TXT_CURSED );
-			bottomRight.measure();
-			bottomRight.hardlight( level > 0 ? UPGRADED : DEGRADED );
-		} else if (item instanceof Scroll || item instanceof Potion) {
-			bottomRight.text( null );
-
-			Integer iconInt;
-			if (item instanceof Scroll){
-				iconInt = ((Scroll) item).initials();
+		if (trueLvl != 0 || buffedLvl != 0) {
+			level.text( Messages.format( TXT_LEVEL, buffedLvl ) );
+			level.measure();
+			if (trueLvl == buffedLvl || buffedLvl <= 0) {
+				level.hardlight(buffedLvl > 0 ? UPGRADED : DEGRADED);
 			} else {
-				iconInt = ((Potion) item).initials();
+				level.hardlight(buffedLvl > trueLvl ? ENHANCED : WARNING);
 			}
-			if (iconInt != null && iconVisible) {
-				bottomRightIcon = new Image(Assets.CONS_ICONS);
-				int left = iconInt*7;
-				int top = item instanceof Potion ? 0 : 8;
-				bottomRightIcon.frame(left, top, 7, 8);
-				add(bottomRightIcon);
-			}
-
 		} else {
-			bottomRight.text( null );
+			level.text( null );
 		}
 
 		layout();
@@ -265,22 +260,34 @@ public class ItemSlot extends Button {
 		active = value;
 		
 		float alpha = value ? ENABLED : DISABLED;
-		icon.alpha( alpha );
-		topLeft.alpha( alpha );
-		topRight.alpha( alpha );
-		bottomRight.alpha( alpha );
-		if (bottomRightIcon != null) bottomRightIcon.alpha( alpha );
+		sprite.alpha( alpha );
+		status.alpha( alpha );
+		extra.alpha( alpha );
+		level.alpha( alpha );
+		if (itemIcon != null) itemIcon.alpha( alpha );
 	}
 
-	public void showParams( boolean TL, boolean TR, boolean BR ) {
-		if (TL) add( topLeft );
-		else remove( topLeft );
+	public void showExtraInfo( boolean show ){
 
-		if (TR) add( topRight );
-		else remove( topRight );
+		if (show){
+			add(extra);
+		} else {
+			remove(extra);
+		}
 
-		if (BR) add( bottomRight );
-		else remove( bottomRight );
-		iconVisible = BR;
+	}
+
+	public void setMargins( int left, int top, int right, int bottom){
+		margin.set(left, top, right, bottom);
+		layout();
+	}
+
+	@Override
+	protected String hoverText() {
+		if (item != null && item.name() != null) {
+			return Messages.titleCase(item.name());
+		} else {
+			return super.hoverText();
+		}
 	}
 }

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,11 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,14 +65,14 @@ public class Bones {
 		try {
 			FileUtils.bundleToFile( BONES_FILE, bundle );
 		} catch (IOException e) {
-			GirlsFrontlinePixelDungeon.reportException(e);
+			ShatteredPixelDungeon.reportException(e);
 		}
 	}
 
 	private static Item pickItem(Hero hero){
 		Item item = null;
 		if (Random.Int(3) != 0) {
-			switch (Random.Int(6)) {
+			switch (Random.Int(7)) {
 				case 0:
 					item = hero.belongings.weapon;
 					break;
@@ -78,12 +80,15 @@ public class Bones {
 					item = hero.belongings.armor;
 					break;
 				case 2:
-					item = hero.belongings.misc1;
+					item = hero.belongings.artifact;
 					break;
 				case 3:
-					item = hero.belongings.misc2;
+					item = hero.belongings.misc;
 					break;
-				case 4: case 5:
+				case 4:
+					item = hero.belongings.ring;
+					break;
+				case 5: case 6:
 					item = Dungeon.quickslot.randomNonePlaceholder();
 					break;
 			}
@@ -94,7 +99,7 @@ public class Bones {
 
 			Iterator<Item> iterator = hero.belongings.backpack.iterator();
 			Item curItem;
-			ArrayList<Item> items = new ArrayList<Item>();
+			ArrayList<Item> items = new ArrayList<>();
 			while (iterator.hasNext()){
 				curItem = iterator.next();
 				if (curItem.bones)
@@ -125,7 +130,9 @@ public class Bones {
 				Bundle bundle = FileUtils.bundleFromFile(BONES_FILE);
 
 				depth = bundle.getInt( LEVEL );
-				item = (Item)bundle.get( ITEM );
+				if (depth > 0) {
+					item = (Item) bundle.get(ITEM);
+				}
 
 				return get();
 
@@ -136,39 +143,50 @@ public class Bones {
 		} else {
 			//heroes who are challenged cannot find bones
 			if (depth == Dungeon.depth && Dungeon.challenges == 0) {
-				FileUtils.deleteFile( BONES_FILE );
+				Bundle emptyBones = new Bundle();
+				emptyBones.put(LEVEL, 0);
+				try {
+					FileUtils.bundleToFile( BONES_FILE, emptyBones );
+				} catch (IOException e) {
+					ShatteredPixelDungeon.reportException(e);
+				}
 				depth = 0;
+				
+				if (item == null) return null;
 
 				//Enforces artifact uniqueness
 				if (item instanceof Artifact){
 					if (Generator.removeArtifact(((Artifact)item).getClass())) {
-						try {
-							//generates a new artifact of the same type, always +0
-							Artifact artifact = (Artifact)item.getClass().newInstance();
-
-							artifact.cursed = true;
-							artifact.cursedKnown = true;
-
-							return artifact;
-						} catch (Exception e) {
-							GirlsFrontlinePixelDungeon.reportException(e);
-							return new Gold(item.price());
+						
+						//generates a new artifact of the same type, always +0
+						Artifact artifact = Reflection.newInstance(((Artifact)item).getClass());
+						
+						if (artifact == null){
+							return new Gold(item.value());
 						}
+
+						artifact.cursed = true;
+						artifact.cursedKnown = true;
+
+						return artifact;
+						
 					} else {
-						return new Gold(item.price());
+						return new Gold(item.value());
 					}
 				}
 				
-				if (item.isUpgradable()) {
+				if (item.isUpgradable() && !(item instanceof MissileWeapon)) {
 					item.cursed = true;
 					item.cursedKnown = true;
-					if (item.isUpgradable()) {
-						//caps at +3
-						if (item.level() > 3) {
-							item.degrade( item.level() - 3 );
-						}
-						item.levelKnown = false;
+				}
+				
+				if (item.isUpgradable()) {
+					//caps at +3
+					if (item.level() > 3) {
+						item.degrade( item.level() - 3 );
 					}
+					//thrown weapons are always IDed, otherwise set unknown
+					item.levelKnown = item instanceof MissileWeapon;
 				}
 				
 				item.reset();

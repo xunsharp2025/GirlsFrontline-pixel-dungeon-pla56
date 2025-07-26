@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,6 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bestiary;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Succubus;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.CityPainter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
@@ -33,9 +31,11 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.traps.CorrosionTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.CursingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.DisarmingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.DisintegrationTrap;
-import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ExplosiveTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.DistortionTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.FlashingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.FrostTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GatewayTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GeyserTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GuardianTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.PitfallTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.RockfallTrap;
@@ -46,6 +46,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.traps.WeakeningTrap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.watabou.noosa.Group;
+import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.noosa.particles.PixelParticle;
 import com.watabou.utils.PointF;
@@ -56,33 +57,38 @@ public class CityLevel extends RegularLevel {
 	{
 		color1 = 0x4b6636;
 		color2 = 0xf2f2f2;
+	}
 
-		initMobRotations = Bestiary.MR_CITY;
+	@Override
+	public void playLevelMusic() {
+		Music.INSTANCE.playTracks(
+				new String[]{Assets.Music.CITY_1, Assets.Music.CITY_2, Assets.Music.CITY_2},
+				new float[]{1, 1, 0.5f},
+				false);
+	}
 
-		RareMobs.put(Succubus.class, 0.02f);
-		RareMobFloor.add(4);
+	@Override
+	protected int standardRooms(boolean forceMax) {
+		if (forceMax) return 8;
+		//6 to 8, average 7
+		return 6+Random.chances(new float[]{1, 3, 1});
 	}
 	
 	@Override
-	protected int standardRooms() {
-		//7 to 10, average 7.9
-		return 7+Random.chances(new float[]{4, 3, 2, 1});
-	}
-	
-	@Override
-	protected int specialRooms() {
+	protected int specialRooms(boolean forceMax) {
+		if (forceMax) return 3;
 		//2 to 3, average 2.33
 		return 2 + Random.chances(new float[]{2, 1});
 	}
 	
 	@Override
 	public String tilesTex() {
-		return Assets.TILES_CITY;
+		return Assets.Environment.TILES_CITY;
 	}
 	
 	@Override
 	public String waterTex() {
-		return Assets.WATER_CITY;
+		return Assets.Environment.WATER_CITY;
 	}
 	
 	@Override
@@ -95,25 +101,25 @@ public class CityLevel extends RegularLevel {
 	
 	@Override
 	protected Class<?>[] trapClasses() {
-		return new Class[]{ FrostTrap.class, StormTrap.class, CorrosionTrap.class, BlazingTrap.class, DisintegrationTrap.class,
-				ExplosiveTrap.class, RockfallTrap.class, FlashingTrap.class, GuardianTrap.class, WeakeningTrap.class,
-				SummoningTrap.class, WarpingTrap.class, CursingTrap.class,
-				PitfallTrap.class, DisarmingTrap.class };
+		return new Class[]{
+				FrostTrap.class, StormTrap.class, CorrosionTrap.class, BlazingTrap.class, DisintegrationTrap.class,
+				RockfallTrap.class, FlashingTrap.class, GuardianTrap.class, WeakeningTrap.class,
+				DisarmingTrap.class, SummoningTrap.class, WarpingTrap.class, CursingTrap.class, PitfallTrap.class, DistortionTrap.class, GatewayTrap.class, GeyserTrap.class };
 	}
 
 	@Override
 	protected float[] trapChances() {
-		return new float[]{ 8, 8, 8, 8, 8,
+		return new float[]{
 				4, 4, 4, 4, 4,
-				2, 2, 2,
-				1, 1 };
+				2, 2, 2, 2,
+				1, 1, 1, 1, 1, 1, 1, 1 };
 	}
 	
 	@Override
-	protected void createItems() {
-		super.createItems();
-		
+	protected void createMobs() {
 		Imp.Quest.spawn( this );
+		
+		super.createMobs();
 	}
 	
 	@Override
@@ -165,11 +171,11 @@ public class CityLevel extends RegularLevel {
 		}
 	}
 	
-	private static class Smoke extends Emitter {
+	public static class Smoke extends Emitter {
 		
 		private int pos;
-		
-		private static final Emitter.Factory factory = new Factory() {
+
+		public static final Emitter.Factory factory = new Factory() {
 			
 			@Override
 			public void emit( Emitter emitter, int index, float x, float y ) {

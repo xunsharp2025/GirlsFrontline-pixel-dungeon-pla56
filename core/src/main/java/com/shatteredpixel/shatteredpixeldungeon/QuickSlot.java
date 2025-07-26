@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ public class QuickSlot {
 	 */
 
 	//note that the current max size is coded at 4, due to UI constraints, but it could be much much bigger with no issue.
-	public static int SIZE = 4;
+	public static int SIZE = 6;
 	private Item[] slots = new Item[SIZE];
 
 
@@ -92,17 +92,20 @@ public class QuickSlot {
 	}
 
 	public void convertToPlaceholder(Item item){
-		Item placeholder = Item.virtual(item.getClass());
-
-		if (placeholder != null && contains(item))
-			for (int i = 0; i < SIZE; i++)
-				if (getItem(i) == item)
-					setSlot( i , placeholder );
+		
+		if (contains(item)) {
+			Item placeholder = item.virtual();
+			if (placeholder == null) return;
+			
+			for (int i = 0; i < SIZE; i++) {
+				if (getItem(i) == item) setSlot(i, placeholder);
+			}
+		}
 	}
 
 	public Item randomNonePlaceholder(){
 
-		ArrayList<Item> result = new ArrayList<Item>();
+		ArrayList<Item> result = new ArrayList<>();
 		for (int i = 0; i < SIZE; i ++)
 		if (getItem(i) != null && !isPlaceholder(i))
 				result.add(getItem(i));
@@ -120,7 +123,7 @@ public class QuickSlot {
 	 */
 
 	public void storePlaceholders(Bundle bundle){
-		ArrayList<Item> placeholders = new ArrayList<Item>(SIZE);
+		ArrayList<Item> placeholders = new ArrayList<>(SIZE);
 		boolean[] placements = new boolean[SIZE];
 
 		for (int i = 0; i < SIZE; i++)

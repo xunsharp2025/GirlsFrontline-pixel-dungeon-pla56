@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +35,8 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.RainbowParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.StaffParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -66,20 +65,20 @@ public class WandOfPrismaticLight extends DamageWand {
 	}
 
 	@Override
-	protected void onZap(Ballistica beam) {
+	public void onZap(Ballistica beam) {
 		affectMap(beam);
 		
 		if (Dungeon.level.viewDistance < 6 ){
 			if (Dungeon.isChallenged(Challenges.DARKNESS)){
-				Buff.prolong( curUser, Light.class, 2f + level());
+				Buff.prolong( curUser, Light.class, 2f + buffedLvl());
 			} else {
-				Buff.prolong( curUser, Light.class, 10f+level()*5);
+				Buff.prolong( curUser, Light.class, 10f+buffedLvl()*5);
 			}
 		}
 		
 		Char ch = Actor.findChar(beam.collisionPos);
 		if (ch != null){
-			processSoulMark(ch, chargesPerCast());
+			wandProc(ch, chargesPerCast());
 			affectTarget(ch);
 		}
 	}
@@ -88,18 +87,18 @@ public class WandOfPrismaticLight extends DamageWand {
 		int dmg = damageRoll();
 
 		//three in (5+lvl) chance of failing
-		if (Random.Int(5+level()) >= 3) {
-			Buff.prolong(ch, Blindness.class, 2f + (level() * 0.333f));
+		if (Random.Int(5+buffedLvl()) >= 3) {
+			Buff.prolong(ch, Blindness.class, 2f + (buffedLvl() * 0.333f));
 			ch.sprite.emitter().burst(Speck.factory(Speck.LIGHT), 6 );
 		}
 
 		if (ch.properties().contains(Char.Property.DEMONIC) || ch.properties().contains(Char.Property.UNDEAD)){
-			ch.sprite.emitter().start( ShadowParticle.UP, 0.05f, 10+level() );
-			Sample.INSTANCE.play(Assets.SND_BURNING);
+			ch.sprite.emitter().start( ShadowParticle.UP, 0.05f, 10+buffedLvl() );
+			Sample.INSTANCE.play(Assets.Sounds.BURNING);
 
 			ch.damage(Math.round(dmg*1.333f), this);
 		} else {
-			ch.sprite.centerEmitter().burst( RainbowParticle.BURST, 10+level() );
+			ch.sprite.centerEmitter().burst( RainbowParticle.BURST, 10+buffedLvl() );
 
 			ch.damage(dmg, this);
 		}
@@ -108,7 +107,10 @@ public class WandOfPrismaticLight extends DamageWand {
 
 	private void affectMap(Ballistica beam){
 		boolean noticed = false;
-		for (int c: beam.subPath(0, beam.dist)){
+		for (int c : beam.subPath(0, beam.dist)){
+			if (!Dungeon.level.insideMap(c)){
+				continue;
+			}
 			for (int n : PathFinder.NEIGHBOURS9){
 				int cell = c+n;
 
@@ -130,26 +132,26 @@ public class WandOfPrismaticLight extends DamageWand {
 			CellEmitter.center(c).burst( RainbowParticle.BURST, Random.IntRange( 1, 2 ) );
 		}
 		if (noticed)
-			Sample.INSTANCE.play( Assets.SND_SECRET );
+			Sample.INSTANCE.play( Assets.Sounds.SECRET );
 
 		GameScene.updateFog();
 	}
 
 	@Override
-	protected void fx( Ballistica beam, Callback callback ) {
+	public void fx(Ballistica beam, Callback callback) {
 		curUser.sprite.parent.add(
 				new Beam.LightRay(curUser.sprite.center(), DungeonTilemap.raisedTileCenterToWorld(beam.collisionPos)));
 		callback.call();
 	}
 
 	@Override
-	public void onHit(G11 staff, Char attacker, Char defender, int damage) {
+	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
 		//cripples enemy
-		Buff.prolong( defender, Cripple.class, 1f+staff.level());
+		Buff.prolong( defender, Cripple.class, 1f+staff.buffedLvl());
 	}
 
 	@Override
-	public void staffFx(StaffParticle particle) {
+	public void staffFx(MagesStaff.StaffParticle particle) {
 		particle.color( Random.Int( 0x1000000 ) );
 		particle.am = 0.5f;
 		particle.setLifespan(1f);

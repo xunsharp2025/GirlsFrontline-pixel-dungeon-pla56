@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,41 +21,25 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
 public class ThrowingStone extends MissileWeapon {
 	
 	{
 		image = ItemSpriteSheet.THROWING_STONE;
-		
-		sticky = false;
+		hitSound = Assets.Sounds.HIT;
+		hitSoundPitch = 1.1f;
 		
 		bones = false;
 		
+		tier = 1;
+		baseUses = 5;
+		sticky = false;
 	}
 	
 	@Override
-	public int min(int lvl) {
-		return 2;
-	}
-	
-	@Override
-	public int max(int lvl) {
-		return 7;
-	}
-	
-	@Override
-	public int STRReq(int lvl) {
-		return 9;
-	}
-	
-	@Override
-	protected float durabilityPerUse() {
-		return super.durabilityPerUse()*3.34f;
-	}
-	
-	@Override
-	public int price() {
-		return quantity;
+	public int value() {
+		return super.value()/2; //half normal value
 	}
 }

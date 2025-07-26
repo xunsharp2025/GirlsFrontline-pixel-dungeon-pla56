@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,9 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
-import com.watabou.noosa.Image;
 
 public class Invisibility extends FlavourBuff {
 
@@ -38,6 +38,7 @@ public class Invisibility extends FlavourBuff {
 
 	{
 		type = buffType.POSITIVE;
+		announced = true;
 	}
 	
 	@Override
@@ -64,10 +65,10 @@ public class Invisibility extends FlavourBuff {
 	public int icon() {
 		return BuffIndicator.INVISIBLE;
 	}
-	
+
 	@Override
-	public void tintIcon(Image icon) {
-		greyIcon(icon, 5f, cooldown());
+	public float iconFadePercent() {
+		return Math.max(0, (DURATION - visualcooldown()) / DURATION);
 	}
 
 	@Override
@@ -87,18 +88,30 @@ public class Invisibility extends FlavourBuff {
 	}
 
 	public static void dispel() {
-		Invisibility buff = Dungeon.hero.buff( Invisibility.class );
-		if (buff != null) {
-			buff.detach();
+		if (Dungeon.hero == null) return;
+
+		for ( Buff invis : Dungeon.hero.buffs( Invisibility.class )){
+			invis.detach();
 		}
 		CloakOfShadows.cloakStealth cloakBuff = Dungeon.hero.buff( CloakOfShadows.cloakStealth.class );
 		if (cloakBuff != null) {
 			cloakBuff.dispel();
 		}
-		//this isn't a form of invisibilty, but it is meant to dispel at the same time as it.
+		
+		//these aren't forms of invisibilty, but do dispel at the same time as it.
 		TimekeepersHourglass.timeFreeze timeFreeze = Dungeon.hero.buff( TimekeepersHourglass.timeFreeze.class );
 		if (timeFreeze != null) {
 			timeFreeze.detach();
+		}
+		
+		Preparation prep = Dungeon.hero.buff( Preparation.class );
+		if (prep != null){
+			prep.detach();
+		}
+		
+		Swiftthistle.TimeBubble bubble =  Dungeon.hero.buff( Swiftthistle.TimeBubble.class );
+		if (bubble != null){
+			bubble.detach();
 		}
 	}
 }

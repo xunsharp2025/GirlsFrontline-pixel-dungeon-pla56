@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,9 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTiledVisual;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
 import com.watabou.noosa.Image;
+import com.watabou.noosa.Tilemap;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -89,28 +90,30 @@ public class MassGraveRoom extends SpecialRoom {
 				pos = level.pointToCell(random());
 			} while (level.map[pos] != Terrain.EMPTY_SP || level.heaps.get(pos) != null);
 			Heap h = level.drop(item, pos);
+			h.setHauntedIfCursed();
 			h.type = Heap.Type.SKELETON;
 		}
 	}
 
-	public static class Bones extends CustomTiledVisual {
+	public static class Bones extends CustomTilemap {
 
 		private static final int WALL_OVERLAP   = 3;
 		private static final int FLOOR          = 7;
 
-		public Bones(){
-			super(Assets.PRISON_QUEST);
+		{
+			texture = Assets.Environment.PRISON_QUEST;
 		}
 
 		@Override
-		public CustomTiledVisual create() {
-			int data[] = new int[tileW*tileH];
+		public Tilemap create() {
+			Tilemap v = super.create();
+			int[] data = new int[tileW*tileH];
 			for (int i = 0; i < data.length; i++){
 				if (i < tileW)  data[i] = WALL_OVERLAP;
 				else            data[i] = FLOOR;
 			}
-			map( data, tileW );
-			return super.create();
+			v.map( data, tileW );
+			return v;
 		}
 
 		@Override

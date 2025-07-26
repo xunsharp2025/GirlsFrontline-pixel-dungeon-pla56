@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,21 +29,21 @@ public class AlbinoSprite extends MobSprite {
 	public AlbinoSprite() {
 		super();
 		
-		texture( Assets.SPRING );
+		texture( Assets.Sprites.RAT );
 		
-		TextureFilm frames = new TextureFilm( texture, 20, 20 );
+		TextureFilm frames = new TextureFilm( texture, 16, 15 );
 		
 		idle = new Animation( 2, true );
-		idle.frames( frames, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1 );
+		idle.frames( frames, 16, 16, 16, 17 );
 		
 		run = new Animation( 10, true );
-		run.frames( frames, 7, 8, 9, 10, 11, 12 );
+		run.frames( frames, 22, 23, 24, 25, 26 );
 		
 		attack = new Animation( 15, false );
-		attack.frames( frames, 3, 4, 5, 6 );
+		attack.frames( frames, 18, 19, 20, 21 );
 		
 		die = new Animation( 10, false );
-		die.frames( frames, 0, 13, 14, 15 );
+		die.frames( frames, 27, 28, 29, 30 );
 		
 		play( idle );
 	}

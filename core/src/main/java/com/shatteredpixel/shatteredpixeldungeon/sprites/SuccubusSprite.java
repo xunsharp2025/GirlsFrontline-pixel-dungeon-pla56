@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,21 +31,21 @@ public class SuccubusSprite extends MobSprite {
 	public SuccubusSprite() {
 		super();
 		
-		texture( Assets.SUCCUBUS );
+		texture( Assets.Sprites.SUCCUBUS );
 		
-		TextureFilm frames = new TextureFilm( texture, 24, 15 );
-
-		idle = new Animation( 15, true );
-		idle.frames( frames, 0, 0, 0, 0, 0, 1 );
-
-		run = new Animation( 22, true );
-		run.frames( frames, 2, 3, 4, 5 );
-
-		attack = new Animation( 15, false );
-		attack.frames( frames, 6, 7 );
-
+		TextureFilm frames = new TextureFilm( texture, 12, 15 );
+		
+		idle = new Animation( 8, true );
+		idle.frames( frames, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 1 );
+		
+		run = new Animation( 15, true );
+		run.frames( frames, 3, 4, 5, 6, 7, 8 );
+		
+		attack = new Animation( 12, false );
+		attack.frames( frames, 9, 10, 11 );
+		
 		die = new Animation( 10, false );
-		die.frames( frames, 8, 9, 10 );
+		die.frames( frames, 12 );
 		
 		play( idle );
 	}

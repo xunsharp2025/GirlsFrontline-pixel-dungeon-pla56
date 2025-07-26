@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,62 +24,49 @@ package com.shatteredpixel.shatteredpixeldungeon.items.artifacts;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
+import com.shatteredpixel.shatteredpixeldungeon.items.Recipe;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.AlchemyScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.Random;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class AlchemistsToolkit extends Artifact {
 
 	{
 		image = ItemSpriteSheet.ARTIFACT_TOOLKIT;
+		defaultAction = AC_BREW;
 
 		levelCap = 10;
+		
+		charge = 0;
+		partialCharge = 0;
 	}
 
 	public static final String AC_BREW = "BREW";
+	public static final String AC_ENERGIZE = "ENERGIZE";
 
-	//arrays used in containing potion collections for mix logic.
-	public final ArrayList<String> combination = new ArrayList<String>();
-	public ArrayList<String> curGuess = new ArrayList<String>();
-	public ArrayList<String> bstGuess = new ArrayList<String>();
-
-	public int numWrongPlace = 0;
-	public int numRight = 0;
-
-	private int seedsToPotion = 0;
-
-	protected String inventoryTitle = "Select a potion";
-	protected WndBag.Mode mode = WndBag.Mode.POTION;
-
-	public AlchemistsToolkit() {
-		super();
-
-		Generator.Category cat = Generator.Category.POTION;
-		for (int i = 1; i <= 3; i++){
-			String potion;
-			do{
-				potion = convertName(cat.classes[Random.chances(cat.probs)].getSimpleName());
-				//forcing the player to use experience potions would be completely unfair.
-			} while (combination.contains(potion) || potion.equals("Experience"));
-			combination.add(potion);
-		}
-	}
+	private float warmUpDelay;
 
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		if (isEquipped( hero ) && level() < levelCap && !cursed)
+		if (isEquipped( hero ) && !cursed) {
 			actions.add(AC_BREW);
+			if (level() < levelCap) {
+				actions.add(AC_ENERGIZE);
+			}
+		}
 		return actions;
 	}
 
@@ -89,199 +76,180 @@ public class AlchemistsToolkit extends Artifact {
 		super.execute(hero, action);
 
 		if (action.equals(AC_BREW)){
-			GameScene.selectItem(itemSelector, mode, inventoryTitle);
-		}
-	}
+			if (!isEquipped(hero))              GLog.i( Messages.get(this, "need_to_equip") );
+			else if (cursed)                    GLog.w( Messages.get(this, "cursed") );
+			else if (warmUpDelay > 0)           GLog.w( Messages.get(this, "not_ready") );
+			else {
+				AlchemyScene.assignToolkit(this);
+				Game.switchScene(AlchemyScene.class);
+			}
+			
+		} else if (action.equals(AC_ENERGIZE)){
+			if (!isEquipped(hero))              GLog.i( Messages.get(this, "need_to_equip") );
+			else if (cursed)                    GLog.w( Messages.get(this, "cursed") );
+			else if (Dungeon.energy < 5)        GLog.w( Messages.get(this, "need_energy") );
+			else {
 
-	public void guessBrew() {
-		if (curGuess.size() != 3)
-			return;
+				final int maxLevels = Math.min(levelCap - level(), Dungeon.energy/5);
 
-		int numWrongPlace = 0;
-		int numRight = 0;
-
-		for (String potion : curGuess) {
-			if (combination.contains(potion)) {
-				if (curGuess.indexOf(potion) == combination.indexOf(potion)) {
-					numRight++;
+				String[] options;
+				if (maxLevels > 1){
+					options = new String[]{ Messages.get(this, "energize_1"), Messages.get(this, "energize_all", 5*maxLevels, maxLevels)};
 				} else {
-					numWrongPlace++;
+					options = new String[]{ Messages.get(this, "energize_1")};
 				}
+
+				GameScene.show(new WndOptions(new ItemSprite(image),
+						Messages.titleCase(name()),
+						Messages.get(this, "energize_desc"),
+						options){
+					@Override
+					protected void onSelect(int index) {
+						super.onSelect(index);
+
+						if (index == 0){
+							Dungeon.energy -= 5;
+							Sample.INSTANCE.play(Assets.Sounds.DRINK);
+							Sample.INSTANCE.playDelayed(Assets.Sounds.PUFF, 0.5f);
+							Dungeon.hero.sprite.operate(Dungeon.hero.pos);
+							upgrade();
+						} else if (index == 1){
+							Dungeon.energy -= 5*maxLevels;
+							Sample.INSTANCE.play(Assets.Sounds.DRINK);
+							Sample.INSTANCE.playDelayed(Assets.Sounds.PUFF, 0.5f);
+							Dungeon.hero.sprite.operate(Dungeon.hero.pos);
+							upgrade(maxLevels);
+						}
+
+					}
+
+					@Override
+					protected boolean hasIcon(int index) {
+						return true;
+					}
+
+					@Override
+					protected Image getIcon(int index) {
+						return new ItemSprite(ItemSpriteSheet.ENERGY);
+					}
+				});
 			}
 		}
 
-		int score = (numRight *3) + numWrongPlace;
-
-		if (score == 9)
-			score ++;
-
-		if (score == 0){
-
-			GLog.i("Your mixture is complete, but none of the potions you used seem to react well. " +
-					"The brew is useless, you throw it away.");
-
-		} else if (score > level()) {
-
-			level(score);
-			seedsToPotion = 0;
-			bstGuess = curGuess;
-			this.numRight = numRight;
-			this.numWrongPlace = numWrongPlace;
-
-			if (level() == 10){
-				bstGuess = new ArrayList<String>();
-				GLog.p("The mixture you've created seems perfect, you don't think there is any way to improve it!");
-			} else {
-				GLog.w("you finish mixing potions, " + brewDesc(numWrongPlace, numRight) +
-						". This is your best brew yet!");
-			}
-
-		} else {
-
-			GLog.w("you finish mixing potions, " + brewDesc(numWrongPlace, numRight) +
-					". This brew isn't as good as the current one, you throw it away.");
-		}
-		curGuess = new ArrayList<String>();
-
+		updateQuickslot();
 	}
 
-	private String brewDesc(int numWrongPlace, int numRight){
-		String result = "";
-		if (numWrongPlace > 0){
-			result += numWrongPlace + " reacted well, but in the wrong order";
-			if (numRight > 0)
-				result += " and ";
+	@Override
+	public String status() {
+		if (isEquipped(Dungeon.hero) && warmUpDelay > 0){
+			return Messages.format( "%d%%", 100 - (int)warmUpDelay );
+		} else {
+			return super.status();
 		}
-		if (numRight > 0){
-			result += numRight + " reacted perfectly";
-		}
-		return result;
 	}
 
 	@Override
 	protected ArtifactBuff passiveBuff() {
-		return new alchemy();
+		return new kitEnergy();
+	}
+	
+	@Override
+	public void charge(Hero target, float amount) {
+		partialCharge += 0.25f*amount;
+		if (partialCharge >= 1){
+			partialCharge--;
+			charge++;
+			updateQuickslot();
+		}
+	}
+
+	public int availableEnergy(){
+		return charge;
+	}
+
+	public int consumeEnergy(int amount){
+		int result = amount - charge;
+		charge = Math.max(0, charge - amount);
+		return Math.max(0, result);
 	}
 
 	@Override
 	public String desc() {
-		String result = "This toolkit contains a number of regents and herbs used to improve the process of " +
-				"cooking potions.\n\n";
+		String result = Messages.get(this, "desc");
 
-		if (isEquipped(Dungeon.hero))
-			if (cursed)
-				result += "The cursed toolkit has bound itself to your side, and refuses to let you use alchemy.\n\n";
-			else
-				result += "The toolkit rests on your hip, the various tools inside make a light jingling sound as you move.\n\n";
-
-		if (level() == 0){
-			result += "The toolkit seems to be missing a key tool, a catalyst mixture. You'll have to make your own " +
-					"out of three common potions to get the most out of the toolkit.";
-		} else if (level() == 10) {
-			result += "The mixture you have created seems perfect, and the toolkit is working at maximum efficiency.";
-		} else if (!bstGuess.isEmpty()) {
-			result += "Your current best mixture is made from: " + bstGuess.get(0) + ", " + bstGuess.get(1) + ", "
-					+ bstGuess.get(2) + ", in that order.\n\n";
-			result += "Of the potions in that mix, " + brewDesc(numWrongPlace, numRight) + ".";
-
-		//would only trigger if an upgraded toolkit was gained through transmutation or bones.
-		} else {
-			result += "The toolkit seems to have a catalyst mixture already in it, but it isn't ideal. Unfortunately " +
-					"you have no idea what's in the mixture.";
+		if (isEquipped(Dungeon.hero)) {
+			if (cursed)                 result += "\n\n" + Messages.get(this, "desc_cursed");
+			else if (warmUpDelay > 0)   result += "\n\n" + Messages.get(this, "desc_warming");
+			else                        result += "\n\n" + Messages.get(this, "desc_hint");
 		}
+		
 		return result;
 	}
-
-	private static final String COMBINATION = "combination";
-	private static final String CURGUESS = "curguess";
-	private static final String BSTGUESS = "bstguess";
-
-	private static final String NUMWRONGPLACE = "numwrongplace";
-	private static final String NUMRIGHT = "numright";
-
-	private static final String SEEDSTOPOTION = "seedstopotion";
-
+	
 	@Override
-	public void storeInBundle(Bundle bundle){
+	public boolean doEquip(Hero hero) {
+		if (super.doEquip(hero)){
+			warmUpDelay = 101f;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	private static final String WARM_UP = "warm_up";
+	
+	@Override
+	public void storeInBundle(Bundle bundle) {
 		super.storeInBundle(bundle);
-		bundle.put(NUMWRONGPLACE, numWrongPlace);
-		bundle.put(NUMRIGHT, numRight);
-
-		bundle.put(SEEDSTOPOTION, seedsToPotion);
-
-		bundle.put(COMBINATION, combination.toArray(new String[combination.size()]));
-		bundle.put(CURGUESS, curGuess.toArray(new String[curGuess.size()]));
-		bundle.put(BSTGUESS, bstGuess.toArray(new String[bstGuess.size()]));
+		bundle.put(WARM_UP, warmUpDelay);
 	}
-
+	
 	@Override
-	public void restoreFromBundle( Bundle bundle ) {
+	public void restoreFromBundle(Bundle bundle) {
 		super.restoreFromBundle(bundle);
-		numWrongPlace = bundle.getInt( NUMWRONGPLACE );
-		numRight = bundle.getInt( NUMRIGHT );
-
-		seedsToPotion = bundle.getInt( SEEDSTOPOTION );
-
-		combination.clear();
-		Collections.addAll( combination, bundle.getStringArray( COMBINATION ));
-		Collections.addAll( curGuess, bundle.getStringArray( CURGUESS ));
-		Collections.addAll( bstGuess, bundle.getStringArray( BSTGUESS ));
+		warmUpDelay = bundle.getFloat(WARM_UP);
 	}
+	
+	public class kitEnergy extends ArtifactBuff {
 
-
-	public class alchemy extends ArtifactBuff {
-
-		public boolean tryCook(int count){
-
-			//this logic is handled inside the class with a variable so that it may be stored.
-			//to prevent manipulation where a player could keep throwing in 1-2 seeds until they get lucky.
-			if (seedsToPotion == 0){
-				if (Random.Int(20) < 10+level()){
-					if (Random.Int(20) < level()){
-						seedsToPotion = 1;
-					} else
-						seedsToPotion = 2;
-				} else
-					seedsToPotion = 3;
-			}
-
-			if (count >= seedsToPotion){
-				seedsToPotion = 0;
-				return true;
-			} else
-				return false;
-
-		}
-
-	}
-
-	protected WndBag.Listener itemSelector = new WndBag.Listener() {
 		@Override
-		public void onSelect(Item item) {
-			if (item != null && item instanceof Potion && item.isIdentified()){
-				if (!curGuess.contains(convertName(item.getClass().getSimpleName()))) {
+		public boolean act() {
 
-					Hero hero = Dungeon.hero;
-					hero.sprite.operate( hero.pos );
-					hero.busy();
-					hero.spend( 2f );
-					Sample.INSTANCE.play(Assets.SND_DRINK);
-
-					item.detach(hero.belongings.backpack);
-
-					curGuess.add(convertName(item.getClass().getSimpleName()));
-					if (curGuess.size() == 3){
-						guessBrew();
-					} else {
-						GLog.i("You mix the " + item.name() + " into your current brew.");
-					}
+			if (warmUpDelay > 0){
+				if (level() == 10){
+					warmUpDelay = 0;
+				} else if (warmUpDelay == 101){
+					warmUpDelay = 100f;
 				} else {
-					GLog.w("Your current brew already contains that potion.");
+					float turnsToWarmUp = (int) Math.pow(10 - level(), 2);
+					warmUpDelay -= 100 / turnsToWarmUp;
 				}
-			} else if (item != null) {
-				GLog.w("You need to select an identified potion.");
+				updateQuickslot();
+			}
+
+			spend(TICK);
+			return true;
+		}
+
+		public void gainCharge(float levelPortion) {
+			if (cursed) return;
+
+			//generates 2 energy every hero level, +0.1 energy per toolkit level
+			//to a max of 12 energy per hero level
+			//This means that energy absorbed into the kit is recovered in 5 hero levels
+			float chargeGain = (2 + level()) * levelPortion;
+			chargeGain *= RingOfEnergy.artifactChargeMultiplier(target);
+			partialCharge += chargeGain;
+
+			//charge is in increments of 1 energy.
+			while (partialCharge >= 1) {
+				charge++;
+				partialCharge -= 1;
+
+				updateQuickslot();
 			}
 		}
-	};
+
+	}
 
 }

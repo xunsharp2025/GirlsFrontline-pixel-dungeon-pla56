@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,20 +37,26 @@ public class Grim extends Weapon.Enchantment {
 	@Override
 	public int proc( Weapon weapon, Char attacker, Char defender, int damage ) {
 
-		int level = Math.max( 0, weapon.level() );
+		int level = Math.max( 0, weapon.buffedLvl() );
 
 		int enemyHealth = defender.HP - damage;
-		if (enemyHealth == 0) return damage; //no point in proccing if they're already dead.
+		if (enemyHealth <= 0) return damage; //no point in proccing if they're already dead.
 
-		//scales from 0 - 30% based on how low hp the enemy is, plus 1% per level
-		int chance = Math.round(((defender.HT - enemyHealth) / (float)defender.HT)*30 + level);
-		
-		if (Random.Int( 100 ) < chance) {
+		//scales from 0 - 50% based on how low hp the enemy is, plus 5% per level
+		float maxChance = 0.5f + .05f*level;
+		float chanceMulti = (float)Math.pow( ((defender.HT - enemyHealth) / (float)defender.HT), 2);
+		float chance = maxChance * chanceMulti;
+
+		chance *= procChanceMultiplier(attacker);
+
+		if (Random.Float() < chance) {
 			
 			defender.damage( defender.HP, this );
 			defender.sprite.emitter().burst( ShadowParticle.UP, 5 );
 			
-			if (!defender.isAlive() && attacker instanceof Hero) {
+			if (!defender.isAlive() && attacker instanceof Hero
+				//this prevents unstable from triggering grim achievement
+				&& weapon.hasEnchant(Grim.class, attacker)) {
 				Badges.validateGrimWeapon();
 			}
 			

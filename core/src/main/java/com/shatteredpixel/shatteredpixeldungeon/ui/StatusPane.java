@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,151 +23,216 @@ package com.shatteredpixel.shatteredpixeldungeon.ui;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.effects.CircleArc;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndGame;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndHero;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndJournal;
-import com.watabou.input.Touchscreen.Touch;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndKeyBindings;
+import com.watabou.input.GameAction;
+import com.watabou.input.KeyBindings;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.NinePatch;
-import com.watabou.noosa.TouchArea;
-import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
-import com.watabou.noosa.ui.Button;
 import com.watabou.noosa.ui.Component;
 import com.watabou.utils.ColorMath;
+
+import java.util.ArrayList;
 
 public class StatusPane extends Component {
 
 	private NinePatch bg;
 	private Image avatar;
+	private Button heroInfo;
+	public static float talentBlink;
 	private float warning;
+
+	public static final float FLASH_RATE = (float)(Math.PI*1.5f); //1.5 blinks per second
 
 	private int lastTier = 0;
 
 	private Image rawShielding;
 	private Image shieldedHP;
 	private Image hp;
-	private Image exp;
+	private BitmapText hpText;
+	private Button heroInfoOnBar;
 
-	private BossHealthBar bossHP;
+	private Image exp;
+	private BitmapText expText;
 
 	private int lastLvl = -1;
 
 	private BitmapText level;
-	private BitmapText depth;
 
-	private DangerIndicator danger;
 	private BuffIndicator buffs;
 	private Compass compass;
 
-	private JournalButton btnJournal;
-	private MenuButton btnMenu;
+	private BusyIndicator busy;
+	private CircleArc counter;
 
-	private Toolbar.PickedUpItem pickedUp;
+	private static String asset = Assets.Interfaces.STATUS;
 
-	@Override
-	protected void createChildren() {
+	private boolean large;
 
-		bg = new NinePatch( Assets.STATUS, 0, 0, 128, 36, 85, 0, 45, 0 );
+	public StatusPane( boolean large ){
+		super();
+
+		this.large = large;
+
+		if (large)  bg = new NinePatch( asset, 0, 64, 41, 39, 33, 0, 4, 0 );
+		else        bg = new NinePatch( asset, 0, 0, 128, 36, 85, 0, 45, 0 );
 		add( bg );
 
-		add( new TouchArea( 0, 1, 31, 31 ) {
+		heroInfo = new Button(){
 			@Override
-			protected void onClick( Touch touch ) {
-				Image sprite = Dungeon.hero.sprite;
-				if (!sprite.isVisible()) {
-					Camera.main.focusOn( sprite );
-				}
+			protected void onClick () {
+				Camera.main.panTo( Dungeon.hero.sprite.center(), 5f );
 				GameScene.show( new WndHero() );
 			}
-		} );
+			
+			@Override
+			public GameAction keyAction() {
+				return SPDAction.HERO_INFO;
+			}
 
-		btnJournal = new JournalButton();
-		add( btnJournal );
-
-		btnMenu = new MenuButton();
-		add( btnMenu );
+			@Override
+			protected String hoverText() {
+				return Messages.titleCase(Messages.get(WndKeyBindings.class, "hero_info"));
+			}
+		};
+		add(heroInfo);
 
 		avatar = HeroSprite.avatar( Dungeon.hero.heroClass, lastTier );
 		add( avatar );
 
+		talentBlink = 0;
+
 		compass = new Compass( Statistics.amuletObtained ? Dungeon.level.entrance : Dungeon.level.exit );
 		add( compass );
 
-		rawShielding = new Image( Assets.SHLD_BAR );
+		if (large)  rawShielding = new Image(asset, 0, 112, 128, 9);
+		else        rawShielding = new Image(asset, 0, 40, 50, 4);
 		rawShielding.alpha(0.5f);
 		add(rawShielding);
 
-		shieldedHP = new Image( Assets.SHLD_BAR );
+		if (large)  shieldedHP = new Image(asset, 0, 112, 128, 9);
+		else        shieldedHP = new Image(asset, 0, 40, 50, 4);
 		add(shieldedHP);
 
-		hp = new Image( Assets.HP_BAR );
+		if (large)  hp = new Image(asset, 0, 103, 128, 9);
+		else        hp = new Image(asset, 0, 36, 50, 4);
 		add( hp );
 
-		exp = new Image( Assets.XP_BAR );
+		hpText = new BitmapText(PixelScene.pixelFont);
+		hpText.alpha(0.6f);
+		add(hpText);
+
+		heroInfoOnBar = new Button(){
+			@Override
+			protected void onClick () {
+				Camera.main.panTo( Dungeon.hero.sprite.center(), 5f );
+				GameScene.show( new WndHero() );
+			}
+		};
+		add(heroInfoOnBar);
+
+		if (large)  exp = new Image(asset, 0, 121, 128, 7);
+		else        exp = new Image(asset, 0, 44, 16, 1);
 		add( exp );
 
-		bossHP = new BossHealthBar();
-		add( bossHP );
+		if (large){
+			expText = new BitmapText(PixelScene.pixelFont);
+			expText.hardlight( 0xFFFFAA );
+			expText.alpha(0.6f);
+			add(expText);
+		}
 
 		level = new BitmapText( PixelScene.pixelFont);
-		level.hardlight( 0xFFEBA4 );
+		level.hardlight( 0xFFFFAA );
 		add( level );
 
-		depth = new BitmapText( Integer.toString( Dungeon.depth ), PixelScene.pixelFont);
-		depth.hardlight( 0xCACFC2 );
-		depth.measure();
-		add( depth );
-
-		danger = new DangerIndicator();
-		add( danger );
-
-		buffs = new BuffIndicator( Dungeon.hero );
+		buffs = new BuffIndicator( Dungeon.hero, large );
 		add( buffs );
 
-		add( pickedUp = new Toolbar.PickedUpItem());
+		busy = new BusyIndicator();
+		add( busy );
+
+		counter = new CircleArc(18, 4.25f);
+		counter.color( 0x808080, true );
+		counter.show(this, busy.center(), 0f);
 	}
 
 	@Override
 	protected void layout() {
 
-		height = 32;
+		height = large ? 39 : 32;
 
-		bg.size( width, bg.height );
+		bg.x = x;
+		bg.y = y;
+		if (large)  bg.size( 160, bg.height ); //HP bars must be 128px wide atm
+		else        bg.size( width, bg.height );
 
-		avatar.x = bg.x + 15 - avatar.width / 2f;
-		avatar.y = bg.y + 16 - avatar.height / 2f;
+		avatar.x = bg.x - avatar.width / 2f + 15;
+		avatar.y = bg.y - avatar.height / 2f + (large ? 15 : 16);
 		PixelScene.align(avatar);
+
+		heroInfo.setRect( x, y+(large ? 0 : 1), 30, large ? 40 : 30 );
 
 		compass.x = avatar.x + avatar.width / 2f - compass.origin.x;
 		compass.y = avatar.y + avatar.height / 2f - compass.origin.y;
 		PixelScene.align(compass);
 
-		hp.x = shieldedHP.x = rawShielding.x = 30;
-		hp.y = shieldedHP.y = rawShielding.y = 3;
+		if (large) {
+			exp.x = x + 30;
+			exp.y = y + 30;
 
-		bossHP.setPos( 6 + (width - bossHP.width())/2, 20);
+			hp.x = shieldedHP.x = rawShielding.x = x + 30;
+			hp.y = shieldedHP.y = rawShielding.y = y + 19;
 
-		depth.x = width - 35.5f - depth.width() / 2f;
-		depth.y = 8f - depth.baseLine() / 2f;
-		PixelScene.align(depth);
+			hpText.x = hp.x + (128 - hpText.width())/2f;
+			hpText.y = hp.y + 1;
+			PixelScene.align(hpText);
 
-		danger.setPos( width - danger.width(), 20 );
+			expText.x = exp.x + (128 - expText.width())/2f;
+			expText.y = exp.y;
+			PixelScene.align(expText);
 
-		buffs.setPos( 31, 9 );
+			heroInfoOnBar.setRect(heroInfo.right(), y + 19, 130, 20);
 
-		btnJournal.setPos( width - 42, 1 );
+			buffs.setPos( x + 31, y );
 
-		btnMenu.setPos( width - btnMenu.width(), 1 );
+			busy.x = x + bg.width + 1;
+			busy.y = y + bg.height - 9;
+		} else {
+			exp.x = x;
+			exp.y = y;
+
+			hp.x = shieldedHP.x = rawShielding.x = x + 30;
+			hp.y = shieldedHP.y = rawShielding.y = y + 3;
+
+			hpText.scale.set(PixelScene.align(0.5f));
+			hpText.x = hp.x + 1;
+			hpText.y = hp.y + (hp.height - (hpText.baseLine()+hpText.scale.y))/2f;
+			hpText.y -= 0.001f; //prefer to be slightly higher
+			PixelScene.align(hpText);
+
+			heroInfoOnBar.setRect(heroInfo.right(), y, 50, 9);
+
+			buffs.setPos( x + 31, y + 9 );
+
+			busy.x = x + 1;
+			busy.y = y + 33;
+		}
+
+		counter.point(busy.center());
 	}
 	
 	private static final int[] warningColors = new int[]{0x660000, 0xCC0000, 0x660000};
@@ -175,41 +240,72 @@ public class StatusPane extends Component {
 	@Override
 	public void update() {
 		super.update();
-
-		float health = Dungeon.hero.HP;
-		float shield = Dungeon.hero.SHLD;
-		float max = Dungeon.hero.HT;
+		
+		int health = Dungeon.hero.HP;
+		int shield = Dungeon.hero.shielding();
+		int max = Dungeon.hero.HT;
 
 		if (!Dungeon.hero.isAlive()) {
 			avatar.tint(0x000000, 0.5f);
-		} else if ((health/max) < 0.3f) {
-			warning += Game.elapsed * 5f *(0.4f - (health/max));
+		} else if ((health/(float)max) < 0.3f) {
+			warning += Game.elapsed * 5f *(0.4f - (health/(float)max));
 			warning %= 1f;
 			avatar.tint(ColorMath.interpolate(warning, warningColors), 0.5f );
+		} else if (talentBlink > 0.33f){ //stops early so it doesn't end in the middle of a blink
+			talentBlink -= Game.elapsed;
+			avatar.tint(1, 1, 0, (float)Math.abs(Math.cos(talentBlink*FLASH_RATE))/2f);
 		} else {
 			avatar.resetColor();
 		}
 
-		hp.scale.x = Math.max( 0, (health-shield)/max);
-		shieldedHP.scale.x = health/max;
-		rawShielding.scale.x = shield/max;
+		hp.scale.x = Math.max( 0, (health-shield)/(float)max);
+		shieldedHP.scale.x = health/(float)max;
 
-		exp.scale.x = (width / exp.width) * Dungeon.hero.exp / Dungeon.hero.maxExp();
+		if (shield > health) {
+			rawShielding.scale.x = shield / (float) max;
+		} else {
+			rawShielding.scale.x = 0;
+		}
+
+		if (shield <= 0){
+			hpText.text(health + "/" + max);
+		} else {
+			hpText.text(health + "+" + shield +  "/" + max);
+		}
+
+		if (large) {
+			exp.scale.x = (128 / exp.width) * Dungeon.hero.exp / Dungeon.hero.maxExp();
+
+			hpText.measure();
+			hpText.x = hp.x + (128 - hpText.width())/2f;
+
+			expText.text(Dungeon.hero.exp + "/" + Dungeon.hero.maxExp());
+			expText.measure();
+			expText.x = hp.x + (128 - expText.width())/2f;
+
+		} else {
+			exp.scale.x = (width / exp.width) * Dungeon.hero.exp / Dungeon.hero.maxExp();
+		}
 
 		if (Dungeon.hero.lvl != lastLvl) {
 
 			if (lastLvl != -1) {
-				Emitter emitter = (Emitter)recycle( Emitter.class );
-				emitter.revive();
-				emitter.pos( 27, 27 );
-				emitter.burst( Speck.factory( Speck.STAR ), 12 );
+				showStarParticles();
 			}
 
 			lastLvl = Dungeon.hero.lvl;
-			level.text( Integer.toString( lastLvl ) );
-			level.measure();
-			level.x = 27.5f - level.width() / 2f;
-			level.y = 28.0f - level.baseLine() / 2f;
+
+			if (large){
+				level.text( "lv. " + lastLvl );
+				level.measure();
+				level.x = x + (30f - level.width()) / 2f;
+				level.y = y + 33f - level.baseLine() / 2f;
+			} else {
+				level.text( Integer.toString( lastLvl ) );
+				level.measure();
+				level.x = x + 27.5f - level.width() / 2f;
+				level.y = y + 28.0f - level.baseLine() / 2f;
+			}
 			PixelScene.align(level);
 		}
 
@@ -218,163 +314,15 @@ public class StatusPane extends Component {
 			lastTier = tier;
 			avatar.copy( HeroSprite.avatar( Dungeon.hero.heroClass, tier ) );
 		}
+
+		counter.setSweep((1f - Actor.now()%1f)%1f);
 	}
 
-	public void pickup( Item item, int cell) {
-		pickedUp.reset( item,
-			cell,
-			btnJournal.journalIcon.x + btnJournal.journalIcon.width()/2f,
-			btnJournal.journalIcon.y + btnJournal.journalIcon.height()/2f);
-	}
-	
-	public void flash(){
-		btnJournal.flashing = true;
-	}
-	
-	public void updateKeys(){
-		btnJournal.updateKeyDisplay();
+	public void showStarParticles(){
+		Emitter emitter = (Emitter)recycle( Emitter.class );
+		emitter.revive();
+		emitter.pos( avatar.center() );
+		emitter.burst( Speck.factory( Speck.STAR ), 12 );
 	}
 
-	private static class JournalButton extends Button {
-
-		private Image bg;
-		private Image journalIcon;
-		private KeyDisplay keyIcon;
-		
-		private boolean flashing;
-
-		public JournalButton() {
-			super();
-
-			width = bg.width + 13; //includes the depth display to the left
-			height = bg.height + 4;
-		}
-
-		@Override
-		protected void createChildren() {
-			super.createChildren();
-
-			bg = new Image( Assets.MENU, 2, 2, 13, 11 );
-			add( bg );
-			
-			journalIcon = new Image( Assets.MENU, 31, 0, 11, 7);
-			add( journalIcon );
-			
-			keyIcon = new KeyDisplay();
-			add(keyIcon);
-			updateKeyDisplay();
-		}
-
-		@Override
-		protected void layout() {
-			super.layout();
-
-			bg.x = x + 13;
-			bg.y = y + 2;
-			
-			journalIcon.x = bg.x + (bg.width() - journalIcon.width())/2f;
-			journalIcon.y = bg.y + (bg.height() - journalIcon.height())/2f;
-			PixelScene.align(journalIcon);
-			
-			keyIcon.x = bg.x + 1;
-			keyIcon.y = bg.y + 1;
-			keyIcon.width = bg.width - 2;
-			keyIcon.height = bg.height - 2;
-			PixelScene.align(keyIcon);
-		}
-
-		private float time;
-		
-		@Override
-		public void update() {
-			super.update();
-			
-			if (flashing){
-				journalIcon.am = (float)Math.abs(Math.cos( 3 * (time += Game.elapsed) ));
-				keyIcon.am = journalIcon.am;
-				if (time >= 0.333f*Math.PI) {
-					time = 0;
-				}
-			}
-		}
-
-		public void updateKeyDisplay() {
-			keyIcon.updateKeys();
-			keyIcon.visible = keyIcon.keyCount() > 0;
-			journalIcon.visible = !keyIcon.visible;
-			if (keyIcon.keyCount() > 0) {
-				bg.brightness(.8f - (Math.min(6, keyIcon.keyCount()) / 20f));
-			} else {
-				bg.resetColor();
-			}
-		}
-
-		@Override
-		protected void onTouchDown() {
-			bg.brightness( 1.5f );
-			Sample.INSTANCE.play( Assets.SND_CLICK );
-		}
-
-		@Override
-		protected void onTouchUp() {
-			if (keyIcon.keyCount() > 0) {
-				bg.brightness(.8f - (Math.min(6, keyIcon.keyCount()) / 20f));
-			} else {
-				bg.resetColor();
-			}
-		}
-
-		@Override
-		protected void onClick() {
-			flashing = false;
-			time = 0;
-			keyIcon.am = journalIcon.am = 1;
-			GameScene.show( new WndJournal() );
-		}
-
-	}
-
-	private static class MenuButton extends Button {
-
-		private Image image;
-
-		public MenuButton() {
-			super();
-
-			width = image.width + 4;
-			height = image.height + 4;
-		}
-
-		@Override
-		protected void createChildren() {
-			super.createChildren();
-
-			image = new Image( Assets.MENU, 17, 2, 12, 11 );
-			add( image );
-		}
-
-		@Override
-		protected void layout() {
-			super.layout();
-
-			image.x = x + 2;
-			image.y = y + 2;
-		}
-
-		@Override
-		protected void onTouchDown() {
-			image.brightness( 1.5f );
-			Sample.INSTANCE.play( Assets.SND_CLICK );
-		}
-
-		@Override
-		protected void onTouchUp() {
-			image.resetColor();
-		}
-
-		@Override
-		protected void onClick() {
-			GameScene.show( new WndGame() );
-		}
-	}
 }

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
-import com.shatteredpixel.shatteredpixeldungeon.DialogInfo;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -35,18 +34,19 @@ import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CityLevel;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.P7Sprite;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ImpSprite;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndImp;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuest;
+import com.watabou.noosa.Game;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
 public class Imp extends NPC {
 
 	{
-		spriteClass = P7Sprite.class;
+		spriteClass = ImpSprite.class;
 
 		properties.add(Property.IMMOVABLE);
 	}
@@ -58,21 +58,20 @@ public class Imp extends NPC {
 		
 		if (!Quest.given && Dungeon.level.heroFOV[pos]) {
 			if (!seenBefore) {
-				yell( Messages.get(this, "hey", Dungeon.hero.givenName() ) );
+				yell( Messages.get(this, "hey", Dungeon.hero.name() ) );
 			}
+			Notes.add( Notes.Landmark.IMP );
 			seenBefore = true;
 		} else {
 			seenBefore = false;
 		}
-		
-		throwItem();
 		
 		return super.act();
 	}
 	
 	@Override
 	public int defenseSkill( Char enemy ) {
-		return 1000;
+		return INFINITE_EVASION;
 	}
 	
 	@Override
@@ -89,53 +88,52 @@ public class Imp extends NPC {
 	}
 	
 	@Override
-	public boolean interact() {
-
-		int DialogID = DialogInfo.ID_P7_QUEST;
-
+	public boolean interact(Char c) {
+		
 		sprite.turnTo( pos, Dungeon.hero.pos );
+
+		if (c != Dungeon.hero){
+			return true;
+		}
+
 		if (Quest.given) {
-
-			final DwarfToken tokens = Dungeon.hero.belongings.getItem( DwarfToken.class );
-			if (tokens != null && (tokens.quantity() >= 8 || (!Quest.alternative && tokens.quantity() >= 4))) {
-				// 퀘스트 완료
-				DialogID += DialogInfo.COMPLETE;
-				WndDialog wnd = new WndDialog(DialogID) {
+			
+			DwarfToken tokens = Dungeon.hero.belongings.getItem( DwarfToken.class );
+			if (tokens != null && (tokens.quantity() >= 5 || (!Quest.alternative && tokens.quantity() >= 4))) {
+				Game.runOnRenderThread(new Callback() {
 					@Override
-					protected void onFinish() {
-						GameScene.show(new WndImp((Imp)this.npc, tokens));
+					public void call() {
+						GameScene.show( new WndImp( Imp.this, tokens ) );
 					}
-				};
-				wnd.npc = this;
-				GameScene.show(wnd);
-
+				});
 			} else {
-				DialogID += DialogInfo.INPROGRESS;
-				WndDialog.setBRANCH(DialogID, Quest.alternative ? 1 : 2);
-				WndDialog.ShowChapter(DialogID);
+				tell( Quest.alternative ?
+						Messages.get(this, "monks_2", Dungeon.hero.name())
+						: Messages.get(this, "golems_2", Dungeon.hero.name()) );
 			}
 			
 		} else {
-			WndDialog.setBRANCH(DialogID, Quest.alternative ? 1 : 2);
-			WndDialog.ShowChapter(DialogID);
-
+			tell( Quest.alternative ? Messages.get(this, "monks_1") : Messages.get(this, "golems_1") );
 			Quest.given = true;
 			Quest.completed = false;
-			
 			Notes.add( Notes.Landmark.IMP );
 		}
 
-		return false;
+		return true;
 	}
 	
 	private void tell( String text ) {
-		GameScene.show(
-			new WndQuest( this, text ));
+		Game.runOnRenderThread(new Callback() {
+			@Override
+			public void call() {
+				GameScene.show( new WndQuest( Imp.this, text ));
+			}
+		});
 	}
 	
 	public void flee() {
 		
-		yell( Messages.get(this, "cya", Dungeon.hero.givenName()) );
+		yell( Messages.get(this, "cya", Dungeon.hero.name()) );
 		
 		destroy();
 		sprite.die();
@@ -200,7 +198,7 @@ public class Imp extends NPC {
 				
 				Imp npc = new Imp();
 				do {
-					npc.pos = level.randomRespawnCell();
+					npc.pos = level.randomRespawnCell( npc );
 				} while (
 						npc.pos == -1 ||
 						level.heaps.get( npc.pos ) != null ||
@@ -212,10 +210,22 @@ public class Imp extends NPC {
 				level.mobs.add( npc );
 				
 				spawned = true;
-				alternative = Random.Int( 2 ) == 0;
+
+				//always assigns monks on floor 17, golems on floor 19, and 50/50 between either on 18
+				switch (Dungeon.depth){
+					case 17: default:
+						alternative = true;
+						break;
+					case 18:
+						alternative = Random.Int(2) == 0;
+						break;
+					case 19:
+						alternative = false;
+						break;
+				}
 				
 				given = false;
-
+				
 				do {
 					reward = (Ring)Generator.random( Generator.Category.RING );
 				} while (reward.cursed);
@@ -223,12 +233,12 @@ public class Imp extends NPC {
 				reward.cursed = true;
 			}
 		}
-
+		
 		public static void process( Mob mob ) {
-			if (spawned && given && !completed) {
+			if (spawned && given && !completed && Dungeon.depth != 20) {
 				if ((alternative && mob instanceof Monk) ||
-						(!alternative && mob instanceof Golem)) {
-
+					(!alternative && mob instanceof Golem)) {
+					
 					Dungeon.level.drop( new DwarfToken(), mob.pos ).sprite.drop();
 				}
 			}

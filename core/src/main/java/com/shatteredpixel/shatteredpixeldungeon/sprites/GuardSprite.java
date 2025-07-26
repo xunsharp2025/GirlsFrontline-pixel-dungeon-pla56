@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,22 +31,30 @@ public class GuardSprite extends MobSprite {
 	public GuardSprite() {
 		super();
 
-		texture( Assets.GUARD );
+		texture( Assets.Sprites.GUARD );
 
-		TextureFilm frames = new TextureFilm( texture, 19, 21 );
+		TextureFilm frames = new TextureFilm( texture, 12, 16 );
 
 		idle = new Animation( 2, true );
 		idle.frames( frames, 0, 0, 0, 1, 0, 0, 1, 1 );
 
 		run = new MovieClip.Animation( 15, true );
-		run.frames( frames,  1, 2, 3, 4, 5 );
+		run.frames( frames, 2, 3, 4, 5, 6, 7 );
 
 		attack = new MovieClip.Animation( 12, false );
-		attack.frames( frames, 6, 7, 6);
+		attack.frames( frames, 8, 9, 10 );
 
 		die = new MovieClip.Animation( 8, false );
-		die.frames( frames, 1, 8, 9 );
+		die.frames( frames, 11, 12, 13, 14 );
 
 		play( idle );
+	}
+
+	@Override
+	public void play( Animation anim ) {
+		if (anim == die) {
+			emitter().burst( ShadowParticle.UP, 4 );
+		}
+		super.play( anim );
 	}
 }

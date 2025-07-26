@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,22 +28,22 @@ public class BanditSprite extends MobSprite {
 	
 	public BanditSprite() {
 		super();
-
-		texture( Assets.BANDIT );
-		TextureFilm film = new TextureFilm( texture, 15, 19 );
-
+		
+		texture( Assets.Sprites.THIEF );
+		TextureFilm film = new TextureFilm( texture, 12, 13 );
+		
 		idle = new Animation( 1, true );
-		idle.frames( film, 0, 0, 0, 1, 0, 0, 0, 0, 1 );
-
+		idle.frames( film, 21, 21, 21, 22, 21, 21, 21, 21, 22 );
+		
 		run = new Animation( 15, true );
-		run.frames( film, 0, 0, 2, 2, 3, 3 );
-
+		run.frames( film, 21, 21, 23, 24, 24, 25 );
+		
 		die = new Animation( 10, false );
-		die.frames( film, 4, 5, 6, 7);
-
+		die.frames( film, 25, 27, 28, 29, 30 );
+		
 		attack = new Animation( 12, false );
-		attack.frames( film, 8, 10, 9 );
-
+		attack.frames( film, 31, 32, 33 );
+		
 		idle();
 	}
 }

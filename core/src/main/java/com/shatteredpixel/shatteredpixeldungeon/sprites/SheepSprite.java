@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,12 +30,12 @@ public class SheepSprite extends MobSprite {
 	public SheepSprite() {
 		super();
 		
-		texture( Assets.SHEEP );
+		texture( Assets.Sprites.SHEEP );
 		
-		TextureFilm frames = new TextureFilm( texture, 20, 22 );
+		TextureFilm frames = new TextureFilm( texture, 16, 15 );
 		
 		idle = new Animation( 8, true );
-		idle.frames( frames, 0, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 );
+		idle.frames( frames, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 0 );
 		
 		run = idle.clone();
 		attack = idle.clone();

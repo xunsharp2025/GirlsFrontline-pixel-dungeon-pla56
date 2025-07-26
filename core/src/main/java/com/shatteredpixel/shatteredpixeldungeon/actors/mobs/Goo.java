@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,31 +21,26 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
-import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
-import com.shatteredpixel.shatteredpixeldungeon.DialogInfo;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
-import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.GooWarn;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ooze;
-import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.LloydsBeacon;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.SkeletonKey;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.GooBlob;
+import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.GooSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BossHealthBar;
-import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
 import com.watabou.noosa.Camera;
-import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -53,13 +48,10 @@ import com.watabou.utils.Random;
 public class Goo extends Mob {
 
 	{
-		HP = HT = 100;
+		HP = HT = Dungeon.isChallenged(Challenges.STRONGER_BOSSES) ? 120 : 100;
 		EXP = 10;
 		defenseSkill = 8;
 		spriteClass = GooSprite.class;
-
-		loot = new LloydsBeacon();
-		lootChance = 0.333f;
 
 		properties.add(Property.BOSS);
 		properties.add(Property.DEMONIC);
@@ -67,19 +59,14 @@ public class Goo extends Mob {
 	}
 
 	private int pumpedUp = 0;
+	private int healInc = 1;
 
 	@Override
 	public int damageRoll() {
 		int min = 1;
-		int max = (HP*2 <= HT) ? 15 : 10;
+		int max = (HP*2 <= HT) ? 12 : 8;
 		if (pumpedUp > 0) {
 			pumpedUp = 0;
-			PathFinder.buildDistanceMap( pos, BArray.not( Dungeon.level.solid, null ), 2 );
-			for (int i = 0; i < PathFinder.distance.length; i++) {
-				if (PathFinder.distance[i] < Integer.MAX_VALUE)
-					CellEmitter.get(i).burst(ElmoParticle.FACTORY, 10);
-			}
-			Sample.INSTANCE.play( Assets.SND_BURNING );
 			return Random.NormalIntRange( min*3, max*3 );
 		} else {
 			return Random.NormalIntRange( min, max );
@@ -108,12 +95,28 @@ public class Goo extends Mob {
 	public boolean act() {
 
 		if (Dungeon.level.water[pos] && HP < HT) {
-			sprite.emitter().burst( Speck.factory( Speck.HEALING ), 1 );
-			if (HP*2 == HT) {
+			HP += healInc;
+
+			LockedFloor lock = Dungeon.hero.buff(LockedFloor.class);
+			if (lock != null) lock.removeTime(healInc*2);
+
+			if (Dungeon.level.heroFOV[pos] ){
+				sprite.emitter().burst( Speck.factory( Speck.HEALING ), healInc );
+			}
+			if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES) && healInc < 3) {
+				healInc++;
+			}
+			if (HP*2 > HT) {
 				BossHealthBar.bleed(false);
 				((GooSprite)sprite).spray(false);
+				HP = Math.min(HP, HT);
 			}
-			HP++;
+		} else {
+			healInc = 1;
+		}
+		
+		if (state != SLEEPING){
+			Dungeon.level.seal();
 		}
 
 		return super.act();
@@ -121,14 +124,22 @@ public class Goo extends Mob {
 
 	@Override
 	protected boolean canAttack( Char enemy ) {
-		return (pumpedUp > 0) ? distance( enemy ) <= 2 : super.canAttack(enemy);
+		if (pumpedUp > 0){
+			//we check both from and to in this case as projectile logic isn't always symmetrical.
+			//this helps trim out BS edge-cases
+			return Dungeon.level.distance(enemy.pos, pos) <= 2
+						&& new Ballistica( pos, enemy.pos, Ballistica.PROJECTILE).collisionPos == enemy.pos
+						&& new Ballistica( enemy.pos, pos, Ballistica.PROJECTILE).collisionPos == pos;
+		} else {
+			return super.canAttack(enemy);
+		}
 	}
 
 	@Override
 	public int attackProc( Char enemy, int damage ) {
 		damage = super.attackProc( enemy, damage );
 		if (Random.Int( 3 ) == 0) {
-			Buff.affect( enemy, Ooze.class );
+			Buff.affect( enemy, Ooze.class ).set( Ooze.DURATION );
 			enemy.sprite.burst( 0x000000, 5 );
 		}
 
@@ -140,15 +151,19 @@ public class Goo extends Mob {
 	}
 
 	@Override
+	public void updateSpriteState() {
+		super.updateSpriteState();
+
+		if (pumpedUp > 0){
+			((GooSprite)sprite).pumpUp( pumpedUp );
+		}
+	}
+
+	@Override
 	protected boolean doAttack( Char enemy ) {
 		if (pumpedUp == 1) {
-			((GooSprite)sprite).pumpUp();
-			PathFinder.buildDistanceMap( pos, BArray.not( Dungeon.level.solid, null ), 2 );
-			for (int i = 0; i < PathFinder.distance.length; i++) {
-				if (PathFinder.distance[i] < Integer.MAX_VALUE)
-					GameScene.add(Blob.seed(i, 2, GooWarn.class));
-			}
 			pumpedUp++;
+			((GooSprite)sprite).pumpUp( pumpedUp );
 
 			spend( attackDelay() );
 
@@ -160,29 +175,27 @@ public class Goo extends Mob {
 			if (visible) {
 				if (pumpedUp >= 2) {
 					((GooSprite) sprite).pumpAttack();
+				} else {
+					sprite.attack(enemy.pos);
 				}
-				else
-					sprite.attack( enemy.pos );
 			} else {
+				if (pumpedUp >= 2){
+					((GooSprite)sprite).triggerEmitters();
+				}
 				attack( enemy );
+				spend( attackDelay() );
 			}
-
-			spend( attackDelay() );
 
 			return !visible;
 
 		} else {
 
 			pumpedUp++;
-
-			((GooSprite)sprite).pumpUp();
-
-			for (int i=0; i < PathFinder.NEIGHBOURS9.length; i++) {
-				int j = pos + PathFinder.NEIGHBOURS9[i];
-				if (!Dungeon.level.solid[j]) {
-					GameScene.add(Blob.seed(j, 2, GooWarn.class));
-				}
+			if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)){
+				pumpedUp++;
 			}
+
+			((GooSprite)sprite).pumpUp( pumpedUp );
 
 			if (Dungeon.level.heroFOV[pos]) {
 				sprite.showStatus( CharSprite.NEGATIVE, Messages.get(this, "!!!") );
@@ -196,26 +209,27 @@ public class Goo extends Mob {
 	}
 
 	@Override
-	public boolean attack( Char enemy ) {
-		boolean result = super.attack( enemy );
+	public boolean attack( Char enemy, float dmgMulti, float dmgBonus, float accMulti ) {
+		boolean result = super.attack( enemy, dmgMulti, dmgBonus, accMulti );
 		pumpedUp = 0;
 		return result;
 	}
 
 	@Override
 	protected boolean getCloser( int target ) {
-		pumpedUp = 0;
+		if (pumpedUp != 0) {
+			pumpedUp = 0;
+			sprite.idle();
+		}
 		return super.getCloser( target );
-	}
-	
-	@Override
-	public void move( int step ) {
-		Dungeon.level.seal();
-		super.move( step );
 	}
 
 	@Override
 	public void damage(int dmg, Object src) {
+		if (!BossHealthBar.isAssigned()){
+			BossHealthBar.assignBoss( this );
+			Dungeon.level.seal();
+		}
 		boolean bleeding = (HP*2 <= HT);
 		super.damage(dmg, src);
 		if ((HP*2 <= HT) && !bleeding){
@@ -238,6 +252,16 @@ public class Goo extends Mob {
 		GameScene.bossSlain();
 		Dungeon.level.drop( new SkeletonKey( Dungeon.depth ), pos ).sprite.drop();
 		
+		//60% chance of 2 blobs, 30% chance of 3, 10% chance for 4. Average of 2.5
+		int blobs = Random.chances(new float[]{0, 0, 6, 3, 1});
+		for (int i = 0; i < blobs; i++){
+			int ofs;
+			do {
+				ofs = PathFinder.NEIGHBOURS8[Random.Int(8)];
+			} while (!Dungeon.level.passable[pos + ofs]);
+			Dungeon.level.drop( new GooBlob(), pos + ofs ).sprite.drop( pos );
+		}
+		
 		Badges.validateBossSlain();
 		
 		yell( Messages.get(this, "defeated") );
@@ -246,13 +270,20 @@ public class Goo extends Mob {
 	@Override
 	public void notice() {
 		super.notice();
-		BossHealthBar.assignBoss(this);
-		if (!Dungeon.level.locked) {
-			WndDialog.ShowChapter(DialogInfo.ID_SEWER_BOSS);
+		if (!BossHealthBar.isAssigned()) {
+			BossHealthBar.assignBoss(this);
+			Dungeon.level.seal();
+			yell(Messages.get(this, "notice"));
+			for (Char ch : Actor.chars()){
+				if (ch instanceof DriedRose.GhostHero){
+					((DriedRose.GhostHero) ch).sayBoss();
+				}
+			}
 		}
 	}
 
 	private final String PUMPEDUP = "pumpedup";
+	private final String HEALINC = "healinc";
 
 	@Override
 	public void storeInBundle( Bundle bundle ) {
@@ -260,6 +291,7 @@ public class Goo extends Mob {
 		super.storeInBundle( bundle );
 
 		bundle.put( PUMPEDUP , pumpedUp );
+		bundle.put( HEALINC, healInc );
 	}
 
 	@Override
@@ -271,6 +303,9 @@ public class Goo extends Mob {
 		if (state != SLEEPING) BossHealthBar.assignBoss(this);
 		if ((HP*2 <= HT)) BossHealthBar.bleed(true);
 
-	}
+		//if check is for pre-0.9.3 saves
+		healInc = bundle.getInt(HEALINC);
 
+	}
+	
 }

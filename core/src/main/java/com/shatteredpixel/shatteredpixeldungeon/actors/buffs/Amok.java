@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ public class Amok extends FlavourBuff {
 
 	{
 		type = buffType.NEGATIVE;
+		announced = true;
 	}
 	
 	@Override
@@ -39,8 +40,9 @@ public class Amok extends FlavourBuff {
 	@Override
 	public void detach() {
 		super.detach();
-		if (target instanceof Mob)
-			((Mob)target).aggro( null );
+		if (target instanceof Mob && target.isAlive()) {
+			((Mob) target).aggro(null);
+		}
 	}
 
 	@Override

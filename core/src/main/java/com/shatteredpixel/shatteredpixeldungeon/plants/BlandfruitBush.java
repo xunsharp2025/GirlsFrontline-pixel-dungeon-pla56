@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,26 +22,24 @@
 package com.shatteredpixel.shatteredpixeldungeon.plants;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Blandfruit;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
 public class BlandfruitBush extends Plant {
 
 	{
-		image = 8;
+		image = 12;
 	}
 
 	@Override
-	public void activate() {
+	public void activate( Char ch ) {
 		Dungeon.level.drop( new Blandfruit(), pos ).sprite.drop();
 	}
 
+	//seed is never dropped
 	public static class Seed extends Plant.Seed {
 		{
-			image = ItemSpriteSheet.SEED_BLANDFRUIT;
-
 			plantClass = BlandfruitBush.class;
-			alchemyClass = null;
 		}
 
 	}

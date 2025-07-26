@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.features;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -36,12 +38,19 @@ public class Door {
 
 		if (Dungeon.level.heroFOV[pos]) {
 			Dungeon.observe();
-			Sample.INSTANCE.play( Assets.SND_OPEN );
+			Sample.INSTANCE.play( Assets.Sounds.OPEN );
 		}
 	}
 
 	public static void leave( int pos ) {
-		if (Dungeon.level.heaps.get( pos ) == null) {
+		int chars = 0;
+		
+		for (Char ch : Actor.chars()){
+			if (ch.pos == pos) chars++;
+		}
+		
+		//door does not shut if anything else is also on it
+		if (Dungeon.level.heaps.get( pos ) == null && chars <= 1) {
 			Level.set( pos, Terrain.DOOR );
 			GameScene.updateMap( pos );
 			if (Dungeon.level.heroFOV[pos])

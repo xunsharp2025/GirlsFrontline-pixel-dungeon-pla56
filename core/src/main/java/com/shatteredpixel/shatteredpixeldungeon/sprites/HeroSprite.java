@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,11 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.watabou.gltextures.SmartTexture;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.noosa.Camera;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.utils.Callback;
@@ -36,10 +38,10 @@ import com.watabou.utils.RectF;
 
 public class HeroSprite extends CharSprite {
 	
-	public static final int FRAME_WIDTH	= 22;
-	public static final int FRAME_HEIGHT	= 23;
+	private static final int FRAME_WIDTH	= 12;
+	private static final int FRAME_HEIGHT	= 15;
 	
-	private static final int RUN_FRAMERATE	= 18;
+	private static final int RUN_FRAMERATE	= 20;
 	
 	private static TextureFilm tiers;
 	
@@ -49,10 +51,10 @@ public class HeroSprite extends CharSprite {
 	public HeroSprite() {
 		super();
 		
-		link( Dungeon.hero );
-		
 		texture( Dungeon.hero.heroClass.spritesheet() );
 		updateArmor();
+		
+		link( Dungeon.hero );
 
 		if (ch.isAlive())
 			idle();
@@ -62,32 +64,32 @@ public class HeroSprite extends CharSprite {
 	
 	public void updateArmor() {
 
-		TextureFilm film = new TextureFilm( tiers(), ((Hero)ch).tier(), FRAME_WIDTH, FRAME_HEIGHT );
+		TextureFilm film = new TextureFilm( tiers(), Dungeon.hero.tier(), FRAME_WIDTH, FRAME_HEIGHT );
 		
-		idle = new Animation( 5, true );
-		idle.frames( film, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 );
+		idle = new Animation( 1, true );
+		idle.frames( film, 0, 0, 0, 1, 0, 0, 1, 1 );
 		
 		run = new Animation( RUN_FRAMERATE, true );
 		run.frames( film, 2, 3, 4, 5, 6, 7 );
 		
-		die = new Animation( 6, false );
-		die.frames( film, 8, 9, 10, 11, 12, 13 );
+		die = new Animation( 20, false );
+		die.frames( film, 8, 9, 10, 11, 12, 11 );
 		
-		attack = new Animation( 23, false );
-		attack.frames( film, 14, 15, 16, 17, 18, 17, 16, 14 );
+		attack = new Animation( 15, false );
+		attack.frames( film, 13, 14, 15, 0 );
 		
 		zap = attack.clone();
 		
-		operate = new Animation( 6, false );
-		operate.frames( film, 28, 29, 28, 29 );
-
-		fly = new Animation( 1, true );
-		fly.frames( film, 27 );
-
-		read = new Animation( 12, false );
-		read.frames( film, 19, 20, 21, 22, 23, 24, 25, 26, 20, 19  );
+		operate = new Animation( 8, false );
+		operate.frames( film, 16, 17, 16, 17 );
 		
-		if (ch.isAlive())
+		fly = new Animation( 1, true );
+		fly.frames( film, 18 );
+
+		read = new Animation( 20, false );
+		read.frames( film, 19, 20, 20, 20, 20, 20, 20, 20, 20, 19 );
+		
+		if (Dungeon.hero.isAlive())
 			idle();
 		else
 			die();
@@ -96,16 +98,24 @@ public class HeroSprite extends CharSprite {
 	@Override
 	public void place( int p ) {
 		super.place( p );
-		Camera.main.target = this;
+		if (Game.scene() instanceof GameScene) Camera.main.panTo(center(), 5f);
 	}
 
 	@Override
 	public void move( int from, int to ) {
 		super.move( from, to );
-		if (ch.flying) {
+		if (ch != null && ch.flying) {
 			play( fly );
 		}
-		Camera.main.target = this;
+		Camera.main.panFollow(this, 20f);
+	}
+
+	@Override
+	public void idle() {
+		super.idle();
+		if (ch != null && ch.flying) {
+			play( fly );
+		}
 	}
 
 	@Override
@@ -150,10 +160,7 @@ public class HeroSprite extends CharSprite {
 	
 	public static TextureFilm tiers() {
 		if (tiers == null) {
-			// 우선적으로  texture를 불러와서 캐릭터 스프라이트 전체의 크기를 가져온다 - 기존의 경우 도적, 현재는 흥국이로 변경
-			SmartTexture texture = TextureCache.get( Assets.RANGER );
-			// 불러온 texture의 넓이와 정해진 tier별 높이만큼을 다른 스프라이트에서 제한적으로 불러와 메모리를 절약한다
-			// 향후 TIERWIDTH와 TIERHEIGHT 등의 변수를 별도로 분리하여 관리하는 방안 고려할 것
+			SmartTexture texture = TextureCache.get( Assets.Sprites.ROGUE );
 			tiers = new TextureFilm( texture, texture.width, FRAME_HEIGHT );
 		}
 		

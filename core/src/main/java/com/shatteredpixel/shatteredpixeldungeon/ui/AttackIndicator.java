@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,16 +22,21 @@
 package com.shatteredpixel.shatteredpixeldungeon.ui;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndKeyBindings;
+import com.watabou.input.GameAction;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
 
+//FIXME needs a refactor, lots of weird thread interaction here.
 public class AttackIndicator extends Tag {
 	
 	private static final float ENABLED	= 1.0f;
@@ -43,18 +48,25 @@ public class AttackIndicator extends Tag {
 	
 	private CharSprite sprite = null;
 	
-	private static Mob lastTarget;
-	private ArrayList<Mob> candidates = new ArrayList<Mob>();
+	private Mob lastTarget;
+	private ArrayList<Mob> candidates = new ArrayList<>();
 	
 	public AttackIndicator() {
 		super( DangerIndicator.COLOR );
-		
-		instance = this;
-		lastTarget = null;
-		
-		setSize( 24, 24 );
-		visible( false );
-		enable( false );
+
+		synchronized (this) {
+			instance = this;
+			lastTarget = null;
+
+			setSize(SIZE, SIZE);
+			visible(false);
+			enable(false);
+		}
+	}
+	
+	@Override
+	public GameAction keyAction() {
+		return SPDAction.TAG_ATTACK;
 	}
 	
 	@Override
@@ -65,10 +77,11 @@ public class AttackIndicator extends Tag {
 	@Override
 	protected synchronized void layout() {
 		super.layout();
-		
+
 		if (sprite != null) {
-			sprite.x = x + (width - sprite.width()) / 2;
-			sprite.y = y + (height - sprite.height()) / 2;
+			if (!flipped)   sprite.x = x + (SIZE - sprite.width()) / 2f + 1;
+			else            sprite.x = x + width - (SIZE + sprite.width()) / 2f - 1;
+			sprite.y = y + (height - sprite.height()) / 2f;
 			PixelScene.align(sprite);
 		}
 	}
@@ -78,13 +91,15 @@ public class AttackIndicator extends Tag {
 		super.update();
 
 		if (!bg.visible){
+			if (sprite != null) sprite.visible = false;
 			enable(false);
 			if (delay > 0f) delay -= Game.elapsed;
 			if (delay <= 0f) active = false;
 		} else {
 			delay = 0.75f;
 			active = true;
-		
+			if (bg.width > 0 && sprite != null)sprite.visible = true;
+
 			if (Dungeon.hero.isAlive()) {
 
 				enable(Dungeon.hero.ready);
@@ -134,20 +149,15 @@ public class AttackIndicator extends Tag {
 			sprite = null;
 		}
 		
-		try {
-			sprite = lastTarget.spriteClass.newInstance();
-			active = true;
-			sprite.idle();
-			sprite.paused = true;
-			add( sprite );
+		sprite = Reflection.newInstance(lastTarget.spriteClass);
+		active = true;
+		sprite.linkVisuals(lastTarget);
+		sprite.idle();
+		sprite.paused = true;
+		sprite.visible = bg.visible;
+		add( sprite );
 
-			sprite.x = x + (width - sprite.width()) / 2 + 1;
-			sprite.y = y + (height - sprite.height()) / 2;
-			PixelScene.align(sprite);
-			
-		} catch (Exception e) {
-			GirlsFrontlinePixelDungeon.reportException(e);
-		}
+		layout();
 	}
 	
 	private boolean enabled = true;
@@ -160,25 +170,29 @@ public class AttackIndicator extends Tag {
 	
 	private synchronized void visible( boolean value ) {
 		bg.visible = value;
-		if (sprite != null) {
-			sprite.visible = value;
-		}
 	}
 	
 	@Override
 	protected void onClick() {
-		if (enabled) {
+		if (enabled && Dungeon.hero.ready) {
 			if (Dungeon.hero.handle( lastTarget.pos )) {
 				Dungeon.hero.next();
 			}
 		}
 	}
-	
-	public static void target( Char target ) {
-		lastTarget = (Mob)target;
-		instance.updateImage();
-		
-		TargetHealthIndicator.instance.target( target );
+
+	@Override
+	protected String hoverText() {
+		return Messages.titleCase(Messages.get(WndKeyBindings.class, "tag_attack"));
+	}
+
+	public static void target(Char target ) {
+		synchronized (instance) {
+			instance.lastTarget = (Mob) target;
+			instance.updateImage();
+
+			TargetHealthIndicator.instance.target(target);
+		}
 	}
 	
 	public static void updateState() {

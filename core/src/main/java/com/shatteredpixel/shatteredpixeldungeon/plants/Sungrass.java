@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,33 +22,35 @@
 package com.shatteredpixel.shatteredpixeldungeon.plants;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Healing;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShaftParticle;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
-import com.watabou.noosa.Image;
 import com.watabou.utils.Bundle;
 
 public class Sungrass extends Plant {
 	
 	{
-		image = 4;
+		image = 3;
+		seedClass = Seed.class;
 	}
 	
 	@Override
-	public void activate() {
-		Char ch = Actor.findChar(pos);
+	public void activate( Char ch ) {
 		
 		if (ch == Dungeon.hero) {
-			Buff.affect( ch, Health.class ).boost(ch.HT);
+			if (Dungeon.hero.subClass == HeroSubClass.WARDEN) {
+				Buff.affect(ch, Healing.class).setHeal(ch.HT, 0, 1);
+			} else {
+				Buff.affect(ch, Health.class).boost(ch.HT);
+			}
 		}
 		
 		if (Dungeon.level.heroFOV[pos]) {
@@ -61,7 +63,6 @@ public class Sungrass extends Plant {
 			image = ItemSpriteSheet.SEED_SUNGRASS;
 
 			plantClass = Sungrass.class;
-			alchemyClass = PotionOfHealing.class;
 
 			bones = true;
 		}
@@ -77,6 +78,7 @@ public class Sungrass extends Plant {
 
 		{
 			type = buffType.POSITIVE;
+			announced = true;
 		}
 		
 		@Override
@@ -104,26 +106,34 @@ public class Sungrass extends Plant {
 			
 			if (level <= 0) {
 				detach();
-			} else {
-				BuffIndicator.refreshHero();
+				if (target instanceof Hero){
+					((Hero)target).resting = false;
+				}
 			}
 			spend( STEP );
 			return true;
 		}
 
 		public void boost( int amount ){
-			level += amount;
-			pos = target.pos;
+			if (target != null) {
+				level += amount;
+				pos = target.pos;
+			}
 		}
 		
 		@Override
 		public int icon() {
-			return BuffIndicator.HEALING;
+			return BuffIndicator.HERB_HEALING;
 		}
-		
+
 		@Override
-		public void tintIcon(Image icon) {
-			FlavourBuff.greyIcon(icon, target.HT/4f, level);
+		public float iconFadePercent() {
+			return Math.max(0, (target.HT - level) / (float)target.HT);
+		}
+
+		@Override
+		public String iconTextDisplay() {
+			return Integer.toString(level);
 		}
 		
 		@Override

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 
@@ -35,19 +36,21 @@ public class MagicalSleep extends Buff {
 	@Override
 	public boolean attachTo( Char target ) {
 		if (!target.isImmune(Sleep.class) && super.attachTo( target )) {
-
-			if (target instanceof Hero)
-				if (target.HP == target.buff(Regeneration.class).regencap()) {
-					GLog.i(Messages.get(this, "toohealthy"));
-					detach();
-					return true;
-				} else {
-					GLog.i(Messages.get(this, "fallasleep"));
-				}
-			else if (target instanceof Mob)
-				((Mob)target).state = ((Mob)target).SLEEPING;
-
+			
 			target.paralysed++;
+			
+			if (target.alignment == Char.Alignment.ALLY) {
+				if (target.HP == target.HT) {
+					if (target instanceof  Hero) GLog.i(Messages.get(this, "toohealthy"));
+					detach();
+				} else {
+					if (target instanceof  Hero) GLog.i(Messages.get(this, "fallasleep"));
+				}
+			}
+
+			if (target instanceof Mob) {
+				((Mob) target).state = ((Mob) target).SLEEPING;
+			}
 
 			return true;
 		} else {
@@ -61,11 +64,11 @@ public class MagicalSleep extends Buff {
 			detach();
 			return true;
 		}
-		if (target instanceof Hero) {
+		if (target.alignment == Char.Alignment.ALLY) {
 			target.HP = Math.min(target.HP+1, target.HT);
-			((Hero) target).resting = true;
-			if (target.HP == target.buff(Regeneration.class).regencap()) {
-				GLog.p(Messages.get(this, "wakeup"));
+			if (target instanceof  Hero) ((Hero) target).resting = true;
+			if (target.HP == target.HT) {
+				if (target instanceof  Hero) GLog.p(Messages.get(this, "wakeup"));
 				detach();
 			}
 		}
@@ -85,6 +88,14 @@ public class MagicalSleep extends Buff {
 	@Override
 	public int icon() {
 		return BuffIndicator.MAGIC_SLEEP;
+	}
+
+	@Override
+	public void fx(boolean on) {
+		if (!on && (target.paralysed <= 1) ) {
+			//in case the character has visual paralysis from another source
+			target.sprite.remove(CharSprite.State.PARALYSED);
+		}
 	}
 
 	@Override

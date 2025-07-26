@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,12 +47,9 @@ public class RockfallTrap extends Trap {
 	{
 		color = GREY;
 		shape = DIAMOND;
-	}
-	
-	@Override
-	public Trap hide() {
-		//this one can't be hidden
-		return reveal();
+		
+		canBeHidden = false;
+		avoidsHallways = true;
 	}
 	
 	@Override
@@ -60,8 +57,14 @@ public class RockfallTrap extends Trap {
 		
 		ArrayList<Integer> rockCells = new ArrayList<>();
 		
+		//determines if the trap is actually in the world, or if it is being spawned for its effect
+		boolean onGround = Dungeon.level.traps.get(pos) == this;
+		Room r = null;
 		if (Dungeon.level instanceof RegularLevel){
-			Room r = ((RegularLevel) Dungeon.level).room(pos);
+			r = ((RegularLevel) Dungeon.level).room(pos);
+		}
+		
+		if (onGround && r != null){
 			int cell;
 			for (Point p : r.getPoints()){
 				cell = Dungeon.level.pointToCell(p);
@@ -70,7 +73,7 @@ public class RockfallTrap extends Trap {
 				}
 			}
 			
-		//if we don't have rooms, then just do 5x5
+		//if we don't have a room, then just do 5x5
 		} else {
 			PathFinder.buildDistanceMap( pos, BArray.not( Dungeon.level.solid, null ), 2 );
 			for (int i = 0; i < PathFinder.distance.length; i++) {
@@ -90,7 +93,7 @@ public class RockfallTrap extends Trap {
 
 			Char ch = Actor.findChar( cell );
 
-			if (ch != null){
+			if (ch != null && ch.isAlive()){
 				int damage = Random.NormalIntRange(5+Dungeon.depth, 10+Dungeon.depth*2);
 				damage -= ch.drRoll();
 				ch.damage( Math.max(damage, 0) , this);
@@ -106,7 +109,7 @@ public class RockfallTrap extends Trap {
 		
 		if (seen){
 			Camera.main.shake(3, 0.7f);
-			Sample.INSTANCE.play(Assets.SND_ROCKS);
+			Sample.INSTANCE.play(Assets.Sounds.ROCKS);
 		}
 
 	}

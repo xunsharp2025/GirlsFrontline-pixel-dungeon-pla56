@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,12 +36,12 @@ public class BlacksmithSprite extends MobSprite {
 	public BlacksmithSprite() {
 		super();
 		
-		texture( Assets.PPSH );
+		texture( Assets.Sprites.TROLL );
 		
-		TextureFilm frames = new TextureFilm( texture, 13, 22 );
+		TextureFilm frames = new TextureFilm( texture, 13, 16 );
 		
 		idle = new Animation( 15, true );
-		idle.frames( frames, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0 );
+		idle.frames( frames, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 3 );
 		
 		run = new Animation( 20, true );
 		run.frames( frames, 0 );
@@ -78,7 +78,7 @@ public class BlacksmithSprite extends MobSprite {
 		if (visible && emitter != null && anim == idle) {
 			emitter.burst( Speck.factory( Speck.FORGE ), 3 );
 			float volume = 0.2f / (Dungeon.level.distance( ch.pos, Dungeon.hero.pos ));
-			Sample.INSTANCE.play( Assets.SND_EVOKE, volume, volume, 0.8f  );
+			Sample.INSTANCE.play( Assets.Sounds.EVOKE, volume, volume, 0.8f  );
 		}
 	}
 

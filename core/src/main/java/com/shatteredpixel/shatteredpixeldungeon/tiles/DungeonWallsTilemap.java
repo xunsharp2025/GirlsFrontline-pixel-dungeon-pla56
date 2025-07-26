@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,8 @@ public class DungeonWallsTilemap extends DungeonTilemap {
 					return DungeonTileSheet.DOOR_SIDEWAYS;
 				} else if (map[pos + mapWidth] == Terrain.LOCKED_DOOR){
 					return DungeonTileSheet.DOOR_SIDEWAYS_LOCKED;
+				} else if (map[pos + mapWidth] == Terrain.CRYSTAL_DOOR){
+					return DungeonTileSheet.DOOR_SIDEWAYS_CRYSTAL;
 				} else if (map[pos + mapWidth] == Terrain.OPEN_DOOR){
 					return DungeonTileSheet.NULL_TILE;
 				}
@@ -73,14 +75,18 @@ public class DungeonWallsTilemap extends DungeonTilemap {
 			return DungeonTileSheet.DOOR_OVERHANG;
 		} else if (Dungeon.level.insideMap(pos) && map[pos+mapWidth] == Terrain.OPEN_DOOR ) {
 			return DungeonTileSheet.DOOR_OVERHANG_OPEN;
+		} else if (Dungeon.level.insideMap(pos) && map[pos+mapWidth] == Terrain.CRYSTAL_DOOR ) {
+			return DungeonTileSheet.DOOR_OVERHANG_CRYSTAL;
 		} else if (pos + mapWidth < size && (map[pos+mapWidth] == Terrain.STATUE || map[pos+mapWidth] == Terrain.STATUE_SP)){
 			return DungeonTileSheet.STATUE_OVERHANG;
 		} else if (pos + mapWidth < size && map[pos+mapWidth] == Terrain.ALCHEMY){
-			return DungeonTileSheet.ALCHEMY_POT_OVERHAND;
+			return DungeonTileSheet.ALCHEMY_POT_OVERHANG;
 		} else if (pos + mapWidth < size && map[pos+mapWidth] == Terrain.BARRICADE){
 			return DungeonTileSheet.BARRICADE_OVERHANG;
 		} else if (pos + mapWidth < size && map[pos+mapWidth] == Terrain.HIGH_GRASS){
 			return DungeonTileSheet.getVisualWithAlts(DungeonTileSheet.HIGH_GRASS_OVERHANG, pos + mapWidth);
+		} else if (pos + mapWidth < size && map[pos+mapWidth] == Terrain.FURROWED_GRASS){
+			return DungeonTileSheet.getVisualWithAlts(DungeonTileSheet.FURROWED_OVERHANG, pos + mapWidth);
 		}
 
 		return -1;
@@ -95,9 +101,5 @@ public class DungeonWallsTilemap extends DungeonTilemap {
 	public boolean overlapsScreenPoint( int x, int y ) {
 		return true;
 	}
-
-	@Override
-	protected boolean needsRender(int pos) {
-		return data[pos] != -1;
-	}
+	
 }

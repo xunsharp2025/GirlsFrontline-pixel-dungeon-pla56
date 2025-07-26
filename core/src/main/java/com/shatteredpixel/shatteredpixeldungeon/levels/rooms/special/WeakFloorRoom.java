@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,8 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTiledVisual;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
+import com.watabou.noosa.Tilemap;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
@@ -66,22 +67,23 @@ public class WeakFloorRoom extends SpecialRoom {
 		}
 		
 		Painter.set(level, well, Terrain.CHASM);
-		CustomTiledVisual vis = new HiddenWell();
+		CustomTilemap vis = new HiddenWell();
 		vis.pos(well.x, well.y);
 		level.customTiles.add(vis);
 	}
 
-	public static class HiddenWell extends CustomTiledVisual {
+	public static class HiddenWell extends CustomTilemap {
 
-		public HiddenWell(){
-			super(Assets.WEAK_FLOOR);
+		{
+			texture = Assets.Environment.WEAK_FLOOR;
+			tileW = tileH = 1;
 		}
 
 		@Override
-		public CustomTiledVisual create() {
-			tileW = tileH = 1;
-			map( new int[]{Dungeon.depth/5}, 1);
-			return super.create();
+		public Tilemap create() {
+			Tilemap v = super.create();
+			v.map( new int[]{Dungeon.depth/5}, 1);
+			return v;
 		}
 
 		@Override

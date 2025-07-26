@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
@@ -151,7 +152,7 @@ public class LloydsBeacon extends Artifact {
 			hero.busy();
 			
 			hero.sprite.operate( hero.pos );
-			Sample.INSTANCE.play( Assets.SND_BEACON );
+			Sample.INSTANCE.play( Assets.Sounds.BEACON );
 			
 			GLog.i( Messages.get(this, "return") );
 			
@@ -159,13 +160,27 @@ public class LloydsBeacon extends Artifact {
 			
 			if (returnDepth == Dungeon.depth) {
 				ScrollOfTeleportation.appear( hero, returnPos );
-				Dungeon.level.press( returnPos, hero );
+				for(Mob m : Dungeon.level.mobs){
+					if (m.pos == hero.pos){
+						//displace mob
+						for(int i : PathFinder.NEIGHBOURS8){
+							if (Actor.findChar(m.pos+i) == null && Dungeon.level.passable[m.pos + i]){
+								m.pos += i;
+								m.sprite.point(m.sprite.worldToCamera(m.pos));
+								break;
+							}
+						}
+					}
+				}
+				Dungeon.level.occupyCell(hero );
 				Dungeon.observe();
 				GameScene.updateFog();
 			} else {
 
-				Buff buff = Dungeon.hero.buff(TimekeepersHourglass.timeFreeze.class);
-				if (buff != null) buff.detach();
+				TimekeepersHourglass.timeFreeze timeFreeze = Dungeon.hero.buff(TimekeepersHourglass.timeFreeze.class);
+				if (timeFreeze != null) timeFreeze.disarmPressedTraps();
+				Swiftthistle.TimeBubble timeBubble = Dungeon.hero.buff(Swiftthistle.TimeBubble.class);
+				if (timeBubble != null) timeBubble.disarmPressedTraps();
 
 				InterlevelScene.mode = InterlevelScene.Mode.RETURN;
 				InterlevelScene.returnDepth = returnDepth;
@@ -189,17 +204,17 @@ public class LloydsBeacon extends Artifact {
 			updateQuickslot();
 
 			if (Actor.findChar(target) == curUser){
-				ScrollOfTeleportation.teleportHero(curUser);
+				ScrollOfTeleportation.teleportChar(curUser);
 				curUser.spendAndNext(1f);
 			} else {
 				final Ballistica bolt = new Ballistica( curUser.pos, target, Ballistica.MAGIC_BOLT );
 				final Char ch = Actor.findChar(bolt.collisionPos);
 
 				if (ch == curUser){
-					ScrollOfTeleportation.teleportHero(curUser);
+					ScrollOfTeleportation.teleportChar(curUser);
 					curUser.spendAndNext( 1f );
 				} else {
-					Sample.INSTANCE.play( Assets.SND_ZAP );
+					Sample.INSTANCE.play( Assets.Sounds.ZAP );
 					curUser.sprite.zap(bolt.collisionPos);
 					curUser.busy();
 
@@ -215,7 +230,7 @@ public class LloydsBeacon extends Artifact {
 										int count = 10;
 										int pos;
 										do {
-											pos = Dungeon.level.randomRespawnCell();
+											pos = Dungeon.level.randomRespawnCell( ch );
 											if (count-- <= 0) {
 												break;
 											}
@@ -260,6 +275,18 @@ public class LloydsBeacon extends Artifact {
 	@Override
 	protected ArtifactBuff passiveBuff() {
 		return new beaconRecharge();
+	}
+	
+	@Override
+	public void charge(Hero target, float amount) {
+		if (charge < chargeCap){
+			partialCharge += 0.25f*amount;
+			if (partialCharge >= 1){
+				partialCharge--;
+				charge++;
+				updateQuickslot();
+			}
+		}
 	}
 
 	@Override

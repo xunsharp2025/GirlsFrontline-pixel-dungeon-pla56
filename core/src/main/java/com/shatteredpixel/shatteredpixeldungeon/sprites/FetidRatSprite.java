@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,21 +34,21 @@ public class FetidRatSprite extends MobSprite {
 	public FetidRatSprite() {
 		super();
 
-		texture( Assets.STG );
+		texture( Assets.Sprites.RAT );
 
-		TextureFilm frames = new TextureFilm( texture, 21, 23 );
+		TextureFilm frames = new TextureFilm( texture, 16, 15 );
 
 		idle = new Animation( 2, true );
-		idle.frames( frames, 0 );
+		idle.frames( frames, 32, 32, 32, 33 );
 
 		run = new Animation( 10, true );
-		run.frames( frames, 4, 5, 6, 7, 8, 9 );
+		run.frames( frames, 38, 39, 40, 41, 42 );
 
 		attack = new Animation( 15, false );
-		attack.frames( frames, 1, 2, 1, 3, 1, 2 );
+		attack.frames( frames, 34, 35, 36, 37, 32 );
 
 		die = new Animation( 10, false );
-		die.frames( frames, 0, 10, 11, 12 );
+		die.frames( frames, 43, 44, 45, 46 );
 
 		play( idle );
 	}
@@ -74,8 +74,8 @@ public class FetidRatSprite extends MobSprite {
 	}
 	
 	@Override
-	public void die() {
-		super.die();
+	public void kill() {
+		super.kill();
 		
 		if (cloud != null) {
 			cloud.on = false;

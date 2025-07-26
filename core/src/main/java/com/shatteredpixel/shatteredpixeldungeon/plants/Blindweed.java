@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,35 +22,38 @@
 package com.shatteredpixel.shatteredpixeldungeon.plants;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfInvisibility;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
-import com.watabou.utils.Random;
 
 public class Blindweed extends Plant {
 	
 	{
-		image = 3;
+		image = 11;
+		seedClass = Seed.class;
 	}
 	
 	@Override
-	public void activate() {
-		Char ch = Actor.findChar(pos);
+	public void activate( Char ch ) {
 		
 		if (ch != null) {
-			int len = Random.Int( 5, 10 );
-			Buff.prolong( ch, Blindness.class, len );
-			Buff.prolong( ch, Cripple.class, len );
-			if (ch instanceof Mob) {
-				if (((Mob)ch).state == ((Mob)ch).HUNTING) ((Mob)ch).state = ((Mob)ch).WANDERING;
-				((Mob)ch).beckon( Dungeon.level.randomDestination() );
+			if (ch instanceof Hero && ((Hero) ch).subClass == HeroSubClass.WARDEN){
+				Buff.affect(ch, Invisibility.class, Invisibility.DURATION/2f);
+			} else {
+				Buff.prolong(ch, Blindness.class, Blindness.DURATION);
+				Buff.prolong(ch, Cripple.class, Cripple.DURATION);
+				if (ch instanceof Mob) {
+					if (((Mob) ch).state == ((Mob) ch).HUNTING) ((Mob) ch).state = ((Mob) ch).WANDERING;
+					((Mob) ch).beckon(Dungeon.level.randomDestination( ch ));
+				}
 			}
 		}
 		
@@ -64,7 +67,6 @@ public class Blindweed extends Plant {
 			image = ItemSpriteSheet.SEED_BLINDWEED;
 
 			plantClass = Blindweed.class;
-			alchemyClass = PotionOfInvisibility.class;
 		}
 	}
 }

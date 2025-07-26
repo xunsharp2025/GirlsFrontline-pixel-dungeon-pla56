@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,20 +29,20 @@ public class ThiefSprite extends MobSprite {
 	public ThiefSprite() {
 		super();
 		
-		texture( Assets.THIEF );
-			TextureFilm film = new TextureFilm( texture, 15, 19 );
+		texture( Assets.Sprites.THIEF );
+		TextureFilm film = new TextureFilm( texture, 12, 13 );
 		
 		idle = new Animation( 1, true );
 		idle.frames( film, 0, 0, 0, 1, 0, 0, 0, 0, 1 );
 		
 		run = new Animation( 15, true );
-		run.frames( film, 0, 0, 2, 2, 3, 3 );
+		run.frames( film, 0, 0, 2, 3, 3, 4 );
 		
 		die = new Animation( 10, false );
-		die.frames( film, 4, 5, 6, 7);
+		die.frames( film, 5, 6, 7, 8, 9 );
 		
 		attack = new Animation( 12, false );
-		attack.frames( film, 8, 10, 9 );
+		attack.frames( film, 10, 11, 12, 0 );
 		
 		idle();
 	}

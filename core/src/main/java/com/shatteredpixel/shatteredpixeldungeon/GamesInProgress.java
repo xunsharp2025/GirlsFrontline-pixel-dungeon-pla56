@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +36,7 @@ import java.util.HashMap;
 
 public class GamesInProgress {
 	
-	public static final int MAX_SLOTS = 10;
+	public static final int MAX_SLOTS = 4;
 	
 	//null means we have loaded info and it is empty, no entry means unknown.
 	private static HashMap<Integer, Info> slotStates = new HashMap<>();
@@ -50,19 +49,20 @@ public class GamesInProgress {
 	private static final String DEPTH_FILE	= "depth%d.dat";
 	
 	public static boolean gameExists( int slot ){
-		return FileUtils.dirExists(Messages.format(GAME_FOLDER, slot));
+		return FileUtils.dirExists(gameFolder(slot))
+				&& FileUtils.fileLength(gameFile(slot)) > 1;
 	}
 	
-	public static File gameFolder( int slot ){
-		return FileUtils.getDir(Messages.format(GAME_FOLDER, slot));
+	public static String gameFolder( int slot ){
+		return Messages.format(GAME_FOLDER, slot);
 	}
 	
-	public static File gameFile( int slot ){
-		return FileUtils.getFile(gameFolder( slot ), GAME_FILE);
+	public static String gameFile( int slot ){
+		return gameFolder(slot) + "/" + GAME_FILE;
 	}
 	
-	public static File depthFile( int slot, int depth ) {
-		return FileUtils.getFile( gameFolder(slot), Messages.format(DEPTH_FILE, depth));
+	public static String depthFile( int slot, int depth ) {
+		return gameFolder(slot) + "/" + Messages.format(DEPTH_FILE, depth);
 	}
 	
 	public static int firstEmpty(){
@@ -74,7 +74,7 @@ public class GamesInProgress {
 	
 	public static ArrayList<Info> checkAll(){
 		ArrayList<Info> result = new ArrayList<>();
-		for (int i = 0; i <= MAX_SLOTS; i++){
+		for (int i = 1; i <= MAX_SLOTS; i++){
 			Info curr = check(i);
 			if (curr != null) result.add(curr);
 		}
@@ -103,12 +103,15 @@ public class GamesInProgress {
 				info.slot = slot;
 				Dungeon.preview(info, bundle);
 				
-				//saves from before 0.6.0b are not supported
-				if (info.version < GirlsFrontlinePixelDungeon.v0_6_0b) {
+				//saves from before v0.9.2b are not supported
+				if (info.version < ShatteredPixelDungeon.v0_9_2b) {
 					info = null;
 				}
 
 			} catch (IOException e) {
+				info = null;
+			} catch (Exception e){
+				ShatteredPixelDungeon.reportException( e );
 				info = null;
 			}
 			
@@ -128,19 +131,17 @@ public class GamesInProgress {
 		
 		info.level = hero.lvl;
 		info.str = hero.STR;
+		info.strBonus = hero.STR() - hero.STR;
 		info.exp = hero.exp;
 		info.hp = hero.HP;
 		info.ht = hero.HT;
-		info.shld = hero.SHLD;
+		info.shld = hero.shielding();
 		info.heroClass = hero.heroClass;
 		info.subClass = hero.subClass;
 		info.armorTier = hero.tier();
 		
 		info.goldCollected = Statistics.goldCollected;
 		info.maxDepth = Statistics.deepestFloor;
-
-		// TODO 점수 계산 식 작성 필요
-		info.score = 0;
 
 		slotStates.put( slot, info );
 	}
@@ -162,18 +163,17 @@ public class GamesInProgress {
 		
 		public int level;
 		public int str;
+		public int strBonus;
 		public int exp;
 		public int hp;
 		public int ht;
 		public int shld;
-		public HeroClass heroClass = HeroClass.NONE;
+		public HeroClass heroClass;
 		public HeroSubClass subClass;
 		public int armorTier;
 		
 		public int goldCollected;
 		public int maxDepth;
-
-		public int score;
 	}
 	
 	public static final Comparator<GamesInProgress.Info> scoreComparator = new Comparator<GamesInProgress.Info>() {

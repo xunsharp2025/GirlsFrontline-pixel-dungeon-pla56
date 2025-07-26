@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,6 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.tweeners.AlphaTweener;
-import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
@@ -70,7 +69,13 @@ public class Honeypot extends Item {
 			
 			detach( hero.belongings.backpack );
 
-			shatter( hero, hero.pos ).collect();
+			Item item = shatter( hero, hero.pos );
+			if (!item.collect()){
+				Dungeon.level.drop(item, hero.pos);
+				if (item instanceof ShatteredPot){
+					((ShatteredPot) item).dropPot(hero, hero.pos);
+				}
+			}
 
 			hero.next();
 
@@ -89,18 +94,17 @@ public class Honeypot extends Item {
 	public Item shatter( Char owner, int pos ) {
 		
 		if (Dungeon.level.heroFOV[pos]) {
-			Sample.INSTANCE.play( Assets.SND_SHATTER );
+			Sample.INSTANCE.play( Assets.Sounds.SHATTER );
 			Splash.at( pos, 0xffd500, 5 );
 		}
 		
 		int newPos = pos;
 		if (Actor.findChar( pos ) != null) {
-			ArrayList<Integer> candidates = new ArrayList<Integer>();
-			boolean[] passable = Dungeon.level.passable;
+			ArrayList<Integer> candidates = new ArrayList<>();
 			
 			for (int n : PathFinder.NEIGHBOURS4) {
 				int c = pos + n;
-				if (passable[c] && Actor.findChar( c ) == null) {
+				if (!Dungeon.level.solid[c] && Actor.findChar( c ) == null) {
 					candidates.add( c );
 				}
 			}
@@ -121,8 +125,8 @@ public class Honeypot extends Item {
 			bee.sprite.alpha( 0 );
 			bee.sprite.parent.add( new AlphaTweener( bee.sprite, 1, 0.15f ) );
 			
-			Sample.INSTANCE.play( Assets.SND_BEE );
-			return new ShatteredPot().setBee( bee );
+			Sample.INSTANCE.play( Assets.Sounds.BEE );
+			return new ShatteredPot();
 		} else {
 			return this;
 		}
@@ -139,7 +143,7 @@ public class Honeypot extends Item {
 	}
 	
 	@Override
-	public int price() {
+	public int value() {
 		return 30 * quantity;
 	}
 
@@ -148,55 +152,82 @@ public class Honeypot extends Item {
 
 		{
 			image = ItemSpriteSheet.SHATTPOT;
-			stackable = false;
-		}
-
-		private int myBee;
-		private int beeDepth;
-
-		public Item setBee(Char bee){
-			myBee = bee.id();
-			beeDepth = Dungeon.depth;
-			return this;
+			stackable = true;
 		}
 
 		@Override
-		public boolean doPickUp(Hero hero) {
-			if ( super.doPickUp(hero) ){
-				setHolder( hero );
+		public boolean doPickUp(Hero hero, int pos) {
+			if ( super.doPickUp(hero, pos) ){
+				pickupPot( hero );
 				return true;
-			}else
+			} else {
 				return false;
+			}
 		}
 
 		@Override
 		public void doDrop(Hero hero) {
 			super.doDrop(hero);
-			updateBee( hero.pos, null );
+			dropPot(hero, hero.pos);
 		}
 
 		@Override
 		protected void onThrow(int cell) {
 			super.onThrow(cell);
-			updateBee( cell, null );
+			dropPot(curUser, cell);
 		}
 
-		public void setHolder(Char holder){
-			updateBee(holder.pos, holder );
+		public void pickupPot(Char holder){
+			for (Bee bee : findBees(holder.pos)){
+				updateBee(bee, -1, holder);
+			}
+		}
+		
+		public void dropPot( Char holder, int dropPos ){
+			for (Bee bee : findBees(holder)){
+				updateBee(bee, dropPos, null);
+			}
 		}
 
-		public void goAway(){
-			updateBee( -1, null);
+		public void destroyPot( int potPos ){
+			for (Bee bee : findBees(potPos)){
+				updateBee(bee, -1, null);
+			}
 		}
 
-		private void updateBee( int cell, Char holder){
-			//important, as ids are not unique between depths.
-			if (Dungeon.depth != beeDepth)
-				return;
-
-			Bee bee = (Bee)Actor.findById( myBee );
-			if (bee != null)
+		private void updateBee( Bee bee, int cell, Char holder ){
+			if (bee != null && bee.alignment == Char.Alignment.ENEMY)
 				bee.setPotInfo( cell, holder );
+		}
+		
+		//returns up to quantity bees which match the current pot Pos
+		private ArrayList<Bee> findBees( int potPos ){
+			ArrayList<Bee> bees = new ArrayList<>();
+			for (Char c : Actor.chars()){
+				if (c instanceof Bee && ((Bee) c).potPos() == potPos){
+					bees.add((Bee) c);
+					if (bees.size() >= quantity) {
+						break;
+					}
+				}
+			}
+			
+			return bees;
+		}
+		
+		//returns up to quantity bees which match the current pot holder
+		private ArrayList<Bee> findBees( Char potHolder ){
+			ArrayList<Bee> bees = new ArrayList<>();
+			for (Char c : Actor.chars()){
+				if (c instanceof Bee && ((Bee) c).potHolderID() == potHolder.id()){
+					bees.add((Bee) c);
+					if (bees.size() >= quantity) {
+						break;
+					}
+				}
+			}
+			
+			return bees;
 		}
 
 		@Override
@@ -208,22 +239,10 @@ public class Honeypot extends Item {
 		public boolean isIdentified() {
 			return true;
 		}
-
-		private static final String MYBEE = "mybee";
-		private static final String BEEDEPTH = "beedepth";
-
+		
 		@Override
-		public void storeInBundle(Bundle bundle) {
-			super.storeInBundle(bundle);
-			bundle.put( MYBEE, myBee );
-			bundle.put( BEEDEPTH, beeDepth );
-		}
-
-		@Override
-		public void restoreFromBundle(Bundle bundle) {
-			super.restoreFromBundle(bundle);
-			myBee = bundle.getInt( MYBEE );
-			beeDepth = bundle.getInt( BEEDEPTH );
+		public int value() {
+			return 5 * quantity;
 		}
 	}
 }

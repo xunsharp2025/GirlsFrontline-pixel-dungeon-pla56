@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,26 +25,26 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.watabou.noosa.TextureFilm;
 
 public class BruteSprite extends MobSprite {
-
+	
 	public BruteSprite() {
 		super();
-
-		texture( Assets.VESPID );
-
-		TextureFilm frames = new TextureFilm( texture, 20, 21 );
-
-		idle = new Animation( 5, true );
-		idle.frames( frames, 0 );
-
-		run = new Animation( 15, true );
-		run.frames( frames,  4, 5, 6, 7, 8, 9 );
-
-		attack = new Animation( 18, false );
-		attack.frames( frames, 1, 2, 3, 2 );
-
+		
+		texture( Assets.Sprites.BRUTE );
+		
+		TextureFilm frames = new TextureFilm( texture, 12, 16 );
+		
+		idle = new Animation( 2, true );
+		idle.frames( frames, 0, 0, 0, 1, 0, 0, 1, 1 );
+		
+		run = new Animation( 12, true );
+		run.frames( frames, 4, 5, 6, 7 );
+		
+		attack = new Animation( 12, false );
+		attack.frames( frames, 2, 3, 0 );
+		
 		die = new Animation( 12, false );
-		die.frames( frames, 10, 11, 12 );
-
+		die.frames( frames, 8, 9, 10 );
+		
 		play( idle );
 	}
 }

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,24 +32,24 @@ public class MonkSprite extends MobSprite {
 	public MonkSprite() {
 		super();
 		
-		texture( Assets.STRIKER );
+		texture( Assets.Sprites.MONK );
 		
-		TextureFilm frames = new TextureFilm( texture, 21, 20 );
+		TextureFilm frames = new TextureFilm( texture, 15, 14 );
 		
 		idle = new Animation( 6, true );
-		idle.frames( frames, 0 );
+		idle.frames( frames, 1, 0, 1, 2 );
 		
 		run = new Animation( 15, true );
-		run.frames( frames, 5, 6, 7, 8, 9, 10 );
+		run.frames( frames, 11, 12, 13, 14, 15, 16 );
 		
-		attack = new Animation( 24, false );
-		attack.frames( frames, 4, 1, 4, 2, 4, 3, 4, 4 );
+		attack = new Animation( 12, false );
+		attack.frames( frames, 3, 4, 3, 4 );
 		
-		kick = new Animation( 24, false );
-		kick.frames( frames, 4, 1, 4, 2, 4, 3, 4, 4 );
+		kick = new Animation( 10, false );
+		kick.frames( frames, 5, 6, 5 );
 		
-		die = new Animation( 8, false );
-		die.frames( frames, 1, 11, 12, 13 );
+		die = new Animation( 15, false );
+		die.frames( frames, 1, 7, 8, 8, 9, 10 );
 		
 		play( idle );
 	}

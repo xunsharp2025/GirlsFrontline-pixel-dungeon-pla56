@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,8 +43,12 @@ public class WeakeningTrap extends Trap{
 		}
 
 		Char ch = Actor.findChar( pos );
-		if (ch == Dungeon.hero){
-			Buff.prolong( ch, Weakness.class, Weakness.DURATION*2f );
+		if (ch != null){
+			if (ch.properties().contains(Char.Property.BOSS)
+				|| ch.properties().contains(Char.Property.MINIBOSS)){
+				Buff.prolong( ch, Weakness.class, Weakness.DURATION/2f );
+			}
+			Buff.prolong( ch, Weakness.class, Weakness.DURATION*3f );
 		}
 	}
 }

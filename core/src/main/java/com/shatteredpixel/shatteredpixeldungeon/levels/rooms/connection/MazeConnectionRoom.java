@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +30,10 @@ public class MazeConnectionRoom extends ConnectionRoom {
 	
 	@Override
 	public void paint(Level level) {
-		super.paint(level);
-		
 		Painter.fill(level, this, 1, Terrain.EMPTY);
 		
 		//true = space, false = wall
+		Maze.allowDiagonals = false;
 		boolean[][] maze = Maze.generate(this);
 		
 		Painter.fill(level, this, 1, Terrain.EMPTY);

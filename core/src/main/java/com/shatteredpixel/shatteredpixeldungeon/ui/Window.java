@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,55 +22,53 @@
 package com.shatteredpixel.shatteredpixeldungeon.ui;
 
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
+import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
 import com.shatteredpixel.shatteredpixeldungeon.effects.ShadowBox;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
-import com.watabou.input.Keys;
-import com.watabou.input.Keys.Key;
-import com.watabou.input.Touchscreen.Touch;
+import com.watabou.input.KeyBindings;
+import com.watabou.input.KeyEvent;
+import com.watabou.input.PointerEvent;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.NinePatch;
-import com.watabou.noosa.TouchArea;
+import com.watabou.noosa.PointerArea;
+import com.watabou.utils.Point;
 import com.watabou.utils.Signal;
 
-public class Window extends Group implements Signal.Listener<Key> {
+public class Window extends Group implements Signal.Listener<KeyEvent> {
 
 	protected int width;
 	protected int height;
 
+	protected int xOffset;
 	protected int yOffset;
 	
-	protected TouchArea blocker;
+	protected PointerArea blocker;
 	protected ShadowBox shadow;
 	protected NinePatch chrome;
-	
+
+	public static final int WHITE = 0xFFFFFF;
 	public static final int TITLE_COLOR = 0xFFFF44;
 	public static final int SHPX_COLOR = 0x33BB33;
 	
 	public Window() {
-		this( 0, 0, 0, Chrome.get( Chrome.Type.WINDOW ) );
+		this( 0, 0, Chrome.get( Chrome.Type.WINDOW ) );
 	}
 	
 	public Window( int width, int height ) {
-		this( width, height, 0, Chrome.get( Chrome.Type.WINDOW ) );
+		this( width, height, Chrome.get( Chrome.Type.WINDOW ) );
 	}
 
 	public Window( int width, int height, NinePatch chrome ) {
-		this(width, height, 0, chrome);
-	}
-			
-	public Window( int width, int height, int yOffset, NinePatch chrome ) {
 		super();
-
-		this.yOffset = yOffset;
 		
-		blocker = new TouchArea( 0, 0, PixelScene.uiCamera.width, PixelScene.uiCamera.height ) {
+		blocker = new PointerArea( 0, 0, PixelScene.uiCamera.width, PixelScene.uiCamera.height ) {
 			@Override
-			protected void onClick( Touch touch ) {
+			protected void onClick( PointerEvent event ) {
 				if (Window.this.parent != null && !Window.this.chrome.overlapsScreenPoint(
-					(int)touch.current.x,
-					(int)touch.current.y )) {
+					(int) event.current.x,
+					(int) event.current.y )) {
 					
 					onBackPressed();
 				}
@@ -112,7 +110,7 @@ public class Window extends Group implements Signal.Listener<Key> {
 				camera.y / camera.zoom,
 				chrome.width(), chrome.height );
 
-		Keys.event.add( this );
+		KeyEvent.addKeyListener( this );
 	}
 	
 	public void resize( int w, int h ) {
@@ -124,19 +122,59 @@ public class Window extends Group implements Signal.Listener<Key> {
 			height + chrome.marginVer() );
 		
 		camera.resize( (int)chrome.width, (int)chrome.height );
+
 		camera.x = (int)(Game.width - camera.screenWidth()) / 2;
+		camera.x += xOffset * camera.zoom;
+
 		camera.y = (int)(Game.height - camera.screenHeight()) / 2;
 		camera.y += yOffset * camera.zoom;
 
 		shadow.boxRect( camera.x / camera.zoom, camera.y / camera.zoom, chrome.width(), chrome.height );
 	}
 
-	public void offset( int yOffset ){
+	public Point getOffset(){
+		return new Point(xOffset, yOffset);
+	}
+
+	public final void offset( Point offset ){
+		offset(offset.x, offset.y);
+	}
+
+	//windows with scroll panes will likely need to override this and refresh them when offset changes
+	public void offset( int xOffset, int yOffset ){
+		camera.x -= this.xOffset * camera.zoom;
+		this.xOffset = xOffset;
+		camera.x += xOffset * camera.zoom;
+
 		camera.y -= this.yOffset * camera.zoom;
 		this.yOffset = yOffset;
 		camera.y += yOffset * camera.zoom;
 
 		shadow.boxRect( camera.x / camera.zoom, camera.y / camera.zoom, chrome.width(), chrome.height );
+	}
+
+	//ensures the window, with offset, does not go beyond a given margin
+	public void boundOffsetWithMargin( int margin ){
+		float x = camera.x / camera.zoom;
+		float y = camera.y / camera.zoom;
+
+		Camera sceneCam = PixelScene.uiCamera.visible ? PixelScene.uiCamera : Camera.main;
+
+		int newXOfs = xOffset;
+		if (x < margin){
+			newXOfs += margin - x;
+		} else if (x + camera.width > sceneCam.width - margin){
+			newXOfs += (sceneCam.width - margin) - (x + camera.width);
+		}
+
+		int newYOfs = yOffset;
+		if (y < margin){
+			newYOfs += margin - y;
+		} else if (y + camera.height > sceneCam.height - margin){
+			newYOfs += (sceneCam.height - margin) - (y + camera.height);
+		}
+
+		offset(newXOfs, newYOfs);
 	}
 	
 	public void hide() {
@@ -151,29 +189,24 @@ public class Window extends Group implements Signal.Listener<Key> {
 		super.destroy();
 		
 		Camera.remove( camera );
-		Keys.event.remove( this );
+		KeyEvent.removeKeyListener( this );
 	}
 
 	@Override
-	public void onSignal( Key key ) {
-		if (key.pressed) {
-			switch (key.code) {
-			case Keys.BACK:
+	public boolean onSignal( KeyEvent event ) {
+		if (event.pressed) {
+			if (KeyBindings.getActionForKey( event ) == SPDAction.BACK
+				|| KeyBindings.getActionForKey( event ) == SPDAction.WAIT){
 				onBackPressed();
-				break;
-			case Keys.MENU:
-				onMenuPressed();
-				break;
 			}
 		}
 		
-		Keys.event.cancel();
+		//TODO currently always eats the key event as windows always take full focus
+		// if they are ever made more flexible, might not want to do this in all cases
+		return true;
 	}
 	
 	public void onBackPressed() {
 		hide();
-	}
-	
-	public void onMenuPressed() {
 	}
 }

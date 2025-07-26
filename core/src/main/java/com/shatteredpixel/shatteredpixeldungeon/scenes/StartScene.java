@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,24 +24,21 @@ package com.shatteredpixel.shatteredpixeldungeon.scenes;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
-import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
+import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Archs;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndGameInProgress;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndSelectGameInProgress;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.NinePatch;
-import com.watabou.noosa.RenderedText;
-import com.watabou.noosa.ui.Button;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Button;
 
 import java.util.ArrayList;
 
@@ -70,21 +67,23 @@ public class StartScene extends PixelScene {
 		btnExit.setPos( w - btnExit.width(), 0 );
 		add( btnExit );
 		
-		RenderedText title = PixelScene.renderText( Messages.get(this, "title"), 9);
+		RenderedTextBlock title = PixelScene.renderTextBlock( Messages.get(this, "title"), 9);
 		title.hardlight(Window.TITLE_COLOR);
-		title.x = (w - title.width()) / 2f;
-		title.y = (16 - title.baseLine()) / 2f;
+		title.setPos(
+				(w - title.width()) / 2f,
+				(20 - title.height()) / 2f
+		);
 		align(title);
 		add(title);
 		
 		ArrayList<GamesInProgress.Info> games = GamesInProgress.checkAll();
 		
-		int slotGap = SPDSettings.landscape() ? 5 : 10;
+		int slotGap = landscape() ? 5 : 10;
 		int slotCount = Math.min(GamesInProgress.MAX_SLOTS, games.size()+1);
 		int slotsHeight = slotCount*SLOT_HEIGHT + (slotCount-1)* slotGap;
 		
 		float yPos = (h - slotsHeight)/2f;
-		if (SPDSettings.landscape()) yPos += 8;
+		if (landscape()) yPos += 8;
 		
 		for (GamesInProgress.Info game : games) {
 			SaveSlotButton existingGame = new SaveSlotButton();
@@ -106,7 +105,6 @@ public class StartScene extends PixelScene {
 		}
 		
 		GamesInProgress.curSlot = 0;
-		ActionIndicator.action = null;
 		
 		fadeIn();
 		
@@ -114,7 +112,7 @@ public class StartScene extends PixelScene {
 	
 	@Override
 	protected void onBackPressed() {
-		GirlsFrontlinePixelDungeon.switchNoFade( TitleScene.class );
+		ShatteredPixelDungeon.switchNoFade( TitleScene.class );
 	}
 	
 	private static class SaveSlotButton extends Button {
@@ -122,7 +120,7 @@ public class StartScene extends PixelScene {
 		private NinePatch bg;
 		
 		private Image hero;
-		private RenderedText name;
+		private RenderedTextBlock name;
 		
 		private Image steps;
 		private BitmapText depth;
@@ -137,9 +135,9 @@ public class StartScene extends PixelScene {
 			super.createChildren();
 			
 			bg = Chrome.get(Chrome.Type.GEM);
-			add(bg);
+			add( bg);
 			
-			name = PixelScene.renderText(9);
+			name = PixelScene.renderTextBlock(9);
 			add(name);
 		}
 		
@@ -171,10 +169,10 @@ public class StartScene extends PixelScene {
 				}
 				
 				if (hero == null){
-					hero = new Image(info.heroClass.spritesheet(), 0, 86, 12, 17);
+					hero = new Image(info.heroClass.spritesheet(), 0, 15*info.armorTier, 12, 15);
 					add(hero);
 					
-					steps = new Image(Icons.get(Icons.DEPTH));
+					steps = new Image(Icons.get(Icons.STAIRS));
 					add(steps);
 					depth = new BitmapText(PixelScene.pixelFont);
 					add(depth);
@@ -184,7 +182,7 @@ public class StartScene extends PixelScene {
 					level = new BitmapText(PixelScene.pixelFont);
 					add(level);
 				} else {
-					hero.copy(new Image(info.heroClass.spritesheet(), 0, 86, 12, 17));
+					hero.copy(new Image(info.heroClass.spritesheet(), 0, 15*info.armorTier, 12, 15));
 					
 					classIcon.copy(Icons.get(info.heroClass));
 				}
@@ -223,27 +221,33 @@ public class StartScene extends PixelScene {
 				hero.y = y + (height - hero.height())/2f;
 				align(hero);
 				
-				name.x = hero.x + hero.width() + 6;
-				name.y = y + (height - name.baseLine())/2f;
+				name.setPos(
+						hero.x + hero.width() + 6,
+						y + (height - name.height())/2f
+				);
 				align(name);
 				
-				classIcon.x = x + width - classIcon.width() - 8;
+				classIcon.x = x + width - 24 + (16 - classIcon.width())/2f;
 				classIcon.y = y + (height - classIcon.height())/2f;
+				align(classIcon);
 				
 				level.x = classIcon.x + (classIcon.width() - level.width()) / 2f;
 				level.y = classIcon.y + (classIcon.height() - level.height()) / 2f + 1;
 				align(level);
 				
-				steps.x = classIcon.x - steps.width();
+				steps.x = x + width - 40 + (16 - steps.width())/2f;
 				steps.y = y + (height - steps.height())/2f;
+				align(steps);
 				
 				depth.x = steps.x + (steps.width() - depth.width()) / 2f;
 				depth.y = steps.y + (steps.height() - depth.height()) / 2f + 1;
 				align(depth);
 				
 			} else {
-				name.x = x + (width - name.width())/2f;
-				name.y = y + (height - name.baseLine())/2f;
+				name.setPos(
+						x + (width - name.width())/2f,
+						y + (height - name.height())/2f
+				);
 				align(name);
 			}
 			
@@ -253,10 +257,11 @@ public class StartScene extends PixelScene {
 		@Override
 		protected void onClick() {
 			if (newGame) {
-				//GirlsFrontlinePixelDungeon.scene().add( new WndStartGame(slot) );
-				GirlsFrontlinePixelDungeon.scene().add( new WndSelectGameInProgress() );
+				GamesInProgress.selectedClass = null;
+				GamesInProgress.curSlot = slot;
+				ShatteredPixelDungeon.switchScene(HeroSelectScene.class);
 			} else {
-				GirlsFrontlinePixelDungeon.scene().add( new WndGameInProgress(slot));
+				ShatteredPixelDungeon.scene().add( new WndGameInProgress(slot));
 			}
 		}
 	}

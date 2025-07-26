@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
+import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
@@ -34,45 +34,43 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.IntroScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.IconButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
-import com.watabou.noosa.RenderedText;
-import com.watabou.noosa.ui.Button;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Button;
 import com.watabou.noosa.ui.Component;
+import com.watabou.utils.DeviceCompat;
 
 public class WndStartGame extends Window {
 	
 	private static final int WIDTH    = 120;
-	private static final int HEIGHT   = 150;
+	private static final int HEIGHT   = 140;
 
 	public WndStartGame(final int slot){
 		
 		Badges.loadGlobal();
 		Journal.loadGlobal();
 		
-		RenderedText title = PixelScene.renderText(Messages.get(this, "title"), 12 );
+		RenderedTextBlock title = PixelScene.renderTextBlock(Messages.get(this, "title"), 12 );
 		title.hardlight(Window.TITLE_COLOR);
-		title.x = (WIDTH - title.width())/2f;
-		title.y = 2;
+		title.setPos( (WIDTH - title.width())/2f, 3);
+		PixelScene.align(title);
 		add(title);
 		
 		float heroBtnSpacing = (WIDTH - 4*HeroBtn.WIDTH)/5f;
 		
 		float curX = heroBtnSpacing;
 		for (HeroClass cl : HeroClass.values()){
-			if (cl == HeroClass.NONE) {
-				continue;
-			}
 			HeroBtn button = new HeroBtn(cl);
-			button.setRect(curX, title.baseLine() + 4, HeroBtn.WIDTH, HeroBtn.HEIGHT);
+			button.setRect(curX, title.height() + 7, HeroBtn.WIDTH, HeroBtn.HEIGHT);
 			curX += HeroBtn.WIDTH + heroBtnSpacing;
 			add(button);
 		}
@@ -80,7 +78,7 @@ public class WndStartGame extends Window {
 		ColorBlock separator = new ColorBlock(1, 1, 0xFF222222);
 		separator.size(WIDTH, 1);
 		separator.x = 0;
-		separator.y = title.baseLine() + 6 + HeroBtn.HEIGHT;
+		separator.y = title.bottom() + 6 + HeroBtn.HEIGHT;
 		add(separator);
 		
 		HeroPane ava = new HeroPane();
@@ -96,6 +94,7 @@ public class WndStartGame extends Window {
 				
 				GamesInProgress.curSlot = slot;
 				Dungeon.hero = null;
+				ActionIndicator.action = null;
 				InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
 				
 				if (SPDSettings.intro()) {
@@ -118,16 +117,18 @@ public class WndStartGame extends Window {
 		start.setRect(0, HEIGHT - 20, WIDTH, 20);
 		add(start);
 		
-		if (Badges.isUnlocked(Badges.Badge.VICTORY)){
+		if (DeviceCompat.isDebug() || Badges.isUnlocked(Badges.Badge.VICTORY)){
 			IconButton challengeButton = new IconButton(
 					Icons.get( SPDSettings.challenges() > 0 ? Icons.CHALLENGE_ON :Icons.CHALLENGE_OFF)){
 				@Override
 				protected void onClick() {
-					GirlsFrontlinePixelDungeon.scene().add(new WndChallenges(SPDSettings.challenges(), true) {
+					ShatteredPixelDungeon.scene().addToFront(new WndChallenges(SPDSettings.challenges(), true) {
 						public void onBackPressed() {
 							super.onBackPressed();
-							icon( Icons.get( SPDSettings.challenges() > 0 ?
-									Icons.CHALLENGE_ON :Icons.CHALLENGE_OFF ) );
+							if (parent != null) {
+								icon(Icons.get(SPDSettings.challenges() > 0 ?
+										Icons.CHALLENGE_ON : Icons.CHALLENGE_OFF));
+							}
 						}
 					} );
 				}
@@ -159,24 +160,15 @@ public class WndStartGame extends Window {
 		
 		private Image hero;
 		
-		private static final int WIDTH = HeroSprite.FRAME_WIDTH;
-		private static final int HEIGHT = HeroSprite.FRAME_HEIGHT;
+		private static final int WIDTH = 24;
+		private static final int HEIGHT = 16;
 		
 		HeroBtn ( HeroClass cl ){
 			super();
 			
 			this.cl = cl;
-			//hero = new Image(Assets.WARRIOR, 0, 0, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
-			if (cl == HeroClass.WARRIOR){
-				hero = new Image(Assets.WARRIOR, 0, HeroSprite.FRAME_HEIGHT * 2 /*tier*/, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
-			} else if (cl == HeroClass.MAGE){
-				hero = new Image(Assets.MAGE, 0, HeroSprite.FRAME_HEIGHT * 2 /*tier*/, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
-			} else if (cl == HeroClass.ROGUE){
-				hero = new Image(Assets.ROGUE, 0, HeroSprite.FRAME_HEIGHT * 2 /*tier*/, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
-			} else if (cl == HeroClass.RANGER){
-				hero = new Image(Assets.RANGER, 0, HeroSprite.FRAME_HEIGHT * 2 /*tier*/, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
-			}
-			add(hero);
+
+			add(hero = new Image(cl.spritesheet(), 0, 90, 12, 15));
 			
 		}
 		
@@ -194,8 +186,8 @@ public class WndStartGame extends Window {
 		public void update() {
 			super.update();
 			if (cl != GamesInProgress.selectedClass){
-				if (cl == HeroClass.RANGER && !Badges.isUnlocked(Badges.Badge.BOSS_SLAIN_3)){
-					hero.brightness( 0f );
+				if (!cl.isUnlocked()){
+					hero.brightness(0.3f);
 				} else {
 					hero.brightness(0.6f);
 				}
@@ -208,9 +200,8 @@ public class WndStartGame extends Window {
 		protected void onClick() {
 			super.onClick();
 			
-			if( cl == HeroClass.RANGER && !Badges.isUnlocked(Badges.Badge.BOSS_SLAIN_3)){
-				GirlsFrontlinePixelDungeon.scene().add(
-						new WndMessage(Messages.get(WndStartGame.class, "ranger_unlock")));
+			if( !cl.isUnlocked() ){
+				ShatteredPixelDungeon.scene().addToFront( new WndMessage(cl.unlockMsg()));
 			} else {
 				GamesInProgress.selectedClass = cl;
 			}
@@ -228,7 +219,7 @@ public class WndStartGame extends Window {
 		private IconButton heroMisc;
 		private IconButton heroSubclass;
 		
-		private RenderedText name;
+		private RenderedTextBlock name;
 		
 		private static final int BTN_SIZE = 20;
 		
@@ -236,7 +227,7 @@ public class WndStartGame extends Window {
 		protected void createChildren() {
 			super.createChildren();
 			
-			avatar = new Image(Assets.AVATARS);
+			avatar = new Image(Assets.Sprites.AVATARS);
 			avatar.scale.set(2f);
 			add(avatar);
 			
@@ -244,7 +235,7 @@ public class WndStartGame extends Window {
 				@Override
 				protected void onClick() {
 					if (cl == null) return;
-					GirlsFrontlinePixelDungeon.scene().add(new WndMessage(Messages.get(cl, cl.name() + "_desc_item")));
+					ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(cl, cl.name() + "_desc_item")));
 				}
 			};
 			heroItem.setSize(BTN_SIZE, BTN_SIZE);
@@ -254,7 +245,7 @@ public class WndStartGame extends Window {
 				@Override
 				protected void onClick() {
 					if (cl == null) return;
-					GirlsFrontlinePixelDungeon.scene().add(new WndMessage(Messages.get(cl, cl.name() + "_desc_loadout")));
+					ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(cl, cl.name() + "_desc_loadout")));
 				}
 			};
 			heroLoadout.setSize(BTN_SIZE, BTN_SIZE);
@@ -264,7 +255,7 @@ public class WndStartGame extends Window {
 				@Override
 				protected void onClick() {
 					if (cl == null) return;
-					GirlsFrontlinePixelDungeon.scene().add(new WndMessage(Messages.get(cl, cl.name() + "_desc_misc")));
+					ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(cl, cl.name() + "_desc_misc")));
 				}
 			};
 			heroMisc.setSize(BTN_SIZE, BTN_SIZE);
@@ -276,15 +267,15 @@ public class WndStartGame extends Window {
 					if (cl == null) return;
 					String msg = Messages.get(cl, cl.name() + "_desc_subclasses");
 					for (HeroSubClass sub : cl.subClasses()){
-						msg += "\n\n" + sub.desc();
+						msg += "\n\n" + sub.shortDesc();
 					}
-					GirlsFrontlinePixelDungeon.scene().add(new WndMessage(msg));
+					ShatteredPixelDungeon.scene().addToFront(new WndMessage(msg));
 				}
 			};
 			heroSubclass.setSize(BTN_SIZE, BTN_SIZE);
 			add(heroSubclass);
 			
-			name = PixelScene.renderText(12);
+			name = PixelScene.renderTextBlock(12);
 			add(name);
 			
 			visible = false;
@@ -295,11 +286,13 @@ public class WndStartGame extends Window {
 			super.layout();
 			
 			avatar.x = x;
-			avatar.y = y + (height - avatar.height() - name.baseLine() - 2)/2f;
+			avatar.y = y + (height - avatar.height() - name.height() - 4)/2f;
 			PixelScene.align(avatar);
 			
-			name.x = x + (avatar.width() - name.width())/2f;
-			name.y = avatar.y + avatar.height() + 2;
+			name.setPos(
+					x + (avatar.width() - name.width())/2f,
+					avatar.y + avatar.height() + 3
+			);
 			PixelScene.align(name);
 			
 			heroItem.setPos(x + width - BTN_SIZE, y);
@@ -314,31 +307,30 @@ public class WndStartGame extends Window {
 			if (GamesInProgress.selectedClass != cl){
 				cl = GamesInProgress.selectedClass;
 				if (cl != null) {
-					// subtract 1 for NONE class
-					avatar.frame((cl.ordinal() - 1) * 24, 0, 24, 32);
+					avatar.frame(cl.ordinal() * 24, 0, 24, 32);
 					
 					name.text(Messages.capitalize(cl.title()));
 					
 					switch(cl){
 						case WARRIOR:
 							heroItem.icon(new ItemSprite(ItemSpriteSheet.SEAL, null));
-							heroLoadout.icon(new ItemSprite(ItemSpriteSheet.UMP45, null));
+							heroLoadout.icon(new ItemSprite(ItemSpriteSheet.WORN_SHORTSWORD, null));
 							heroMisc.icon(new ItemSprite(ItemSpriteSheet.RATION, null));
 							break;
 						case MAGE:
-							heroItem.icon(new ItemSprite(ItemSpriteSheet.G11, null));
+							heroItem.icon(new ItemSprite(ItemSpriteSheet.MAGES_STAFF, null));
 							heroLoadout.icon(new ItemSprite(ItemSpriteSheet.HOLDER, null));
 							heroMisc.icon(new ItemSprite(ItemSpriteSheet.WAND_MAGIC_MISSILE, null));
 							break;
 						case ROGUE:
 							heroItem.icon(new ItemSprite(ItemSpriteSheet.ARTIFACT_CLOAK, null));
 							heroLoadout.icon(new ItemSprite(ItemSpriteSheet.DAGGER, null));
-							heroMisc.icon(Icons.get(Icons.DEPTH));
+							heroMisc.icon(Icons.get(Icons.STAIRS));
 							break;
-						case RANGER:
-							heroItem.icon(new ItemSprite(ItemSpriteSheet.BOOMERANG, null));
-							heroLoadout.icon(new ItemSprite(ItemSpriteSheet.M79, null));
-							heroMisc.icon(new ItemSprite(ItemSpriteSheet.DART, null));
+						case HUNTRESS:
+							heroItem.icon(new ItemSprite(ItemSpriteSheet.SPIRIT_BOW, null));
+							heroLoadout.icon(new ItemSprite(ItemSpriteSheet.GLOVES, null));
+							heroMisc.icon(new Image(Assets.Environment.TILES_SEWERS, 112, 96, 16, 16 ));
 							break;
 					}
 					

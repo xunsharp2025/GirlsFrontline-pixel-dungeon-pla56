@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Random;
+import com.watabou.utils.RectF;
 
 public class BlobEmitter extends Emitter {
 	
@@ -38,6 +39,8 @@ public class BlobEmitter extends Emitter {
 		this.blob = blob;
 		blob.use( this );
 	}
+
+	public RectF bound = new RectF(0, 0, 1, 1);
 	
 	@Override
 	protected void emit( int index ) {
@@ -57,10 +60,10 @@ public class BlobEmitter extends Emitter {
 			for (int j = blob.area.top; j < blob.area.bottom; j++) {
 				cell = i + j*Dungeon.level.width();
 				if (cell < Dungeon.level.heroFOV.length
-						&& Dungeon.level.heroFOV[cell]
+						&& (Dungeon.level.heroFOV[cell] || blob.alwaysVisible)
 						&& map[cell] > 0) {
-					float x = (i + Random.Float()) * size;
-					float y = (j + Random.Float()) * size;
+					float x = (i + Random.Float(bound.left, bound.right)) * size;
+					float y = (j + Random.Float(bound.top, bound.bottom)) * size;
 					factory.emit(this, index, x, y);
 				}
 			}

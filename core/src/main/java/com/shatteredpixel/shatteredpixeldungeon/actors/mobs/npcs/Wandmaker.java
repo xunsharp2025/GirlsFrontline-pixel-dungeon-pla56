@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
-import com.shatteredpixel.shatteredpixeldungeon.DialogInfo;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -37,14 +36,17 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.MassGraveRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.RotGardenRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard.RitualSiteRoom;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Rotberry;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.WandmakerSprite;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuest;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndWandmaker;
+import com.watabou.noosa.Game;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Callback;
+import com.watabou.utils.Point;
 import com.watabou.utils.Random;
-import com.watabou.utils.SparseArray;
 
 import java.util.ArrayList;
 
@@ -58,13 +60,15 @@ public class Wandmaker extends NPC {
 	
 	@Override
 	protected boolean act() {
-		throwItem();
+		if (Dungeon.level.heroFOV[pos] && Quest.wand1 != null){
+			Notes.add( Notes.Landmark.WANDMAKER );
+		}
 		return super.act();
 	}
 	
 	@Override
 	public int defenseSkill( Char enemy ) {
-		return 1000;
+		return INFINITE_EVASION;
 	}
 	
 	@Override
@@ -74,56 +78,119 @@ public class Wandmaker extends NPC {
 	@Override
 	public void add( Buff buff ) {
 	}
-
+	
 	@Override
 	public boolean reset() {
 		return true;
 	}
 	
 	@Override
-	public boolean interact() {
-		
+	public boolean interact(Char c) {
 		sprite.turnTo( pos, Dungeon.hero.pos );
 
-		// 퀘스트 진행 검사
+		if (c != Dungeon.hero){
+			return true;
+		}
+
 		if (Quest.given) {
-			final Item item = Dungeon.hero.belongings.getItem( Quest.TARGETS.get(Quest.type));
+			
+			Item item;
+			switch (Quest.type) {
+				case 1:
+				default:
+					item = Dungeon.hero.belongings.getItem(CorpseDust.class);
+					break;
+				case 2:
+					item = Dungeon.hero.belongings.getItem(Embers.class);
+					break;
+				case 3:
+					item = Dungeon.hero.belongings.getItem(Rotberry.Seed.class);
+					break;
+			}
 
-			// 퀘스트 완료
 			if (item != null) {
-
-				int DialogID = DialogInfo.ID_M16A1_QUEST + DialogInfo.COMPLETE;
-				WndDialog wnd = new WndDialog( DialogID ) {
+				Game.runOnRenderThread(new Callback() {
 					@Override
-					protected void onFinish() {
-						GameScene.show(new WndWandmaker((Wandmaker) this.npc, item));
+					public void call() {
+						GameScene.show( new WndWandmaker( Wandmaker.this, item ) );
 					}
-				};
-
-				wnd.npc = this;
-				GameScene.show(wnd);
-
+				});
 			} else {
-				// 진행중 대사 출력
-				int DialogID = DialogInfo.ID_M16A1_QUEST + DialogInfo.INPROGRESS;
-
-				WndDialog.setBRANCH(DialogID, Quest.type);
-				WndDialog.ShowChapter(DialogID);
-
+				String msg;
+				switch(Quest.type){
+					case 1: default:
+						msg = Messages.get(this, "reminder_dust", Dungeon.hero.name());
+						break;
+					case 2:
+						msg = Messages.get(this, "reminder_ember", Dungeon.hero.name());
+						break;
+					case 3:
+						msg = Messages.get(this, "reminder_berry", Dungeon.hero.name());
+						break;
+				}
+				Game.runOnRenderThread(new Callback() {
+					@Override
+					public void call() {
+						GameScene.show(new WndQuest(Wandmaker.this, msg));
+					}
+				});
 			}
 			
 		} else {
-			// 퀘스트 수주
-			int DialogID = DialogInfo.ID_M16A1_QUEST;
 
-			WndDialog.setBRANCH(DialogID, Quest.type);
-			WndDialog.ShowChapter(DialogID);
+			String msg1 = "";
+			String msg2 = "";
+			switch(Dungeon.hero.heroClass){
+				case WARRIOR:
+					msg1 += Messages.get(this, "intro_warrior");
+					break;
+				case ROGUE:
+					msg1 += Messages.get(this, "intro_rogue");
+					break;
+				case MAGE:
+					msg1 += Messages.get(this, "intro_mage", Dungeon.hero.name());
+					break;
+				case HUNTRESS:
+					msg1 += Messages.get(this, "intro_huntress");
+					break;
+			}
 
-			Notes.add( Notes.Landmark.WANDMAKER );
+			msg1 += Messages.get(this, "intro_1");
+
+			switch (Quest.type){
+				case 1:
+					msg2 += Messages.get(this, "intro_dust");
+					break;
+				case 2:
+					msg2 += Messages.get(this, "intro_ember");
+					break;
+				case 3:
+					msg2 += Messages.get(this, "intro_berry");
+					break;
+			}
+
+			msg2 += Messages.get(this, "intro_2");
+			final String msg1Final = msg1;
+			final String msg2Final = msg2;
+			
+			Game.runOnRenderThread(new Callback() {
+				@Override
+				public void call() {
+					GameScene.show(new WndQuest(Wandmaker.this, msg1Final){
+						@Override
+						public void hide() {
+							super.hide();
+							GameScene.show(new WndQuest(Wandmaker.this, msg2Final));
+						}
+					});
+				}
+			});
+
 			Quest.given = true;
+			Notes.add( Notes.Landmark.WANDMAKER );
 		}
 
-		return false;
+		return true;
 	}
 	
 	public static class Quest {
@@ -132,14 +199,6 @@ public class Wandmaker extends NPC {
 		// 1 = corpse dust quest
 		// 2 = elemental embers quest
 		// 3 = rotberry quest
-
-		private static SparseArray<Class<? extends Item>> TARGETS = new SparseArray<>();
-
-		static {
-			TARGETS.put(1, CorpseDust.class);
-			TARGETS.put(2, Embers.class);
-			TARGETS.put(3, Rotberry.Seed.class);
-		}
 		
 		private static boolean spawned;
 		
@@ -167,7 +226,7 @@ public class Wandmaker extends NPC {
 		private static final String RITUALPOS	= "ritualpos";
 		
 		public static void storeInBundle( Bundle bundle ) {
-
+			
 			Bundle node = new Bundle();
 			
 			node.put( SPAWNED, spawned );
@@ -220,9 +279,23 @@ public class Wandmaker extends NPC {
 				questRoomSpawned = false;
 				
 				Wandmaker npc = new Wandmaker();
+				boolean validPos;
+				//Do not spawn wandmaker on the entrance, a trap, or in front of a door.
 				do {
+					validPos = true;
 					npc.pos = level.pointToCell(room.random());
-				} while (npc.pos == level.entrance);
+					if (npc.pos == level.entrance){
+						validPos = false;
+					}
+					for (Point door : room.connected.values()){
+						if (level.trueDistance( npc.pos, level.pointToCell( door ) ) <= 1){
+							validPos = false;
+						}
+					}
+					if (level.traps.get(npc.pos) != null){
+						validPos = false;
+					}
+				} while (!validPos);
 				level.mobs.add( npc );
 
 				spawned = true;

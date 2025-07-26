@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +29,14 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Effects;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.StaffParticle;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Elastic;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
+import com.shatteredpixel.shatteredpixeldungeon.levels.features.Door;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.TenguDartTrap;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
-import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.Image;
@@ -58,19 +59,19 @@ public class WandOfBlastWave extends DamageWand {
 	}
 
 	public int max(int lvl){
-		return 5+3*lvl;
+		return 3+3*lvl;
 	}
 
 	@Override
-	protected void onZap(Ballistica bolt) {
-		Sample.INSTANCE.play( Assets.SND_BLAST );
+	public void onZap(Ballistica bolt) {
+		Sample.INSTANCE.play( Assets.Sounds.BLAST );
 		BlastWave.blast(bolt.collisionPos);
 
-		int damage = damageRoll();
-
-		//presses all tiles in the AOE first
+		//presses all tiles in the AOE first, with the exception of tengu dart traps
 		for (int i : PathFinder.NEIGHBOURS9){
-			Dungeon.level.press(bolt.collisionPos+i, Actor.findChar(bolt.collisionPos+i), true);
+			if (!(Dungeon.level.traps.get(bolt.collisionPos+i) instanceof TenguDartTrap)) {
+				Dungeon.level.pressCell(bolt.collisionPos + i);
+			}
 		}
 
 		//throws other chars around the center.
@@ -78,69 +79,101 @@ public class WandOfBlastWave extends DamageWand {
 			Char ch = Actor.findChar(bolt.collisionPos + i);
 
 			if (ch != null){
-				processSoulMark(ch, chargesPerCast());
-				ch.damage(Math.round(damage * 0.667f), this);
+				wandProc(ch, chargesPerCast());
+				if (ch.alignment != Char.Alignment.ALLY) ch.damage(damageRoll(), this);
 
-				if (ch.isAlive()) {
+				if (ch.pos == bolt.collisionPos + i) {
 					Ballistica trajectory = new Ballistica(ch.pos, ch.pos + i, Ballistica.MAGIC_BOLT);
-					int strength = 1 + Math.round(level() / 2f);
-					throwChar(ch, trajectory, strength);
+					int strength = 1 + Math.round(buffedLvl() / 2f);
+					throwChar(ch, trajectory, strength, false);
 				}
+
 			}
 		}
 
 		//throws the char at the center of the blast
 		Char ch = Actor.findChar(bolt.collisionPos);
 		if (ch != null){
-			processSoulMark(ch, chargesPerCast());
-			ch.damage(damage, this);
+			wandProc(ch, chargesPerCast());
+			ch.damage(damageRoll(), this);
 
-			if (ch.isAlive() && bolt.path.size() > bolt.dist+1) {
+			if (bolt.path.size() > bolt.dist+1 && ch.pos == bolt.collisionPos) {
 				Ballistica trajectory = new Ballistica(ch.pos, bolt.path.get(bolt.dist + 1), Ballistica.MAGIC_BOLT);
-				int strength = level() + 3;
-				throwChar(ch, trajectory, strength);
+				int strength = buffedLvl() + 3;
+				throwChar(ch, trajectory, strength, false);
 			}
 		}
-
-		if (!curUser.isAlive()) {
-			Dungeon.fail( getClass() );
-			GLog.n( Messages.get( this, "ondeath") );
-		}
+		
 	}
 
 	public static void throwChar(final Char ch, final Ballistica trajectory, int power){
+		throwChar(ch, trajectory, power, true);
+	}
+
+	public static void throwChar(final Char ch, final Ballistica trajectory, int power,
+	                             boolean closeDoors) {
+		throwChar(ch, trajectory, power, closeDoors, true);
+	}
+
+	public static void throwChar(final Char ch, final Ballistica trajectory, int power,
+	                             boolean closeDoors, boolean collideDmg){
+		if (ch.properties().contains(Char.Property.BOSS)) {
+			power /= 2;
+		}
+
 		int dist = Math.min(trajectory.dist, power);
 
-		if (ch.properties().contains(Char.Property.BOSS))
-			dist /= 2;
+		boolean collided = dist == trajectory.dist;
 
-		if (dist == 0 || ch.properties().contains(Char.Property.IMMOVABLE)) return;
+		if (dist == 0
+				|| ch.rooted
+				|| ch.properties().contains(Char.Property.IMMOVABLE)) return;
+
+		//large characters cannot be moved into non-open space
+		if (Char.hasProp(ch, Char.Property.LARGE)) {
+			for (int i = 1; i <= dist; i++) {
+				if (!Dungeon.level.openSpace[trajectory.path.get(i)]){
+					dist = i-1;
+					collided = true;
+					break;
+				}
+			}
+		}
 
 		if (Actor.findChar(trajectory.path.get(dist)) != null){
 			dist--;
+			collided = true;
 		}
+
+		if (dist < 0) return;
 
 		final int newPos = trajectory.path.get(dist);
 
 		if (newPos == ch.pos) return;
 
 		final int finalDist = dist;
+		final boolean finalCollided = collided && collideDmg;
 		final int initialpos = ch.pos;
 
 		Actor.addDelayed(new Pushing(ch, ch.pos, newPos, new Callback() {
 			public void call() {
 				if (initialpos != ch.pos) {
-					//something cased movement before pushing resolved, cancel to be safe.
+					//something caused movement before pushing resolved, cancel to be safe.
 					ch.sprite.place(ch.pos);
 					return;
 				}
+				int oldPos = ch.pos;
 				ch.pos = newPos;
-				if (ch.pos == trajectory.collisionPos) {
-					ch.damage(Random.NormalIntRange((finalDist + 1) / 2, finalDist), this);
-					Paralysis.prolong(ch, Paralysis.class, Random.NormalIntRange((finalDist + 1) / 2, finalDist));
+				if (finalCollided && ch.isAlive()) {
+					ch.damage(Random.NormalIntRange(finalDist, 2*finalDist), this);
+					Paralysis.prolong(ch, Paralysis.class, 1 + finalDist/2f);
 				}
-				Dungeon.level.press(ch.pos, ch, true);
+				if (closeDoors && Dungeon.level.map[oldPos] == Terrain.OPEN_DOOR){
+					Door.leave(oldPos);
+				}
+				Dungeon.level.occupyCell(ch);
 				if (ch == Dungeon.hero){
+					//FIXME currently no logic here if the throw effect kills the hero
 					Dungeon.observe();
 				}
 			}
@@ -148,32 +181,22 @@ public class WandOfBlastWave extends DamageWand {
 	}
 
 	@Override
-	//behaves just like glyph of Repulsion
-	public void onHit(G11 staff, Char attacker, Char defender, int damage) {
-		int level = Math.max(0, staff.level());
-
-		// lvl 0 - 25%
-		// lvl 1 - 40%
-		// lvl 2 - 50%
-		if (Random.Int( level + 4 ) >= 3){
-			int oppositeHero = defender.pos + (defender.pos - attacker.pos);
-			Ballistica trajectory = new Ballistica(defender.pos, oppositeHero, Ballistica.MAGIC_BOLT);
-			throwChar(defender, trajectory, 2);
-		}
+	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
+		new Elastic().proc(staff, attacker, defender, damage);
 	}
 
 	@Override
-	protected void fx(Ballistica bolt, Callback callback) {
+	public void fx(Ballistica bolt, Callback callback) {
 		MagicMissile.boltFromChar( curUser.sprite.parent,
 				MagicMissile.FORCE,
 				curUser.sprite,
 				bolt.collisionPos,
 				callback);
-		Sample.INSTANCE.play(Assets.SND_ZAP);
+		Sample.INSTANCE.play(Assets.Sounds.ZAP);
 	}
 
 	@Override
-	public void staffFx(StaffParticle particle) {
+	public void staffFx(MagesStaff.StaffParticle particle) {
 		particle.color( 0x664422 ); particle.am = 0.6f;
 		particle.setLifespan(3f);
 		particle.speed.polar(Random.Float(PointF.PI2), 0.3f);

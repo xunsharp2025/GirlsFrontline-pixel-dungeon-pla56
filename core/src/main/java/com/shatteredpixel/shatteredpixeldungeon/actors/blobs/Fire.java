@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,9 +96,9 @@ public class Fire extends Blob {
 		}
 	}
 	
-	private void burn( int pos ) {
+	public static void burn( int pos ) {
 		Char ch = Actor.findChar( pos );
-		if (ch != null && !ch.isImmune(this.getClass())) {
+		if (ch != null && !ch.isImmune(Fire.class)) {
 			Buff.affect( ch, Burning.class ).reignite( ch );
 		}
 		
@@ -116,7 +116,7 @@ public class Fire extends Blob {
 	@Override
 	public void use( BlobEmitter emitter ) {
 		super.use( emitter );
-		emitter.start( FlameParticle.FACTORY, 0.03f, 0 );
+		emitter.pour( FlameParticle.FACTORY, 0.03f );
 	}
 	
 	@Override

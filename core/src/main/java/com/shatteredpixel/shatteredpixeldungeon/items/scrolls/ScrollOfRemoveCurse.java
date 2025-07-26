@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,47 +21,57 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.scrolls;
 
-import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Weakness;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Degrade;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
+import com.shatteredpixel.shatteredpixeldungeon.items.EquipableItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
-import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
-import com.watabou.noosa.audio.Sample;
 
 public class ScrollOfRemoveCurse extends InventoryScroll {
 
 	{
-		initials = 8;
-		mode = WndBag.Mode.UNIDED_OR_CURSED;
+		icon = ItemSpriteSheet.Icons.SCROLL_REMCURSE;
+		preferredBag = Belongings.Backpack.class;
 	}
-	
+
 	@Override
-	public void empoweredRead() {
-		for (Item item : curUser.belongings){
-			if (item.cursed){
-				item.cursedKnown = true;
-			}
-		}
-		Sample.INSTANCE.play( Assets.SND_READ );
-		Invisibility.dispel();
-		doRead();
+	protected boolean usableOnItem(Item item) {
+		return uncursable(item);
 	}
-	
+
+	public static boolean uncursable( Item item ){
+		if (item.isEquipped(Dungeon.hero) && Dungeon.hero.buff(Degrade.class) != null) {
+			return true;
+		} if ((item instanceof EquipableItem || item instanceof Wand) && ((!item.isIdentified() && !item.cursedKnown) || item.cursed)){
+			return true;
+		} else if (item instanceof Weapon){
+			return ((Weapon)item).hasCurseEnchant();
+		} else if (item instanceof Armor){
+			return ((Armor)item).hasCurseGlyph();
+		} else {
+			return false;
+		}
+	}
+
 	@Override
 	protected void onItemSelected(Item item) {
 		new Flare( 6, 32 ).show( curUser.sprite, 2f ) ;
 
 		boolean procced = uncurse( curUser, item );
 
-		Weakness.detach( curUser, Weakness.class );
+		if (curUser.buff(Degrade.class) != null) {
+			Degrade.detach(curUser, Degrade.class);
+			procced = true;
+		}
 
 		if (procced) {
 			GLog.p( Messages.get(this, "cleansed") );
@@ -74,15 +84,17 @@ public class ScrollOfRemoveCurse extends InventoryScroll {
 		
 		boolean procced = false;
 		for (Item item : items) {
-			if (item != null && item.cursed) {
-				item.cursed = false;
-				procced = true;
+			if (item != null) {
+				item.cursedKnown = true;
+				if (item.cursed) {
+					procced = true;
+					item.cursed = false;
+				}
 			}
 			if (item instanceof Weapon){
 				Weapon w = (Weapon) item;
 				if (w.hasCurseEnchant()){
 					w.enchant(null);
-					w.cursed = false;
 					procced = true;
 				}
 			}
@@ -90,30 +102,25 @@ public class ScrollOfRemoveCurse extends InventoryScroll {
 				Armor a = (Armor) item;
 				if (a.hasCurseGlyph()){
 					a.inscribe(null);
-					a.cursed = false;
 					procced = true;
 				}
 			}
-			if (item instanceof Bag){
-				for (Item bagItem : ((Bag)item).items){
-					if (bagItem != null && bagItem.cursed) {
-						bagItem.cursed = false;
-						procced = true;
-					}
-				}
+			if (item instanceof Wand){
+				((Wand) item).updateLevel();
 			}
 		}
 		
-		if (procced) {
+		if (procced && hero != null) {
 			hero.sprite.emitter().start( ShadowParticle.UP, 0.05f, 10 );
 			hero.updateHT( false ); //for ring of might
+			updateQuickslot();
 		}
 		
 		return procced;
 	}
 	
 	@Override
-	public int price() {
-		return isKnown() ? 30 * quantity : super.price();
+	public int value() {
+		return isKnown() ? 30 * quantity : super.value();
 	}
 }

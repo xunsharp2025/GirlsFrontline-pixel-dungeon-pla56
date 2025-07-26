@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,11 @@
 package com.shatteredpixel.shatteredpixeldungeon.ui;
 
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
-import com.watabou.input.Touchscreen.Touch;
+import com.watabou.input.PointerEvent;
+import com.watabou.input.ScrollEvent;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.ColorBlock;
-import com.watabou.noosa.TouchArea;
+import com.watabou.noosa.ScrollArea;
 import com.watabou.noosa.ui.Component;
 import com.watabou.utils.Point;
 import com.watabou.utils.PointF;
@@ -35,15 +36,9 @@ public class ScrollPane extends Component {
 	protected static final int THUMB_COLOR		= 0xFF7b8073;
 	protected static final float THUMB_ALPHA	= 0.5f;
 
-	protected TouchController controller;
+	protected PointerController controller;
 	protected Component content;
-	protected ColorBlock thumb_vertical;
-	protected ColorBlock thumb_horizontal;
-
-	protected float minX;
-	protected float minY;
-	protected float maxX;
-	protected float maxY;
+	protected ColorBlock thumb;
 
 	public ScrollPane( Component content ) {
 		super();
@@ -66,20 +61,17 @@ public class ScrollPane extends Component {
 
 	public void scrollTo( float x, float y ) {
 		content.camera.scroll.set( x, y );
+		thumb.y = this.y + height * content.camera.scroll.y / content.height();
 	}
 
 	@Override
 	protected void createChildren() {
-		controller = new TouchController();
+		controller = new PointerController();
 		add( controller );
 
-		thumb_vertical = new ColorBlock( 1, 1, THUMB_COLOR );
-		thumb_vertical.am = THUMB_ALPHA;
-		add( thumb_vertical );
-
-		thumb_horizontal = new ColorBlock( 1, 1, THUMB_COLOR );
-		thumb_horizontal.am = THUMB_ALPHA;
-		add( thumb_horizontal );
+		thumb = new ColorBlock( 1, 1, THUMB_COLOR );
+		thumb.am = THUMB_ALPHA;
+		add( thumb );
 	}
 
 	@Override
@@ -97,20 +89,12 @@ public class ScrollPane extends Component {
 		cs.y = p.y;
 		cs.resize( (int)width, (int)height );
 
-		thumb_vertical.visible = ( height < content.height() );
-		if (thumb_vertical.visible) {
-			thumb_vertical.scale.set( 2, height * height / content.height() );
-			thumb_vertical.x = right() - thumb_vertical.width();
-			thumb_vertical.y = y;
+		thumb.visible = height < content.height();
+		if (thumb.visible) {
+			thumb.scale.set( 2, height * height / content.height() );
+			thumb.x = right() - thumb.width();
+			thumb.y = y + height * content.camera.scroll.y / content.height();
 		}
-
-		thumb_horizontal.visible = ( width < content.width() );
-		if (thumb_horizontal.visible) {
-			thumb_horizontal.scale.set( width * width / content.width(), 2 );
-			thumb_horizontal.y = bottom() - thumb_horizontal.height();
-			thumb_horizontal.x = x;
-		}
-
 	}
 
 	public Component content() {
@@ -120,26 +104,33 @@ public class ScrollPane extends Component {
 	public void onClick( float x, float y ) {
 	}
 
-	public class TouchController extends TouchArea {
+	public class PointerController extends ScrollArea {
 
 		private float dragThreshold;
 
-		public TouchController() {
+		public PointerController() {
 			super( 0, 0, 0, 0 );
 			dragThreshold = PixelScene.defaultZoom * 8;
 		}
+		
+		@Override
+		protected void onScroll(ScrollEvent event) {
+			PointF newPt = new PointF(lastPos);
+			newPt.y -= event.amount * content.camera.zoom * 10;
+			scroll(newPt);
+			dragging = false;
+		}
 
 		@Override
-		protected void onTouchUp( Touch touch ) {
+		protected void onPointerUp( PointerEvent event ) {
 			if (dragging) {
 
 				dragging = false;
-				thumb_vertical.am = THUMB_ALPHA;
-				thumb_horizontal.am = THUMB_ALPHA;
+				thumb.am = THUMB_ALPHA;
 
 			} else {
 
-				PointF p = content.camera.screenToCamera( (int)touch.current.x, (int)touch.current.y );
+				PointF p = content.camera.screenToCamera( (int) event.current.x, (int) event.current.y );
 				ScrollPane.this.onClick( p.x, p.y );
 
 			}
@@ -149,42 +140,43 @@ public class ScrollPane extends Component {
 		private PointF lastPos = new PointF();
 
 		@Override
-		protected void onDrag( Touch t ) {
+		protected void onDrag( PointerEvent event ) {
 			if (dragging) {
 
-				Camera c = content.camera;
+				scroll(event.current);
 
-				c.scroll.offset( PointF.diff( lastPos, t.current ).invScale( c.zoom ) );
-				if (c.scroll.x + width > content.width()) {
-					c.scroll.x = content.width() - width;
-				}
-				if (c.scroll.x < 0) {
-					c.scroll.x = 0;
-				}
-				if (c.scroll.y + height > content.height()) {
-					c.scroll.y = content.height() - height;
-				}
-				if (c.scroll.y < 0) {
-					c.scroll.y = 0;
-				}
-
-				thumb_vertical.y = y + height * c.scroll.y / content.height();
-
-				thumb_horizontal.x = x + width * c.scroll.x / content.width();
-
-				lastPos.set( t.current );
-
-			} else if (PointF.distance( t.current, t.start ) > dragThreshold) {
+			} else if (PointF.distance( event.current, event.start ) > dragThreshold) {
 
 				dragging = true;
-				lastPos.set( t.current );
-				thumb_vertical.am = 1;
-				thumb_horizontal.am = 1;
+				lastPos.set( event.current );
+				thumb.am = 1;
 
 			}
 		}
-	}
-	public void OnDrag(Touch touch) {
-		controller.onDrag(touch);
+		
+		private void scroll( PointF current ){
+			
+			Camera c = content.camera;
+			
+			c.shift( PointF.diff( lastPos, current ).invScale( c.zoom ) );
+			if (c.scroll.x + width > content.width()) {
+				c.scroll.x = content.width() - width;
+			}
+			if (c.scroll.x < 0) {
+				c.scroll.x = 0;
+			}
+			if (c.scroll.y + height > content.height()) {
+				c.scroll.y = content.height() - height;
+			}
+			if (c.scroll.y < 0) {
+				c.scroll.y = 0;
+			}
+			
+			thumb.y = y + height * c.scroll.y / content.height();
+			
+			lastPos.set( current );
+			
+		}
+		
 	}
 }

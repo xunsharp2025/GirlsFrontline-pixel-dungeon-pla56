@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,6 @@ import com.watabou.utils.Random;
 
 public abstract class WellWater extends Blob {
 
-	protected int pos;
-	
 	@Override
 	protected void evolve() {
 		int cell;
@@ -71,7 +69,7 @@ public abstract class WellWater extends Blob {
 		} else if ((heap = Dungeon.level.heaps.get( pos )) != null) {
 			
 			Item oldItem = heap.peek();
-			Item newItem = affectItem( oldItem );
+			Item newItem = affectItem( oldItem, pos );
 			
 			if (newItem != null) {
 				
@@ -112,7 +110,7 @@ public abstract class WellWater extends Blob {
 	
 	protected abstract boolean affectHero( Hero hero );
 	
-	protected abstract Item affectItem( Item item );
+	protected abstract Item affectItem( Item item, int pos );
 	
 	protected abstract Notes.Landmark record();
 	

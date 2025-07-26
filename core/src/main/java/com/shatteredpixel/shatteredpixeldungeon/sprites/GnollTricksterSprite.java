@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,23 +35,23 @@ public class GnollTricksterSprite extends MobSprite {
 	public GnollTricksterSprite() {
 		super();
 
-		texture( Assets.WJAEGER );
+		texture( Assets.Sprites.GNOLL );
 
-		TextureFilm frames = new TextureFilm( texture, 20, 19 );
+		TextureFilm frames = new TextureFilm( texture, 12, 15 );
 
-		idle = new Animation( 2, true );
-		idle.frames( frames, 0, 0, 0, 1, 0, 0, 1, 1 );
+		idle = new MovieClip.Animation( 2, true );
+		idle.frames( frames, 21, 21, 21, 22, 21, 21, 22, 22 );
 
-		run = new Animation( 12, true );
-		run.frames( frames, 4, 5, 6, 7, 8, 9 );
+		run = new MovieClip.Animation( 12, true );
+		run.frames( frames, 25, 26, 27, 28 );
 
-		attack = new Animation( 12, false );
-		attack.frames( frames, 2, 3, 0 );
+		attack = new MovieClip.Animation( 12, false );
+		attack.frames( frames, 23, 24, 21 );
 
-		zap = attack.clone();
+		cast = attack.clone();
 
-		die = new Animation( 12, false );
-		die.frames( frames, 10, 11, 12 );
+		die = new MovieClip.Animation( 12, false );
+		die.frames( frames, 29, 30, 31 );
 
 		play( idle );
 	}
@@ -61,7 +61,7 @@ public class GnollTricksterSprite extends MobSprite {
 		if (!Dungeon.level.adjacent(cell, ch.pos)) {
 
 			((MissileSprite)parent.recycle( MissileSprite.class )).
-					reset( ch.pos, cell, new ParalyticDart(), new Callback() {
+					reset( this, cell, new ParalyticDart(), new Callback() {
 						@Override
 						public void call() {
 							ch.onAttackComplete();

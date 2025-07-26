@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -28,6 +29,8 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.Lightning;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SparkParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
+import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
@@ -35,25 +38,32 @@ import java.util.ArrayList;
 
 public class Shocking extends Weapon.Enchantment {
 
-	private static ItemSprite.Glowing WHITE = new ItemSprite.Glowing( 0xFFFFFF, 0.6f );
+	private static ItemSprite.Glowing WHITE = new ItemSprite.Glowing( 0xFFFFFF, 0.5f );
 
 	@Override
 	public int proc( Weapon weapon, Char attacker, Char defender, int damage ) {
-		// lvl 0 - 33%
-		// lvl 1 - 50%
-		// lvl 2 - 60%
-		int level = Math.max( 0, weapon.level() );
-		
-		if (Random.Int( level + 3 ) >= 2) {
+		int level = Math.max( 0, weapon.buffedLvl() );
+
+		// lvl 0 - 25%
+		// lvl 1 - 40%
+		// lvl 2 - 50%
+		float procChance = (level+1f)/(level+4f) * procChanceMultiplier(attacker);
+		if (Random.Float() < procChance) {
 			
 			affected.clear();
-			affected.add(attacker);
-
 			arcs.clear();
-			arcs.add(new Lightning.Arc(attacker.sprite.center(), defender.sprite.center()));
-			hit(defender, Random.Int(1, damage / 3));
+			
+			arc(attacker, defender, 2, affected, arcs);
+			
+			affected.remove(defender); //defender isn't hurt by lightning
+			for (Char ch : affected) {
+				if (ch.alignment != attacker.alignment) {
+					ch.damage(Math.round(damage * 0.4f), this);
+				}
+			}
 
 			attacker.sprite.parent.addToFront( new Lightning( arcs, null ) );
+			Sample.INSTANCE.play( Assets.Sounds.LIGHTNING );
 			
 		}
 
@@ -70,23 +80,21 @@ public class Shocking extends Weapon.Enchantment {
 
 	private ArrayList<Lightning.Arc> arcs = new ArrayList<>();
 	
-	private void hit( Char ch, int damage ) {
+	public static void arc( Char attacker, Char defender, int dist, ArrayList<Char> affected, ArrayList<Lightning.Arc> arcs ) {
 		
-		if (damage < 1) {
-			return;
-		}
+		affected.add(defender);
 		
-		affected.add(ch);
-		ch.damage(Dungeon.level.water[ch.pos] && !ch.flying ?  2*damage : damage, this);
+		defender.sprite.centerEmitter().burst(SparkParticle.FACTORY, 3);
+		defender.sprite.flash();
 		
-		ch.sprite.centerEmitter().burst(SparkParticle.FACTORY, 3);
-		ch.sprite.flash();
-
-		for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
-			Char n = Actor.findChar( ch.pos + PathFinder.NEIGHBOURS8[i] );
-			if (n != null && !affected.contains( n )) {
-				arcs.add(new Lightning.Arc(ch.sprite.center(), n.sprite.center()));
-				hit(n, Random.Int(damage / 2, damage));
+		PathFinder.buildDistanceMap( defender.pos, BArray.not( Dungeon.level.solid, null ), dist );
+		for (int i = 0; i < PathFinder.distance.length; i++) {
+			if (PathFinder.distance[i] < Integer.MAX_VALUE) {
+				Char n = Actor.findChar(i);
+				if (n != null && n != attacker && !affected.contains(n)) {
+					arcs.add(new Lightning.Arc(defender.sprite.center(), n.sprite.center()));
+					arc(attacker, n, (Dungeon.level.water[n.pos] && !n.flying) ? 2 : 1, affected, arcs);
+				}
 			}
 		}
 	}

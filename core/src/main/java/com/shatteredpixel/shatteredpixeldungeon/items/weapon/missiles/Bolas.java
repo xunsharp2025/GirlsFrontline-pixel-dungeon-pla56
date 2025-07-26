@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
@@ -30,37 +31,22 @@ public class Bolas extends MissileWeapon {
 	
 	{
 		image = ItemSpriteSheet.BOLAS;
+		hitSound = Assets.Sounds.HIT;
+		hitSoundPitch = 1f;
 		
-	}
-	
-	@Override
-	public int min(int lvl) {
-		return 4;
+		tier = 3;
+		baseUses = 5;
 	}
 	
 	@Override
 	public int max(int lvl) {
-		return 6;
-	}
-	
-	@Override
-	public int STRReq(int lvl) {
-		return 15;
+		return  3 * tier +                      //9 base, down from 15
+				(tier == 1 ? 2*lvl : tier*lvl); //scaling unchanged
 	}
 	
 	@Override
 	public int proc( Char attacker, Char defender, int damage ) {
 		Buff.prolong( defender, Cripple.class, Cripple.DURATION );
 		return super.proc( attacker, defender, damage );
-	}
-	
-	@Override
-	protected float durabilityPerUse() {
-		return super.durabilityPerUse()*2f;
-	}
-	
-	@Override
-	public int price() {
-		return 18 * quantity;
 	}
 }

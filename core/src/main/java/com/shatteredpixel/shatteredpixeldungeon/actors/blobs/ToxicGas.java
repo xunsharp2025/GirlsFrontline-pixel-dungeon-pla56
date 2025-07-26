@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.BlobEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.watabou.utils.Random;
 
 public class ToxicGas extends Blob implements Hero.Doom {
 
@@ -38,7 +37,7 @@ public class ToxicGas extends Blob implements Hero.Doom {
 	protected void evolve() {
 		super.evolve();
 
-		int levelDamage = 5 + Dungeon.depth * 5;
+		int damage = 1 + Dungeon.depth/5;
 
 		Char ch;
 		int cell;
@@ -48,11 +47,6 @@ public class ToxicGas extends Blob implements Hero.Doom {
 				cell = i + j*Dungeon.level.width();
 				if (cur[cell] > 0 && (ch = Actor.findChar( cell )) != null) {
 					if (!ch.isImmune(this.getClass())) {
-
-						int damage = (ch.HT + levelDamage) / 40;
-						if (Random.Int( 40 ) < (ch.HT + levelDamage) % 40) {
-							damage++;
-						}
 
 						ch.damage(damage, this);
 					}

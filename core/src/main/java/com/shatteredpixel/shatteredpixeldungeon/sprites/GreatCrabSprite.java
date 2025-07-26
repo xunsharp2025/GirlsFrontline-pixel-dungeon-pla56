@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.TextureFilm;
 
@@ -31,38 +30,27 @@ public class GreatCrabSprite extends MobSprite {
 	public GreatCrabSprite() {
 		super();
 
-		texture( Assets.AEGIS );
+		texture( Assets.Sprites.CRAB );
 
-		TextureFilm frames = new TextureFilm( texture, 20, 20 );
+		TextureFilm frames = new TextureFilm( texture, 16, 16 );
 
 		idle = new MovieClip.Animation( 5, true );
-		idle.frames( frames, 0 );
+		idle.frames( frames, 16, 17, 16, 18 );
 
 		run = new MovieClip.Animation( 10, true );
-		run.frames( frames, 3, 4, 5, 6, 7 );
+		run.frames( frames, 19, 20, 21, 22 );
 
 		attack = new MovieClip.Animation( 12, false );
-		attack.frames( frames, 0, 1, 1, 2, 2 );
+		attack.frames( frames, 23, 24, 25 );
 
 		die = new MovieClip.Animation( 12, false );
-		die.frames( frames, 8, 9, 10 );
+		die.frames( frames, 26, 27, 28, 29 );
 
 		play( idle );
 	}
 
 	@Override
-	public void onComplete( Animation anim ) {
-
-		super.onComplete( anim );
-
-		if (anim == die) {
-			emitter().burst( Speck.factory( Speck.WOOL ), 15 );
-		}
-	}
-
-	@Override
 	public int blood() {
-		return 0xFFFFFF88;
+		return 0xFFFFEA80;
 	}
 }
-

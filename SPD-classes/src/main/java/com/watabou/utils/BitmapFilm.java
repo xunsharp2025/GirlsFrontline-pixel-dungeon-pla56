@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,27 +21,26 @@
 
 package com.watabou.utils;
 
-import android.graphics.Bitmap;
-import android.graphics.Rect;
+import com.badlogic.gdx.graphics.Pixmap;
 
 import java.util.HashMap;
 
 public class BitmapFilm {
 
-	public Bitmap bitmap;
+	public Pixmap bitmap;
 	
-	protected HashMap<Object,Rect> frames = new HashMap<Object, Rect>();
+	protected HashMap<Object,Rect> frames = new HashMap<>();
 	
-	public BitmapFilm( Bitmap bitmap ) {
+	public BitmapFilm( Pixmap bitmap ) {
 		this.bitmap = bitmap;
 		add( null, new Rect( 0, 0, bitmap.getWidth(), bitmap.getHeight() ) );
 	}
 	
-	public BitmapFilm( Bitmap bitmap, int width ) {
+	public BitmapFilm( Pixmap bitmap, int width ) {
 		this( bitmap, width, bitmap.getHeight() );
 	}
 	
-	public BitmapFilm( Bitmap bitmap, int width, int height ) {
+	public BitmapFilm( Pixmap bitmap, int width, int height ) {
 		this.bitmap = bitmap;
 		int cols = bitmap.getWidth() / width;
 		int rows = bitmap.getHeight() / height;

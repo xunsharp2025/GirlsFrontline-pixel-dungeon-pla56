@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,34 +21,32 @@
 
 package com.watabou.noosa;
 
-import com.watabou.input.Keys;
+import com.watabou.input.GameAction;
+import com.watabou.input.KeyBindings;
+import com.watabou.input.KeyEvent;
 import com.watabou.utils.Signal;
 
 public class Scene extends Group {
 	
-	private Signal.Listener<Keys.Key> keyListener;
+	private Signal.Listener<KeyEvent> keyListener;
 	
 	public void create() {
-		Keys.event.add( keyListener = new Signal.Listener<Keys.Key>() {
+		KeyEvent.addKeyListener( keyListener = new Signal.Listener<KeyEvent>() {
 			@Override
-			public void onSignal( Keys.Key key ) {
-				if (Game.instance != null && key.pressed) {
-					switch (key.code) {
-					case Keys.BACK:
+			public boolean onSignal( KeyEvent event ) {
+				if (Game.instance != null && event.pressed) {
+					if (KeyBindings.getActionForKey( event ) == GameAction.BACK){
 						onBackPressed();
-						break;
-					case Keys.MENU:
-						onMenuPressed();
-						break;
 					}
 				}
+				return false;
 			}
 		} );
 	}
 	
 	@Override
 	public void destroy() {
-		Keys.event.remove( keyListener );
+		KeyEvent.removeKeyListener( keyListener );
 		super.destroy();
 	}
 	
@@ -59,7 +57,6 @@ public class Scene extends Group {
 	public void onResume(){
 	
 	}
-	
 	@Override
 	public void update() {
 		super.update();
@@ -72,10 +69,6 @@ public class Scene extends Group {
 	
 	protected void onBackPressed() {
 		Game.instance.finish();
-	}
-	
-	protected void onMenuPressed() {
-		
 	}
 
 }

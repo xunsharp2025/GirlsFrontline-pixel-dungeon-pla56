@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items.artifacts;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
@@ -47,7 +48,18 @@ public class CapeOfThorns extends Artifact {
 	protected ArtifactBuff passiveBuff() {
 		return new Thorns();
 	}
-
+	
+	@Override
+	public void charge(Hero target, float amount) {
+		if (cooldown == 0) {
+			charge += Math.round(4*amount);
+			updateQuickslot();
+		}
+		if (charge >= chargeCap){
+			target.buff(Thorns.class).proc(0, null, null);
+		}
+	}
+	
 	@Override
 	public String desc() {
 		String desc = Messages.get(this, "desc");
@@ -69,7 +81,6 @@ public class CapeOfThorns extends Artifact {
 			if (cooldown > 0) {
 				cooldown--;
 				if (cooldown == 0) {
-					BuffIndicator.refreshHero();
 					GLog.w( Messages.get(this, "inert") );
 				}
 				updateQuickslot();
@@ -85,7 +96,6 @@ public class CapeOfThorns extends Artifact {
 					charge = 0;
 					cooldown = 10+level();
 					GLog.p( Messages.get(this, "radiating") );
-					BuffIndicator.refreshHero();
 				}
 			}
 

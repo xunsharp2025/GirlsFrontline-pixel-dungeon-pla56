@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,19 +22,28 @@
 package com.shatteredpixel.shatteredpixeldungeon.plants;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AdrenalineSurge;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.LeafParticle;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Rotberry extends Plant {
 
 	{
-		image = 7;
+		image = 0;
+		seedClass = Seed.class;
 	}
 
 	@Override
-	public void activate() {
+	public void activate( Char ch ) {
+		if (ch instanceof Hero && ((Hero) ch).subClass == HeroSubClass.WARDEN){
+			Buff.affect(ch, AdrenalineSurge.class).reset(1, AdrenalineSurge.DURATION);
+		}
+		
 		Dungeon.level.drop( new Seed(), pos ).sprite.drop();
 	}
 	
@@ -54,7 +63,18 @@ public class Rotberry extends Plant {
 			image = ItemSpriteSheet.SEED_ROTBERRY;
 
 			plantClass = Rotberry.class;
-			alchemyClass = PotionOfStrength.class;
+
+			unique = true;
+		}
+		
+		@Override
+		public int value() {
+			return 30 * quantity;
+		}
+
+		@Override
+		public int energyVal() {
+			return 3 * quantity;
 		}
 	}
 }

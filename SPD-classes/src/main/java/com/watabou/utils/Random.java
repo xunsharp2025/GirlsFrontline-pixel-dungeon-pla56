@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,9 @@
 
 package com.watabou.utils;
 
+import com.watabou.noosa.Game;
+
+import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,19 +31,38 @@ import java.util.List;
 
 public class Random {
 
-	private static java.util.Random rand = new java.util.Random();
-
-	public static void seed( ){
-		rand = new java.util.Random();
+	//we store a stack of random number generators, which may be seeded deliberately or randomly.
+	//top of the stack is what is currently being used to generate new numbers.
+	//the base generator is always created with no seed, and cannot be popped.
+	private static ArrayDeque<java.util.Random> generators;
+	static {
+		resetGenerators();
 	}
 
-	public static void seed( long seed ){
-		rand.setSeed(seed);
+	public static synchronized void resetGenerators(){
+		generators = new ArrayDeque<>();
+		generators.push(new java.util.Random());
+	}
+
+	public static synchronized void pushGenerator(){
+		generators.push( new java.util.Random() );
+	}
+
+	public static synchronized void pushGenerator( long seed ){
+		generators.push( new java.util.Random( seed ) );
+	}
+
+	public static synchronized void popGenerator(){
+		if (generators.size() == 1){
+			Game.reportException( new RuntimeException("tried to pop the last random number generator!"));
+		} else {
+			generators.pop();
+		}
 	}
 
 	//returns a uniformly distributed float in the range [0, 1)
-	public static float Float() {
-		return rand.nextFloat();
+	public static synchronized float Float() {
+		return generators.peek().nextFloat();
 	}
 
 	//returns a uniformly distributed float in the range [0, max)
@@ -52,10 +74,15 @@ public class Random {
 	public static float Float( float min, float max ) {
 		return min + Float(max - min);
 	}
+	
+	//returns a triangularly distributed float in the range [min, max)
+	public static float NormalFloat( float min, float max ) {
+		return min + ((Float(max - min) + Float(max - min))/2f);
+	}
 
 	//returns a uniformly distributed int in the range [0, max)
-	public static int Int( int max ) {
-		return max > 0 ? rand.nextInt(max) : 0;
+	public static synchronized int Int( int max ) {
+		return max > 0 ? generators.peek().nextInt(max) : 0;
 	}
 
 	//returns a uniformly distributed int in the range [min, max)
@@ -74,8 +101,8 @@ public class Random {
 	}
 
 	//returns a uniformly distributed long in the range [-2^63, 2^63)
-	public static long Long() {
-		return rand.nextLong();
+	public static synchronized long Long() {
+		return generators.peek().nextLong();
 	}
 
 	//returns a uniformly distributed long in the range [0, max)
@@ -163,8 +190,8 @@ public class Random {
 			null;
 	}
 
-	public static<T> void shuffle( List<?extends T> list){
-		Collections.shuffle(list, rand);
+	public synchronized static<T> void shuffle( List<?extends T> list){
+		Collections.shuffle(list, generators.peek());
 	}
 	
 	public static<T> void shuffle( T[] array ) {

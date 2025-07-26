@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,60 +25,60 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Electricity;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.ToxicGas;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Charm;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Chill;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corrosion;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Frost;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ooze;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Weakness;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Eye;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Shaman;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Warlock;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Yog;
-import com.shatteredpixel.shatteredpixeldungeon.levels.traps.DisintegrationTrap;
-import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GrimTrap;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.AntiMagic;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
+import java.text.DecimalFormat;
 import java.util.HashSet;
 
 public class RingOfElements extends Ring {
+
+	{
+		icon = ItemSpriteSheet.Icons.RING_ELEMENTS;
+	}
+
+	public String statsInfo() {
+		if (isIdentified()){
+			return Messages.get(this, "stats", new DecimalFormat("#.##").format(100f * (1f - Math.pow(0.825f, soloBuffedBonus()))));
+		} else {
+			return Messages.get(this, "typical_stats", new DecimalFormat("#.##").format(17.5f));
+		}
+	}
 	
 	@Override
 	protected RingBuff buff( ) {
 		return new Resistance();
 	}
-	
+
 	public static final HashSet<Class> RESISTS = new HashSet<>();
 	static {
 		RESISTS.add( Burning.class );
-		RESISTS.add( Charm.class );
 		RESISTS.add( Chill.class );
 		RESISTS.add( Frost.class );
 		RESISTS.add( Ooze.class );
 		RESISTS.add( Paralysis.class );
 		RESISTS.add( Poison.class );
 		RESISTS.add( Corrosion.class );
-		RESISTS.add( Weakness.class );
-		
-		RESISTS.add( DisintegrationTrap.class );
-		RESISTS.add( GrimTrap.class );
-		
+
 		RESISTS.add( ToxicGas.class );
 		RESISTS.add( Electricity.class );
-		
-		RESISTS.add( Shaman.class );
-		RESISTS.add( Warlock.class );
-		RESISTS.add( Eye.class );
-		RESISTS.add( Yog.BurningFist.class );
+
+		RESISTS.addAll( AntiMagic.RESISTS );
 	}
 	
 	public static float resist( Char target, Class effect ){
-		if (getBonus(target, Resistance.class) == 0) return 1f;
+		if (getBuffedBonus(target, Resistance.class) == 0) return 1f;
 		
 		for (Class c : RESISTS){
 			if (c.isAssignableFrom(effect)){
-				return (float)Math.pow(0.875, getBonus(target, Resistance.class));
+				return (float)Math.pow(0.825, getBuffedBonus(target, Resistance.class));
 			}
 		}
 		

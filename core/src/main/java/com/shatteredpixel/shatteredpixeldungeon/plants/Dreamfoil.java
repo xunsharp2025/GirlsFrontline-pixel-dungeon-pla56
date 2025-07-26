@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,20 +21,14 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.plants;
 
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bleeding;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.BlobImmunity;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Drowsy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicalSleep;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Slow;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Weakness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfPurity;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
@@ -42,25 +36,22 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 public class Dreamfoil extends Plant {
 
 	{
-		image = 10;
+		image = 7;
+		seedClass = Seed.class;
 	}
 
 	@Override
-	public void activate() {
-		Char ch = Actor.findChar(pos);
+	public void activate( Char ch ) {
 
 		if (ch != null) {
-			if (ch instanceof Mob)
-				Buff.affect(ch, MagicalSleep.class);
-			else if (ch instanceof Hero){
+			PotionOfHealing.cure(ch);
+
+			if (ch instanceof Hero) {
 				GLog.i( Messages.get(this, "refreshed") );
-				Buff.detach( ch, Poison.class );
-				Buff.detach( ch, Cripple.class );
-				Buff.detach( ch, Weakness.class );
-				Buff.detach( ch, Bleeding.class );
-				Buff.detach( ch, Drowsy.class );
-				Buff.detach( ch, Slow.class );
-				Buff.detach( ch, Vertigo.class);
+
+				if (((Hero) ch).subClass == HeroSubClass.WARDEN){
+					Buff.affect(ch, BlobImmunity.class, BlobImmunity.DURATION/2f);
+				}
 			}
 		}
 	}
@@ -70,7 +61,6 @@ public class Dreamfoil extends Plant {
 			image = ItemSpriteSheet.SEED_DREAMFOIL;
 
 			plantClass = Dreamfoil.class;
-			alchemyClass = PotionOfPurity.class;
 		}
 	}
 }

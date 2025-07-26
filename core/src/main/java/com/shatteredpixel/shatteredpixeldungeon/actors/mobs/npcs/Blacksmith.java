@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
-import com.shatteredpixel.shatteredpixeldungeon.DialogInfo;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -34,6 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.DarkGold;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Pickaxe;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard.BlacksmithRoom;
@@ -42,10 +42,11 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.BlacksmithSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBlacksmith;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuest;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -60,54 +61,62 @@ public class Blacksmith extends NPC {
 	
 	@Override
 	protected boolean act() {
-		throwItem();
+		if (Dungeon.level.heroFOV[pos] && !Quest.reforged){
+			Notes.add( Notes.Landmark.TROLL );
+		}
 		return super.act();
 	}
 	
 	@Override
-	public boolean interact() {
+	public boolean interact(Char c) {
 		
-		sprite.turnTo( pos, Dungeon.hero.pos );
+		sprite.turnTo( pos, c.pos );
+
+		if (c != Dungeon.hero){
+			return true;
+		}
 		
 		if (!Quest.given) {
-
-			int DialogID = DialogInfo.ID_PPSH47_QUEST;
-
-			WndDialog.setBRANCH(DialogID, Quest.alternative ? 1:2);
-			WndDialog.ShowChapter(DialogID);
-
-			Quest.given = true;
-			Quest.completed = false;
-
-			Pickaxe pick = new Pickaxe();
-			if (pick.doPickUp( Dungeon.hero )) {
-				GLog.i( Messages.get(Dungeon.hero, "you_now_have", pick.name() ));
-			} else {
-				Dungeon.level.drop( pick, Dungeon.hero.pos ).sprite.drop();
-			}
 			
-			Notes.add( Notes.Landmark.TROLL );
+			Game.runOnRenderThread(new Callback() {
+				@Override
+				public void call() {
+					GameScene.show( new WndQuest( Blacksmith.this,
+							Quest.alternative ? Messages.get(Blacksmith.this, "blood_1") : Messages.get(Blacksmith.this, "gold_1") ) {
+						
+						@Override
+						public void onBackPressed() {
+							super.onBackPressed();
+							
+							Quest.given = true;
+							Quest.completed = false;
+							Notes.add( Notes.Landmark.TROLL );
+							
+							Pickaxe pick = new Pickaxe();
+							if (pick.doPickUp( Dungeon.hero )) {
+								GLog.i( Messages.get(Dungeon.hero, "you_now_have", pick.name() ));
+							} else {
+								Dungeon.level.drop( pick, Dungeon.hero.pos ).sprite.drop();
+							}
+						}
+					} );
+				}
+			});
 			
 		} else if (!Quest.completed) {
 			if (Quest.alternative) {
-				int DialogID = DialogInfo.ID_PPSH47_QUEST+DialogInfo.INPROGRESS;
+				
 				Pickaxe pick = Dungeon.hero.belongings.getItem( Pickaxe.class );
 				if (pick == null) {
-					WndDialog.setBRANCH(DialogID, 0);
-					WndDialog.ShowChapter(DialogID);
+					tell( Messages.get(this, "lost_pick") );
 				} else if (!pick.bloodStained) {
-					WndDialog.setBRANCH(DialogID, 1);
-					WndDialog.ShowChapter(DialogID);
+					tell( Messages.get(this, "blood_2") );
 				} else {
 					if (pick.isEquipped( Dungeon.hero )) {
 						pick.doUnequip( Dungeon.hero, false );
 					}
 					pick.detach( Dungeon.hero.belongings.backpack );
-
-					DialogID = DialogInfo.ID_PPSH47_QUEST + DialogInfo.COMPLETE;
-
-					WndDialog.setBRANCH(DialogID, 1);
-					WndDialog.ShowChapter(DialogID);
+					tell( Messages.get(this, "completed") );
 					
 					Quest.completed = true;
 					Quest.reforged = false;
@@ -117,26 +126,17 @@ public class Blacksmith extends NPC {
 				
 				Pickaxe pick = Dungeon.hero.belongings.getItem( Pickaxe.class );
 				DarkGold gold = Dungeon.hero.belongings.getItem( DarkGold.class );
-
-				int DialogID = DialogInfo.ID_PPSH47_QUEST + DialogInfo.INPROGRESS;
-
 				if (pick == null) {
-					WndDialog.setBRANCH(DialogID, 0);
-					WndDialog.ShowChapter(DialogID);
+					tell( Messages.get(this, "lost_pick") );
 				} else if (gold == null || gold.quantity() < 15) {
-					WndDialog.setBRANCH(DialogID, 2);
-					WndDialog.ShowChapter(DialogID);
+					tell( Messages.get(this, "gold_2") );
 				} else {
 					if (pick.isEquipped( Dungeon.hero )) {
 						pick.doUnequip( Dungeon.hero, false );
 					}
 					pick.detach( Dungeon.hero.belongings.backpack );
 					gold.detachAll( Dungeon.hero.belongings.backpack );
-
-					DialogID = DialogInfo.ID_PPSH47_QUEST + DialogInfo.COMPLETE;
-
-					WndDialog.setBRANCH(DialogID, 1);
-					WndDialog.ShowChapter(DialogID);
+					tell( Messages.get(this, "completed") );
 					
 					Quest.completed = true;
 					Quest.reforged = false;
@@ -145,26 +145,34 @@ public class Blacksmith extends NPC {
 			}
 		} else if (!Quest.reforged) {
 			
-			GameScene.show( new WndBlacksmith( this, Dungeon.hero ) );
+			Game.runOnRenderThread(new Callback() {
+				@Override
+				public void call() {
+					GameScene.show( new WndBlacksmith( Blacksmith.this, Dungeon.hero ) );
+				}
+			});
 			
 		} else {
-			int DialogID = DialogInfo.ID_PPSH47_QUEST + DialogInfo.COMPLETE;
-
-			WndDialog.setBRANCH(DialogID, 2);
-			WndDialog.ShowChapter(DialogID);
+			
+			tell( Messages.get(this, "get_lost") );
 			
 		}
 
-		return false;
+		return true;
 	}
 	
 	private void tell( String text ) {
-		GameScene.show( new WndQuest( this, text ) );
+		Game.runOnRenderThread(new Callback() {
+			@Override
+			public void call() {
+				GameScene.show( new WndQuest( Blacksmith.this, text ) );
+			}
+		});
 	}
 	
 	public static String verify( Item item1, Item item2 ) {
 		
-		if (item1 == item2) {
+		if (item1 == item2 && (item1.quantity() == 1 && item2.quantity() == 1)) {
 			return Messages.get(Blacksmith.class, "same_item");
 		}
 
@@ -176,7 +184,11 @@ public class Blacksmith extends NPC {
 			return Messages.get(Blacksmith.class, "un_ided");
 		}
 		
-		if (item1.cursed || item2.cursed) {
+		if (item1.cursed || item2.cursed ||
+				(item1 instanceof Armor && ((Armor) item1).hasCurseGlyph()) ||
+				(item2 instanceof Armor && ((Armor) item2).hasCurseGlyph()) ||
+				(item1 instanceof Weapon && ((Weapon) item1).hasCurseEnchant()) ||
+				(item2 instanceof Weapon && ((Weapon) item2).hasCurseEnchant())) {
 			return Messages.get(Blacksmith.class, "cursed");
 		}
 		
@@ -202,28 +214,33 @@ public class Blacksmith extends NPC {
 			second = item2;
 		}
 
-		Sample.INSTANCE.play( Assets.SND_EVOKE );
+		Sample.INSTANCE.play( Assets.Sounds.EVOKE );
 		ScrollOfUpgrade.upgrade( Dungeon.hero );
 		Item.evoke( Dungeon.hero );
-		
-		if (first.isEquipped( Dungeon.hero )) {
-			((EquipableItem)first).doUnequip( Dungeon.hero, true );
-		}
-		first.level(first.level()+1); //prevents on-upgrade effects like enchant/glyph removal
-		Dungeon.hero.spendAndNext( 2f );
-		Badges.validateItemLevelAquired( first );
-		
+
 		if (second.isEquipped( Dungeon.hero )) {
 			((EquipableItem)second).doUnequip( Dungeon.hero, false );
 		}
-		second.detachAll( Dungeon.hero.belongings.backpack );
-		
+		second.detach( Dungeon.hero.belongings.backpack );
+
 		if (second instanceof Armor){
 			BrokenSeal seal = ((Armor) second).checkSeal();
 			if (seal != null){
 				Dungeon.level.drop( seal, Dungeon.hero.pos );
 			}
 		}
+
+		//preserves enchant/glyphs if present
+		if (first instanceof Weapon && ((Weapon) first).hasGoodEnchant()){
+			((Weapon) first).upgrade(true);
+		} else if (first instanceof Armor && ((Armor) first).hasGoodGlyph()){
+			((Armor) first).upgrade(true);
+		} else {
+			first.upgrade();
+		}
+		Dungeon.hero.spendAndNext( 2f );
+		Badges.validateItemLevelAquired( first );
+		Item.updateQuickslot();
 		
 		Quest.reforged = true;
 		
@@ -232,7 +249,7 @@ public class Blacksmith extends NPC {
 	
 	@Override
 	public int defenseSkill( Char enemy ) {
-		return 1000;
+		return INFINITE_EVASION;
 	}
 	
 	@Override

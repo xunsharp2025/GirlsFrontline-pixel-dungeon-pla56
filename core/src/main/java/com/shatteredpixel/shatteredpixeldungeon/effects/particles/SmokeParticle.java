@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.effects.particles;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.noosa.particles.Emitter.Factory;
 import com.watabou.noosa.particles.PixelParticle;
+import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
 public class SmokeParticle extends PixelParticle {
@@ -32,6 +33,13 @@ public class SmokeParticle extends PixelParticle {
 		@Override
 		public void emit( Emitter emitter, int index, float x, float y ) {
 			((SmokeParticle)emitter.recycle( SmokeParticle.class )).reset( x, y );
+		}
+	};
+	
+	public static final Factory SPEW = new Factory() {
+		@Override
+		public void emit( Emitter emitter, int index, float x, float y ) {
+			((SmokeParticle)emitter.recycle( SmokeParticle.class )).resetSpew( x, y );
 		}
 	};
 	
@@ -51,6 +59,18 @@ public class SmokeParticle extends PixelParticle {
 		
 		left = lifespan = Random.Float( 0.6f, 1f );
 		speed.set( Random.Float( -4, +4 ), Random.Float( -8, +8 ) );
+	}
+	
+	public void resetSpew( float x, float y ) {
+		revive();
+		
+		this.x = x;
+		this.y = y;
+		
+		acc.set( -40, 40 );
+		
+		left = lifespan = Random.Float( 0.6f, 1f );
+		speed.polar( Random.Float(PointF.PI*1.7f, PointF.PI*1.8f), Random.Float( 30, 60 ));
 	}
 	
 	@Override
