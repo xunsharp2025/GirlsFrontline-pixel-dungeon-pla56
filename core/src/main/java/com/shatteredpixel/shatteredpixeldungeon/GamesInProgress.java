@@ -168,7 +168,7 @@ public class GamesInProgress {
 		public int hp;
 		public int ht;
 		public int shld;
-		public HeroClass heroClass;
+		public HeroClass heroClass = HeroClass.NONE;
 		public HeroSubClass subClass;
 		public int armorTier;
 		

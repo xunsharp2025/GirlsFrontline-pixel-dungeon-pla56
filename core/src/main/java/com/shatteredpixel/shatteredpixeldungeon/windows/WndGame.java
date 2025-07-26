@@ -94,7 +94,7 @@ public class WndGame extends Window {
 					InterlevelScene.noStory = true;
 					GamesInProgress.selectedClass = Dungeon.hero.heroClass;
 					GamesInProgress.curSlot = GamesInProgress.firstEmpty();
-					GirlsFrontlinePixelDungeon.switchScene(HeroSelectScene.class);
+					GirlsFrontlinePixelDungeon.scene().add( new WndStartGame(1) );
 				}
 			} );
 			curBtn.icon(Icons.get(Icons.ENTER));

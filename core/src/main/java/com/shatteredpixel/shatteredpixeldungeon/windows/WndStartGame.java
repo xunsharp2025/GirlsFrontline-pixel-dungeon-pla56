@@ -49,6 +49,7 @@ import com.watabou.noosa.Image;
 import com.watabou.noosa.RenderedText;
 
 import com.watabou.noosa.ui.Component;
+import com.watabou.utils.DeviceCompat;
 
 public class WndStartGame extends Window {
 
@@ -69,10 +70,12 @@ public class WndStartGame extends Window {
 
 		float curX = heroBtnSpacing;
 		for (HeroClass cl : HeroClass.values()){
-			HeroBtn button = new HeroBtn(cl);
-			button.setRect(curX, title.height() + 4, HeroBtn.WIDTH, HeroBtn.HEIGHT);
-			curX += HeroBtn.WIDTH + heroBtnSpacing;
-			add(button);
+			if (cl != HeroClass.NONE){
+				HeroBtn button = new HeroBtn(cl);
+				button.setRect(curX, title.height() + 4, HeroBtn.WIDTH, HeroBtn.HEIGHT);
+				curX += HeroBtn.WIDTH + heroBtnSpacing;
+				add(button);
+			}
 		}
 
 		ColorBlock separator = new ColorBlock(1, 1, 0xFF222222);
@@ -116,7 +119,7 @@ public class WndStartGame extends Window {
 		start.setRect(0, HEIGHT - 20, WIDTH, 20);
 		add(start);
 
-		if (Badges.isUnlocked(Badges.Badge.VICTORY)){
+		if (Badges.isUnlocked(Badges.Badge.VICTORY) || DeviceCompat.isDebug()){
 			IconButton challengeButton = new IconButton(
 					Icons.get( SPDSettings.challenges() > 0 ? Icons.CHALLENGE_ON :Icons.CHALLENGE_OFF)){
 				@Override

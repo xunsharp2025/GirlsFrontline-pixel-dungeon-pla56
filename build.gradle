@@ -13,7 +13,7 @@ allprojects {
 
     ext {
         appName = 'GirlFront Pixel Dungeon'
-        appPackageName = 'com.gfpixel.gfpixeldungeon'
+        appPackageName = 'com.gfpixel.gfpixeldungeon.bason123'
 
         appVersionCode = 628
         appVersionName = '0.5.2-baseon1.2.3'

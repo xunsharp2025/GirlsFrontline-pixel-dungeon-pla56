@@ -213,7 +213,12 @@ public class WndSelectGameInProgress extends Window {
 
             add( name );
 
-            name.text( Info.subClass != HeroSubClass.NONE ? Info.subClass.title() + " " + Info.heroClass.title() :Info.heroClass.title() );
+            if (Info.heroClass == HeroClass.NONE) {
+                name.text( Info.heroClass.title() );
+            } else {
+                name.text( Info.subClass != HeroSubClass.NONE ? "X" :Info.heroClass.title() );
+            }
+
 
             name.setPos(x + 10.5f * SCALE - name.width() / 2f, y + 34.5f * SCALE - name.height() / 3f);
             name.alpha(3.0f);

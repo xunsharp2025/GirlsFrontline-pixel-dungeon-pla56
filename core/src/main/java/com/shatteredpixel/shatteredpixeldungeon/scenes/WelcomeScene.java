@@ -38,6 +38,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndError;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndHardNotification;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndStartGame;
 import com.watabou.glwrap.Blending;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.ColorBlock;
@@ -133,7 +134,7 @@ public class WelcomeScene extends PixelScene {
 					SPDSettings.version(GirlsFrontlinePixelDungeon.versionCode);
 					GamesInProgress.selectedClass = null;
 					GamesInProgress.curSlot = 1;
-					GirlsFrontlinePixelDungeon.switchScene(HeroSelectScene.class);
+					GirlsFrontlinePixelDungeon.scene().add( new WndStartGame(1) );
 				} else {
 					updateVersion(previousVersion);
 					GirlsFrontlinePixelDungeon.switchScene(TitleScene.class);
