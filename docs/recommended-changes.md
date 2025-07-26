@@ -18,7 +18,7 @@ Shattered Pixel Dungeon has an internal version code which should be incremented
 
 You may be tempted to set this value back to 1 when starting a new mod, but Shattered has compatibility code for previous versions which may be incorrectly triggered if you decrement the version code. The version code is entirely internal so there is no harm in using the game's current version code as a starting point.
 
-If you wish to set it to 1 anyway, the various constant variables toward the top of [ShatteredPixelDungeon.java](/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/ShatteredPixelDungeon.java) are a good starting point for finding all of the cases where the game refers to the version code for compatibility purposes.
+If you wish to set it to 1 anyway, the various constant variables toward the top of [GirlsFrontlinePixelDungeon.java](/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/GirlsFrontlinePixelDungeon.java) are a good starting point for finding all of the cases where the game refers to the version code for compatibility purposes.
 
 ## Credits & Supporter button
 

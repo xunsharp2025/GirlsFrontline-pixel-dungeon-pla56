@@ -22,7 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.mechanics;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 
 import java.util.ArrayList;
@@ -161,7 +161,7 @@ public class Ballistica {
 			end = Math.min( end, path.size()-1);
 			return path.subList(start, end+1);
 		} catch (Exception e){
-			ShatteredPixelDungeon.reportException(e);
+			GirlsFrontlinePixelDungeon.reportException(e);
 			return new ArrayList<>();
 		}
 	}

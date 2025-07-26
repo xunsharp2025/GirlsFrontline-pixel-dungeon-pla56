@@ -84,7 +84,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTerror;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.Runestone;
-import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfFear;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAggression;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAugmentation;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfBlast;
@@ -93,6 +92,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfClairvoyance
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfDeepSleep;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfDisarming;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfEnchantment;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfFear;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfFlock;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfIntuition;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfShock;
@@ -110,34 +110,46 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfPrismaticLight
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfTransfusion;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfWarding;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.AssassinsBlade;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.BattleAxe;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Crossbow;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Dagger;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Dirk;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Flail;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gauntlet;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Glaive;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gloves;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Greataxe;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Greatshield;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Greatsword;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.HandAxe;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Longsword;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Mace;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.AR.G36;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.AR.Hk416;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.BP.Mos;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.BP.SaigaPlate;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.AK47;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.Kar98;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.M16;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.M99;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.Sass;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.HB.Kriss;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.LR.M1911;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.LR.NAGANT;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.LR.Wa;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Launcher.Gepard;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Launcher.SRS;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MG.Dp;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MG.Mg42;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MG.Negev;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Quarterstaff;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.RoundShield;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.RunicBlade;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Sai;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Scimitar;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Shortsword;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Spear;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Sword;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WarHammer;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Whip;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WornShortsword;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SA.GROZA;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SA.GUA91;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SA.NagantRevolver;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SA.Welrod;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SG.Ks23;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SG.Usas12;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SG.Win97;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.M1a1;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.M9;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.SAIGA;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.Ump45;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SR.AWP;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SR.M1903;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SR.Ntw20;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SakuraBlade;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Thunder;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG.C96;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG.Cannon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG.Lar;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG.SR3;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Bolas;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.FishingSpear;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ForceCube;
@@ -183,6 +195,9 @@ public class Generator {
 		WEP_T3	( 0, 0, MeleeWeapon.class),
 		WEP_T4	( 0, 0, MeleeWeapon.class),
 		WEP_T5	( 0, 0, MeleeWeapon.class),
+
+		//TODO W6
+		WEP_T6	( 0, 0, MeleeWeapon.class),
 		
 		ARMOR	( 2, 1, Armor.class ),
 		

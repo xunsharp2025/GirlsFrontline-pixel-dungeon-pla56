@@ -359,7 +359,7 @@ public abstract class Room extends Rect implements Graph.Node, Bundlable {
 	}
 	
 	@Override
-	public int price() {
+	public int value() {
 		return price;
 	}
 

@@ -92,7 +92,7 @@ public class ScrollOfPsionicBlast extends Scroll {
 	}
 	
 	@Override
-	public int price() {
+	public int value() {
 		return isKnown() ? 50 * quantity : super.price();
 	}
 }

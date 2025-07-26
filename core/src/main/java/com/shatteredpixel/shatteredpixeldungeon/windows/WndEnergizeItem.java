@@ -22,12 +22,10 @@
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.shatteredpixel.shatteredpixeldungeon.items.EnergyCrystal;
 import com.shatteredpixel.shatteredpixeldungeon.items.EquipableItem;
-import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.AlchemyScene;
@@ -117,10 +115,10 @@ public class WndEnergizeItem extends WndInfoItem {
 		}
 		item.detachAll( hero.belongings.backpack );
 
-		if (ShatteredPixelDungeon.scene() instanceof AlchemyScene){
+		if (GirlsFrontlinePixelDungeon.scene() instanceof AlchemyScene){
 
 			Dungeon.energy += item.energyVal();
-			((AlchemyScene) ShatteredPixelDungeon.scene()).createEnergy();
+			((AlchemyScene) GirlsFrontlinePixelDungeon.scene()).createEnergy();
 
 		} else {
 
@@ -142,10 +140,10 @@ public class WndEnergizeItem extends WndInfoItem {
 
 			item = item.detach( hero.belongings.backpack );
 
-			if (ShatteredPixelDungeon.scene() instanceof AlchemyScene){
+			if (GirlsFrontlinePixelDungeon.scene() instanceof AlchemyScene){
 
 				Dungeon.energy += item.energyVal();
-				((AlchemyScene) ShatteredPixelDungeon.scene()).createEnergy();
+				((AlchemyScene) GirlsFrontlinePixelDungeon.scene()).createEnergy();
 
 			} else {
 
@@ -158,11 +156,11 @@ public class WndEnergizeItem extends WndInfoItem {
 	}
 
 	public static WndBag openItemSelector(){
-		if (ShatteredPixelDungeon.scene() instanceof GameScene) {
+		if (GirlsFrontlinePixelDungeon.scene() instanceof GameScene) {
 			return GameScene.selectItem( selector );
 		} else {
 			WndBag window = WndBag.getBag( selector );
-			ShatteredPixelDungeon.scene().addToFront(window);
+			GirlsFrontlinePixelDungeon.scene().addToFront(window);
 			return window;
 		}
 	}
@@ -182,10 +180,10 @@ public class WndEnergizeItem extends WndInfoItem {
 		public void onSelect(Item item) {
 			if (item != null) {
 				WndBag parentWnd = openItemSelector();
-				if (ShatteredPixelDungeon.scene() instanceof GameScene) {
+				if (GirlsFrontlinePixelDungeon.scene() instanceof GameScene) {
 					GameScene.show(new WndEnergizeItem(item, parentWnd));
 				} else {
-					ShatteredPixelDungeon.scene().addToFront(new WndEnergizeItem(item, parentWnd));
+					GirlsFrontlinePixelDungeon.scene().addToFront(new WndEnergizeItem(item, parentWnd));
 				}
 			}
 		}

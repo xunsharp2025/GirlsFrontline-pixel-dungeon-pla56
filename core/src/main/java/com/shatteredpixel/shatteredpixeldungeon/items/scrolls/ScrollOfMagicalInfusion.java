@@ -60,7 +60,7 @@ public class ScrollOfMagicalInfusion extends InventoryScroll {
 	}
 
 	@Override
-	public int price() {
+	public int value() {
 		return isKnown() ? 100 * quantity : super.price();
 	}
 }

@@ -47,7 +47,7 @@ public class PotionOfMight extends Potion {
 	}
 	
 	@Override
-	public int price() {
+	public int value() {
 		return isKnown() ? 100 * quantity : super.price();
 	}
 }

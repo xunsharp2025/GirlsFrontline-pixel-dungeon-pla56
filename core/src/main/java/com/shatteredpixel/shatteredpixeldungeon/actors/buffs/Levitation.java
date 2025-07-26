@@ -22,7 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -53,7 +53,7 @@ public class Levitation extends FlavourBuff {
 		target.flying = false;
 		super.detach();
 		//only press tiles if we're current in the game screen
-		if (ShatteredPixelDungeon.scene() instanceof GameScene) {
+		if (GirlsFrontlinePixelDungeon.scene() instanceof GameScene) {
 			Dungeon.level.occupyCell(target );
 		}
 	}

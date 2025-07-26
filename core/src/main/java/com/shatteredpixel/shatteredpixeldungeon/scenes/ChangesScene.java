@@ -23,7 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
-import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Archs;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
@@ -174,7 +174,7 @@ public class ChangesScene extends PixelScene {
 				super.onClick();
 				if (changesSelected != 0) {
 					changesSelected = 0;
-					ShatteredPixelDungeon.seamlessResetScene();
+					GirlsFrontlinePixelDungeon.seamlessResetScene();
 				}
 			}
 		};
@@ -188,7 +188,7 @@ public class ChangesScene extends PixelScene {
 				super.onClick();
 				if (changesSelected != 1) {
 					changesSelected = 1;
-					ShatteredPixelDungeon.seamlessResetScene();
+					GirlsFrontlinePixelDungeon.seamlessResetScene();
 				}
 			}
 		};
@@ -202,7 +202,7 @@ public class ChangesScene extends PixelScene {
 				super.onClick();
 				if (changesSelected != 2) {
 					changesSelected = 2;
-					ShatteredPixelDungeon.seamlessResetScene();
+					GirlsFrontlinePixelDungeon.seamlessResetScene();
 				}
 			}
 		};
@@ -216,7 +216,7 @@ public class ChangesScene extends PixelScene {
 				super.onClick();
 				if (changesSelected != 3) {
 					changesSelected = 3;
-					ShatteredPixelDungeon.seamlessResetScene();
+					GirlsFrontlinePixelDungeon.seamlessResetScene();
 				}
 			}
 		};
@@ -230,7 +230,7 @@ public class ChangesScene extends PixelScene {
 				super.onClick();
 				if (changesSelected != 4) {
 					changesSelected = 4;
-					ShatteredPixelDungeon.seamlessResetScene();
+					GirlsFrontlinePixelDungeon.seamlessResetScene();
 				}
 			}
 		};
@@ -244,7 +244,7 @@ public class ChangesScene extends PixelScene {
 				super.onClick();
 				if (changesSelected != 5) {
 					changesSelected = 5;
-					ShatteredPixelDungeon.seamlessResetScene();
+					GirlsFrontlinePixelDungeon.seamlessResetScene();
 				}
 			}
 		};
@@ -261,7 +261,7 @@ public class ChangesScene extends PixelScene {
 	
 	@Override
 	protected void onBackPressed() {
-		ShatteredPixelDungeon.switchNoFade(TitleScene.class);
+		GirlsFrontlinePixelDungeon.switchNoFade(TitleScene.class);
 	}
 
 }

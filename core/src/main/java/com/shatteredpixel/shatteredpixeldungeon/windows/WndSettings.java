@@ -23,8 +23,8 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
+import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
-import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Languages;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -173,7 +173,7 @@ public class WndSettings extends WndTabbed {
 	public void hide() {
 		super.hide();
 		//resets generators because there's no need to retain chars for languages not selected
-		ShatteredPixelDungeon.seamlessResetScene(new Game.SceneChangeCallback() {
+		GirlsFrontlinePixelDungeon.seamlessResetScene(new Game.SceneChangeCallback() {
 			@Override
 			public void beforeCreate() {
 				Game.platform.resetGenerators();
@@ -231,7 +231,7 @@ public class WndSettings extends WndTabbed {
 					protected void onChange() {
 						if (getSelectedValue() != SPDSettings.scale()) {
 							SPDSettings.scale(getSelectedValue());
-							ShatteredPixelDungeon.seamlessResetScene();
+							GirlsFrontlinePixelDungeon.seamlessResetScene();
 						}
 					}
 				};
@@ -246,7 +246,7 @@ public class WndSettings extends WndTabbed {
 						super.onClick();
 						if (checked()) {
 							checked(!checked());
-							ShatteredPixelDungeon.scene().add(new WndOptions(Icons.get(Icons.DISPLAY),
+							GirlsFrontlinePixelDungeon.scene().add(new WndOptions(Icons.get(Icons.DISPLAY),
 									Messages.get(DisplayTab.class, "saver"),
 									Messages.get(DisplayTab.class, "saver_desc"),
 									Messages.get(DisplayTab.class, "okay"),
@@ -400,7 +400,7 @@ public class WndSettings extends WndTabbed {
 					@Override
 					protected void onChange() {
 						SPDSettings.interfaceSize(getSelectedValue());
-						ShatteredPixelDungeon.seamlessResetScene();
+						GirlsFrontlinePixelDungeon.seamlessResetScene();
 					}
 				};
 				optUISize.setSelectedValue(SPDSettings.interfaceSize());
@@ -483,7 +483,7 @@ public class WndSettings extends WndTabbed {
 				@Override
 				protected void onClick() {
 					super.onClick();
-					ShatteredPixelDungeon.seamlessResetScene(new Game.SceneChangeCallback() {
+					GirlsFrontlinePixelDungeon.seamlessResetScene(new Game.SceneChangeCallback() {
 						@Override
 						public void beforeCreate() {
 							SPDSettings.systemFont(checked());
@@ -508,7 +508,7 @@ public class WndSettings extends WndTabbed {
 					@Override
 					protected void onClick() {
 						super.onClick();
-						ShatteredPixelDungeon.scene().addToFront(new WndKeyBindings());
+						GirlsFrontlinePixelDungeon.scene().addToFront(new WndKeyBindings());
 					}
 				};
 
@@ -869,7 +869,7 @@ public class WndSettings extends WndTabbed {
 					protected void onClick() {
 						super.onClick();
 						Messages.setup(langs.get(langIndex));
-						ShatteredPixelDungeon.seamlessResetScene(new Game.SceneChangeCallback() {
+						GirlsFrontlinePixelDungeon.seamlessResetScene(new Game.SceneChangeCallback() {
 							@Override
 							public void beforeCreate() {
 								SPDSettings.language(langs.get(langIndex));
@@ -981,7 +981,7 @@ public class WndSettings extends WndTabbed {
 						credits.add(text);
 
 						credits.resize(w, (int) text.bottom() + 2);
-						ShatteredPixelDungeon.scene().addToFront(credits);
+						GirlsFrontlinePixelDungeon.scene().addToFront(credits);
 					}
 				};
 				add(btnCredits);

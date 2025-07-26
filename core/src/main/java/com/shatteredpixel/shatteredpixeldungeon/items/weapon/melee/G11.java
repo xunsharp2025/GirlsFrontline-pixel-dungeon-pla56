@@ -300,7 +300,7 @@ public class G11 extends MeleeWeapon {
 	}
 
 	@Override
-	public int price() {
+	public int value() {
 		return 0;
 	}
 

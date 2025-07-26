@@ -277,7 +277,7 @@ public class ShootGun extends MeleeWeapon {
     }
 
     @Override
-    public int price() {
+    public int value() {
         //TODO 商店价格
         return super.price();
     }

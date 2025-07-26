@@ -22,8 +22,8 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.keys;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
-import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndSupportPrompt;
@@ -55,11 +55,11 @@ public class SkeletonKey extends Key {
 				Game.runOnRenderThread(new Callback() {
 					@Override
 					public void call() {
-						ShatteredPixelDungeon.scene().add(new WndSupportPrompt());
+						GirlsFrontlinePixelDungeon.scene().add(new WndSupportPrompt());
 					}
 				});
 			} catch (IOException e) {
-				ShatteredPixelDungeon.reportException(e);
+				GirlsFrontlinePixelDungeon.reportException(e);
 			}
 			
 		}
