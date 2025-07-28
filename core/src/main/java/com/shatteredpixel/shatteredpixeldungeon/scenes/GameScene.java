@@ -98,8 +98,11 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.TargetHealthIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Toast;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Toolbar;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.ui.diglog.LevelPlot_P1;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.utils.diglog.Script;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndGame;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndHero;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndInfoCell;
@@ -410,6 +413,9 @@ public class GameScene extends PixelScene {
 			case FALL:
 				switch (Dungeon.depth) {
 				case 1:
+					if(Script.checkChapter(Script.ID_SEWERS)) {
+						GameScene.scene.add(new WndDialog(new LevelPlot_P1(),false));
+					}
 					WndStory.showChapter( WndStory.ID_SEWERS );
 					break;
 				case 6:
@@ -1407,6 +1413,9 @@ public class GameScene extends PixelScene {
 		}
 	}
 
+	public static float ToolbarHeight(){return scene.toolbar.height();}
+
+	public static float StatusHeight(){return scene.status.height();}
 	
 	private static final CellSelector.Listener defaultCellListener = new CellSelector.Listener() {
 		@Override

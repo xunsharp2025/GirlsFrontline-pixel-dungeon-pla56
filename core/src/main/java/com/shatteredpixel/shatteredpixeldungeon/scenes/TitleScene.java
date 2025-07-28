@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Chrome.Type.GREY_BUTTON;
+
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
@@ -105,9 +107,9 @@ public class TitleScene extends PixelScene {
 		signs.y = title.y;
 		add( signs );
 
-		final Chrome.Type WINDOW = Chrome.Type.WINDOW;
+		final Chrome.Type WINDOW = GREY_BUTTON;
 
-		StyledButton btnPlay = new StyledButton(WINDOW, Messages.get(this, "enter")){
+		StyledButton btnPlay = new StyledButton(GREY_BUTTON, Messages.get(this, "enter")){
 			@Override
 			protected void onClick() {
 				if (GamesInProgress.checkAll().size() == 0){
@@ -136,7 +138,7 @@ public class TitleScene extends PixelScene {
 		StyledButton btnSupport = new SupportButton(WINDOW, Messages.get(this, "support"));
 		add(btnSupport);
 
-		StyledButton btnRankings = new StyledButton(WINDOW,Messages.get(this, "rankings")){
+		StyledButton btnRankings = new StyledButton(GREY_BUTTON,Messages.get(this, "rankings")){
 			@Override
 			protected void onClick() {
 				GirlsFrontlinePixelDungeon.switchNoFade( RankingsScene.class );
@@ -145,7 +147,7 @@ public class TitleScene extends PixelScene {
 		btnRankings.icon(Icons.get(Icons.RANKINGS));
 		add(btnRankings);
 
-		StyledButton btnBadges = new StyledButton(WINDOW, Messages.get(this, "badges")){
+		StyledButton btnBadges = new StyledButton(GREY_BUTTON, Messages.get(this, "badges")){
 			@Override
 			protected void onClick() {
 				GirlsFrontlinePixelDungeon.switchNoFade( BadgesScene.class );
@@ -165,7 +167,7 @@ public class TitleScene extends PixelScene {
 		StyledButton btnSettings = new SettingsButton(WINDOW, Messages.get(this, "settings"));
 		add(btnSettings);
 
-		StyledButton btnAbout = new StyledButton(WINDOW, Messages.get(this, "about")){
+		StyledButton btnAbout = new StyledButton(GREY_BUTTON, Messages.get(this, "about")){
 			@Override
 			protected void onClick() {
 				GirlsFrontlinePixelDungeon.switchScene( AboutScene.class );
