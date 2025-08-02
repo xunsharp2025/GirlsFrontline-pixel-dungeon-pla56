@@ -15,7 +15,7 @@ public class SkipIndicator extends Tag {
     public SkipIndicator() {
         super( 0x00FF4C4C );
 
-        setSize( 24, 16 );
+        setSize( 24, 24 );
 
         visible = true;
 
@@ -29,14 +29,14 @@ public class SkipIndicator extends Tag {
         bg.alpha(0f);
         add( bg );
         //TODO SKIP
-        icon = Icons.CHANGES.get();
+        icon = Icons.SKIP.get();
         add( icon );
     }
 
     @Override
     protected void layout() {
         super.layout();
-        icon.x = x+1;
+        icon.x = x-5;
         icon.y = y;
     }
 

@@ -285,6 +285,7 @@ public class WndSettings extends WndTabbed {
 				add(btnOrientation);
 			}
 
+
 			sep2 = new ColorBlock(1, 1, 0xFF000000);
 			add(sep2);
 

@@ -85,7 +85,7 @@ public class WndStartGame extends Window {
 		add(separator);
 
 		HeroPane ava = new HeroPane();
-		ava.setRect(20, separator.y + 2, WIDTH-30, 80);
+		ava.setRect(20, separator.y + 15, WIDTH-30, 80);
 		add(ava);
 
 		RedButton start = new RedButton(Messages.get(this, "start")){

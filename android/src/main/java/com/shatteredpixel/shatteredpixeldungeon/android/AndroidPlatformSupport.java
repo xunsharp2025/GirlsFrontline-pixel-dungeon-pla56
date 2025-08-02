@@ -48,7 +48,7 @@ import java.util.regex.Pattern;
 public class AndroidPlatformSupport extends PlatformSupport {
 	
 	public void updateDisplaySize(){
-		if (SPDSettings.landscape()) {
+		if (SPDSettings.landscape() != null) {
 			AndroidGame.instance.setRequestedOrientation( SPDSettings.landscape() ?
 					ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE :
 					ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT );

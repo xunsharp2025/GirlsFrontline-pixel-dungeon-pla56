@@ -13,9 +13,82 @@ public class Script {
     //More information can be found at WndDialog.java
     //By Teller 2021/8/20
 
+    //GirlPD is Implement
+    //By JDSALing 2025/7/28
+
     public enum Character{
-        NOBODY,REN,SMALLB,RED,EXUSIAI,FROSTNOVA,SLICE
+       NONE,UMP45,HK416,G11,UMP9
     }
+
+    public static Image AvatarG11(int index) {
+        Image i;
+        switch (index){
+            default:
+            case 0:
+                i = new Image(Assets.EMOTION,0,0,24,24);
+                break;
+            case 1:
+                i = new Image(Assets.EMOTION,24,0,24,24);
+                break;
+            case 2:
+                i = new Image(Assets.EMOTION,48,0,24,24);
+                break;
+        }
+        return i;
+    }
+
+    public static Image AvatarUMP45(int index) {
+        Image i;
+        switch (index){
+            default:
+            case 0:
+                i = new Image(Assets.EMOTION,0,24,24,24);
+                break;
+            case 1:
+                i = new Image(Assets.EMOTION,24,24,24,24);
+                break;
+            case 2:
+                i = new Image(Assets.EMOTION,48,24,24,24);
+                break;
+        }
+        return i;
+    }
+
+    public static Image AvatarUMP9(int index) {
+        Image i;
+        switch (index){
+            default:
+            case 0:
+                i = new Image(Assets.EMOTION,0,48,24,24);
+                break;
+            case 1:
+                i = new Image(Assets.EMOTION,24,48,24,24);
+                break;
+            case 2:
+                i = new Image(Assets.EMOTION,48,48,24,24);
+                break;
+        }
+        return i;
+    }
+
+    public static Image AvatarHK416(int index) {
+        Image i;
+        switch (index){
+            default:
+            case 0:
+                i = new Image(Assets.EMOTION,0,72,24,24);
+                break;
+            case 1:
+                i = new Image(Assets.EMOTION,24,72,24,24);
+                break;
+            case 2:
+                i = new Image(Assets.EMOTION,48,72,24,24);
+                break;
+        }
+        return i;
+    }
+
+
 
     public enum FormalPlot
     {
@@ -56,26 +129,17 @@ public class Script {
         String str;
         switch (character) {
             default:
-            case NOBODY:
-                str = Messages.get(Script.class,"name_empty");
+            case UMP45:
+                str = Messages.get(Script.class,"name_ump45");
                 break;
-            case REN:
-                str = Messages.get(Script.class,"name_ren");
+            case G11:
+                str = Messages.get(Script.class,"name_g11");
                 break;
-            case SMALLB:
-                str = Messages.get(Script.class,"name_smallb");
+            case HK416:
+                str = Messages.get(Script.class,"name_hk416");
                 break;
-            case RED:
-                str = Messages.get(Script.class,"name_red");
-                break;
-            case EXUSIAI:
-                str = Messages.get(Script.class,"name_exusiat");
-                break;
-            case FROSTNOVA:
-                str = Messages.get(Script.class,"name_frostnova");
-                break;
-            case SLICE:
-                str = Messages.get(Script.class,"name_slice");
+            case UMP9:
+                str = Messages.get(Script.class,"name_ump9");
                 break;
         }
         //GLog.i(str);
@@ -87,31 +151,25 @@ public class Script {
         int row = -1;
         switch (character) {
             default:
-            case NOBODY:
+            case UMP45:
                 row = 0;
                 break;
-            case REN:
-                row = 0;
-                break;
-            case SMALLB:
+            case G11:
                 row = 1;
                 break;
-            case RED:
+            case HK416:
                 row = 2;
                 break;
-            case EXUSIAI:
+            case UMP9:
                 row = 3;
                 break;
-            //case FROSTNOVA:
-            //    row = 4;
-            //    break;
         }
         Image image = new Image(Assets.Sprites.AVATARS, 0, 48* row,48, 48);
 
         switch (character)
         {
-            case FROSTNOVA:
-                image = new Image(null, 0, 48* row, 36, 48);
+            case NONE:
+                image = new Image(Assets.EMOTION,0,24,24,24);
 
                 AlphaTweener invisible = new AlphaTweener( image, 0.4f, 0.4f );
                 if (image.parent != null){

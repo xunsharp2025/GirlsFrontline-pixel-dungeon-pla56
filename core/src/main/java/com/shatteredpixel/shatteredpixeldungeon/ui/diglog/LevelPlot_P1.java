@@ -11,6 +11,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MissileSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.diglog.Plot;
+import com.shatteredpixel.shatteredpixeldungeon.utils.diglog.Script;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
 import com.watabou.noosa.Image;
 
@@ -44,27 +45,27 @@ public class LevelPlot_P1 extends Plot {
                 case 1:
                     process_to_1();
                     break;
-//                case 2:
-//                    process_to_2();
-//                    break;
-//                case 3:
-//                    process_to_3();
-//                    break;
-//                case 4:
-//                    process_to_4();
-//                    break;
-//                case 5:
-//                    process_to_5();
-//                    break;
-//                case 6:
-//                    process_to_6();
-//                    break;
-//                case 7:
-//                    process_to_7();
-//                    break;
-//                case 8:
-//                    process_to_8();
-//                    break;
+                case 2:
+                    process_to_2();
+                    break;
+                case 3:
+                    process_to_3();
+                    break;
+                case 4:
+                    process_to_4();
+                    break;
+                case 5:
+                    process_to_5();
+                    break;
+                case 6:
+                    process_to_6();
+                    break;
+                case 7:
+                    process_to_7();
+                    break;
+                case 8:
+                    process_to_8();
+                    break;
             }
             diagulewindow.update();
             process++;
@@ -85,78 +86,58 @@ public class LevelPlot_P1 extends Plot {
 
     @Override
     public void skip() {
+        diagulewindow.cancel();
+        WndDialog.settedPlot = null;
     }
 
     private void process_to_1() {
         diagulewindow.hideAll();
-        diagulewindow.setMainAvatar(AvatarMain(1));
-        diagulewindow.setLeftName("Test");
-        diagulewindow.changeText("This is Dialog");
-    }
-    /**
-     * 根据index选择头像<br>
-     * 0为UMP45 1为G11
-     * @param index 索引值
-     * @return 返回图像
-     */
-    private Image AvatarMain(int index) {
-        Image i;
-        switch (index){
-            //G11
-            case 1:
-                i = new Image(Assets.Sprites.AVATARS,25,0,24,32);
-                break;
-            //UMP45
-            default:
-                i = new Image(Assets.Sprites.AVATARS,0,0,24,32);
-                break;
-        }
-        return i;
+        diagulewindow.setMainAvatar(Script.AvatarUMP45(0));
+        diagulewindow.setLeftName(Script.Name(Script.Character.UMP45));
+        diagulewindow.changeText(Messages.get(this,"dialog0"));
     }
 
-//    private void process_to_2() {
-//        diagulewindow.setLeftName(Messages.get(Typhon.class, "name"));
-//        diagulewindow.changeText(Messages.get(TyphonPlot.class, "message2"));
-//    }
-//
-//    private void process_to_3() {
-//        diagulewindow.changeText(Messages.get(TyphonPlot.class, "message3"));
-//    }
-//
-//    private void process_to_4() {
-//        diagulewindow.changeText(Messages.get(TyphonPlot.class, "message4"));
-//
-//    }
-//
-//    private void process_to_5() {
-//        diagulewindow.hideAll();
-//        diagulewindow.setLeftName(hero.name());
-//        diagulewindow.changeText(Messages.get(TyphonPlot.class, "message5", hero.name()));
-//    }
-//
-//    private void process_to_6() {
-//        diagulewindow.setLeftName(Messages.get(Typhon.class, "name"));
-//        diagulewindow.setMainAvatar(new Image(Assets.Splashes.TYPHON));
-//        diagulewindow.changeText(Messages.get(TyphonPlot.class, "message6"));
-//    }
-//
-//    private void process_to_7() {
-//        MorphsNPC typhonn = new MorphsNPC();
-//        typhonn.pos = 358;
-//        GameScene.add(typhonn);
-//        diagulewindow.setLeftName(Messages.get(MorphsNPC.class, "name"));
-//        diagulewindow.setMainAvatar(new Image(Assets.Splashes.MOSRDX_1));
-//        diagulewindow.changeText(Messages.get(TyphonPlot.class, "message7", hero.name()));
-//    }
-//
-//    private void process_to_8() {
-//        diagulewindow.setLeftName(Messages.get(Typhon.class, "name"));
-//        diagulewindow.setMainAvatar(new Image(Assets.Splashes.TYPHON));
-//        diagulewindow.changeText(Messages.get(TyphonPlot.class, "message8", hero.name()));
-//    }
+    private void process_to_2() {
+        diagulewindow.setMainAvatar(Script.AvatarUMP9(1));
+        diagulewindow.setLeftName(Script.Name(Script.Character.UMP9));
+        diagulewindow.changeText(Messages.get(this,"dialog1"));
+    }
 
+    private void process_to_3() {
+        diagulewindow.setMainAvatar(Script.AvatarUMP45(2));
+        diagulewindow.setLeftName(Script.Name(Script.Character.UMP45));
+        diagulewindow.changeText(Messages.get(this,"dialog2"));
+    }
 
+    private void process_to_4() {
+        diagulewindow.setMainAvatar(Script.AvatarHK416(2));
+        diagulewindow.setLeftName(Script.Name(Script.Character.HK416));
+        diagulewindow.changeText(Messages.get(this,"dialog3"));
+    }
 
+    private void process_to_5() {
+        diagulewindow.setMainAvatar(Script.AvatarUMP45(2));
+        diagulewindow.setLeftName(Script.Name(Script.Character.UMP45));
+        diagulewindow.changeText(Messages.get(this,"dialog4"));
+    }
+
+    private void process_to_6() {
+        diagulewindow.setMainAvatar(Script.AvatarG11(1));
+        diagulewindow.setLeftName(Script.Name(Script.Character.G11));
+        diagulewindow.changeText(Messages.get(this,"dialog5"));
+    }
+
+    private void process_to_7() {
+        diagulewindow.setMainAvatar(Script.AvatarHK416(1));
+        diagulewindow.setLeftName(Script.Name(Script.Character.HK416));
+        diagulewindow.changeText(Messages.get(this,"dialog6"));
+    }
+
+    private void process_to_8() {
+        diagulewindow.setMainAvatar(Script.AvatarG11(2));
+        diagulewindow.setLeftName(Script.Name(Script.Character.G11));
+        diagulewindow.changeText(Messages.get(this,"dialog7"));
+    }
 }
 
 

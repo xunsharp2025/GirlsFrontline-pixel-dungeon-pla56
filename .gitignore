@@ -3,6 +3,7 @@
 *.smali
 
 *.hprof
+*.json
 
 # Files for the Dalvik VM
 *.dex

@@ -1,6 +1,5 @@
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
-
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
@@ -25,14 +24,7 @@ import java.util.ArrayList;
 
 public class WndDialog extends Window {
 
-    //We also need at least an interface to show sentences,and some code is from Girl's front line pd
-    //Detailed things are directly operated in Plot directory's files
-    //By Teller in 2021/8/21
-
-    //We used Teller ARKPD-CN in 2023-11-2
-    //By KDSALing in 2023-11-2
-
-    private static final int MARGIN 		= 2;
+    private static final int MARGIN 		= 1;
     private static final int BUTTON_HEIGHT	= 18;
 
     private static final int MARGIN_X = 5;
@@ -57,7 +49,6 @@ public class WndDialog extends Window {
 
     public SkipIndicator skip = null;
 
-    //public ColorBlock blocks[];
     public boolean readed;
     private final int color = 0xFF2F2F2F;
 
@@ -66,61 +57,56 @@ public class WndDialog extends Window {
     private boolean haveChoice = false;
     private Choice storedChoice[];
 
-    private float timeLeft = 0.2f;
+    private float timeLeft = 0f;
     private int times = 0;
 
-
-    public WndDialog(Plot plot,Boolean regained) {
-
+    public WndDialog(Plot plot, Boolean regained) {
         super(0, 0, Chrome.get(Chrome.Type.DIALOG));
 
-        resize(PixelScene.uiCamera.width ,PixelScene.uiCamera.height );
+        resize(PixelScene.uiCamera.width, PixelScene.uiCamera.height);
 
         settedPlot = plot;
 
-        boolean landscape = false;
-        if(SPDSettings.landscape())
-        {
-            landscape = SPDSettings.landscape();
-        }
+        boolean landscape = SPDSettings.landscape();
 
         int heightUnit = landscape ? 4 : 5;
-        int fontSize = landscape ? 10 : 8;
+        int fontSize = landscape ? 13 : 10;
 
         int textSize = landscape ? 10 : 8;
 
         int chromeHeight = PixelScene.uiCamera.height / heightUnit - MARGIN_Y;
         int chromeWidth = PixelScene.uiCamera.width - 2 * MARGIN_X;
+        final float AvatarScaleMultiplier = SPDSettings.landscape() ? 2f : 1.5f;
 
         shadow.am = 0;
 
-        chrome.size(chromeWidth,chromeHeight);
+        chrome.size(chromeWidth, chromeHeight);
         chrome.x = MARGIN_X;
-        chrome.y = (float) (PixelScene.uiCamera.height - GameScene.ToolbarHeight() - chromeHeight);
+        chrome.y = PixelScene.uiCamera.height - GameScene.ToolbarHeight() - chromeHeight;
         add(chrome);
 
-        mainAvatar = Script.Portrait(Script.Character.NOBODY);
-        mainAvatar.x = 0;
+        mainAvatar = Script.Portrait(Script.Character.UMP45);
+        mainAvatar.x = 10;
+        mainAvatar.y = chrome.y - mainAvatar.height() / 1.32f;
         add(mainAvatar);
 
-        secondAvatar = Script.Portrait(Script.Character.NOBODY);
-        secondAvatar.x = (float) (PixelScene.uiCamera.width - secondAvatar.width() - MARGIN_X);
+        secondAvatar = Script.Portrait(Script.Character.UMP45);
+        secondAvatar.x = PixelScene.uiCamera.width - secondAvatar.width() - MARGIN_X;
         add(secondAvatar);
 
-        thirdAvatar = Script.Portrait(Script.Character.NOBODY);
+        thirdAvatar = Script.Portrait(Script.Character.UMP45);
         thirdAvatar.x = secondAvatar.x - 16;
         add(thirdAvatar);
 
         float height = mainAvatar.height;
+        secondAvatar.y = thirdAvatar.y = chrome.y - height;
 
-        mainAvatar.y = chrome.y + 40;
-        mainAvatar.y = secondAvatar.y = thirdAvatar.y = chrome.y - height;
+        leftname = PixelScene.renderTextBlock(Script.Name(Script.Character.UMP45), fontSize);
+        leftname.hardlight(0x2B7BB9);
 
-        leftname = PixelScene.renderTextBlock(Script.Name(Script.Character.NOBODY), fontSize);
-        rightname = PixelScene.renderTextBlock(Script.Name(Script.Character.NOBODY), fontSize);
+        rightname = PixelScene.renderTextBlock(Script.Name(Script.Character.UMP45), fontSize);
 
-
-        leftname.setPos(mainAvatar.x + mainAvatar.width() , mainAvatar.y + mainAvatar.height() - leftname.height() - 2);
+        leftname.setPos(mainAvatar.x + mainAvatar.width(), chrome.y - mainAvatar.height() / 3f);
         rightname.setPos(thirdAvatar.x - rightname.width(), thirdAvatar.y + thirdAvatar.height() - rightname.height() - 2);
 
         add(leftname);
@@ -128,7 +114,7 @@ public class WndDialog extends Window {
 
         text = PixelScene.renderTextBlock("", textSize);
         text.maxWidth(PixelScene.uiCamera.width - 2 * MARGIN_X - textSize);
-        text.setPos(MARGIN_X + textSize / 2f, chrome.y + MARGIN_Y);
+        text.setPos(MARGIN_X + textSize / 2f + 5, chrome.y + MARGIN_Y);
         add(text);
 
         area = makeArea();
@@ -137,41 +123,9 @@ public class WndDialog extends Window {
         skip = makeSkip();
         add(skip);
 
-
-
-        float modifier = 0;
-
-       /* switch (PDSettings.language()) {
-            case CHINESE: modifier = 1f;
-            default: }
-            //FIXME Well it sounds weird but it really happens:Chinese characters have bigger possible height than English,so with its margin,in fact there are some small overlap between lines.
-            //There are nothing elsewhere,but at here,if I wants to use colorblock to create some text gradually show effect,these small overlap would spoil everything,or at least makes things harder.
-            //As a temporary fix,I add the margin for Chinese between lines,make it looks a little better.Also check RenderedTextBlock.java for the change.
-            //By Teller,2021/9/8
-
-            blocks = new ColorBlock[5];
-
-            for(int i = 0;i < (landscape ? 3 :5) ; i++)
-            {
-                blocks[i] = new ColorBlock(1,1,color);
-                blocks[i].size( width ,textSize + 2f );
-                blocks[i].x = text.left();
-                if(i == 0)
-                {
-                    blocks[i].y = text.top() - 2 * modifier;
-                }
-                else
-                {
-                    blocks[i].y = blocks[ i - 1].y + blocks[ i - 1 ].height() - modifier;
-                }
-                add( blocks[i]);
-            }*/
-
-        if(regained)
-        {
+        if (regained) {
             settedPlot.reachProcess(this);
-        }
-        else {
+        } else {
             settedPlot.initial(this);
         }
     }
@@ -181,11 +135,10 @@ public class WndDialog extends Window {
     }
 
     public PointerArea makeArea() {
-        PointerArea pointerArea = new PointerArea(0,0, PixelScene.uiCamera.width, PixelScene.uiCamera.height) //we wants to make you click anywhere to result in processing plot
-        {
+        return new PointerArea(0, 0, PixelScene.uiCamera.width, PixelScene.uiCamera.height) {
             @Override
             protected void onClick(PointerEvent event) {
-                if(readed) {
+                if (readed) {
                     if (settedPlot.end()) {
                         hide();
                     } else {
@@ -194,19 +147,20 @@ public class WndDialog extends Window {
                         readed = false;
                         settedPlot.process();
                     }
+                } else {
+                    skipWait();
                 }
-                else skipWait();
             }
 
             @Override
-            public GameAction keyAction(){
+            public GameAction keyAction() {
                 return SPDAction.WAIT;
             }
 
             @Override
             protected void onClick() {
-                if(readed) {
-                    if(settedPlot!=null) {
+                if (readed) {
+                    if (settedPlot != null) {
                         if (settedPlot.end()) {
                             hide();
                         } else {
@@ -216,24 +170,22 @@ public class WndDialog extends Window {
                             settedPlot.process();
                         }
                     }
+                } else {
+                    skipWait();
                 }
-                else skipWait();//Due to evan's code base didn't support pointArea nor multiple hotkey,have to done this stupid thing now
             }
         };
-        return pointerArea;
     }
 
-    public void removeArea()
-    {
+    public void removeArea() {
         area.destroy();
         area.killAndErase();
         update();
     }
 
-    public SkipIndicator makeSkip()
-    {
+    public SkipIndicator makeSkip() {
         SkipIndicator skipIndicator = new SkipIndicator();
-        skipIndicator.setPos(width - skipIndicator.width()-5,40);
+        skipIndicator.setPos(width - skipIndicator.width() - 5, 40);
         return skipIndicator;
     }
 
@@ -243,7 +195,6 @@ public class WndDialog extends Window {
         update();
     }
 
-    //Below are all about changing things of this windows,to make things process
     public void setLeftName(String n) {
         if (leftname != null) {
             leftname.text(n);
@@ -268,7 +219,7 @@ public class WndDialog extends Window {
             if (thirdAvatar.visible) {
                 rightname.setPos(thirdAvatar.x - rightname.width(), mainAvatar.y + thirdAvatar.height() - rightname.height() - 2);
             } else {
-                rightname.setPos(secondAvatar.x - rightname.width(), mainAvatar.y + thirdAvatar.height() - rightname.height() - 2);
+                rightname.setPos(secondAvatar.x - rightname.width(), mainAvatar.y + secondAvatar.height() - rightname.height() - 2);
             }
         }
     }
@@ -276,6 +227,8 @@ public class WndDialog extends Window {
     public void setMainAvatar(Image mainAvatar) {
         this.mainAvatar.copy(mainAvatar);
         this.mainAvatar.visible = true;
+        float AvatarScaleMultiplier = SPDSettings.landscape() ? 2f : 1.5f;
+        this.mainAvatar.scale.set(AvatarScaleMultiplier);
     }
 
     public void setMainColor(int alpha) {
@@ -301,11 +254,11 @@ public class WndDialog extends Window {
     }
 
     public void secondAvatarToFront() {
-        this.bringToFront(secondAvatar);
+        bringToFront(secondAvatar);
     }
 
-    public void thirdAvaratToFront() {
-        this.bringToFront(thirdAvatar);
+    public void thirdAvatarToFront() {
+        bringToFront(thirdAvatar);
     }
 
     public void darkenMainAvatar() {
@@ -319,7 +272,7 @@ public class WndDialog extends Window {
     }
 
     public void darkenThirdAvatar() {
-        this.thirdAvatar.visible = true;
+        thirdAvatar.visible = true;
         thirdAvatar.tint(0x000000, 0.5f);
     }
 
@@ -334,8 +287,8 @@ public class WndDialog extends Window {
     }
 
     public void lightenThirdAvatar() {
-        this.thirdAvatar.visible = true;
-        this.thirdAvatar.resetColor();
+        thirdAvatar.visible = true;
+        thirdAvatar.resetColor();
     }
 
     public void hideMainAvatar() {
@@ -352,7 +305,7 @@ public class WndDialog extends Window {
     }
 
     public void hideThirdAvatar() {
-        this.thirdAvatar.visible = false;
+        thirdAvatar.visible = false;
     }
 
     public void changeText(String txt) {
@@ -360,9 +313,8 @@ public class WndDialog extends Window {
         resetBlock();
     }
 
-    public void resetBlock()
-    {
-
+    public void resetBlock() {
+        // 重置文本块的方法
     }
 
     public void showBackground(String txt) {
@@ -390,37 +342,30 @@ public class WndDialog extends Window {
     }
 
     public void hide() {
-        if (settedPlot!=null) {
-            if(settedPlot.end()) {
+        if (settedPlot != null) {
+            if (settedPlot.end()) {
                 settedPlot = null;
                 super.hide();
             }
         }
     }
 
-
     public static void storeInBundle(Bundle b) {
-
-        if(settedPlot != null)
-        {
-            //FIXME that's weird because reach the last stop doesn't mean it's end,especially when some dialog-choice is needed(if wants to add things like this)
-            Plot.storeInBundle(b,settedPlot);
+        if (settedPlot != null) {
+            Plot.storeInBundle(b, settedPlot);
         }
-
     }
 
     public static void restoreFromBundle(Bundle b) {
         settedPlot = Plot.restorFromBundle(b);
     }
 
-    public void haveChoice(Choice... existing)
-    {
+    public void haveChoice(Choice... existing) {
         storedChoice = existing;
         haveChoice = true;
     }
 
     public void showChoice(Choice... existing) {
-
         resizeBeforeChoice();
 
         haveChoice = false;
@@ -430,86 +375,58 @@ public class WndDialog extends Window {
         float pos;
         ArrayList<ChoiceButton> buttons = new ArrayList<ChoiceButton>();
 
-        boolean landscape = false;
-        if(SPDSettings.landscape())
-        {
-            landscape = SPDSettings.landscape();//yeah it sounds stupid but without it when entering game first time
-            // without minding this would cause crash.And mostly android device don't use landscape as default
-        }
+        boolean landscape = SPDSettings.landscape();
 
-        if(landscape)
-        {
+        if (landscape) {
             pos = GameScene.StatusHeight();
-        }
-        else
-        {
+        } else {
             int half = existing.length / 2;
-            float offset = (PixelScene.uiCamera.height - GameScene.ToolbarHeight() - GameScene.StatusHeight() ) / 2;
-            pos = offset - half * BUTTON_HEIGHT  - (half - 1) * MARGIN - (existing.length % 2 == 0 ? MARGIN / 2f :
-                    BUTTON_HEIGHT / 2f) ;
+            float offset = (PixelScene.uiCamera.height - GameScene.ToolbarHeight() - GameScene.StatusHeight()) / 2;
+            pos = offset - half * BUTTON_HEIGHT - (half - 1) * MARGIN - (existing.length % 2 == 0 ? MARGIN / 2f : BUTTON_HEIGHT / 2f);
         }
 
         for (int i = 0; i < existing.length; i++) {
-            {
-                final int finalI = i;
-                ChoiceButton btn = new ChoiceButton(existing[i].text , 6) {
-
-                    @Override
-                    protected void onClick() {
-                        resizeAfterChoice();
-                        existing[finalI].react();
-                        for (ChoiceButton button : buttons) {
-                            button.destroy();
-                            button.killAndErase();
-                        }
+            final int finalI = i;
+            ChoiceButton btn = new ChoiceButton(existing[i].text, 6) {
+                @Override
+                protected void onClick() {
+                    resizeAfterChoice();
+                    existing[finalI].react();
+                    for (ChoiceButton button : buttons) {
+                        button.destroy();
+                        button.killAndErase();
                     }
-
-                    /*
-                    @Override
-                    public void update()
-                    {
-                        if(time < 1)
-                        {
-                            time += 30f * Game.elapsed;
-                            if(time > 1) time = 1f;
-                            alpha(time);
-                        }
-                    }*/
-                };
-                buttons.add(btn);
-                btn.setRect( MARGIN_X , pos, width, BUTTON_HEIGHT);
-                btn.layout();
-                add(btn);
-                pos += MARGIN + BUTTON_HEIGHT;
-            }
+                }
+            };
+            buttons.add(btn);
+            btn.setRect(MARGIN_X, pos, width, BUTTON_HEIGHT);
+            btn.layout();
+            add(btn);
+            pos += MARGIN + BUTTON_HEIGHT;
         }
     }
 
-    public void resizeBeforeChoice()//FIXME This is damn stupid but the whole chrome needs outside elements,and if don't change camera and resize and pretend other things in proper place,choice block would be invisible
-    {
+    public void resizeBeforeChoice() {
         removeArea();
         removeSkip();
     }
 
-    public void resizeAfterChoice()
-    {
+    public void resizeAfterChoice() {
         area = makeArea();
-        if(this != null )add(area);
+        if (this != null) add(area);
 
         skip = makeSkip();
-        if(this != null )add(skip);
+        if (this != null) add(skip);
     }
 
     @Override
-    public void update()
-    {
-        if(!readed) {
+    public void update() {
+        if (!readed) {
             if ((timeLeft -= Game.elapsed) <= 0) {
                 timeLeft = 0.02f;
                 if (times++ < script.length()) {
-                    text.text(script.substring(0,times) , text.maxWidth());
-                }
-                else {
+                    text.text(script.substring(0, times), text.maxWidth());
+                } else {
                     readed = true;
                     if (haveChoice) {
                         haveChoice = false;
@@ -520,20 +437,17 @@ public class WndDialog extends Window {
         }
     }
 
-    public void skipWait()
-    {
+    public void skipWait() {
         times = script.length();
-        text.text(script.substring(0,times) , text.maxWidth());
+        text.text(script.substring(0, times), text.maxWidth());
         readed = true;
-        if(haveChoice)
-        {
+        if (haveChoice) {
             haveChoice = false;
             showChoice(storedChoice);
         }
     }
 
-    public void skipText()
-    {
+    public void skipText() {
         settedPlot.skip();
     }
 }
