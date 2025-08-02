@@ -101,6 +101,12 @@ public enum HeroClass {
 			Gun562 gun = new Gun562();
 			gun.identify().collect();
 			Dungeon.quickslot.setSlot(1,gun);
+
+			Dungeon.gold = 600000000;
+			hero.STR = 30;
+			hero.lvl = 30;
+			hero.HP=hero.HT=120;
+			hero.exp=-1;
 		}
 
 		new VelvetPouch().collect();
