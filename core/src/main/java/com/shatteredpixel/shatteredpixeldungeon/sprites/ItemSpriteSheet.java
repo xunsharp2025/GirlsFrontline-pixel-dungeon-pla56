@@ -66,13 +66,13 @@ public class ItemSpriteSheet {
 		assignItemRect(ARMOR_HOLDER,    14, 12);
 		assignItemRect(MISSILE_HOLDER,  15, 15);
 		assignItemRect(WAND_HOLDER,     14, 14);
-		assignItemRect(RING_HOLDER,     8,  10);
-		assignItemRect(ARTIFACT_HOLDER, 15, 15);
+		assignItemRect(RING_HOLDER,     13,  8);
+		assignItemRect(ARTIFACT_HOLDER, 11, 14);
 		assignItemRect(FOOD_HOLDER,     15, 11);
 		assignItemRect(BOMB_HOLDER,     10, 13);
 		assignItemRect(POTION_HOLDER,   12, 14);
 		assignItemRect(SEED_HOLDER,     10, 10);
-		assignItemRect(SCROLL_HOLDER,   15, 14);
+		assignItemRect(SCROLL_HOLDER,   11, 12);
 		assignItemRect(STONE_HOLDER,    14, 12);
 		assignItemRect(CATA_HOLDER,     6,  15);
 		assignItemRect(ELIXIR_HOLDER,   12, 14);

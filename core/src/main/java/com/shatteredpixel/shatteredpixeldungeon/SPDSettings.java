@@ -77,6 +77,8 @@ public class SPDSettings extends GameSettings {
 	public static Boolean landscape(){
 		if (contains(KEY_LANDSCAPE)){
 			return getBoolean(KEY_LANDSCAPE, false);
+		} else if(DeviceCompat.isDesktop()) {
+			return getBoolean(KEY_LANDSCAPE, Game.dispWidth > Game.dispHeight);
 		} else {
 			return null;
 		}
