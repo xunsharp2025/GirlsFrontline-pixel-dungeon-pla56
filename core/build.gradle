@@ -1,0 +1,90 @@
+apply plugin: 'com.android.application'
+
+// Create a variable called keystorePropertiesFile, and initialize it to your
+// keystore.properties file, in the rootProject folder.
+/*def keystorePropertiesFile = rootProject.file("keystore.properties")
+
+// Initialize a new Properties() object called keystoreProperties.
+def keystoreProperties = new Properties()
+
+// Load your keystore.properties file into the keystoreProperties object.
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))*/
+
+android {
+    namespace 'com.gfpixel.gfpixeldungeon'
+    /*signingConfigs {
+        gpd {
+            keyAlias keystoreProperties['keyAlias']public void MagicEffect(int index){
+    switch (index){
+        case 0: // MAGIC_MISSILE
+            // 实现魔法导弹效果，例如造成远程伤害
+            break;
+        case 1: // FROST
+            // 实现冰冻效果，例如减慢敌人速度或造成冻结伤害
+            break;
+        case 2: // FIRE
+            // 实现火焰效果，例如造成持续伤害或点燃敌人
+            break;
+        case 3: // CORROSION
+            // 实现腐蚀效果，例如造成持续伤害并减少敌人防御
+            break;
+        case 4: // FOLIAGE
+            // 实现植物效果，例如治疗或增加躲避率
+            break;
+        case 5: // FORCE
+            // 实现力量效果，例如推开敌人或增加攻击力
+            break;
+        case 6: // BEACON
+            // 实现信标效果，例如标记位置或提供视野
+            break;
+        case 7: // SHADOW
+            // 实现阴影效果，例如增加隐身或减少敌人命中
+            break;
+        case 8: // RAINBOW
+            // 实现彩虹效果，例如随机应用多种效果或增加幸运
+            break;
+        default:
+            // 处理无效的索引值
+            break;
+    }
+}
+
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }*/
+    compileSdkVersion 26
+    buildToolsVersion '30.0.2'
+    defaultConfig {
+        resConfigs "en_US", "cs", "tr", "ca", /*"ko",*/ "pl", "it",
+                "eo", "ru", "zh_CN", "de", "fr", "es", "pt", "fi", "hu", "in"
+        minSdkVersion 8
+        //noinspection ExpiredTargetSdkVersion
+        targetSdkVersion 26
+    }
+    buildTypes {
+        debug {
+            applicationIdSuffix ".indev"
+            versionNameSuffix '-DevlopmentVersion'
+            debuggable true
+            jniDebuggable true
+            renderscriptDebuggable true
+            //signingConfig signingConfigs.gpd
+        }
+        release {
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //signingConfig signingConfigs.gpd
+        }
+    }
+}
+
+dependencies {
+    implementation project(':SPD-classes')
+    repositories {
+        google()
+        jcenter()
+    }
+}
