@@ -70,7 +70,7 @@ public class MagesStaff extends MeleeWeapon {
     private static final float STAFF_SCALE_FACTOR = 0.75f;
 
     {
-        image = ItemSpriteSheet.MAGES_STAFF;
+        image = ItemSpriteSheet.G11;
         hitSound = Assets.Sounds.HIT;
         hitSoundPitch = 1.1f;
 

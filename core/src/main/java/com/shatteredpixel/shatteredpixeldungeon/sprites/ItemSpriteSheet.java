@@ -149,17 +149,18 @@ public class ItemSpriteSheet {
 	static{
 		assignItemRect(ANKH,            10, 16);
 		assignItemRect(STYLUS,          12, 13);
-		
+
 		assignItemRect(SEAL,            9,  15);
-		assignItemRect(TORCH,           12, 15);
+		assignItemRect(TORCH,           15, 15);
 		assignItemRect(BEACON,          16, 15);
-		
+
 		assignItemRect(HONEYPOT,        14, 12);
 		assignItemRect(SHATTPOT,        14, 12);
 		assignItemRect(IRON_KEY,        8,  14);
 		assignItemRect(GOLDEN_KEY,      8,  14);
 		assignItemRect(CRYSTAL_KEY,     8,  14);
 		assignItemRect(SKELETON_KEY,    8,  14);
+
 		assignItemRect(MASK,            11,  9);
 		assignItemRect(CROWN,           13,  7);
 		assignItemRect(AMULET,          16, 16);
@@ -200,19 +201,12 @@ public class ItemSpriteSheet {
 	                                                                                    //16 free slots
 
 	private static final int WEP_TIER1      =                               xy(1, 7);   //8 slots
-	public static final int WORN_SHORTSWORD = WEP_TIER1+0;
-	public static final int CUDGEL          = WEP_TIER1+1;
-	public static final int GLOVES          = WEP_TIER1+2;
-	public static final int RAPIER          = WEP_TIER1+3;
-	public static final int DAGGER          = WEP_TIER1+4;
-	public static final int MAGES_STAFF     = WEP_TIER1+5;
-
-
 	//TODO SP1 贴图需要调整
-	public static final int UMP45         	= WEP_TIER1+0;
+	public static final int UMP45         	= WEP_TIER1;
 	public static final int DP             	= WEP_TIER1+1;
 	public static final int M9   = WEP_TIER1+2;
 	public static final int UMP40          	= WEP_TIER1+3;
+	public static final int DAGGER          = WEP_TIER1+4;
 	public static final int G11             = WEP_TIER1+5;
 	public static final int SR3             = WEP_TIER1+6;
 	public static final int CANNON         	= WEP_TIER1+7;
@@ -221,10 +215,17 @@ public class ItemSpriteSheet {
 	public static final int M2HB        	= WEP_TIER1+10;
 
 	static{
-		assignItemRect(WORN_SHORTSWORD, 13, 13);
-		assignItemRect(GLOVES,          12, 16);
-		assignItemRect(DAGGER,          12, 13);
-		assignItemRect(MAGES_STAFF,     15, 16);
+		assignItemRect(UMP45, 	15, 16);
+		assignItemRect(DP,     	15, 16);
+		assignItemRect(M9,   	14, 16);
+		assignItemRect(UMP40, 	16, 16);
+		assignItemRect(DAGGER,  12, 13);
+		assignItemRect(G11,     15, 16);
+		assignItemRect(SR3,     15, 16);
+		assignItemRect(CANNON,  15, 15);
+		assignItemRect(SRS, 	16, 16);
+		assignItemRect(THUNDER, 	15, 15);
+		assignItemRect(M2HB, 	20, 16);
 	}
 
 	private static final int WEP_TIER2      =                               xy(9, 7);   //8 slots
@@ -471,7 +472,7 @@ public class ItemSpriteSheet {
 	public static final int RING_DIAMOND    = RINGS+11;
 	static {
 		for (int i = RINGS; i < RINGS+16; i++)
-			assignItemRect(i, 8, 10);
+			assignItemRect(i, 15, 10);
 	}
 
 	private static final int ARTIFACTS          =                            xy(1, 16);  //32 slots

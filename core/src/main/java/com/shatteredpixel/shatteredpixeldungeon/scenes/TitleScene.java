@@ -112,11 +112,10 @@ public class TitleScene extends PixelScene {
 		StyledButton btnPlay = new StyledButton(GREY_BUTTON, Messages.get(this, "enter")){
 			@Override
 			protected void onClick() {
-				if (GamesInProgress.checkAll().size() == 0){
+				if (GamesInProgress.checkAll().isEmpty()){
 					TitleScene.this.add( new WndStartGame(1) );
 				} else {
 					TitleScene.this.add( new WndSelectGameInProgress() );
-					//GirlsFrontlinePixelDungeon.switchNoFade( StartScene.class );
 				}
 			}
 
@@ -170,7 +169,7 @@ public class TitleScene extends PixelScene {
 		StyledButton btnAbout = new StyledButton(GREY_BUTTON, Messages.get(this, "about")){
 			@Override
 			protected void onClick() {
-				GirlsFrontlinePixelDungeon.switchScene( AboutScene.class );
+				GirlsFrontlinePixelDungeon.switchNoFade( AboutScene.class );
 			}
 		};
 		btnAbout.icon(Icons.get(Icons.SHPX));

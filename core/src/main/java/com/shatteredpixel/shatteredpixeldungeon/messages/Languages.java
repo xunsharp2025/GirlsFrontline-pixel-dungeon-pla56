@@ -24,8 +24,8 @@ package com.shatteredpixel.shatteredpixeldungeon.messages;
 import java.util.Locale;
 
 public enum Languages {
-	ENGLISH("english",      "",   Status.REVIEWED,   null, null),
-	CHINESE("中文",          "zh", Status.INCOMPLETE, new String[]{"Jinkeloid(zdx00793)", "endlesssolitude"}, new String[]{"931451545", "Chronie_Lynn_Iwa", "Fatir", "Fishbone", "HoofBumpBlurryface", "Lery", "Lyn_0401", "Ooooscar", "ShatteredFlameBlast", "SpaceAnchor", "hmdzl001", "leo", "tempest102"});
+	ENGLISH("English","en", Status.INCOMPLETE, null, null),
+	CHINESE("中文",      "",   Status.REVIEWED,new String[]{"Jinkeloid(zdx00793)", "endlesssolitude", "新版少前地牢制作组"}, new String[]{"931451545", "Chronie_Lynn_Iwa", "Fatir", "Fishbone", "HoofBumpBlurryface", "Lery", "Lyn_0401", "Ooooscar", "ShatteredFlameBlast", "SpaceAnchor", "hmdzl001", "leo", "tempest102"});
 
 	public enum Status{
 		//below 80% complete languages are not added.
@@ -79,7 +79,7 @@ public enum Languages {
 			if (lang.code().equals(code))
 				return lang;
 		}
-		return ENGLISH;
+		return CHINESE;
 	}
 
 }
