@@ -33,20 +33,20 @@ public class GhostSprite extends MobSprite {
 		super();
 		
 		texture( Assets.Sprites.GHOST );
-		
-		TextureFilm frames = new TextureFilm( texture, 14, 15 );
-		
+
+		TextureFilm frames = new TextureFilm( texture, 21, 20 );
+
 		idle = new Animation( 5, true );
 		idle.frames( frames, 0, 1 );
-		
+
 		run = new Animation( 10, true );
 		run.frames( frames, 0, 1 );
 
-		attack = new Animation( 10, false );
-		attack.frames( frames, 0, 2, 3 );
+		attack = new Animation( 20, false );
+		attack.frames( frames, 2, 3, 4, 3, 4, 2);
 
 		die = new Animation( 8, false );
-		die.frames( frames, 0, 4, 5, 6, 7 );
+		die.frames( frames, 0, 5, 6, 7 );
 		
 		play( idle );
 	}

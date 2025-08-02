@@ -86,7 +86,7 @@ public class Assets {
 	public static final String WJAEGER		= "weak_jaeger.png";
 	public static final String BRUTE			= "brute.png";
 	public static final String AEGIS		= "aegis.png";
-	public static final String EXCU			= "excutioner.png";
+	public static final String EXCU			= "sprites/boss/excutioner.png";
 
 	public static final String SWARM		= "swarm.png";
 	public static final String GOLYAT		= "golyat.png";

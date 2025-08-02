@@ -313,7 +313,7 @@ public class WndJournal extends WndTabbed {
 				case "Examining":
 					return Icons.get(Icons.MAGNIFY);
 				case "Surprise_Attacks":
-					return new ItemSprite( ItemSpriteSheet.ASSASSINS_BLADE );
+					return new ItemSprite( ItemSpriteSheet.GUA91 );
 				case "Identifying":
 					return new ItemSprite( new ScrollOfIdentify() );
 				case "Food":

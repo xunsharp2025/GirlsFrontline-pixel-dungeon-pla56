@@ -47,28 +47,28 @@ public class GooSprite extends MobSprite {
 
 	public GooSprite() {
 		super();
-		
-		texture( Assets.Sprites.GOO );
-		
-		TextureFilm frames = new TextureFilm( texture, 20, 14 );
-		
-		idle = new Animation( 10, true );
-		idle.frames( frames, 2, 1, 0, 0, 1 );
-		
-		run = new Animation( 15, true );
-		run.frames( frames, 3, 2, 1, 2 );
-		
-		pump = new Animation( 20, true );
-		pump.frames( frames, 4, 3, 2, 1, 0 );
 
-		pumpAttack = new Animation ( 20, false );
-		pumpAttack.frames( frames, 4, 3, 2, 1, 0, 7);
+		texture( Assets.EXCU );
+
+		TextureFilm frames = new TextureFilm( texture, 26, 24 );
+
+		idle = new Animation( 5, true );
+		idle.frames( frames, 0, 0, 0 );
+
+		run = new Animation( 15, true );
+		run.frames( frames, 4, 5, 6, 7, 8, 9 );
+
+		pump = new Animation( 10, true );
+		pump.frames( frames, 0 );
+
+		pumpAttack = new Animation ( 10, false );
+		pumpAttack.frames( frames, 1, 2, 3 );
 
 		attack = new Animation( 10, false );
-		attack.frames( frames, 8, 9, 10 );
-		
-		die = new Animation( 10, false );
-		die.frames( frames, 5, 6, 7 );
+		attack.frames( frames, 1, 2, 3 );
+
+		die = new Animation( 5, false );
+		die.frames( frames, 10, 11, 12 );
 		
 		play(idle);
 
