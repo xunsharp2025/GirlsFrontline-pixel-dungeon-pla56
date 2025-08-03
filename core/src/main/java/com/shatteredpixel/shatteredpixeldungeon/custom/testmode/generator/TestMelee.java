@@ -346,7 +346,7 @@ public class TestMelee extends TestGenerator {
                 placed++;
                 iconButtons.add(btn);
 
-                if (placed == 5) {
+                if (placed == 6) {
                     placed = 0;
                     row++;
                     top = o_tier.bottom() + GAP + (row * (BTN_SIZE + GAP));
