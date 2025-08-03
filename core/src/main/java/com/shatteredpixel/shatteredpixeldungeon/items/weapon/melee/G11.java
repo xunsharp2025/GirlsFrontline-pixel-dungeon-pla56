@@ -312,7 +312,7 @@ public class G11 extends MeleeWeapon {
 
 		@Override
 		public boolean itemSelectable(Item item) {
-			return false;
+			return item instanceof Wand;
 		}
 
 		@Override

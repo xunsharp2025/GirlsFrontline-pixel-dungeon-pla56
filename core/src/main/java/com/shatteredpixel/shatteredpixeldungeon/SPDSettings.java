@@ -80,7 +80,7 @@ public class SPDSettings extends GameSettings {
 		} else if(DeviceCompat.isDesktop()) {
 			return getBoolean(KEY_LANDSCAPE, Game.dispWidth > Game.dispHeight);
 		} else {
-			return null;
+			return getBoolean(KEY_LANDSCAPE, false);
 		}
 	}
 	public static void powerSaver( boolean value ){

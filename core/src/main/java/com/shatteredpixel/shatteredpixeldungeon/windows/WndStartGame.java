@@ -286,13 +286,13 @@ public class WndStartGame extends Window {
 			super.layout();
 
 			avatar.x = x;
-			avatar.y = y + (height - avatar.height() - name.width() - 2)/2f;
+			avatar.y = y + (height - avatar.height() - name.width() - 2)/3f;
 			PixelScene.align(avatar);
 
 			name.setPos(x + (avatar.width() - name.width())/2f, avatar.y + avatar.height() + 2);
 			PixelScene.align(name);
 
-			heroItem.setPos(x + width - BTN_SIZE, y);
+			heroItem.setPos(x + width - BTN_SIZE, avatar.height+10);
 			heroLoadout.setPos(x + width - BTN_SIZE, heroItem.bottom());
 			heroMisc.setPos(x + width - BTN_SIZE, heroLoadout.bottom());
 			heroSubclass.setPos(x + width - BTN_SIZE, heroMisc.bottom());
@@ -326,7 +326,7 @@ public class WndStartGame extends Window {
 							heroMisc.icon(Icons.get(Icons.DEPTH));
 							break;
 						case HUNTRESS:
-							heroItem.icon(new ItemSprite(ItemSpriteSheet.BOOMERANG, null));
+							heroItem.icon(new ItemSprite(ItemSpriteSheet.SPIRIT_BOW, null));
 							heroLoadout.icon(new ItemSprite(ItemSpriteSheet.M79, null));
 							heroMisc.icon(new ItemSprite(ItemSpriteSheet.DART, null));
 							break;

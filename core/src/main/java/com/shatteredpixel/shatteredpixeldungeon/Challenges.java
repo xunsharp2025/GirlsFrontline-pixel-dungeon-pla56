@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon;
 
+import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
 import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 
@@ -69,6 +70,10 @@ public class Challenges {
 
 		if (Dungeon.isChallenged(NO_HERBALISM) && item instanceof Dewdrop){
 			return true;
+		}
+
+		if (Dungeon.isChallenged(INFLATION)){
+            return item instanceof Ankh;
 		}
 
 		return false;

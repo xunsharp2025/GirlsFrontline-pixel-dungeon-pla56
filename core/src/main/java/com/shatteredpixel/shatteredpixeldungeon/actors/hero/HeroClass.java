@@ -55,6 +55,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
@@ -101,6 +102,8 @@ public enum HeroClass {
 			Gun562 gun = new Gun562();
 			gun.identify().collect();
 			Dungeon.quickslot.setSlot(1,gun);
+
+			new WandOfBlastWave().identify().collect();
 
 			Dungeon.gold = 600000000;
 			hero.STR = 30;
