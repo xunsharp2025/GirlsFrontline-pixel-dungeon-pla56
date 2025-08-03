@@ -42,7 +42,12 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Sh
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Waterskin;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.LeatherArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.MailArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.PlateArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.ScaleArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.RedBook;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
@@ -102,6 +107,17 @@ public enum HeroClass {
 			Gun562 gun = new Gun562();
 			gun.identify().collect();
 			Dungeon.quickslot.setSlot(1,gun);
+
+//			ClothArmor.class,
+//					LeatherArmor.class,
+//					MailArmor.class,
+//					ScaleArmor.class,
+//					PlateArmor.class };
+			new ClothArmor().identify().collect();
+			new LeatherArmor().identify().collect();
+			new MailArmor().identify().collect();
+			new ScaleArmor().identify().collect();
+			new PlateArmor().identify().collect();
 
 			new WandOfBlastWave().identify().collect();
 

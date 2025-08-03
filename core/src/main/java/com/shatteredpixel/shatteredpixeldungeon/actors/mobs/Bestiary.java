@@ -30,7 +30,7 @@ public class Bestiary {
 
 	public static ArrayList<Class<? extends Mob>> getMobRotation( int depth ) {
 
-		ArrayList<Class<? extends Mob>> mobs = getRotation( depth % 5 );
+		ArrayList<Class<? extends Mob>> mobs = getRotation( depth );
 		addRareMobs(depth, mobs);
 		swapMobAlts(mobs);
 		Random.shuffle(mobs);
@@ -103,7 +103,7 @@ public class Bestiary {
 				return new ArrayList<>(Arrays.asList(
 						Rat.class, Rat.class, Rat.class, Rat.class, Rat.class,
 						Rat.class, Rat.class, Rat.class, Rat.class, Rat.class));
-			case 2:
+            case 2:
 				//3x rat, 3x gnoll
 				return new ArrayList<>(Arrays.asList(
 						Rat.class, Rat.class, Rat.class,
