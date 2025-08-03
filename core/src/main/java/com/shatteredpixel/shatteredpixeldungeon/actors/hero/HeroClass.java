@@ -39,17 +39,30 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.Smok
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Endure;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.HeroicLeap;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Shockwave;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.BackpackCleaner;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.CustomWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.ImmortalShieldAffecter;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.LevelTeleporter;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.TestBag;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.TimeReverser;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.TrapPlacer;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.WandOfReflectDisintegration;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.LazyTest;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestArmor;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestArtifact;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestMelee;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestMissile;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestPotion;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestRing;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
+import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Waterskin;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.LeatherArmor;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.MailArmor;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.PlateArmor;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.ScaleArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.RedBook;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.PotionBandolier;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.ScrollHolder;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
@@ -60,12 +73,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun561;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun562;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SA.Welrod;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.M9;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.Ump45;
@@ -99,33 +109,51 @@ public enum HeroClass {
 		if (!Challenges.isItemBlocked(i)) i.collect();
 
 		if (DeviceCompat.isDebug()) 	{
-			new Gun561().identify().collect();
-			new RedBook().identify().collect();
-			new ScrollOfMagicMapping().identify().quantity(100).collect();
-			new PotionOfMindVision().identify().quantity(100).collect();
-			new ScrollOfUpgrade().identify().quantity(100).collect();
-			Gun562 gun = new Gun562();
-			gun.identify().collect();
-			Dungeon.quickslot.setSlot(1,gun);
+			CustomWeapon customWeapon = new CustomWeapon();
+			customWeapon.adjustStatus();
+			customWeapon.identify().collect();
 
-//			ClothArmor.class,
-//					LeatherArmor.class,
-//					MailArmor.class,
-//					ScaleArmor.class,
-//					PlateArmor.class };
-			new ClothArmor().identify().collect();
-			new LeatherArmor().identify().collect();
-			new MailArmor().identify().collect();
-			new ScaleArmor().identify().collect();
-			new PlateArmor().identify().collect();
+			new TestBag().collect();
 
-			new WandOfBlastWave().identify().collect();
+			new TrapPlacer().collect();
 
-			Dungeon.gold = 600000000;
-			hero.STR = 30;
-			hero.lvl = 30;
-			hero.HP=hero.HT=120;
-			hero.exp=-1;
+			new TimeReverser().collect();
+
+			new ImmortalShieldAffecter().collect();
+
+			new BackpackCleaner().collect();
+
+			new LevelTeleporter().collect();
+
+			new LazyTest().collect();
+
+			new TestArmor().collect();
+			new TestArtifact().collect();
+			new TestMelee().collect();
+			new TestMissile().collect();
+			new TestRing().collect();
+			new TestPotion().collect();
+			//new PotionBag().collect();
+
+			new ScrollHolder().collect();
+			Dungeon.LimitedDrops.SCROLL_HOLDER.drop();
+
+			new PotionBandolier().collect();
+			Dungeon.LimitedDrops.POTION_BANDOLIER.drop();
+
+			new VelvetPouch().collect();
+			Dungeon.LimitedDrops.VELVET_POUCH.drop();
+
+			new MagicalHolster().collect();
+			Dungeon.LimitedDrops.MAGICAL_HOLSTER.drop();
+
+			Waterskin waterskin = new Waterskin();
+			Dewdrop dewdrop = new Dewdrop();
+			dewdrop.quantity(20);
+			waterskin.collectDew(dewdrop);
+			waterskin.collect();
+
+			new WandOfReflectDisintegration().identify().collect();
 		}
 
 		new VelvetPouch().collect();

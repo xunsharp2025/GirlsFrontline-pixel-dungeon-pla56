@@ -89,11 +89,11 @@ public class Assets {
 	public static final String EXCU			= "sprites/boss/excutioner.png";
 
 	public static final String SWARM		= "swarm.png";
-	public static final String GOLYAT		= "golyat.png";
+	public static final String GOLYAT		= "sprites/girlpd/golyat.png";
 	public static final String JAEGER		= "jaeger.png";
 	public static final String THIEF		= "thief.png";
 	public static final String BANDIT		= "bandit.png";
-	public static final String MG5	    = "mg5.png";
+	public static final String MG5	    = "sprites/girlpd/mg5.png";
 	public static final String URO		= "uro.png";
 
 	public static final String SCOUT			= "scout.png";
@@ -128,15 +128,15 @@ public class Assets {
 	public static final String JUPITER		= "jupiter.png";
 	public static final String TYPHOOTIN	= "typhootin.png";
 
-	public static final String ACYCLOPS		= "acyclops.png";
+	public static final String ACYCLOPS		= "sprites/girlpd/acyclops.png";
 	public static final String SGCYCLOPS		= "sgcyclops.png";
-	public static final String HYDRA		= "hydra.png";
+	public static final String HYDRA		= "sprites/girlpd/hydra.png";
 	public static final String TYPHOON		= "typhoon.png";
 
 	public static final String ELID = "elid.png";
 
 	public static final String RIPPER = "Ripper.png";
-	public static final String GOLYATPLUS		= "golyatplus.png";
+	public static final String GOLYATPLUS		= "sprites/girlpd/golyatplus.png";
 	public static final String JAGUAR = "Jaguar.png";
 	public static final String ELPHELT = "Elphelt.png";
 	public static final String TOW = "tow.png";

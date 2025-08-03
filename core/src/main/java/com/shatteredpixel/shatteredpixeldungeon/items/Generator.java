@@ -346,6 +346,7 @@ public class Generator {
 			WEAPON.probs = new float[]{};
 			
 			WEP_T1.classes = new Class<?>[]{
+					Cannon.class,
 					Ump45.class,
 					G11.class,
                     Welrod.class,
@@ -356,7 +357,7 @@ public class Generator {
 					SRS.class,
 					Thunder.class
 			};
-			WEP_T1.probs = new float[]{ 1, 0, 1, 1, 1, 1, 0, 1, 0.09f };
+			WEP_T1.probs = new float[]{ 0, 1, 0, 1, 1, 1, 1, 0, 1, 0.09f };
 			
 			WEP_T2.classes = new Class<?>[]{
 					M16.class,
@@ -364,7 +365,7 @@ public class Generator {
 					M1903.class,
 					M1a1.class,
 					G36.class,
-					NagantRevolver.class
+					NagantRevolver.class,
 			};
 			WEP_T2.probs = new float[]{ 5, 4, 5, 4, 4, 4 };
 			
