@@ -33,6 +33,13 @@
 		android:fullBackupOnly="true"
 		android:backupAgent=".AndroidBackupHandler">
 		<activity
+			android:name=".ErrorActivity"
+			android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize"
+			android:exported="false"
+			android:screenOrientation="nosensor"
+			android:theme="@style/DungeonTheme"
+			tools:ignore="DiscouragedApi" />
+		<activity
 			android:label="${appName}"
 			android:name=".AndroidLauncher"
 			android:exported="true">
@@ -47,7 +54,15 @@
 			android:screenOrientation="nosensor"
 			android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize">
 		</activity>
-
+		<provider
+			android:name="androidx.core.content.FileProvider"
+			android:authorities="com.ansdomagiclingpixeldungeon.ling.indev.fileprovider"
+			android:exported="false"
+			android:grantUriPermissions="true">
+			<meta-data
+				android:name="android.support.FILE_PROVIDER_PATHS"
+				android:resource="@xml/file_paths" />
+		</provider>
 	</application>
 
 </manifest>

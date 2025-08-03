@@ -43,6 +43,8 @@ import com.watabou.noosa.Game;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Button;
 import com.watabou.utils.FileUtils;
 
+import cat.ereza.customactivityoncrash.config.CaocConfig;
+
 public class AndroidGame extends AndroidApplication {
 	
 	public static AndroidApplication instance;
@@ -52,7 +54,11 @@ public class AndroidGame extends AndroidApplication {
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		CaocConfig.Builder.create()
+				.backgroundMode(CaocConfig.BACKGROUND_MODE_SHOW_CUSTOM) //default: CaocConfig.BACKGROUND_MODE_SHOW_CUSTOM
+				.minTimeBetweenCrashesMs(2000) //default: 3000
+				.errorActivity(ErrorActivity.class) //default: null (default error activity)
+				.apply();
 		//there are some things we only need to set up on first launch
 		if (instance == null) {
 
