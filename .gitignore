@@ -12,6 +12,8 @@
 build/
 release/
 
+*.so
+
 # Build output files
 core/debug/
 core/release/

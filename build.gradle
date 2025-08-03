@@ -10,6 +10,11 @@ buildscript {
 }
 
 allprojects {
+    ext {
+        appAndroidCompileSDK = 34
+        appAndroidMinSDK = 14
+        appAndroidTargetSDK = 33
+    }
     repositories {
         google()
         mavenCentral()

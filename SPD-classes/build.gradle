@@ -1,8 +1,7 @@
 apply plugin: 'com.android.library'
 android {
     namespace 'com.gfpixel.gfpixeldungeon'
-    compileSdkVersion 26
-    buildToolsVersion '28.0.3'
+    compileSdk appAndroidCompileSDK
 }
 dependencies {
 }

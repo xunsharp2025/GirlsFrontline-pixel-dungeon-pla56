@@ -15,6 +15,7 @@ import com.gfpixel.gfpixeldungeon.sprites.MissileSprite;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
+import com.watabou.utils.ColorMath;
 
 import java.util.ArrayList;
 
@@ -29,6 +30,10 @@ public class ShootGun extends MeleeWeapon {
     public Item missileItem = new Food();
     public int curCharges = 999;
     public int maxCharges = 999;
+
+    public int coolDown;
+
+    public int altCooldown = 5;
 
     //TODO 用于渲染子弹法杖特效
     public int effectIndex = 0;
@@ -264,14 +269,29 @@ public class ShootGun extends MeleeWeapon {
         return super.random();
     }
 
+    public static final String CURCHAGE = "curchage";
+    public static final String MAXCHARGE = "maxcharge";
+
+    public static final String COOLDOWN = "cooldown";
+
+    public static final String ALTCOODWON = "altcoodwon";
+
     @Override
     public void storeInBundle(Bundle bundle) {
+        bundle.put(CURCHAGE,curCharges);
+        bundle.put(MAXCHARGE,maxCharges);
+        bundle.put(COOLDOWN,coolDown);
+        bundle.put(ALTCOODWON,altCooldown);
         //存储数据
         super.storeInBundle(bundle);
     }
 
     @Override
     public void restoreFromBundle(Bundle bundle) {
+        curCharges = bundle.getInt(CURCHAGE);
+        maxCharges = bundle.getInt(MAXCHARGE);
+        coolDown = bundle.getInt(COOLDOWN);
+        altCooldown = bundle.getInt(ALTCOODWON);
         //读取数据
         super.restoreFromBundle(bundle);
     }
