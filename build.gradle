@@ -13,7 +13,7 @@ allprojects {
 
     ext {
         appName = 'GirlFront Pixel Dungeon'
-        appPackageName = 'com.gfpixel.gfpixeldungeon.bason123'
+        appPackageName = 'com.ngfpixel.gfchemistrypixeldungeon'
 
         appVersionCode = 628
         appVersionName = '0.5.2-baseon1.2.3'
@@ -22,7 +22,7 @@ allprojects {
 
         appAndroidCompileSDK = 34
         appAndroidMinSDK = 19
-        appAndroidTargetSDK = 31
+        appAndroidTargetSDK = 34
 
         gdxVersion = '1.10.0'
         gdxControllersVersion = '2.2.1'
