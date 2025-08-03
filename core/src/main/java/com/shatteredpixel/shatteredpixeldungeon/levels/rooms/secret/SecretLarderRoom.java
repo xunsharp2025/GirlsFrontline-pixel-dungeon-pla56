@@ -21,10 +21,13 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Challenges.NO_FOOD;
+
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.ChargrilledMeat;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Maccol;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Pasty;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
@@ -61,7 +64,7 @@ public class SecretLarderRoom extends SecretRoom {
 		while (extraFood > 0){
 			Food food;
 			if (extraFood >= Hunger.STARVING){
-				food = new Pasty();
+				food = Dungeon.isChallenged(NO_FOOD) ? new Maccol() : new Pasty();
 				extraFood -= Hunger.STARVING;
 			} else {
 				food = new ChargrilledMeat();

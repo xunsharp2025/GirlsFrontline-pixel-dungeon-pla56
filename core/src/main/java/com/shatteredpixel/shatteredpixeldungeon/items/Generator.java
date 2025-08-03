@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Challenges.NO_FOOD;
+
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
@@ -43,6 +45,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesi
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.UnstableSpellbook;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Maccol;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Pasty;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
@@ -462,8 +465,9 @@ public class Generator {
 			FOOD.classes = new Class<?>[]{
 					Food.class,
 					Pasty.class,
-					MysteryMeat.class };
-			FOOD.probs = new float[]{ 4, 1, 0 };
+					MysteryMeat.class,
+					Maccol.class};
+			FOOD.probs = new float[]{ 4, Dungeon.isChallenged(NO_FOOD) ? 0 : 1, 0,  Dungeon.isChallenged(NO_FOOD) ? 1 : 0 };
 			
 			RING.classes = new Class<?>[]{
 					RingOfAccuracy.class,

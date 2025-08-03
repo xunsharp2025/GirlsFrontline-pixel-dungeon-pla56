@@ -21,6 +21,10 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Challenges.NO_FOOD;
+
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Maccol;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Pasty;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SeniorSprite;
 import com.watabou.utils.Random;
@@ -30,7 +34,7 @@ public class Senior extends Monk {
 	{
 		spriteClass = SeniorSprite.class;
 
-		loot = new Pasty();
+		loot = Dungeon.isChallenged(NO_FOOD) ? new Maccol() : new Pasty();
 		lootChance = 1f;
 	}
 	

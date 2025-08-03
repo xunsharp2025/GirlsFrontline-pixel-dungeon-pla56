@@ -29,6 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.food.Blandfruit;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.ChargrilledMeat;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.FrozenCarpaccio;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Maccol;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Pasty;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
@@ -448,7 +449,8 @@ public class TestPotion extends TestGenerator {
             case 5: return StewedMeat.class;
             case 6: return FrozenCarpaccio.class;
             case 7: return ChargrilledMeat.class;
-            case 8: default: return Berry.class;
+            case 8: return Berry.class;
+            case 9: default: return Maccol.class;
         }
     }
 
@@ -473,7 +475,7 @@ public class TestPotion extends TestGenerator {
     private int maxIndex(int cate){
         if(cate == 7) return 10;
         if(cate == 9) return 12;
-        if(cate == 10) return 8;
+        if(cate == 10) return 9;
         if(cate == 11) return 12;
         return 11;
     }
