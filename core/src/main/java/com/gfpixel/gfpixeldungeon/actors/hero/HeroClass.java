@@ -23,60 +23,42 @@ package com.gfpixel.gfpixeldungeon.actors.hero;
 
 import com.gfpixel.gfpixeldungeon.Assets;
 import com.gfpixel.gfpixeldungeon.Badges;
-import com.gfpixel.gfpixeldungeon.BuildConfig;
 import com.gfpixel.gfpixeldungeon.Challenges;
 import com.gfpixel.gfpixeldungeon.Dungeon;
-import com.gfpixel.gfpixeldungeon.items.Amulet;
 import com.gfpixel.gfpixeldungeon.items.BrokenSeal;
-import com.gfpixel.gfpixeldungeon.items.Honeypot;
 import com.gfpixel.gfpixeldungeon.items.Item;
-import com.gfpixel.gfpixeldungeon.items.TomeOfMastery;
 import com.gfpixel.gfpixeldungeon.items.armor.ClothArmor;
 //import com.gfpixel.gfpixeldungeon.items.armor.ScaleArmor;
-import com.gfpixel.gfpixeldungeon.items.armor.PlateArmor;
 import com.gfpixel.gfpixeldungeon.items.artifacts.CloakOfShadows;
-import com.gfpixel.gfpixeldungeon.items.artifacts.HornOfPlenty;
-import com.gfpixel.gfpixeldungeon.items.artifacts.MaoQuotation;
-import com.gfpixel.gfpixeldungeon.items.artifacts.UnstableSpellbook;
-import com.gfpixel.gfpixeldungeon.items.bags.MagicalHolster;
-import com.gfpixel.gfpixeldungeon.items.bags.PotionBandolier;
-import com.gfpixel.gfpixeldungeon.items.bags.ScrollHolder;
-import com.gfpixel.gfpixeldungeon.items.bags.VelvetPouch;
+import com.gfpixel.gfpixeldungeon.items.artifacts.RedBook;
 import com.gfpixel.gfpixeldungeon.items.food.Food;
 import com.gfpixel.gfpixeldungeon.items.food.Pasty;
 import com.gfpixel.gfpixeldungeon.items.food.SmallRation;
-import com.gfpixel.gfpixeldungeon.items.potions.PotionOfExperience;
 import com.gfpixel.gfpixeldungeon.items.potions.PotionOfHealing;
 import com.gfpixel.gfpixeldungeon.items.potions.PotionOfInvisibility;
-import com.gfpixel.gfpixeldungeon.items.potions.PotionOfMight;
 import com.gfpixel.gfpixeldungeon.items.potions.PotionOfMindVision;
-import com.gfpixel.gfpixeldungeon.items.potions.PotionOfStrength;
 import com.gfpixel.gfpixeldungeon.items.scrolls.ScrollOfMagicMapping;
-import com.gfpixel.gfpixeldungeon.items.scrolls.ScrollOfMagicalInfusion;
-import com.gfpixel.gfpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
-import com.gfpixel.gfpixeldungeon.items.scrolls.ScrollOfRage;
 import com.gfpixel.gfpixeldungeon.items.scrolls.ScrollOfRecharging;
-import com.gfpixel.gfpixeldungeon.items.scrolls.ScrollOfTerror;
 import com.gfpixel.gfpixeldungeon.items.scrolls.ScrollOfUpgrade;
-import com.gfpixel.gfpixeldungeon.items.stones.StoneOfEnchantment;
 import com.gfpixel.gfpixeldungeon.items.wands.M79;
 import com.gfpixel.gfpixeldungeon.items.wands.WandOfDisintegration;
 import com.gfpixel.gfpixeldungeon.items.wands.WandOfMagicMissile;
-import com.gfpixel.gfpixeldungeon.items.weapon.melee.Cypros;
+import com.gfpixel.gfpixeldungeon.items.wands.WandofNukeBomb;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.G11;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.Gun562;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.SMG.M9;
-import com.gfpixel.gfpixeldungeon.items.weapon.melee.Thunder;
-import com.gfpixel.gfpixeldungeon.items.weapon.melee.UG.Cannon;
-import com.gfpixel.gfpixeldungeon.items.weapon.melee.type561;
-import com.gfpixel.gfpixeldungeon.items.weapon.melee.type562;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.SMG.Ump45;
 import com.gfpixel.gfpixeldungeon.items.weapon.melee.SA.Welrod;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.ShootGun;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.Thunder;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.UG.Cannon;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.Gun561;
+import com.gfpixel.gfpixeldungeon.items.weapon.melee.type562;
 import com.gfpixel.gfpixeldungeon.items.weapon.missiles.Boomerang;
 import com.gfpixel.gfpixeldungeon.items.weapon.missiles.ThrowingKnife;
 import com.gfpixel.gfpixeldungeon.items.weapon.missiles.ThrowingStone;
-import com.gfpixel.gfpixeldungeon.items.weapon.missiles.darts.Dart;
 import com.gfpixel.gfpixeldungeon.messages.Messages;
-import com.gfpixel.gfpixeldungeon.sprites.ItemSpriteSheet;
+import com.watabou.noosa.Game;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Holidays;
 
@@ -135,39 +117,17 @@ public enum HeroClass {
 			new SmallRation().collect();
 		}
 
-		if (BuildConfig.DEBUG) 	{
-			Dungeon.LimitedDrops.POTION_BANDOLIER.drop();
-			Dungeon.LimitedDrops.VELVET_POUCH.drop();
-			Dungeon.LimitedDrops.MAGICAL_HOLSTER.drop();
-			Dungeon.LimitedDrops.SCROLL_HOLDER.drop();
-			new type561().identify().collect();
-			new type562().identify().collect();
+		if (Game.version.contains("DevlopmentVersion")) 	{
+			new Gun561().identify().collect();
+			new RedBook().identify().collect();
 			new Thunder().identify().collect();
 			new Cannon().identify().collect();
 			new ScrollOfMagicMapping().identify().quantity(100).collect();
 			new PotionOfMindVision().identify().quantity(100).collect();
 			new ScrollOfUpgrade().identify().quantity(100).collect();
-			new StoneOfEnchantment().quantity(100).collect();
-			new ScrollOfMagicalInfusion().identify().quantity(100).collect();
-			new ScrollOfPsionicBlast().identify().quantity(100).collect();
-			new ScrollOfTerror().identify().quantity(100).collect();
-			new ScrollOfRage().identify().quantity(100).collect();
-			new WandOfDisintegration().identify().upgrade().collect();
-			new UnstableSpellbook().identify().quantity(1).collect();
-			new PlateArmor().identify().upgrade(100).collect();
-			new MaoQuotation().identify().quantity(1).collect();
-			new Amulet().quantity(114514).collect();
-			new PotionOfHealing().identify().quantity(100).collect();
-			new PotionOfExperience().identify().quantity(100).collect();
-			new PotionOfMight().identify().quantity(100).collect();
-			new PotionOfStrength().identify().quantity(100).collect();
-			new Dart().identify().quantity(100).collect();
-			new PotionBandolier().collect();
-			new VelvetPouch().collect();
-			new MagicalHolster().collect();
-			new ScrollHolder().collect();
-			new Honeypot().quantity(100).collect();
-			new PotionOfInvisibility().identify().quantity(100).collect();
+			Gun562 gun = new Gun562();
+			gun.identify().collect();
+			Dungeon.quickslot.setSlot(1,gun);
 		}
 
 
@@ -199,12 +159,14 @@ public enum HeroClass {
 		stone.identify().quantity(3).collect();
 		Dungeon.quickslot.setSlot(0, stone);
 
-		if (!BuildConfig.DEBUG) {
-			new PotionBandolier().collect();
-			Dungeon.LimitedDrops.POTION_BANDOLIER.drop();
-		}
+//		if (!BuildConfig.DEBUG) {
+//			new PotionBandolier().collect();
+//			Dungeon.LimitedDrops.POTION_BANDOLIER.drop();
+//		}
 
 		new PotionOfHealing().identify();
+
+
 
 	}
 
@@ -219,10 +181,10 @@ public enum HeroClass {
 
 		Dungeon.quickslot.setSlot(0, staff);
 
-		if (!BuildConfig.DEBUG) {
-			new MagicalHolster().collect();
-			Dungeon.LimitedDrops.MAGICAL_HOLSTER.drop();
-		}
+//		if (!BuildConfig.DEBUG) {
+//			new MagicalHolster().collect();
+//			Dungeon.LimitedDrops.MAGICAL_HOLSTER.drop();
+//		}
 		new ScrollOfUpgrade().identify();
 
 
@@ -242,10 +204,10 @@ public enum HeroClass {
 		Dungeon.quickslot.setSlot(0, cloak);
 		Dungeon.quickslot.setSlot(1, knives);
 
-		if (!BuildConfig.DEBUG) {
-			new ScrollHolder().collect();
-			Dungeon.LimitedDrops.SCROLL_HOLDER.drop();
-		}
+//		if (!BuildConfig.DEBUG) {
+//			new ScrollHolder().collect();
+//			Dungeon.LimitedDrops.SCROLL_HOLDER.drop();
+//		}
 		new ScrollOfMagicMapping().identify();
 
 	}
@@ -262,10 +224,10 @@ public enum HeroClass {
 		Dungeon.quickslot.setSlot(0, boomerang);
 		Dungeon.quickslot.setSlot(2, m79);
 
-		if (!BuildConfig.DEBUG) {
-			new VelvetPouch().collect();
-			Dungeon.LimitedDrops.VELVET_POUCH.drop();
-		}
+//		if (!BuildConfig.DEBUG) {
+//			new VelvetPouch().collect();
+//			Dungeon.LimitedDrops.VELVET_POUCH.drop();
+//		}
 		new PotionOfMindVision().identify();
 
 	}

@@ -24,14 +24,8 @@ package com.gfpixel.gfpixeldungeon.messages;
 import java.util.Locale;
 
 public enum Languages {
-	//KOREAN("한국어",      "ko", Status.REVIEWED, null, null),
-
-	//RUSSIAN("русский",      "ru", Status.REVIEWED, new String[]{"ConsideredHamster", "Inevielle", "yarikonline"}, new String[]{"AttHawk46", "HerrGotlieb", "HoloTheWise", "MrXantar", "Shamahan", "roman.yagodin", "un_logic", "Вoвa"}),
-	CHINESE("中文",          "zh", Status.INCOMPLETE, new String[]{"X"}, null ),
-	JAPANESE("日語",          "ja", Status.INCOMPLETE, new String[]{"X"}, null ),
-	//CZECH("čeština",        "cs", Status.REVIEWED, new String[]{"ObisMike"}, new String[]{"AshenShugar", "Buba237", "JStrange", "RealBrofessor", "chuckjirka"}),
-	//CATALAN("català",       "ca", Status.REVIEWED, new String[]{"Illyatwo2"}, null),
-    ENGLISH("english",         "en", Status.INCOMPLETE, new String[]{"X"}, null);
+	ENGLISH("中文-少前",          "", Status.INCOMPLETE, new String[]{"X"}, null ),
+	CHINESE("中文-破碎",          "zh", Status.INCOMPLETE, new String[]{"X"}, null );
 	//SPANISH("español",      "es", Status.UNREVIEWED, new String[]{"Kiroto", "Kohru", "grayscales"}, new String[]{"Alesxanderk", "CorvosUtopy", "Dewstend", "Dyrran", "Fervoreking", "Illyatwo2", "JPCHZ", "airman12", "alfongad", "benzarr410", "ctrijueque", "dhg121", "javifs", "jonismack1", "tres.14159"}),
 	//POLISH("polski",        "pl", Status.UNREVIEWED, new String[]{"Deksippos", "kuadziw", "szymex73"}, new String[]{"Chasseur", "Darden", "MJedi", "MrKukurykpl", "Peperos", "Scharnvirk", "Shmilly", "dusakus", "michaub", "ozziezombie", "szczoteczka22"}),
 	//PORTUGUESE("português", "pt", Status.UNREVIEWED, new String[]{"TDF2001", "matheus208"}, new String[]{"Bigode935", "Chacal.Ex", "ChainedFreaK", "JST", "MadHorus", "Tio P", "ancientorange", "danypr23", "denis.gnl", "ismael.henriques12", "owenreilly", "rafazago", "try31"}),

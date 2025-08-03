@@ -21,9 +21,10 @@
 
 package com.gfpixel.gfpixeldungeon.messages;
 
-import com.gfpixel.gfpixeldungeon.BuildConfig;
 import com.gfpixel.gfpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.gfpixel.gfpixeldungeon.SPDSettings;
+import com.gfpixel.gfpixeldungeon.utils.GLog;
+import com.watabou.noosa.Game;
 import com.watabou.utils.DeviceCompat;
 
 import java.util.Arrays;
@@ -74,6 +75,8 @@ public class Messages {
 			"com.gfpixel.gfpixeldungeon.messages.misc.misc"
 	};
 
+	private static ResourceBundle[] bundles;
+
 	static{
 		setup(SPDSettings.language());
 	}
@@ -83,13 +86,17 @@ public class Messages {
 		Messages.lang = lang;
 		Locale locale = new Locale(lang.code());
 
-		for (String file : prop_files) {
-			ResourceBundle bundle = ResourceBundle.getBundle( file, locale );
+		bundles = new ResourceBundle[prop_files.length];
+		for (int i = 0; i < prop_files.length; i++) {
+			bundles[i] = ResourceBundle.getBundle(prop_files[i], locale);
+		}
+
+		for (ResourceBundle bundle : bundles) {
 			Enumeration<String> keys = bundle.getKeys();
 			while (keys.hasMoreElements()) {
 				String key = keys.nextElement();
 				String value = bundle.getString(key);
-				
+
 				if (DeviceCompat.usesISO_8859_1()) {
 					try {
 						value = new String(value.getBytes("ISO-8859-1"), "UTF-8");
@@ -117,33 +124,54 @@ public class Messages {
 		return get(o.getClass(), k, args);
 	}
 
-	public static String get(Class c, String k, Object...args){
+	public static String get(Class c, String k, Object...args) {
+		return get(c, k, null, args);
+	}
+
+	private static String get(Class c, String k, String baseName, Object...args){
 		String key;
 		if (c != null){
-			key = c.getName().replace("com.gfpixel.gfpixeldungeon.", "");
+			key = c.getName();
+			key = key.replace("com.gfpixel.gfpixeldungeon.", "");
 			key += "." + k;
 		} else
 			key = k;
 
-		if (strings.containsKey(key.toLowerCase(Locale.ENGLISH))){
-			if (args.length > 0) return format(strings.get(key.toLowerCase(Locale.ENGLISH)), args);
-			else return strings.get(key.toLowerCase(Locale.ENGLISH));
-		} else {
+		String value = getFromBundle(key.toLowerCase(Locale.CHINA));
+		if (value != null){
+			if (args.length > 0) return format(value, args);
+			else return value;
+		}  else {
+			//Use baseName so the missing string is clear what exactly needs replacing. Otherwise, it just says java.lang.Object.[key]
+			if (baseName == null) {
+				baseName = key;
+				//转换为小写
+				baseName = baseName.toLowerCase();
+			}
 			//this is so child classes can inherit properties from their parents.
 			//in cases where text is commonly grabbed as a utility from classes that aren't mean to be instantiated
 			//(e.g. flavourbuff.dispTurns()) using .class directly is probably smarter to prevent unnecessary recursive calls.
 			if (c != null && c.getSuperclass() != null){
-				return get(c.getSuperclass(), k, args);
+				return get(c.getSuperclass(), k, baseName, args);
 			} else {
-				if (BuildConfig.DEBUG)	{
-					return key;
+				if (Game.version.contains("DevlopmentVersion")) {
+					System.out.println("Missing translation: " + baseName);
 				}
-				return "!!!NO TEXT FOUND!!!";
+				return "Ms:"+baseName;
 			}
 		}
 	}
 
-
+	private static String getFromBundle(String key){
+		String result;
+		for (ResourceBundle b : bundles){
+			if (b.containsKey(key)){
+				result = b.getString(key);
+				return result;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * String Utility Methods
