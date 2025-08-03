@@ -52,6 +52,8 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.CavesLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CityBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CityLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.DeadEndLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.DeepCaveBossLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.DeepCaveLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.HallsBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.HallsLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.LastLevel;
@@ -288,12 +290,21 @@ public class Dungeon {
 		case 22:
 		case 23:
 		case 24:
-			level = new HallsLevel();
+			level = new DeepCaveLevel();
 			break;
 		case 25:
-			level = new HallsBossLevel();
+			level = new DeepCaveBossLevel();
 			break;
 		case 26:
+		case 27:
+		case 28:
+		case 29:
+			level = new HallsLevel();
+			break;
+		case 30:
+			level = new HallsBossLevel();
+			break;
+		case 31:
 			level = new LastLevel();
 			break;
 		default:

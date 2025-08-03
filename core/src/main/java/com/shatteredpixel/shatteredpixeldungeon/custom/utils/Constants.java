@@ -3,7 +3,7 @@ package com.shatteredpixel.shatteredpixeldungeon.custom.utils;
 import com.watabou.noosa.Game;
 
 public class Constants {
-    public static final int MAX_DEPTH = 26;
+    public static final int MAX_DEPTH = 31;
 
     //public static Group parent = Dungeon.hero.sprite.parent;
 

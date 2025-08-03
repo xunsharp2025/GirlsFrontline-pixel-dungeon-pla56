@@ -291,4 +291,14 @@ public class BuffIndicator extends Component {
 			heroInstance.needsRefresh = true;
 		}
 	}
+	private static BuffIndicator bossInstance;
+
+	public static void refreshBoss(){
+		if (bossInstance != null) {
+			bossInstance.needsRefresh = true;
+		}
+	}
+	public static void setBossInstance(BuffIndicator boss){
+		bossInstance = boss;
+	}
 }

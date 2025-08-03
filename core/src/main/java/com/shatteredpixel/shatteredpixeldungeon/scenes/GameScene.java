@@ -1203,7 +1203,7 @@ public class GameScene extends PixelScene {
 				InterlevelScene.noStory = true;
 				GamesInProgress.selectedClass = Dungeon.hero.heroClass;
 				GamesInProgress.curSlot = GamesInProgress.firstEmpty();
-				GirlsFrontlinePixelDungeon.scene().add( new WndStartGame(1) );
+				GirlsFrontlinePixelDungeon.scene().addToFront( new WndStartGame(1) );
 			}
 
 			@Override

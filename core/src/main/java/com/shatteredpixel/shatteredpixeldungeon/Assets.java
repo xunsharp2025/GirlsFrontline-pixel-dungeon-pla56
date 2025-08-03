@@ -72,7 +72,7 @@ public class Assets {
 	public static final String PYRO		= "pyro.png";
 	public static final String NOEL			= "noel.png";
 	public static final String P7			= "p7.png";
-	public static final String FNC		= "fnc.png";
+	public static final String FNC		= "sprites/girlpd/fnc.png";
 	public static final String KEEPER		= "shopkeeper.png";
 	public static final String SAIGA		= "saiga.png";
 	public static final String STAR		= "star.png";
@@ -81,27 +81,27 @@ public class Assets {
 
 	public static final String DINER			= "dinergate.png";
 	public static final String SPRING			= "springfield.png";
-	public static final String PROWLER		= "prowler.png";
+	public static final String PROWLER		= "sprites/girlpd/prowler.png";
+	public static final String BRUTE			= "sprites/girlpd/brute.png";
 	public static final String STG		= "stg.png";
 	public static final String WJAEGER		= "weak_jaeger.png";
-	public static final String BRUTE			= "brute.png";
 	public static final String AEGIS		= "aegis.png";
 	public static final String EXCU			= "sprites/boss/excutioner.png";
 
-	public static final String SWARM		= "swarm.png";
+	public static final String SWARM		= "sprites/girlpd/swarm.png";
 	public static final String GOLYAT		= "sprites/girlpd/golyat.png";
 	public static final String JAEGER		= "jaeger.png";
 	public static final String THIEF		= "thief.png";
 	public static final String BANDIT		= "bandit.png";
 	public static final String MG5	    = "sprites/girlpd/mg5.png";
-	public static final String URO		= "uro.png";
+	public static final String URO		= "sprites/boss/uro.png";
 
 	public static final String SCOUT			= "scout.png";
-	public static final String VESPID		= "vespid.png";
+	public static final String VESPID		= "sprites/girlpd/vespid.png";
 	public static final String SVESPID		= "shieldvespid.png";
 	public static final String SPINNER		= "spinner.png";
 	public static final String NEMEUM = "nemeum.png";
-	public static final String GAGER		= "gager.png";
+	public static final String GAGER		= "sprites/boss/gager.png";
 
 	public static final String WRAITH		= "wraith.png";
 	public static final String ELEMENTAL	= "elemental.png";
@@ -365,7 +365,7 @@ public class Assets {
 		public static final String GNOLL    = "sprites/gnoll.png";
 		public static final String CRAB     = "sprites/crab.png";
 		public static final String GOO      = "sprites/goo.png";
-		public static final String SWARM    = "sprites/swarm.png";
+		public static final String SWARM    = "sprites/girlpd/swarm.png";
 		public static final String SKELETON = "sprites/skeleton.png";
 		public static final String SHAMAN   = "sprites/shaman.png";
 		public static final String THIEF    = "sprites/thief.png";

@@ -37,6 +37,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.traps.FlockTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GrimTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GrippingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.PoisonDartTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ShockingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.TeleportationTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.WarpingTrap;
@@ -151,6 +152,8 @@ public class TrapsRoom extends SpecialRoom {
 			{PoisonDartTrap.class, FlashingTrap.class, ExplosiveTrap.class},
 			//city
 			{WarpingTrap.class, FlashingTrap.class, DisintegrationTrap.class},
+			//recave
+			{GrimTrap.class, DisintegrationTrap.class, ShockingTrap.class},
 			//halls, muahahahaha
 			{GrimTrap.class}
 	};

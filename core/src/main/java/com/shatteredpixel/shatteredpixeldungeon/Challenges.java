@@ -24,6 +24,10 @@ package com.shatteredpixel.shatteredpixeldungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
 import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Maccol;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
 
 public class Challenges {
 
@@ -68,6 +72,15 @@ public class Challenges {
 
 	public static boolean isItemBlocked( Item item ){
 
+		if (Dungeon.isChallenged(NO_FOOD)){
+			if (item instanceof Food) {
+				if (!(item instanceof SmallRation) && !(item instanceof Maccol)) {
+					return true;
+				}
+			} else if (item instanceof HornOfPlenty){
+				return true;
+			}
+		}
 		if (Dungeon.isChallenged(NO_HERBALISM) && item instanceof Dewdrop){
 			return true;
 		}

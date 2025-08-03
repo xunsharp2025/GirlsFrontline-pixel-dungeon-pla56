@@ -101,8 +101,8 @@ public class Bestiary {
 			case 1:
 				//10x rat
 				return new ArrayList<Class<? extends Mob>>(Arrays.asList(
-						Rat.class, Rat.class, Rat.class, Rat.class, Rat.class,
-						Rat.class, Rat.class, Rat.class, Rat.class, Rat.class));
+						Rat.class, Rat.class, Rat.class, Rat.class, Rat.class, Rat.class,
+						Snake.class,Snake.class));
             case 2:
 				//3x rat, 3x gnoll
 				return new ArrayList<>(Arrays.asList(

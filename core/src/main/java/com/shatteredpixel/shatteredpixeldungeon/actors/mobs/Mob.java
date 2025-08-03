@@ -87,7 +87,9 @@ public abstract class Mob extends Char {
 	}
 	
 	private static final String	TXT_DIED	= "You hear something died in the distance";
-	
+	public boolean haveToBleed() {
+		return true;
+	}
 	protected static final String TXT_NOTICE1	= "?!";
 	protected static final String TXT_RAGE		= "#$%^";
 	protected static final String TXT_EXP		= "%+dEXP";

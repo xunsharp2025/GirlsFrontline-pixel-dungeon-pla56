@@ -156,9 +156,7 @@ public class ItemSpriteSheet {
 
 		assignItemRect(HONEYPOT,        14, 12);
 		assignItemRect(SHATTPOT,        14, 12);
-		assignItemRect(IRON_KEY,        8,  14);
-		assignItemRect(GOLDEN_KEY,      8,  14);
-		assignItemRect(CRYSTAL_KEY,     8,  14);
+
 		assignItemRect(SKELETON_KEY,    8,  14);
 
 		assignItemRect(MASK,            11,  9);

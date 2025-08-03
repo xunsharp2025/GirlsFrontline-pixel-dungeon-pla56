@@ -58,6 +58,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.En
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Monk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Snake;
+import com.shatteredpixel.shatteredpixeldungeon.custom.utils.Constants;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CheckedCell;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
@@ -659,7 +660,8 @@ public class Hero extends Char {
 		
 		checkVisibleMobs();
 		BuffIndicator.refreshHero();
-		
+		BuffIndicator.refreshBoss();
+
 		if (paralysed > 0) {
 			
 			curAction = null;
@@ -1481,7 +1483,7 @@ public class Hero extends Char {
 			curAction = new HeroAction.Unlock( cell );
 			
 		} else if ((cell == Dungeon.level.exit || Dungeon.level.map[cell] == Terrain.EXIT || Dungeon.level.map[cell] == Terrain.UNLOCKED_EXIT)
-				&& Dungeon.depth < 26) {
+				&& Dungeon.depth < Constants.MAX_DEPTH) {
 			
 			curAction = new HeroAction.Descend( cell );
 			

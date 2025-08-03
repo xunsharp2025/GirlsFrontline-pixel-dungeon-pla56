@@ -29,6 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.Ratmogrify
 import com.shatteredpixel.shatteredpixeldungeon.items.KingsCrown;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.FncSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.RatKingSprite;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndInfoArmorAbility;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
@@ -38,7 +39,7 @@ import com.watabou.utils.Callback;
 public class RatKing extends NPC {
 
 	{
-		spriteClass = RatKingSprite.class;
+		spriteClass = FncSprite.class;
 		
 		state = SLEEPING;
 	}
@@ -158,7 +159,7 @@ public class RatKing extends NPC {
 	
 	@Override
 	public String description() {
-		return ((RatKingSprite)sprite).festive ?
+		return ((FncSprite)sprite).festive ?
 				Messages.get(this, "desc_festive")
 				: super.description();
 	}

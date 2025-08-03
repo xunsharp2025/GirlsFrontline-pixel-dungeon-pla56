@@ -46,8 +46,6 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
-import com.watabou.noosa.RenderedText;
-
 import com.watabou.noosa.ui.Component;
 import com.watabou.utils.DeviceCompat;
 
@@ -124,7 +122,7 @@ public class WndStartGame extends Window {
 					Icons.get( SPDSettings.challenges() > 0 ? Icons.CHALLENGE_ON :Icons.CHALLENGE_OFF)){
 				@Override
 				protected void onClick() {
-					GirlsFrontlinePixelDungeon.scene().add(new WndChallenges(SPDSettings.challenges(), true) {
+					GirlsFrontlinePixelDungeon.scene().addToFront(new WndChallenges(SPDSettings.challenges(), true) {
 						public void onBackPressed() {
 							super.onBackPressed();
 							icon( Icons.get( SPDSettings.challenges() > 0 ?
@@ -235,7 +233,7 @@ public class WndStartGame extends Window {
 				@Override
 				protected void onClick() {
 					if (cl == null) return;
-					GirlsFrontlinePixelDungeon.scene().add(new WndMessage(Messages.get(cl, cl.name() + "_desc_item")));
+					GirlsFrontlinePixelDungeon.scene().addToFront(new WndMessage(Messages.get(cl, cl.name() + "_desc_item")));
 				}
 			};
 			heroItem.setSize(BTN_SIZE, BTN_SIZE);
@@ -245,7 +243,7 @@ public class WndStartGame extends Window {
 				@Override
 				protected void onClick() {
 					if (cl == null) return;
-					GirlsFrontlinePixelDungeon.scene().add(new WndMessage(Messages.get(cl, cl.name() + "_desc_loadout")));
+					GirlsFrontlinePixelDungeon.scene().addToFront(new WndMessage(Messages.get(cl, cl.name() + "_desc_loadout")));
 				}
 			};
 			heroLoadout.setSize(BTN_SIZE, BTN_SIZE);
@@ -255,7 +253,7 @@ public class WndStartGame extends Window {
 				@Override
 				protected void onClick() {
 					if (cl == null) return;
-					GirlsFrontlinePixelDungeon.scene().add(new WndMessage(Messages.get(cl, cl.name() + "_desc_misc")));
+					GirlsFrontlinePixelDungeon.scene().addToFront(new WndMessage(Messages.get(cl, cl.name() + "_desc_misc")));
 				}
 			};
 			heroMisc.setSize(BTN_SIZE, BTN_SIZE);
@@ -269,7 +267,7 @@ public class WndStartGame extends Window {
 					for (HeroSubClass sub : cl.subClasses()){
 						msg += "\n\n" + sub.desc();
 					}
-					GirlsFrontlinePixelDungeon.scene().add(new WndMessage(msg));
+					GirlsFrontlinePixelDungeon.scene().addToFront(new WndMessage(msg));
 				}
 			};
 			heroSubclass.setSize(BTN_SIZE, BTN_SIZE);
