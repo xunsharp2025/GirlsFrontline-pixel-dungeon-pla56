@@ -7,10 +7,13 @@ android {
 
     sourceSets.main.assets.srcDirs = [new File(project(':core').projectDir, "/src/main/assets")]
 
+
+    
     defaultConfig {
         manifestPlaceholders = [appName:appName]
         applicationId appPackageName
-
+        //接入多Dex,解决代码方法超过65535的问题
+        multiDexEnabled true
         versionCode appVersionCode
         versionName appVersionName
 
