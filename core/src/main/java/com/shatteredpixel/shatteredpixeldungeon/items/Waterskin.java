@@ -83,9 +83,9 @@ public class Waterskin extends Item {
 		super.execute( hero, action );
 
 		if (action.equals( AC_DRINK )) {
-
-			if (volume > 0) {
-				
+			if(hero.HP == hero.HT){
+				GLog.w(Messages.get(this, "health_is_full"));
+			}else if (volume > 0) {
 				float missingHealthPercent = 1f - (hero.HP / (float)hero.HT);
 
 				int curShield = 0;
@@ -114,8 +114,6 @@ public class Waterskin extends Item {
 
 					updateQuickslot();
 				}
-
-
 			} else {
 				GLog.w( Messages.get(this, "empty") );
 			}
