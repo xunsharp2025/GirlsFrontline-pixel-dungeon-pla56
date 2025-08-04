@@ -109,11 +109,17 @@ public enum HeroClass {
 		i = new Food();
 		if (!Challenges.isItemBlocked(i)) i.collect();
 
-		if (DeviceCompat.isDebug()) 	{
+		new VelvetPouch().collect();
+		Dungeon.LimitedDrops.VELVET_POUCH.drop();
+
+		Waterskin waterskin = new Waterskin();
+		waterskin.collect();
+
+		if (DeviceCompat.isDebug()){
 			CustomWeapon customWeapon = new CustomWeapon();
 			customWeapon.adjustStatus();
 			customWeapon.identify().collect();
-
+			
 			new TestBag().collect();
 
 			new TrapPlacer().collect();
@@ -134,7 +140,6 @@ public enum HeroClass {
 			new TestMissile().collect();
 			new TestRing().collect();
 			new TestPotion().collect();
-			//new PotionBag().collect();
 
 			new ScrollHolder().collect();
 			Dungeon.LimitedDrops.SCROLL_HOLDER.drop();
@@ -148,20 +153,10 @@ public enum HeroClass {
 			new MagicalHolster().collect();
 			Dungeon.LimitedDrops.MAGICAL_HOLSTER.drop();
 
-			Waterskin waterskin = new Waterskin();
-			Dewdrop dewdrop = new Dewdrop();
-			dewdrop.quantity(20);
-			waterskin.collectDew(dewdrop);
-			waterskin.collect();
+			waterskin.fill();
 
 			new WandOfReflectDisintegration().identify().collect();
 		}
-
-		new VelvetPouch().collect();
-		Dungeon.LimitedDrops.VELVET_POUCH.drop();
-
-		Waterskin waterskin = new Waterskin();
-		waterskin.collect();
 
 		new ScrollOfIdentify().identify();
 
