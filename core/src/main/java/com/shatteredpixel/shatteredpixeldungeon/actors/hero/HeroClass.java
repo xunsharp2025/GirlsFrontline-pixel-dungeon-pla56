@@ -147,9 +147,6 @@ public enum HeroClass {
 			new PotionBandolier().collect();
 			Dungeon.LimitedDrops.POTION_BANDOLIER.drop();
 
-			new VelvetPouch().collect();
-			Dungeon.LimitedDrops.VELVET_POUCH.drop();
-
 			new MagicalHolster().collect();
 			Dungeon.LimitedDrops.MAGICAL_HOLSTER.drop();
 
