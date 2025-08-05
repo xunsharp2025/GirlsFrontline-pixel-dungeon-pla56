@@ -7,17 +7,28 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.PathFinder;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
+
+import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;
 
 public class Gun562 extends ShootGun {
+    protected Charger charger=null;
+    public float partialCharge = 0f;
 
     {
         curCharges = 1;
@@ -29,11 +40,21 @@ public class Gun562 extends ShootGun {
         needEquip = false;
     }
 
+    private static final String CUR_CHARGES         = "curCharges";
+    private static final String PARTIALCHARGE       = "partialCharge";
+
     @Override
-    public ArrayList<String> actions(Hero hero) {
-        ArrayList<String> actions = super.actions(hero);
-        actions.remove(AC_RELOAD);
-        return actions;
+    public void storeInBundle( Bundle bundle ) {
+        super.storeInBundle( bundle );
+        bundle.put( CUR_CHARGES, curCharges );
+        bundle.put( PARTIALCHARGE , partialCharge );
+    }
+    
+    @Override
+    public void restoreFromBundle( Bundle bundle ) {
+        super.restoreFromBundle( bundle );
+        curCharges = bundle.getInt( CUR_CHARGES );
+        partialCharge = bundle.getFloat( PARTIALCHARGE );
     }
 
     @Override
@@ -115,33 +136,124 @@ public class Gun562 extends ShootGun {
     }
 
     @Override
-    public void activate(Char ch) {
-        if (chargeBuff == null) {
-            chargeBuff = new ChargeBuff();
+    public boolean collect( Bag container ) {
+        if (super.collect( container )) {
+            if (container.owner != null) {
+                if (charger == null) {
+                    charger = new Charger();
+                }
+                charger.attachTo(container.owner);
+
+                if (container instanceof MagicalHolster){
+                    charger.setScaleFactor(((MagicalHolster) container).HOLSTER_SCALE_FACTOR);
+                }
+            }
+            return true;
+        } else {
+            return false;
         }
-        chargeBuff.attachTo(ch);
+    }
+
+    @Override
+    public ArrayList<String> actions(Hero hero) {
+        ArrayList<String> actions = super.actions(hero);
+        actions.remove(AC_RELOAD);
+        return actions;
+    }
+
+    @Override
+    public void execute(Hero hero,String action) {
+        if(action.equals(AC_SHOOT)){
+            if(curCharges < 1){
+                GLog.n(Messages.get(this, "empty"));
+            }else{
+                curUser = hero;
+                curItem = this;
+                GameScene.selectCell(zapper);
+            }
+        }else{
+            super.execute(hero,action);
+        }
+    }
+
+    @Override
+    public void activate(Char owner) {
+        if (charger == null) {
+            charger = new Charger();
+        }
+        charger.attachTo(owner);
     }
 
     @Override
     public void onDetach( ) {
-        ChargeBuff chargeBuff = curUser.buff(ChargeBuff.class);
-        if (chargeBuff != null && chargeBuff == this.chargeBuff) {
-            chargeBuff.detach();
+        if(charger != null){
+            charger.detach();
+            charger = null;
         }
     }
 
-    public static class ChargeBuff extends Buff {
+    public class Charger extends Buff {
+        private static final float BASE_CHARGE_DELAY = 10f;
+        private static final float SCALING_CHARGE_ADDITION = 40f;
+        private static final float NORMAL_SCALE_FACTOR = 0.875f;
 
-        public static final int RELOAD_TIME = 100;
+        public static final float CHARGE_BUFF_BONUS = 0.25f;
 
+        float scalingFactor = NORMAL_SCALE_FACTOR;
+        
         @Override
         public boolean act() {
-            if (curItem instanceof ShootGun && ((ShootGun)curItem).curCharges < ((ShootGun)curItem).maxCharges) {
-                ((ShootGun)curItem).reload();
+            if (curCharges < maxCharges)
+                recharge();
+            
+            while (partialCharge >= 1 && curCharges < maxCharges) {
+                partialCharge--;
+                curCharges++;
+                updateQuickslot();
             }
-
-            spend(RELOAD_TIME);
+            
+            if (curCharges == maxCharges){
+                partialCharge = 0;
+            }
+            
+            spend( TICK );
+            
             return true;
         }
+
+        private void recharge(){
+            int missingCharges = maxCharges - curCharges;
+            missingCharges = Math.max(0, missingCharges);
+
+            float turnsToCharge = (float) (BASE_CHARGE_DELAY
+                    + (SCALING_CHARGE_ADDITION * Math.pow(scalingFactor, missingCharges)));
+
+            LockedFloor lock = target.buff(LockedFloor.class);
+            if (lock == null || lock.regenOn())
+                partialCharge += (1f/turnsToCharge) * RingOfEnergy.wandChargeMultiplier(target);
+
+            for (Recharging bonus : target.buffs(Recharging.class)){
+                if (bonus != null && bonus.remainder() > 0f) {
+                    partialCharge += CHARGE_BUFF_BONUS * bonus.remainder();
+                }
+            }
+        }
+
+        public void gainCharge(float charge){
+            if (curCharges < maxCharges) {
+                partialCharge += charge;
+                while (partialCharge >= 1f) {
+                    curCharges++;
+                    partialCharge--;
+                }
+                curCharges = Math.min(curCharges, maxCharges);
+                updateQuickslot();
+            }
+        }
+
+        private void setScaleFactor(float value){
+            this.scalingFactor = value;
+        }
     }
+
 }
