@@ -8,8 +8,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
-import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
@@ -20,7 +18,6 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.PathFinder;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
-import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
 
 import com.watabou.utils.Bundle;
 
@@ -143,10 +140,6 @@ public class Gun562 extends ShootGun {
                     charger = new Charger();
                 }
                 charger.attachTo(container.owner);
-
-                if (container instanceof MagicalHolster){
-                    charger.setScaleFactor(((MagicalHolster) container).HOLSTER_SCALE_FACTOR);
-                }
             }
             return true;
         } else {
@@ -203,8 +196,9 @@ public class Gun562 extends ShootGun {
         
         @Override
         public boolean act() {
-            if (curCharges < maxCharges)
+            if (curCharges < maxCharges){
                 recharge();
+            }
             
             while (partialCharge >= 1 && curCharges < maxCharges) {
                 partialCharge--;
@@ -225,17 +219,11 @@ public class Gun562 extends ShootGun {
             int missingCharges = maxCharges - curCharges;
             missingCharges = Math.max(0, missingCharges);
 
-            float turnsToCharge = (float) (BASE_CHARGE_DELAY
-                    + (SCALING_CHARGE_ADDITION * Math.pow(scalingFactor, missingCharges)));
+            float turnsToCharge =100;
 
             LockedFloor lock = target.buff(LockedFloor.class);
-            if (lock == null || lock.regenOn())
-                partialCharge += (1f/turnsToCharge) * RingOfEnergy.wandChargeMultiplier(target);
-
-            for (Recharging bonus : target.buffs(Recharging.class)){
-                if (bonus != null && bonus.remainder() > 0f) {
-                    partialCharge += CHARGE_BUFF_BONUS * bonus.remainder();
-                }
+            if (lock == null || lock.regenOn()){
+                partialCharge += (1f/turnsToCharge);
             }
         }
 
@@ -249,10 +237,6 @@ public class Gun562 extends ShootGun {
                 curCharges = Math.min(curCharges, maxCharges);
                 updateQuickslot();
             }
-        }
-
-        private void setScaleFactor(float value){
-            this.scalingFactor = value;
         }
     }
 
