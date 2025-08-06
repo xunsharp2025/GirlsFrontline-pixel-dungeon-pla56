@@ -22,39 +22,44 @@
 package com.shatteredpixel.shatteredpixeldungeon;
 
 public class Assets {
-	public static final String SAVESLOT	= "new_ui.png";
-	public static final String PORTRAIT1= "portrait1.png";
-	public static final String EMOTION 	= "emotion.png";
-	public static final String PYRO		= "pyro.png";
+	//unsed
+	public static final String ELID         = "elid.png";
+	public static final String TOW 			= "tow.png";
+
+	//need Organize
+	public static final String SAVESLOT		= "new_ui.png";
+	public static final String PORTRAIT1	= "portrait1.png";
+	public static final String EMOTION 		= "emotion.png";
+	public static final String PYRO			= "pyro.png";
 	public static final String NOEL			= "noel.png";
 	public static final String P7			= "p7.png";
-	public static final String FNC		= "sprites/girlpd/fnc.png";
-	public static final String PROWLER		= "sprites/girlpd/prowler.png";
-	public static final String AEGIS		= "aegis.png";
-	public static final String EXCU			= "sprites/boss/excutioner.png";
-	public static final String GOLYAT		= "sprites/girlpd/golyat.png";
-	public static final String MG5	    = "sprites/girlpd/mg5.png";
-	public static final String URO		= "sprites/boss/uro.png";
-	public static final String VESPID		= "sprites/girlpd/vespid.png";
 	public static final String SVESPID		= "shieldvespid.png";
-	public static final String NEMEUM = "nemeum.png";
-	public static final String GAGER		= "sprites/boss/gager.png";
-	public static final String DISLOLI			= "disloli.png";
-	public static final String GARM		= "garm.png";
-	public static final String DREAMER		= "dreamer.png";
 	public static final String M4A1			= "m4a1.png";
-	public static final String DRAGUN		= "dragun.png";
 	public static final String JUPITER		= "jupiter.png";
 	public static final String TYPHOOTIN	= "typhootin.png";
+	public static final String NEMEUM 		= "nemeum.png";
+	public static final String TYPHOON		= "typhoon.png";
+	public static final String JAGUAR       = "Jaguar.png";
+	public static final String INTRUDER 	= "intruder.png";
+
+	//need Organize
+	public static final String ELPHELT 		= "sprites/Elphelt.png";
+	public static final String DRAGUN		= "sprites/dragun.png";
+	public static final String DISLOLI		= "sprites/disloli.png";
+	public static final String GARM			= "sprites/garm.png";
+	public static final String DREAMER		= "sprites/dreamer.png";
+	public static final String AEGIS		= "sprites/aegis.png";
+	public static final String FNC			= "sprites/girlpd/fnc.png";
+	public static final String PROWLER		= "sprites/girlpd/prowler.png";
+	public static final String EXCU			= "sprites/boss/excutioner.png";
+	public static final String GOLYAT		= "sprites/girlpd/golyat.png";
+	public static final String MG5	    	= "sprites/girlpd/mg5.png";
+	public static final String URO			= "sprites/boss/uro.png";
+	public static final String VESPID		= "sprites/girlpd/vespid.png";
+	public static final String GAGER		= "sprites/boss/gager.png";
 	public static final String ACYCLOPS		= "sprites/girlpd/acyclops.png";
 	public static final String HYDRA		= "sprites/girlpd/hydra.png";
-	public static final String TYPHOON		= "typhoon.png";
-	public static final String ELID = "elid.png";
-	public static final String GOLYATPLUS		= "sprites/girlpd/golyatplus.png";
-	public static final String JAGUAR = "Jaguar.png";
-	public static final String ELPHELT = "Elphelt.png";
-	public static final String TOW = "tow.png";
-	public static final String INTRUDER = "intruder.png";
+	public static final String GOLYATPLUS	= "sprites/girlpd/golyatplus.png";
 
 	public static class Effects {
 		public static final String EFFECTS      = "effects/effects.png";
