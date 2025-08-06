@@ -22,16 +22,6 @@
 package com.shatteredpixel.shatteredpixeldungeon;
 
 public class Assets {
-
-	public static class Effects {
-		public static final String EFFECTS      = "effects/effects.png";
-		public static final String FIREBALL     = "effects/fireball.png";
-		public static final String SPECKS       = "effects/specks.png";
-		public static final String SPELL_ICONS  = "effects/spell_icons.png";
-		public static final String SHAKCO       = "effects/shockwave.png";
-		public static final String TEXT_ICONS 	= "effects/text_icons.png";
-	}
-
 	public static final String SAVESLOT	= "new_ui.png";
 	public static final String PORTRAIT1= "portrait1.png";
 	public static final String EMOTION 	= "emotion.png";
@@ -65,6 +55,15 @@ public class Assets {
 	public static final String ELPHELT = "Elphelt.png";
 	public static final String TOW = "tow.png";
 	public static final String INTRUDER = "intruder.png";
+
+	public static class Effects {
+		public static final String EFFECTS      = "effects/effects.png";
+		public static final String FIREBALL     = "effects/fireball.png";
+		public static final String SPECKS       = "effects/specks.png";
+		public static final String SPELL_ICONS  = "effects/spell_icons.png";
+		public static final String SHAKCO       = "effects/shockwave.png";
+		public static final String TEXT_ICONS 	= "effects/text_icons.png";
+	}
 
 	public static class Environment {
 		public static final String TERRAIN_FEATURES = "environment/terrain_features.png";
