@@ -32,110 +32,34 @@ public class Assets {
 		public static final String TEXT_ICONS 	= "effects/text_icons.png";
 	}
 
-	public static final String BANNERS	= "banners.png";
-	public static final String BADGES	= "badges.png";
-	public static final String LOCKED	= "locked_badge.png";
-	public static final String AMULET	= "amulet.png";
-
 	public static final String SAVESLOT	= "new_ui.png";
-	public static final String PORTRAIT	= "portrait.png";
 	public static final String PORTRAIT1= "portrait1.png";
-
-	public static final String CHROME	= "chrome.png";
-	public static final String ICONS	= "icons.png";
-	public static final String STATUS	= "status_pane.png";
-	public static final String MENU		= "menu_button.png";
-	public static final String HP_BAR	= "hp_bar.png";
-	public static final String SHLD_BAR = "shield_bar.png";
-	public static final String XP_BAR	= "exp_bar.png";
-	public static final String TOOLBAR	= "toolbar.png";
-	public static final String SHADOW   = "shadow.png";
-	public static final String BOSSHP   = "boss_hp.png";
-
-	public static final String WARRIOR	= "warrior.png";
-	public static final String MAGE		= "mage.png";
-	public static final String ROGUE	= "rogue.png";
-	public static final String RANGER	= "ranger.png";
-	public static final String AVATARS	= "avatars.png";
-	public static final String KAR98		= "kar98.png";
-	public static final String UMP40 	= "ump40.png";
 	public static final String EMOTION 	= "emotion.png";
-
-	public static final String SURFACE	= "surface.png";
-
-	public static final String FIREBALL		= "fireball.png";
-	public static final String SPECKS		= "specks.png";
-	public static final String EFFECTS		= "effects.png";
-
-	public static final String SHEEP		= "sheep.png";
-	public static final String SKS		= "sks.png";
 	public static final String PYRO		= "pyro.png";
 	public static final String NOEL			= "noel.png";
 	public static final String P7			= "p7.png";
 	public static final String FNC		= "sprites/girlpd/fnc.png";
-	public static final String KEEPER		= "shopkeeper.png";
-	public static final String SAIGA		= "saiga.png";
-	public static final String STAR		= "star.png";
-	public static final String M16	= "m16a1.png";
-	public static final String PPSH	= "ppsh.png";
-
-	public static final String DINER			= "dinergate.png";
-	public static final String SPRING			= "springfield.png";
 	public static final String PROWLER		= "sprites/girlpd/prowler.png";
-	public static final String BRUTE			= "sprites/girlpd/brute.png";
-	public static final String STG		= "stg.png";
-	public static final String WJAEGER		= "weak_jaeger.png";
 	public static final String AEGIS		= "aegis.png";
 	public static final String EXCU			= "sprites/boss/excutioner.png";
-
-	public static final String SWARM		= "sprites/girlpd/swarm.png";
 	public static final String GOLYAT		= "sprites/girlpd/golyat.png";
-	public static final String JAEGER		= "jaeger.png";
-	public static final String THIEF		= "thief.png";
-	public static final String BANDIT		= "bandit.png";
 	public static final String MG5	    = "sprites/girlpd/mg5.png";
 	public static final String URO		= "sprites/boss/uro.png";
-
-	public static final String SCOUT			= "scout.png";
 	public static final String VESPID		= "sprites/girlpd/vespid.png";
 	public static final String SVESPID		= "shieldvespid.png";
-	public static final String SPINNER		= "spinner.png";
 	public static final String NEMEUM = "nemeum.png";
 	public static final String GAGER		= "sprites/boss/gager.png";
-
-	public static final String WRAITH		= "wraith.png";
-	public static final String ELEMENTAL	= "elemental.png";
-	public static final String STRIKER			= "striker.png";
-	public static final String ESTRIKER			= "elitestriker.png";
-	public static final String MANTI		= "manti.png";
-	public static final String UNDEAD		= "undead.png";
 	public static final String DISLOLI			= "disloli.png";
-	public static final String PIRANHA		= "piranha.png";
-	public static final String EYE			= "eye.png";
-	public static final String SUCCUBUS		= "succubus.png";
-	public static final String SCORPIO		= "scorpio.png";
 	public static final String GARM		= "garm.png";
 	public static final String DREAMER		= "dreamer.png";
 	public static final String M4A1			= "m4a1.png";
-	public static final String LARVA		= "larva.png";
-	public static final String BEE      	= "bee.png";
-	public static final String MIMIC    	= "mimic.png";
-	public static final String ROT_LASH 	= "rot_lasher.png";
-	public static final String ROT_HEART	= "rot_heart.png";
-
-	public static final String GUARD		= "guard.png";
 	public static final String DRAGUN		= "dragun.png";
 	public static final String JUPITER		= "jupiter.png";
 	public static final String TYPHOOTIN	= "typhootin.png";
-
 	public static final String ACYCLOPS		= "sprites/girlpd/acyclops.png";
-	public static final String SGCYCLOPS		= "sgcyclops.png";
 	public static final String HYDRA		= "sprites/girlpd/hydra.png";
 	public static final String TYPHOON		= "typhoon.png";
-
 	public static final String ELID = "elid.png";
-
-	public static final String RIPPER = "Ripper.png";
 	public static final String GOLYATPLUS		= "sprites/girlpd/golyatplus.png";
 	public static final String JAGUAR = "Jaguar.png";
 	public static final String ELPHELT = "Elphelt.png";

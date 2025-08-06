@@ -30,7 +30,7 @@ public class SwarmSprite extends MobSprite {
 	public SwarmSprite() {
 		super();
 
-		texture( Assets.SWARM );
+		texture( Assets.Sprites.SWARM );
 
 		TextureFilm frames = new TextureFilm( texture, 16, 16 );
 
