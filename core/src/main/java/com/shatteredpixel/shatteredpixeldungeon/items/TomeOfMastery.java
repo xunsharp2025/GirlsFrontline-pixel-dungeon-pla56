@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items;
 
+import static com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet.Gun561;
+
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -83,6 +85,8 @@ public class TomeOfMastery extends Item {
 			case HUNTRESS:
 				way1 = HeroSubClass.SNIPER;
 				way2 = HeroSubClass.WARDEN;
+				break;
+			case TYPE56:
 				break;
 			}
 			GameScene.show( new WndChooseWay( this, way1, way2 ) );

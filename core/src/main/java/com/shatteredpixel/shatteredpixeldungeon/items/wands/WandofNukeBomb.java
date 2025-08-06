@@ -103,11 +103,11 @@ public class WandofNukeBomb extends DamageWand {
 
         public static final float DURATION = 10f;
 
-        @Override
+        /*@Override
         public int icon() {
             //TODO
             return BuffIndicator.DEGRADE;
-        }
+        }*/
 
         @Override
         public String toString() {

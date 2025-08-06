@@ -45,6 +45,7 @@ public enum Icons {
 	MAGE,
 	ROGUE,
 	HUNTRESS,
+	TYPE56,
 
 	//grey icons, mainly used for buttons, spacing for 16x16
 	EXIT,
@@ -161,6 +162,9 @@ public enum Icons {
 				break;
 			case HUNTRESS:
 				icon.frame( icon.texture.uvRectBySize( 64, 16, 16, 16 ) );
+				break;
+			case TYPE56:
+				icon.frame( icon.texture.uvRectBySize( 80, 16, 16, 16 ) );
 				break;
 
 			case EXIT:
@@ -367,6 +371,8 @@ public enum Icons {
 			return get( ROGUE );
 		case HUNTRESS:
 			return get( HUNTRESS );
+		case TYPE56:
+			return get( TYPE56 );
 		default:
 			return get( WARRIOR );
 		}

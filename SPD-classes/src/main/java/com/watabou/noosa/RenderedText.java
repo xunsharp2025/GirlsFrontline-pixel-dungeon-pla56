@@ -46,7 +46,11 @@ public class RenderedText extends Image {
 	public RenderedText( ) {
 		text = null;
 	}
-	
+
+
+	public float baseLine(){
+		return size * scale.y;
+	}
 	public RenderedText( int size ){
 		text = null;
 		this.size = size;

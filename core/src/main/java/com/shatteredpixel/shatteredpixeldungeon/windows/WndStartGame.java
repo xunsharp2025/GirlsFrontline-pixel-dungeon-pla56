@@ -46,12 +46,13 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
+import com.watabou.noosa.RenderedText;
 import com.watabou.noosa.ui.Component;
 import com.watabou.utils.DeviceCompat;
 
 public class WndStartGame extends Window {
 
-	private static final int WIDTH    = 120;
+	private static final int WIDTH    = 117;
 	private static final int HEIGHT   = 150;
 
 	public WndStartGame(final int slot){
@@ -64,7 +65,7 @@ public class WndStartGame extends Window {
 		title.setPos((WIDTH - title.width())/2f,2);
 		add(title);
 
-		float heroBtnSpacing = (WIDTH - 4*HeroBtn.WIDTH)/5f;
+		float heroBtnSpacing = (WIDTH - 4*HeroBtn.WIDTH)/20f;
 
 		float curX = heroBtnSpacing;
 		for (HeroClass cl : HeroClass.values()){
@@ -172,8 +173,10 @@ public class WndStartGame extends Window {
 				hero = new Image(Assets.Sprites.MAGE, 0, HeroSprite.FRAME_HEIGHT * 2 /*tier*/, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
 			} else if (cl == HeroClass.ROGUE){
 				hero = new Image(Assets.Sprites.ROGUE, 0, HeroSprite.FRAME_HEIGHT * 2 /*tier*/, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
-			} else {
+			} else if (cl == HeroClass.HUNTRESS){
 				hero = new Image(Assets.Sprites.HUNTRESS, 0, HeroSprite.FRAME_HEIGHT * 2 /*tier*/, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
+			} else {
+				hero = new Image(Assets.Sprites.TYPE56, 0, HeroSprite.FRAME_HEIGHT * 2 /*tier*/, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
 			}
 			add(hero);
 		}
@@ -217,23 +220,23 @@ public class WndStartGame extends Window {
 		private IconButton heroMisc;
 		private IconButton heroSubclass;
 
-		private RenderedTextBlock name;
+		private RenderedText name;
 
-		private static final int BTN_SIZE = 20;
+		private static final int BTN_SIZE = 17;
 
 		@Override
 		protected void createChildren() {
 			super.createChildren();
 
 			avatar = new Image(Assets.Sprites.AVATARS);
-			avatar.scale.set(2f);
+			avatar.scale.set(2.093f);
 			add(avatar);
 
 			heroItem = new IconButton(){
 				@Override
 				protected void onClick() {
 					if (cl == null) return;
-					GirlsFrontlinePixelDungeon.scene().addToFront(new WndMessage(Messages.get(cl, cl.name() + "_desc_item")));
+					GirlsFrontlinePixelDungeon.scene().add(new WndMessage(Messages.get(cl, cl.name() + "_desc_item")));
 				}
 			};
 			heroItem.setSize(BTN_SIZE, BTN_SIZE);
@@ -243,7 +246,7 @@ public class WndStartGame extends Window {
 				@Override
 				protected void onClick() {
 					if (cl == null) return;
-					GirlsFrontlinePixelDungeon.scene().addToFront(new WndMessage(Messages.get(cl, cl.name() + "_desc_loadout")));
+					GirlsFrontlinePixelDungeon.scene().add(new WndMessage(Messages.get(cl, cl.name() + "_desc_loadout")));
 				}
 			};
 			heroLoadout.setSize(BTN_SIZE, BTN_SIZE);
@@ -253,7 +256,7 @@ public class WndStartGame extends Window {
 				@Override
 				protected void onClick() {
 					if (cl == null) return;
-					GirlsFrontlinePixelDungeon.scene().addToFront(new WndMessage(Messages.get(cl, cl.name() + "_desc_misc")));
+					GirlsFrontlinePixelDungeon.scene().add(new WndMessage(Messages.get(cl, cl.name() + "_desc_misc")));
 				}
 			};
 			heroMisc.setSize(BTN_SIZE, BTN_SIZE);
@@ -267,13 +270,13 @@ public class WndStartGame extends Window {
 					for (HeroSubClass sub : cl.subClasses()){
 						msg += "\n\n" + sub.desc();
 					}
-					GirlsFrontlinePixelDungeon.scene().addToFront(new WndMessage(msg));
+					GirlsFrontlinePixelDungeon.scene().add(new WndMessage(msg));
 				}
 			};
 			heroSubclass.setSize(BTN_SIZE, BTN_SIZE);
 			add(heroSubclass);
 
-			name = PixelScene.renderTextBlock(12);
+			name = PixelScene.renderText(12);
 			add(name);
 
 			visible = false;
@@ -284,13 +287,14 @@ public class WndStartGame extends Window {
 			super.layout();
 
 			avatar.x = x;
-			avatar.y = y + (height - avatar.height() - name.width() - 2)/3f;
+			avatar.y = y + (height - avatar.height() - name.baseLine() - 0)/2f;
 			PixelScene.align(avatar);
 
-			name.setPos(x + (avatar.width() - name.width())/2f, avatar.y + avatar.height() + 2);
+			name.x = x + (avatar.width() - name.width())/2f;
+			name.y = avatar.y + avatar.height() + -77;
 			PixelScene.align(name);
 
-			heroItem.setPos(x + width - BTN_SIZE, avatar.height+10);
+			heroItem.setPos(x + width - BTN_SIZE, y);
 			heroLoadout.setPos(x + width - BTN_SIZE, heroItem.bottom());
 			heroMisc.setPos(x + width - BTN_SIZE, heroLoadout.bottom());
 			heroSubclass.setPos(x + width - BTN_SIZE, heroMisc.bottom());
@@ -324,9 +328,14 @@ public class WndStartGame extends Window {
 							heroMisc.icon(Icons.get(Icons.DEPTH));
 							break;
 						case HUNTRESS:
-							heroItem.icon(new ItemSprite(ItemSpriteSheet.SPIRIT_BOW, null));
+							heroItem.icon(new ItemSprite(ItemSpriteSheet.BOOMERANG, null));
 							heroLoadout.icon(new ItemSprite(ItemSpriteSheet.M79, null));
 							heroMisc.icon(new ItemSprite(ItemSpriteSheet.DART, null));
+							break;
+						case TYPE56:
+							heroItem.icon(new ItemSprite(ItemSpriteSheet.OVERPRICED, null));
+							heroLoadout.icon(new ItemSprite(ItemSpriteSheet.Gun561, null));
+							heroMisc.icon(new ItemSprite(ItemSpriteSheet.REDBOOK, null));
 							break;
 					}
 

@@ -62,7 +62,6 @@ public class WndSelectGameInProgress extends Window {
 
         Component content = squad.content();
 
-
         int slotNumber = 0;
         GLog.i(String.valueOf(games.size()));
         for (GamesInProgress.Info info : games) {
@@ -153,12 +152,15 @@ public class WndSelectGameInProgress extends Window {
                 case HUNTRESS:
                     order = 4;
                     break;
+                case TYPE56:
+                    order = 5;
+                    break;
                 default:
                     order = 0;
                     break;
             }
 
-            portrait = new Image(Assets.PORTRAIT1, (order % 5) * 38, (order / 5) * 60, 38, 60);
+            portrait = new Image(Assets.PORTRAIT1, (order % 6) * 38, (order / 6) * 60, 38, 60);
             frame = new Image(Assets.SAVESLOT, 0, 0, 21, 52);
 
             setRect(0, 0, frame.width * SCALE, frame.height * SCALE);

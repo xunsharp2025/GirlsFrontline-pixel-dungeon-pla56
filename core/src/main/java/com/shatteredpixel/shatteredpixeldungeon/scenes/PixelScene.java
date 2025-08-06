@@ -41,6 +41,7 @@ import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Gizmo;
 import com.watabou.noosa.Image;
+import com.watabou.noosa.RenderedText;
 import com.watabou.noosa.Scene;
 import com.watabou.noosa.Visual;
 import com.watabou.noosa.ui.Component;
@@ -81,6 +82,17 @@ public class PixelScene extends Scene {
 	public static BitmapText.Font pixelFont;
 
 	protected boolean inGameScene = false;
+
+
+	public static RenderedText renderText( int size ) {
+		return renderText("", size);
+	}
+
+	public static RenderedText renderText( String text, int size ) {
+		RenderedText result = new RenderedText( text, size*defaultZoom);
+		result.scale.set(1/(float)defaultZoom);
+		return result;
+	}
 
 	@Override
 	public void create() {

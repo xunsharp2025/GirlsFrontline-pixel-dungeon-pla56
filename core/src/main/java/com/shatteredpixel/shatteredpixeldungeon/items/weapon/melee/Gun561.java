@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandofNukeBomb;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -50,6 +51,7 @@ public class Gun561 extends ShootGun {
 		maxCharges = 1;
 		useMissileSprite = false;
 		effectIndex = 2;
+		RCH = 2;
 		shootPrompt = Messages.get(this, "prompt");
 		needEquip = false;
 		image = ItemSpriteSheet.Gun561;
@@ -63,6 +65,9 @@ public class Gun561 extends ShootGun {
 	public int max(int lvl) {
 		return curCharges == 0 ?  6 + lvl * 2 : 2;
 	}
+
+
+
 
 	@Override
 	public boolean reload() {
@@ -106,11 +111,12 @@ public class Gun561 extends ShootGun {
 	}
 
 	@Override
-	public void execute(Hero hero,String action) {
-		//按下按钮时检查动作
-		super.execute(hero,action);
+	public void execute(Hero hero, String action) {
+		super.execute(hero, action);
 		if (action.equals(AC_CD)) {
-			GLog.n(Messages.get(this, "cd"));
+			WandofNukeBomb.Cooldown cooldown = hero.buff(WandofNukeBomb.Cooldown.class);
+			int timeLeft = (cooldown != null) ? (int)cooldown.cooldown() : 0;
+			GLog.n(Messages.get(this, "cd_status", timeLeft));
 		}
 	}
 
@@ -173,4 +179,29 @@ public class Gun561 extends ShootGun {
 	public void onDetach( ) {
 		//
 	}
+
+	@Override
+	public String info() {
+		String desc = desc();
+
+		desc += "\n\n" + statsDesc() + "\n\n";
+
+		if (cursed && cursedKnown)
+			desc += "\n\n" + Messages.get(Wand.class, "cursed")/*+ "\n\n"*/;
+
+		return desc;
+	}
+	public String statsDesc(){
+		return Messages.get(this, "stats_desc");
+	};
+	public String desc(){
+		// 获取当前实际冷却剩余时间
+		int currentCooldown = 0;
+		WandofNukeBomb.Cooldown cooldownBuff = Dungeon.hero.buff(WandofNukeBomb.Cooldown.class);
+		if (Dungeon.hero != null && cooldownBuff != null) {
+			currentCooldown = (int)cooldownBuff.cooldown();
+		}
+		int displayTime = currentCooldown > 0 ? currentCooldown : 0;
+		return Messages.get(this, "desc", displayTime);
+	};
 }

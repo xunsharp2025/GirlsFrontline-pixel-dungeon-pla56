@@ -32,6 +32,7 @@ public class Gun562 extends ShootGun {
         maxCharges = 1;
         tier = 3;
         useMissileSprite = false;
+        RCH = 3;
         effectIndex = 2;
         image = ItemSpriteSheet.Gun562;
         needEquip = false;

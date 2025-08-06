@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	android:versionCode="520"
+	android:versionCode="531"
 	android:versionName="0.50-B"
 	android:installLocation="auto">
 	
