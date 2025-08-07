@@ -17,7 +17,7 @@ public class Script {
     //By JDSALing 2025/7/28
 
     public enum Character{
-       NONE,UMP45,HK416,G11,UMP9,STAR_45
+       NONE,UMP45,HK416,G11,UMP9,STAR_45,EXCU_TIONER
     }
 
     public static Image AvatarG11(int index) {
@@ -106,6 +106,12 @@ public class Script {
         return i;
     }
 
+    public static Image BossExcutioner() {
+        Image i;
+        i = new Image(Assets.EMOTION,216,0,24,24);
+        return i;
+    }
+
 
 
     public enum FormalPlot
@@ -161,6 +167,9 @@ public class Script {
                 break;
             case STAR_45:
                 str = Messages.get(Script.class,"name_star15");
+                break;
+            case EXCU_TIONER:
+                str = Messages.get(Script.class,"name_excutioner");
                 break;
         }
         //GLog.i(str);
