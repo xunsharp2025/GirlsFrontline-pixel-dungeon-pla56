@@ -44,7 +44,13 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.SewerLevel;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.GhostSprite;
+import com.shatteredpixel.shatteredpixeldungeon.ui.diglog.LevelPlot_P1;
+import com.shatteredpixel.shatteredpixeldungeon.ui.diglog.quest.STAR15_Plot_L1;
+import com.shatteredpixel.shatteredpixeldungeon.ui.diglog.quest.STAR15_Plot_L2;
+import com.shatteredpixel.shatteredpixeldungeon.ui.diglog.quest.STAR15_Plot_L3;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.utils.diglog.Plot;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuest;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndSadGhost;
 import com.watabou.noosa.Game;
@@ -129,13 +135,13 @@ public class Ghost extends NPC {
 							switch (Quest.type) {
 								case 1:
 								default:
-									GameScene.show(new WndQuest(Ghost.this, Messages.get(Ghost.this, "rat_2")));
+									GameScene.scene.add(new WndDialog(new STAR15_Plot_L1.End(),false));
 									break;
 								case 2:
-									GameScene.show(new WndQuest(Ghost.this, Messages.get(Ghost.this, "gnoll_2")));
+									GameScene.scene.add(new WndDialog(new STAR15_Plot_L2.End(),false));
 									break;
 								case 3:
-									GameScene.show(new WndQuest(Ghost.this, Messages.get(Ghost.this, "crab_2")));
+									GameScene.scene.add(new WndDialog(new STAR15_Plot_L3.End(),false));
 									break;
 							}
 						}
@@ -159,18 +165,20 @@ public class Ghost extends NPC {
 			}
 		} else {
 			Mob questBoss;
-			String txt_quest;
-
+			Plot txt_quest;
 			switch (Quest.type){
 				case 1: default:
 					questBoss = new FetidRat();
-					txt_quest = Messages.get(this, "rat_1", Dungeon.hero.name()); break;
+					txt_quest = new STAR15_Plot_L1();
+					break;
 				case 2:
 					questBoss = new GnollTrickster();
-					txt_quest = Messages.get(this, "gnoll_1", Dungeon.hero.name()); break;
+					txt_quest = new STAR15_Plot_L2();
+					break;
 				case 3:
 					questBoss = new GreatCrab();
-					txt_quest = Messages.get(this, "crab_1", Dungeon.hero.name()); break;
+					txt_quest = new STAR15_Plot_L3();
+					break;
 			}
 
 			questBoss.pos = Dungeon.level.randomRespawnCell( this );
@@ -182,7 +190,7 @@ public class Ghost extends NPC {
 				Game.runOnRenderThread(new Callback() {
 					@Override
 					public void call() {
-						GameScene.show( new WndQuest( Ghost.this, txt_quest ) );
+						GameScene.scene.add(new WndDialog(txt_quest,false));
 					}
 				});
 			}
