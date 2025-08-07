@@ -74,12 +74,12 @@ public class DeepCaveLevel extends RegularLevel {
 
     @Override
     public String tilesTex() {
-        return Assets.Environment.TILES_SEWERS;
+        return Assets.Environment.TILES_RECAVES;
     }
 
     @Override
     public String waterTex() {
-        return Assets.Environment.WATER_CAVES;
+        return Assets.Environment.WATER_HALLS;
     }
 
     @Override

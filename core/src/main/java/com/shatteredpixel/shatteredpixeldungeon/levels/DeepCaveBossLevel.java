@@ -49,12 +49,12 @@ public class DeepCaveBossLevel extends Level {
 
     @Override
     public String tilesTex() {
-        return Assets.Environment.TILES_CAVES;
+        return Assets.Environment.TILES_RECAVES;
     }
 
     @Override
     public String waterTex() {
-        return Assets.Environment.WATER_CAVES;
+        return Assets.Environment.WATER_HALLS;
     }
 
     private static final String DOOR	= "door";

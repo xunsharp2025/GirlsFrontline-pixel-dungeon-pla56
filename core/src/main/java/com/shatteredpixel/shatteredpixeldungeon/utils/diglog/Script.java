@@ -18,7 +18,7 @@ public class Script {
 
     public enum Character{
        NONE,UMP45,HK416,G11,UMP9,STAR_45,EXCU_TIONER,M16A1,
-       UROBOROS,PPSH_47,P7,DESTROYER
+       UROBOROS,PPSH_47,P7,DESTROYER,DREAM
     }
 
     public static Image AvatarG11(int index) {
@@ -158,6 +158,23 @@ public class Script {
         return i;
     }
 
+    public static Image NPC_DREAM(int index) {
+        Image i;
+        switch (index){
+            default:
+            case 0:
+                i = new Image(Assets.EMOTION,216,96,24,24);
+                break;
+            case 1:
+                i = new Image(Assets.EMOTION,240,96,24,24);
+                break;
+            case 2:
+                i = new Image(Assets.EMOTION,264,96,24,24);
+                break;
+        }
+        return i;
+    }
+
     public static Image NPC_P7(int index) {
         Image i;
         switch (index){
@@ -199,9 +216,9 @@ public class Script {
     public static final int ID_PRISON		= 1;
     public static final int ID_CAVES		= 2;
     public static final int ID_CITY     	= 3;
-    public static final int ID_HALLS		= 4;
+    public static final int ID_RECAVES		= 4;
 
-    public static final int ID_FROSTNOVA_INTERACT = 5;
+    public static final int ID_HALLS = 5;
 
     private static final SparseArray<String> CHAPTERS = new SparseArray<String>();
 
@@ -210,6 +227,7 @@ public class Script {
         CHAPTERS.put( ID_PRISON, "prison" );
         CHAPTERS.put( ID_CAVES, "caves" );
         CHAPTERS.put( ID_CITY, "city" );
+        CHAPTERS.put( ID_RECAVES, "recaves");
         CHAPTERS.put( ID_HALLS, "halls" );
     };
 
@@ -260,6 +278,9 @@ public class Script {
                 break;
             case DESTROYER:
                 str = Messages.get(Script.class,"name_destroyer");
+                break;
+            case DREAM:
+                str = Messages.get(Script.class,"name_dream");
                 break;
         }
         //GLog.i(str);
