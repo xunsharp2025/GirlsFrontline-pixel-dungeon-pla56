@@ -83,6 +83,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun561;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SA.Welrod;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.M9;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.Ump45;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG.Cannon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingKnife;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingStone;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -123,12 +124,12 @@ public enum HeroClass {
 			CustomWeapon customWeapon = new CustomWeapon();
 			customWeapon.adjustStatus();
 			customWeapon.identify().collect();
-
-			new Amulet().collect();
 			
 			new TestBag().collect();
 
 			new TrapPlacer().collect();
+
+			new Cannon().collect();
 
 			new TimeReverser().collect();
 
