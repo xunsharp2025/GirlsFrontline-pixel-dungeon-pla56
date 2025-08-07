@@ -66,14 +66,12 @@ public class Gun561 extends ShootGun {
 		return curCharges == 0 ?  6 + lvl * 2 : 2;
 	}
 
-
-
-
 	@Override
 	public boolean reload() {
 		if (curCharges < maxCharges) {
 			curUser.sprite.showStatus( CharSprite.POSITIVE, Messages.get(this, "reload") );
 			curCharges++;
+
 			curUser.busy();
 			curUser.sprite.operate( curUser.pos );
 			updateQuickslot();
@@ -180,20 +178,6 @@ public class Gun561 extends ShootGun {
 		//
 	}
 
-	@Override
-	public String info() {
-		String desc = desc();
-
-		desc += "\n\n" + statsDesc() + "\n\n";
-
-		if (cursed && cursedKnown)
-			desc += "\n\n" + Messages.get(Wand.class, "cursed")/*+ "\n\n"*/;
-
-		return desc;
-	}
-	public String statsDesc(){
-		return Messages.get(this, "stats_desc");
-	};
 	public String desc(){
 		// 获取当前实际冷却剩余时间
 		int currentCooldown = 0;

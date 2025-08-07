@@ -174,13 +174,13 @@ public class ShootGun extends MeleeWeapon {
             //否则使用法杖特效
             //TODO 更改MAGIC_MISSILE
             MagicMissile.boltFromChar(curUser.sprite.parent,
-                    MagicEffect(effectIndex),curUser.sprite,cell,
-                    new Callback() {
-                        @Override
-                        public void call() {
-                            onShootComplete(cell);
-                        }
-                    });
+            MagicEffect(effectIndex),curUser.sprite,cell,
+            new Callback() {
+                @Override
+                public void call() {
+                    onShootComplete(cell);
+                }
+            });
         }
     }
 

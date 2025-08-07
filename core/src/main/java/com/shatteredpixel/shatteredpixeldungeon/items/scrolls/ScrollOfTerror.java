@@ -41,10 +41,33 @@ public class ScrollOfTerror extends Scroll {
 
 	@Override
 	public void doRead() {
-		
 		new Flare( 5, 32 ).color( 0xFF0000, true ).show( curUser.sprite, 2f );
 		Sample.INSTANCE.play( Assets.Sounds.READ );
 		
+		TerrorResult result = new TerrorResult();
+		terror(result);
+
+		switch (result.count) {
+		case 0:
+			GLog.i( Messages.get(this, "none") );
+			break;
+		case 1:
+			GLog.i( Messages.get(this, "one", result.affected.name()) );
+			break;
+		default:
+			GLog.i( Messages.get(this, "many") );
+		}
+		identify();
+
+		readAnimation();
+	}
+
+	public class TerrorResult {
+	    public int count = 0;
+	    public Mob affected = null;
+	}
+
+	public static void terror(TerrorResult result){
 		int count = 0;
 		Mob affected = null;
 		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
@@ -58,19 +81,10 @@ public class ScrollOfTerror extends Scroll {
 			}
 		}
 		
-		switch (count) {
-		case 0:
-			GLog.i( Messages.get(this, "none") );
-			break;
-		case 1:
-			GLog.i( Messages.get(this, "one", affected.name()) );
-			break;
-		default:
-			GLog.i( Messages.get(this, "many") );
+		if(result != null){
+			result.count=count;
+			result.affected=affected;
 		}
-		identify();
-
-		readAnimation();
 	}
 	
 	@Override

@@ -20,13 +20,14 @@
  */
 
 package com.shatteredpixel.shatteredpixeldungeon.items.food;
-
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTerror;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
@@ -100,7 +101,9 @@ public class Pasty extends Food {
 		
 		switch(holiday){
 			case NONE:
-				break; //do nothing extra
+				new Flare( 5, 32 ).color( 0xFF0000, true ).show( curUser.sprite, 2f );
+				ScrollOfTerror.terror(null);
+				break;
 			case HWEEN:
 				//heals for 10% max hp
 				hero.HP = Math.min(hero.HP + hero.HT/10, hero.HT);
