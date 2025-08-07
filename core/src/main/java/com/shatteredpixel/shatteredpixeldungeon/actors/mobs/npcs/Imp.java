@@ -35,8 +35,10 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.CityLevel;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ImpSprite;
+import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.quest.P7_Plot_L1;
+import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.quest.P7_Plot_L2;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndImp;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuest;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
@@ -107,28 +109,16 @@ public class Imp extends NPC {
 					}
 				});
 			} else {
-				tell( Quest.alternative ?
-						Messages.get(this, "monks_2", Dungeon.hero.name())
-						: Messages.get(this, "golems_2", Dungeon.hero.name()) );
+				Game.runOnRenderThread(() ->GameScene.show( (new WndDialog(Quest.alternative ? new P7_Plot_L1.End() : new P7_Plot_L2.End(), false) )));
 			}
-			
 		} else {
-			tell( Quest.alternative ? Messages.get(this, "monks_1") : Messages.get(this, "golems_1") );
+			Game.runOnRenderThread(() ->GameScene.show( (new WndDialog(Quest.alternative ? new P7_Plot_L1() : new P7_Plot_L2(), false) )));
 			Quest.given = true;
 			Quest.completed = false;
 			Notes.add( Notes.Landmark.IMP );
 		}
 
 		return true;
-	}
-	
-	private void tell( String text ) {
-		Game.runOnRenderThread(new Callback() {
-			@Override
-			public void call() {
-				GameScene.show( new WndQuest( Imp.this, text ));
-			}
-		});
 	}
 	
 	public void flee() {
