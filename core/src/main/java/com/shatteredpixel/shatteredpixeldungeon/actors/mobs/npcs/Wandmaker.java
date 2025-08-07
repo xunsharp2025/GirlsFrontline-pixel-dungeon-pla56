@@ -40,6 +40,12 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Rotberry;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.WandmakerSprite;
+import com.shatteredpixel.shatteredpixeldungeon.ui.diglog.quest.M16A1_Plot_L1;
+import com.shatteredpixel.shatteredpixeldungeon.ui.diglog.quest.M16A1_Plot_L2;
+import com.shatteredpixel.shatteredpixeldungeon.ui.diglog.quest.M16A1_Plot_L3;
+import com.shatteredpixel.shatteredpixeldungeon.ui.diglog.quest.STAR15_Plot_L1;
+import com.shatteredpixel.shatteredpixeldungeon.utils.diglog.Plot;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuest;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndWandmaker;
 import com.watabou.noosa.Game;
@@ -116,73 +122,47 @@ public class Wandmaker extends NPC {
 					}
 				});
 			} else {
-				String msg;
+				Plot msg;
 				switch(Quest.type){
 					case 1: default:
-						msg = Messages.get(this, "reminder_dust", Dungeon.hero.name());
+						msg = new M16A1_Plot_L1.End();
 						break;
 					case 2:
-						msg = Messages.get(this, "reminder_ember", Dungeon.hero.name());
+						msg = new M16A1_Plot_L2.End();
 						break;
 					case 3:
-						msg = Messages.get(this, "reminder_berry", Dungeon.hero.name());
+						msg = new M16A1_Plot_L3.End();
 						break;
 				}
 				Game.runOnRenderThread(new Callback() {
 					@Override
 					public void call() {
-						GameScene.show(new WndQuest(Wandmaker.this, msg));
+						GameScene.scene.add(new WndDialog(msg,false));
 					}
 				});
 			}
 			
 		} else {
 
-			String msg1 = "";
-			String msg2 = "";
-			switch(Dungeon.hero.heroClass){
-				case WARRIOR:
-					msg1 += Messages.get(this, "intro_warrior");
-					break;
-				case ROGUE:
-					msg1 += Messages.get(this, "intro_rogue");
-					break;
-				case MAGE:
-					msg1 += Messages.get(this, "intro_mage", Dungeon.hero.name());
-					break;
-				case HUNTRESS:
-					msg1 += Messages.get(this, "intro_huntress");
-					break;
-			}
 
-			msg1 += Messages.get(this, "intro_1");
-
+			Plot dialog;
 			switch (Quest.type){
+				default:
 				case 1:
-					msg2 += Messages.get(this, "intro_dust");
+					dialog = new M16A1_Plot_L1();
 					break;
 				case 2:
-					msg2 += Messages.get(this, "intro_ember");
+					dialog = new M16A1_Plot_L2();
 					break;
 				case 3:
-					msg2 += Messages.get(this, "intro_berry");
+					dialog = new M16A1_Plot_L3();
 					break;
 			}
-
-			msg2 += Messages.get(this, "intro_2");
-			final String msg1Final = msg1;
-			final String msg2Final = msg2;
 			
 			Game.runOnRenderThread(new Callback() {
 				@Override
 				public void call() {
-					GameScene.show(new WndQuest(Wandmaker.this, msg1Final){
-						@Override
-						public void hide() {
-							super.hide();
-							GameScene.show(new WndQuest(Wandmaker.this, msg2Final));
-						}
-					});
+					GameScene.scene.add(new WndDialog(dialog,false));
 				}
 			});
 

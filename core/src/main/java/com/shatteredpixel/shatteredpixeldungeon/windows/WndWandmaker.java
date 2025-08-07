@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Wandmaker;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.CorpseDust;
@@ -106,8 +107,13 @@ public class WndWandmaker extends Window {
 		} else {
 			Dungeon.level.drop( reward, wandmaker.pos ).sprite.drop();
 		}
-		
-		wandmaker.yell( Messages.get(this, "farewell", Dungeon.hero.name()) );
+
+		if(Dungeon.hero.heroClass == HeroClass.HUNTRESS){
+			wandmaker.yell( Messages.get(this, "farewell_hk416", Dungeon.hero.name()) );
+		} else {
+			wandmaker.yell( Messages.get(this, "farewell", Dungeon.hero.name()) );
+		}
+
 		wandmaker.destroy();
 		
 		wandmaker.sprite.die();
