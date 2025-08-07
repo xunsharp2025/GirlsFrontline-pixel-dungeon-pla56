@@ -18,7 +18,7 @@ public class Script {
 
     public enum Character{
        NONE,UMP45,HK416,G11,UMP9,STAR_45,EXCU_TIONER,M16A1,
-       UROBOROS,PPSH_47,P7
+       UROBOROS,PPSH_47,P7,DESTROYER
     }
 
     public static Image AvatarG11(int index) {
@@ -257,6 +257,9 @@ public class Script {
                 break;
             case P7:
                 str = Messages.get(Script.class,"name_p7");
+                break;
+            case DESTROYER:
+                str = Messages.get(Script.class,"name_destroyer");
                 break;
         }
         //GLog.i(str);
