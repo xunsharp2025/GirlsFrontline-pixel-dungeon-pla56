@@ -18,7 +18,7 @@ public class Script {
 
     public enum Character{
        NONE,UMP45,HK416,G11,UMP9,STAR_45,EXCU_TIONER,M16A1,
-       UROBOROS,
+       UROBOROS,PPSH_47
     }
 
     public static Image AvatarG11(int index) {
@@ -124,6 +124,23 @@ public class Script {
         return i;
     }
 
+    public static Image NPC_Ppsh_47(int index) {
+        Image i;
+        switch (index){
+            default:
+            case 0:
+                i = new Image(Assets.EMOTION,72,48,24,24);
+                break;
+            case 1:
+                i = new Image(Assets.EMOTION,96,48,24,24);
+                break;
+            case 2:
+                i = new Image(Assets.EMOTION,120,48,24,24);
+                break;
+        }
+        return i;
+    }
+
     public static Image BossExcutioner() {
         Image i;
         i = new Image(Assets.EMOTION,216,0,24,24);
@@ -200,6 +217,9 @@ public class Script {
                 break;
             case UROBOROS:
                 str = Messages.get(Script.class,"name_uroboros");
+                break;
+            case PPSH_47:
+                str = Messages.get(Script.class,"name_ppsh47");
                 break;
         }
         //GLog.i(str);

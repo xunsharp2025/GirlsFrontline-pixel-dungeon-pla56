@@ -40,8 +40,12 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard.Blacksmith
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.BlacksmithSprite;
+import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.quest.Ppsh_Plot_L1;
+import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.quest.Ppsh_Plot_L2;
+import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.quest.Ppsh_Plot_Misc;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBlacksmith;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuest;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
@@ -77,46 +81,22 @@ public class Blacksmith extends NPC {
 		}
 		
 		if (!Quest.given) {
-			
-			Game.runOnRenderThread(new Callback() {
-				@Override
-				public void call() {
-					GameScene.show( new WndQuest( Blacksmith.this,
-							Quest.alternative ? Messages.get(Blacksmith.this, "blood_1") : Messages.get(Blacksmith.this, "gold_1") ) {
-						
-						@Override
-						public void onBackPressed() {
-							super.onBackPressed();
-							
-							Quest.given = true;
-							Quest.completed = false;
-							Notes.add( Notes.Landmark.TROLL );
-							
-							Pickaxe pick = new Pickaxe();
-							if (pick.doPickUp( Dungeon.hero )) {
-								GLog.i( Messages.get(Dungeon.hero, "you_now_have", pick.name() ));
-							} else {
-								Dungeon.level.drop( pick, Dungeon.hero.pos ).sprite.drop();
-							}
-						}
-					} );
-				}
-			});
+			Game.runOnRenderThread(() -> GameScene.show(new WndDialog(Quest.alternative ? new Ppsh_Plot_L1() : new Ppsh_Plot_L2(), false)));
 			
 		} else if (!Quest.completed) {
 			if (Quest.alternative) {
 				
 				Pickaxe pick = Dungeon.hero.belongings.getItem( Pickaxe.class );
 				if (pick == null) {
-					tell( Messages.get(this, "lost_pick") );
+					Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc(), false)));
 				} else if (!pick.bloodStained) {
-					tell( Messages.get(this, "blood_2") );
+					Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc.Kill(), false)));
 				} else {
 					if (pick.isEquipped( Dungeon.hero )) {
 						pick.doUnequip( Dungeon.hero, false );
 					}
 					pick.detach( Dungeon.hero.belongings.backpack );
-					tell( Messages.get(this, "completed") );
+					Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc.L1(), false)));
 					
 					Quest.completed = true;
 					Quest.reforged = false;
@@ -127,16 +107,16 @@ public class Blacksmith extends NPC {
 				Pickaxe pick = Dungeon.hero.belongings.getItem( Pickaxe.class );
 				DarkGold gold = Dungeon.hero.belongings.getItem( DarkGold.class );
 				if (pick == null) {
-					tell( Messages.get(this, "lost_pick") );
+					Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc(), false)));
 				} else if (gold == null || gold.quantity() < 15) {
-					tell( Messages.get(this, "gold_2") );
+					Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc.Gold(), false)));
 				} else {
 					if (pick.isEquipped( Dungeon.hero )) {
 						pick.doUnequip( Dungeon.hero, false );
 					}
 					pick.detach( Dungeon.hero.belongings.backpack );
 					gold.detachAll( Dungeon.hero.belongings.backpack );
-					tell( Messages.get(this, "completed") );
+					Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc.L1(), false)));
 					
 					Quest.completed = true;
 					Quest.reforged = false;
@@ -153,8 +133,8 @@ public class Blacksmith extends NPC {
 			});
 			
 		} else {
-			
-			tell( Messages.get(this, "get_lost") );
+
+			Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc.L2(), false)));
 			
 		}
 
@@ -270,8 +250,8 @@ public class Blacksmith extends NPC {
 		private static boolean spawned;
 		
 		private static boolean alternative;
-		private static boolean given;
-		private static boolean completed;
+		public static boolean given;
+		public static boolean completed;
 		private static boolean reforged;
 		
 		public static void reset() {
@@ -324,7 +304,7 @@ public class Blacksmith extends NPC {
 				
 				rooms.add(new BlacksmithRoom());
 				spawned = true;
-				alternative = Random.Int( 2 ) == 0;
+				alternative =true;
 				
 				given = false;
 				
