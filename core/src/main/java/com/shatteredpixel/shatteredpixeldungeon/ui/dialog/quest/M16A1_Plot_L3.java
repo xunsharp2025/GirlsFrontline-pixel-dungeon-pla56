@@ -1,11 +1,11 @@
-package com.shatteredpixel.shatteredpixeldungeon.ui.diglog.quest;
+package com.shatteredpixel.shatteredpixeldungeon.ui.dialog.quest;
 
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.utils.diglog.Plot;
 import com.shatteredpixel.shatteredpixeldungeon.utils.diglog.Script;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
 
-public class STAR15_Plot_L3 extends Plot {
+public class M16A1_Plot_L3 extends Plot {
 
     private final static int maxprocess = 5;
 
@@ -72,37 +72,37 @@ public class STAR15_Plot_L3 extends Plot {
 
     private void process_to_1() {
         diagulewindow.hideAll();
-        diagulewindow.setMainAvatar(Script.AvatarUMP45(0));
+        diagulewindow.setMainAvatar(Script.AvatarUMP45(1));
         diagulewindow.setLeftName(Script.Name(Script.Character.UMP45));
         diagulewindow.changeText(Messages.get(this,"dialog0"));
     }
 
     private void process_to_2() {
-        diagulewindow.setMainAvatar(Script.AvatarUMP9(2));
-        diagulewindow.setLeftName(Script.Name(Script.Character.UMP9));
+        diagulewindow.setMainAvatar(Script.NPC_M16A1(1));
+        diagulewindow.setLeftName(Script.Name(Script.Character.M16A1));
         diagulewindow.changeText(Messages.get(this,"dialog1"));
     }
 
     private void process_to_3() {
-        diagulewindow.setMainAvatar(Script.AvatarSTAR45(0));
-        diagulewindow.setLeftName(Script.Name(Script.Character.STAR_45));
+        diagulewindow.setMainAvatar(Script.NPC_M16A1(2));
+        diagulewindow.setLeftName(Script.Name(Script.Character.M16A1));
         diagulewindow.changeText(Messages.get(this,"dialog2"));
     }
 
     private void process_to_4() {
-        diagulewindow.setMainAvatar(Script.AvatarSTAR45(1));
-        diagulewindow.setLeftName(Script.Name(Script.Character.STAR_45));
+        diagulewindow.setMainAvatar(Script.AvatarHK416(1));
+        diagulewindow.setLeftName(Script.Name(Script.Character.HK416));
         diagulewindow.changeText(Messages.get(this,"dialog3"));
     }
 
     private void process_to_5() {
-        diagulewindow.setMainAvatar(Script.AvatarSTAR45(2));
-        diagulewindow.setLeftName(Script.Name(Script.Character.STAR_45));
+        diagulewindow.setMainAvatar(Script.AvatarUMP45(0));
+        diagulewindow.setLeftName(Script.Name(Script.Character.UMP45));
         diagulewindow.changeText(Messages.get(this,"dialog4"));
     }
 
     public static class End extends Plot {
-        private final static int maxprocess = 1;
+        private final static int maxprocess = 2;
 
         {
             process = 1;
@@ -126,6 +126,8 @@ public class STAR15_Plot_L3 extends Plot {
             if (diagulewindow != null) {
                 if (process == 1) {
                     process_to_1();
+                } else {
+                    process_to_2();
                 }
                 diagulewindow.update();
                 process++;
@@ -152,13 +154,20 @@ public class STAR15_Plot_L3 extends Plot {
 
         private void process_to_1() {
             diagulewindow.hideAll();
-            diagulewindow.setMainAvatar(Script.AvatarSTAR45(0));
-            diagulewindow.setLeftName(Script.Name(Script.Character.STAR_45));
+            diagulewindow.setMainAvatar(Script.NPC_M16A1(0));
+            diagulewindow.setLeftName(Script.Name(Script.Character.M16A1));
             diagulewindow.changeText(Messages.get(this,"dialog"));
         }
-    }
 
+        private void process_to_2() {
+            diagulewindow.hideAll();
+            diagulewindow.setMainAvatar(Script.NPC_M16A1(0));
+            diagulewindow.setLeftName(Script.Name(Script.Character.M16A1));
+            diagulewindow.changeText(Messages.get(this,"dialog1"));
+        }
+    }
 }
+
 
 
 

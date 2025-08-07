@@ -1,12 +1,11 @@
-package com.shatteredpixel.shatteredpixeldungeon.ui.diglog.quest;
+package com.shatteredpixel.shatteredpixeldungeon.ui.dialog.quest;
 
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.utils.diglog.Plot;
 import com.shatteredpixel.shatteredpixeldungeon.utils.diglog.Script;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
 
-//新对话框
-public class STAR15_Plot_L1 extends Plot {
+public class STAR15_Plot_L2 extends Plot {
 
     private final static int maxprocess = 5;
 
@@ -159,7 +158,6 @@ public class STAR15_Plot_L1 extends Plot {
         }
     }
 }
-
 
 
 

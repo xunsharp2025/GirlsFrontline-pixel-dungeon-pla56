@@ -1,4 +1,4 @@
-package com.shatteredpixel.shatteredpixeldungeon.ui.diglog.quest;
+package com.shatteredpixel.shatteredpixeldungeon.ui.dialog.quest;
 
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.utils.diglog.Plot;
