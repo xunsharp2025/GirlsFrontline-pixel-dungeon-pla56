@@ -93,7 +93,7 @@ public enum HeroClass {
 	MAGE( HeroSubClass.BATTLEMAGE, HeroSubClass.WARLOCK ),
 	ROGUE( HeroSubClass.ASSASSIN, HeroSubClass.FREERUNNER ),
 	HUNTRESS( HeroSubClass.SNIPER, HeroSubClass.WARDEN ),
-	TYPE56(),
+	TYPE561(HeroSubClass.PULSETROOPER, HeroSubClass.MODERN_REBORNER),
 	NONE(  HeroSubClass.NONE );
 	private HeroSubClass[] subClasses;
 
@@ -177,8 +177,8 @@ public enum HeroClass {
 				initHuntress( hero );
 				break;
 
-			case TYPE56:
-				initType56( hero );
+			case TYPE561:
+				initType561( hero );
 				break;
 
 		}
@@ -206,8 +206,8 @@ public enum HeroClass {
 				return Badges.Badge.MASTERY_ROGUE;
 			case HUNTRESS:
 				return Badges.Badge.MASTERY_HUNTRESS;
-			case TYPE56:
-				return Badges.Badge.MASTERY_TYPE56;
+			case TYPE561:
+				return Badges.Badge.MASTERY_TYPE561;
 		}
 		return null;
 	}
@@ -259,22 +259,6 @@ public enum HeroClass {
 		new ScrollOfMagicMapping().identify();
 	}
 
-	private static void initType56( Hero hero ) {
-		(hero.belongings.weapon = new Gun561()).identify();
-		SmallRation SmallRation = new SmallRation();
-		SmallRation.quantity(4).collect();
-		RedBook RedBook = new RedBook();
-		RedBook.collect();
-
-		Dungeon.quickslot.setSlot(0, SmallRation);
-
-		Dungeon.quickslot.setSlot(1, RedBook);
-//		if (!BuildConfig.DEBUG) {
-//			new VelvetPouch().collect();
-//			Dungeon.LimitedDrops.VELVET_POUCH.drop();
-//		}
-		new PotionOfMindVision().identify();
-	}
 	private static void initHuntress( Hero hero ) {
 
 		(hero.belongings.weapon = new M9()).identify();
@@ -285,6 +269,19 @@ public enum HeroClass {
 
 		new PotionOfMindVision().identify();
 		new ScrollOfLullaby().identify();
+	}
+
+	private static void initType561( Hero hero ) {
+		(hero.belongings.weapon = new Gun561()).identify();
+		SmallRation SmallRation = new SmallRation();
+		SmallRation.quantity(4).collect();
+		RedBook RedBook = new RedBook();
+		RedBook.collect();
+
+		Dungeon.quickslot.setSlot(0, SmallRation);
+		Dungeon.quickslot.setSlot(1, RedBook);
+
+		new PotionOfMindVision().identify();
 	}
 
 	public String title() {
@@ -309,7 +306,7 @@ public enum HeroClass {
 				return new ArmorAbility[]{new SmokeBomb(), new DeathMark(), new ShadowClone()};
 			case HUNTRESS:
 				return new ArmorAbility[]{new SpectralBlades(), new NaturesPower(), new SpiritHawk()};
-			case TYPE56:
+			case TYPE561:
 				return new ArmorAbility[]{};
 		}
 	}
@@ -324,8 +321,8 @@ public enum HeroClass {
 				return Assets.Sprites.ROGUE;
 			case HUNTRESS:
 				return Assets.Sprites.HUNTRESS;
-			case TYPE56:
-				return Assets.Sprites.TYPE56;
+			case TYPE561:
+				return Assets.Sprites.TYPE561;
 		}
 	}
 
@@ -376,13 +373,13 @@ public enum HeroClass {
 						Messages.get(HeroClass.class, "huntress_perk4"),
 						Messages.get(HeroClass.class, "huntress_perk5"),
 				};
-			case TYPE56:
+			case TYPE561:
 				return new String[]{
-						Messages.get(HeroClass.class, "type56_perk1"),
-						Messages.get(HeroClass.class, "type56_perk2"),
-						Messages.get(HeroClass.class, "type56_perk3"),
-						Messages.get(HeroClass.class, "type56_perk4"),
-						Messages.get(HeroClass.class, "type56_perk5"),
+						Messages.get(HeroClass.class, "type561_perk1"),
+						Messages.get(HeroClass.class, "type561_perk2"),
+						Messages.get(HeroClass.class, "type561_perk3"),
+						Messages.get(HeroClass.class, "type561_perk4"),
+						Messages.get(HeroClass.class, "type561_perk5"),
 				};
 		}
 	}
@@ -400,8 +397,9 @@ public enum HeroClass {
 				return Badges.isUnlocked(Badges.Badge.UNLOCK_ROGUE);
 			case HUNTRESS:
 				return Badges.isUnlocked(Badges.Badge.UNLOCK_HUNTRESS);
-			case TYPE56:
-				return Badges.isUnlocked(Badges.Badge.UNLOCK_TYPE56);
+			case TYPE561:
+				return true;
+				//return Badges.isUnlocked(Badges.Badge.UNLOCK_TYPE561);
 		}
 	}
 	
@@ -415,7 +413,8 @@ public enum HeroClass {
 				return Messages.get(HeroClass.class, "rogue_unlock");
 			case HUNTRESS:
 				return Messages.get(HeroClass.class, "huntress_unlock");
+			case TYPE561:
+				return Messages.get(HeroClass.class, "type561_unlock");
 		}
 	}
-
 }

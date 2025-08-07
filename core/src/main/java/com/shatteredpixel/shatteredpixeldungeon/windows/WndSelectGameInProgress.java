@@ -152,7 +152,7 @@ public class WndSelectGameInProgress extends Window {
                 case HUNTRESS:
                     order = 4;
                     break;
-                case TYPE56:
+                case TYPE561:
                     order = 5;
                     break;
                 default:

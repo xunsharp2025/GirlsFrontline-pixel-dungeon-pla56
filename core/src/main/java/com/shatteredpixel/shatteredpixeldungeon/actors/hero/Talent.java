@@ -144,7 +144,18 @@ public enum Talent {
 	//universal T4
 	HEROIC_ENERGY(26, 4), //See icon() and title() for special logic for this one
 	//Ratmogrify T4
-	RATSISTANCE(124, 4), RATLOMACY(125, 4), RATFORCEMENTS(126, 4);
+	RATSISTANCE(124, 4), RATLOMACY(125, 4), RATFORCEMENTS(126, 4),
+
+	//type561 T1
+	NICE_FOOD(128), OLD_SOLDIER(129), FAST_RELOAD(130), BETTER_FOOD(131),
+	//type561 T2
+	BARGAIN_SKILLS(132),TRAP_EXPERT(133),HOW_DARE_YOU(134),JIEFANGCI(135),NIGHT_EXPERT(136),
+	//type561 T3
+	SERACH_ARMY(137, 3), ELITE_ARMY(138, 3),
+	//pulseTrooper T3
+	SIMPLE_RELOAD(139, 3), MORE_POWER(140, 3), ENDURE_EMP(141, 3),
+	//modernReborner T3
+	NEWLIFE(142, 3), MORE_ACCURATE(143, 3), ENHANCE_GRENADE(144, 3);
 
 	public static class ImprovisedProjectileCooldown extends FlavourBuff{
 		public int icon() { return BuffIndicator.TIME; }
@@ -490,6 +501,9 @@ public enum Talent {
 			case HUNTRESS:
 				Collections.addAll(tierTalents, NATURES_BOUNTY, SURVIVALISTS_INTUITION, FOLLOWUP_STRIKE, NATURES_AID);
 				break;
+			case TYPE561:
+				Collections.addAll(tierTalents, NICE_FOOD , OLD_SOLDIER, FAST_RELOAD, BETTER_FOOD);
+				break;
 		}
 		for (Talent talent : tierTalents){
 			if (replacements.containsKey(talent)){
@@ -513,6 +527,9 @@ public enum Talent {
 			case HUNTRESS:
 				Collections.addAll(tierTalents, INVIGORATING_MEAL, RESTORED_NATURE, REJUVENATING_STEPS, HEIGHTENED_SENSES, DURABLE_PROJECTILES);
 				break;
+			case TYPE561:
+				Collections.addAll(tierTalents, BARGAIN_SKILLS, TRAP_EXPERT, HOW_DARE_YOU, JIEFANGCI, NIGHT_EXPERT);
+				break;
 		}
 		for (Talent talent : tierTalents){
 			if (replacements.containsKey(talent)){
@@ -535,6 +552,9 @@ public enum Talent {
 				break;
 			case HUNTRESS:
 				Collections.addAll(tierTalents, POINT_BLANK, SEER_SHOT);
+				break;
+			case TYPE561:
+				Collections.addAll(tierTalents, SERACH_ARMY, ELITE_ARMY);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -587,6 +607,12 @@ public enum Talent {
 				break;
 			case WARDEN:
 				Collections.addAll(tierTalents, DURABLE_TIPS, BARKSKIN, SHIELDING_DEW);
+				break;
+			case PULSETROOPER:
+				Collections.addAll(tierTalents, SIMPLE_RELOAD, MORE_POWER, ENDURE_EMP);
+				break;
+			case MODERN_REBORNER:
+				Collections.addAll(tierTalents, NEWLIFE, MORE_ACCURATE, ENHANCE_GRENADE);
 				break;
 		}
 		for (Talent talent : tierTalents){

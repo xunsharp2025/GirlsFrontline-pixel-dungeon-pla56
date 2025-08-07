@@ -50,14 +50,14 @@ public class Badges {
 		MASTERY_MAGE,
 		MASTERY_ROGUE,
 		MASTERY_HUNTRESS,
-		MASTERY_TYPE56,
+		MASTERY_TYPE561,
 		FOUND_RATMOGRIFY,
 
 		//bronze
 		UNLOCK_MAGE                 ( 1 ),
 		UNLOCK_ROGUE                ( 2 ),
 		UNLOCK_HUNTRESS             ( 3 ),
-		UNLOCK_TYPE56               ( 115 ),
+		UNLOCK_TYPE561              ( 115 ),
 
         //silver
 		MONSTERS_SLAIN_1            ( 4 ),
@@ -103,7 +103,7 @@ public class Badges {
 		BOSS_SLAIN_1_MAGE,
 		BOSS_SLAIN_1_ROGUE,
 		BOSS_SLAIN_1_HUNTRESS,
-		BOSS_SLAIN_1_TYPE56,
+		BOSS_SLAIN_1_TYPE561,
 		BOSS_SLAIN_1_ALL_CLASSES    ( 53, true ),
 		GAMES_PLAYED_2              ( 54, true ),
 
@@ -153,7 +153,7 @@ public class Badges {
 		VICTORY_MAGE,
 		VICTORY_ROGUE,
 		VICTORY_HUNTRESS,
-		VICTORY_TYPE56,
+		VICTORY_TYPE561,
 		VICTORY_ALL_CLASSES         ( 98, true ),
 		GAMES_PLAYED_4              ( 99, true ),
 		CHAMPION_1                  ( 100 ),
@@ -657,8 +657,8 @@ public class Badges {
 				case HUNTRESS:
 					badge = Badge.BOSS_SLAIN_1_HUNTRESS;
 					break;
-				case TYPE56:
-					badge = Badge.BOSS_SLAIN_1_TYPE56;
+				case TYPE561:
+					badge = Badge.BOSS_SLAIN_1_TYPE561;
 					break;
 				}
 				local.add( badge );
@@ -668,7 +668,7 @@ public class Badges {
 						isUnlocked( Badge.BOSS_SLAIN_1_MAGE ) &&
 						isUnlocked( Badge.BOSS_SLAIN_1_ROGUE ) &&
 						isUnlocked( Badge.BOSS_SLAIN_1_HUNTRESS) &&
-					isUnlocked( Badge.BOSS_SLAIN_1_TYPE56)) {
+					isUnlocked( Badge.BOSS_SLAIN_1_TYPE561)) {
 					
 					badge = Badge.BOSS_SLAIN_1_ALL_CLASSES;
 					if (!isUnlocked( badge )) {
@@ -742,8 +742,8 @@ public class Badges {
 		case HUNTRESS:
 			badge = Badge.MASTERY_HUNTRESS;
 			break;
-		case TYPE56:
-			badge = Badge.MASTERY_TYPE56;
+		case TYPE561:
+			badge = Badge.MASTERY_TYPE561;
 			break;
 		}
 		
@@ -798,8 +798,8 @@ public class Badges {
 		case HUNTRESS:
 			badge = Badge.VICTORY_HUNTRESS;
 			break;
-		case TYPE56:
-			badge = Badge.VICTORY_TYPE56;
+		case TYPE561:
+			badge = Badge.VICTORY_TYPE561;
 			break;
 		}
 		local.add( badge );
@@ -808,7 +808,7 @@ public class Badges {
 		if (isUnlocked( Badge.VICTORY_WARRIOR ) &&
 				isUnlocked( Badge.VICTORY_MAGE ) &&
 				isUnlocked( Badge.VICTORY_ROGUE ) &&
-				isUnlocked( Badge.VICTORY_TYPE56 ) &&
+				isUnlocked( Badge.VICTORY_TYPE561 ) &&
 				isUnlocked( Badge.VICTORY_HUNTRESS )) {
 			
 			badge = Badge.VICTORY_ALL_CLASSES;

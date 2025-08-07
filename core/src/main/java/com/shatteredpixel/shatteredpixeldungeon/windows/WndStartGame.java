@@ -176,7 +176,7 @@ public class WndStartGame extends Window {
 			} else if (cl == HeroClass.HUNTRESS){
 				hero = new Image(Assets.Sprites.HUNTRESS, 0, HeroSprite.FRAME_HEIGHT * 2 /*tier*/, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
 			} else {
-				hero = new Image(Assets.Sprites.TYPE56, 0, HeroSprite.FRAME_HEIGHT * 2 /*tier*/, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
+				hero = new Image(Assets.Sprites.TYPE561, 0, HeroSprite.FRAME_HEIGHT * 2 /*tier*/, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
 			}
 			add(hero);
 		}
@@ -332,7 +332,7 @@ public class WndStartGame extends Window {
 							heroLoadout.icon(new ItemSprite(ItemSpriteSheet.M79, null));
 							heroMisc.icon(new ItemSprite(ItemSpriteSheet.DART, null));
 							break;
-						case TYPE56:
+						case TYPE561:
 							heroItem.icon(new ItemSprite(ItemSpriteSheet.OVERPRICED, null));
 							heroLoadout.icon(new ItemSprite(ItemSpriteSheet.Gun561, null));
 							heroMisc.icon(new ItemSprite(ItemSpriteSheet.REDBOOK, null));
