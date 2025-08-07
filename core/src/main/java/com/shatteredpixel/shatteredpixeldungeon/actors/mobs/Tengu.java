@@ -321,12 +321,14 @@ public class Tengu extends Mob {
 		if (!BossHealthBar.isAssigned()) {
 			BossHealthBar.assignBoss(this);
 			if (HP <= HT/2) BossHealthBar.bleed(true);
-			Game.runOnRenderThread(new Callback() {
-				@Override
-				public void call() {
-					GameScene.scene.add(new WndDialog(new Uroboros_Plot(),false));
-				}
-			});
+			if(HP == HT){
+				Game.runOnRenderThread(new Callback() {
+					@Override
+					public void call() {
+						GameScene.scene.add(new WndDialog(new Uroboros_Plot(),false));
+					}
+				});
+			}
 			yell(Messages.get(this, "notice", Dungeon.hero.name()));
 		}
 	}
