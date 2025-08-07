@@ -49,7 +49,7 @@ public class WndStory extends Window {
 	public static final int ID_CITY     	= 3;
 	public static final int ID_RECAVES		= 4;
 
-	public static final int ID_HALLS		= 4;
+	public static final int ID_HALLS		= 5;
 	
 	private static final SparseArray<String> CHAPTERS = new SparseArray<>();
 	

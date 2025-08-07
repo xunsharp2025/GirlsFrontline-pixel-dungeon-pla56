@@ -103,6 +103,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.mainlevel.LevelPlot_P2
 import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.mainlevel.LevelPlot_P3;
 import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.mainlevel.LevelPlot_P4;
 import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.mainlevel.LevelPlot_P5;
+import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.mainlevel.LevelPlot_P6;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.utils.diglog.Script;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
@@ -445,6 +446,12 @@ public class GameScene extends PixelScene {
 						GameScene.scene.add(new WndDialog(new LevelPlot_P5(),false));
 					}
 					WndStory.showChapter( WndStory.ID_RECAVES );
+					break;
+				case 26:
+					if(Script.checkChapter(Script.ID_HALLS)) {
+						GameScene.scene.add(new WndDialog(new LevelPlot_P6(),false));
+					}
+					WndStory.showChapter( WndStory.ID_HALLS );
 					break;
 				}
 				if (Dungeon.hero.isAlive()) {
