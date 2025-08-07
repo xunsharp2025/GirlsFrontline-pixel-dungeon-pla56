@@ -141,6 +141,23 @@ public class Script {
         return i;
     }
 
+    public static Image NPC_DISTROYER(int index) {
+        Image i;
+        switch (index){
+            default:
+            case 0:
+                i = new Image(Assets.EMOTION,216,72,24,24);
+                break;
+            case 1:
+                i = new Image(Assets.EMOTION,240,72,24,24);
+                break;
+            case 2:
+                i = new Image(Assets.EMOTION,264,72,24,24);
+                break;
+        }
+        return i;
+    }
+
     public static Image BossExcutioner() {
         Image i;
         i = new Image(Assets.EMOTION,216,0,24,24);

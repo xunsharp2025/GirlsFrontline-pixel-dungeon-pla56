@@ -101,6 +101,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.mainlevel.LevelPlot_P1;
 import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.mainlevel.LevelPlot_P2;
 import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.mainlevel.LevelPlot_P3;
+import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.mainlevel.LevelPlot_P4;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.utils.diglog.Script;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
@@ -433,6 +434,9 @@ public class GameScene extends PixelScene {
 					WndStory.showChapter( WndStory.ID_CAVES );
 					break;
 				case 16:
+					if(Script.checkChapter(Script.ID_CITY)) {
+						GameScene.scene.add(new WndDialog(new LevelPlot_P4(),false));
+					}
 					WndStory.showChapter( WndStory.ID_CITY );
 					break;
 				case 21:
