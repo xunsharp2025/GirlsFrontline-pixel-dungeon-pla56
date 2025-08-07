@@ -61,10 +61,7 @@ public class CityLevel extends RegularLevel {
 
 	@Override
 	public void playLevelMusic() {
-		Music.INSTANCE.playTracks(
-				new String[]{Assets.Music.CITY_1, Assets.Music.CITY_2, Assets.Music.CITY_2},
-				new float[]{1, 1, 0.5f},
-				false);
+		Music.INSTANCE.play(Assets.Music.CITY_1, true);
 	}
 
 	@Override

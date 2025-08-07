@@ -189,6 +189,9 @@ public class Ghost extends NPC {
 					@Override
 					public void call() {
 						GameScene.scene.add(new WndDialog(txt_quest,false));
+						if (Dungeon.level != null) {
+							Dungeon.level.playLevelMusic();
+						}
 					}
 				});
 			}
@@ -199,7 +202,9 @@ public class Ghost extends NPC {
 	}
 
 	public static class Quest {
-		
+		public static boolean active(){
+			return spawned && given && !processed && depth == Dungeon.depth;
+		}
 		private static boolean spawned;
 
 		private static int type;

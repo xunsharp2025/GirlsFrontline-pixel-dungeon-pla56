@@ -61,10 +61,7 @@ public class CavesLevel extends RegularLevel {
 
 	@Override
 	public void playLevelMusic() {
-		Music.INSTANCE.playTracks(
-				new String[]{Assets.Music.CAVES_1, Assets.Music.CAVES_2, Assets.Music.CAVES_2},
-				new float[]{1, 1, 0.5f},
-				false);
+		Music.INSTANCE.play(Assets.Music.CAVES_1, true);
 	}
 
 	@Override

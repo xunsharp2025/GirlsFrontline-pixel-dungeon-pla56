@@ -20,6 +20,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTileSheet;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Group;
+import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
@@ -33,6 +34,17 @@ public class DeepCaveBossLevel extends Level {
         color2 = 0xb9d661;
 
         viewDistance = Math.min(6, viewDistance);
+    }
+
+    @Override
+    public void playLevelMusic() {
+        if (locked){
+            Music.INSTANCE.play(Assets.Music.RECAVES_BOSS, true);
+        } else if (map[arenaDoor] == Terrain.DOOR){
+            Music.INSTANCE.end();
+        } else {
+            Music.INSTANCE.play(Assets.Music.RECAVES_1, true);
+        }
     }
 
     private static final int WIDTH = 32;
@@ -227,6 +239,7 @@ public class DeepCaveBossLevel extends Level {
             CellEmitter.get( arenaDoor ).start( Speck.factory( Speck.ROCK ), 0.07f, 10 );
             Camera.main.shake( 3, 0.7f );
             Sample.INSTANCE.play( Assets.Sounds.ROCKS );
+            playLevelMusic();
         }
     }
 
@@ -243,6 +256,7 @@ public class DeepCaveBossLevel extends Level {
             set( arenaDoor, Terrain.EMPTY_DECO );
             GameScene.updateMap( arenaDoor );
             Dungeon.observe();
+            Music.INSTANCE.end();
         }
 
         return super.drop( item, cell );

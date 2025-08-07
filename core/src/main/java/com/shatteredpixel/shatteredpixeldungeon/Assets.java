@@ -154,28 +154,30 @@ public class Assets {
 	}
 
 	public static class Music {
-		public static final String THEME_1      = "music/theme.ogg";
-		public static final String THEME_2      = "music/theme_2.mp3";
+		public static final String THEME_1      = "music/MakeSense.ogg";
+		public static final String THEME_2      = "music/Horizon.ogg";
 
-		public static final String SEWERS_1     = "music/s1.mp3";
-		public static final String SEWERS_2     = "music/sewers_2.ogg";
-		public static final String SEWERS_BOSS  = "music/sewers_boss.ogg";
+		public static final String END        = "music/Vacance.ogg";
 
-		public static final String PRISON_1     = "music/prison_1.ogg";
-		public static final String PRISON_2     = "music/prison_2.ogg";
-		public static final String PRISON_BOSS  = "music/prison_boss.ogg";
+		public static final String SEWERS_1     = "music/SafetyFirst-a.ogg";
+		public static final String SEWERS_2     = "music/SafetyFirst-b.ogg";
+		public static final String SEWERS_BOSS  = "music/Made-in-Heaven.ogg";
 
-		public static final String CAVES_1      = "music/caves_1.ogg";
-		public static final String CAVES_2      = "music/caves_2.ogg";
-		public static final String CAVES_BOSS   = "music/caves_boss.ogg";
+		public static final String PRISON_1     = "music/M_halloween19_host.ogg";
+		public static final String PRISON_BOSS  = "music/M_halloween19_made_in_heaven.ogg";
 
-		public static final String CITY_1       = "music/city_1.ogg";
-		public static final String CITY_2       = "music/city_2.ogg";
-		public static final String CITY_BOSS    = "music/city_boss.ogg";
+		public static final String CAVES_1      = "music/Machines-AreTalking.ogg";
+		public static final String CAVES_BOSS   = "music/Cradle-of-Fear.ogg";
 
-		public static final String HALLS_1      = "music/halls_1.ogg";
-		public static final String HALLS_2      = "music/halls_2.ogg";
-		public static final String HALLS_BOSS   = "music/halls_boss.ogg";
+		public static final String CITY_1       = "music/Event_summer_combat.ogg";
+		public static final String CITY_BOSS    = "music/Cury.ogg";
+
+
+		public static final String RECAVES_1       = "music/Tactical-Operation.ogg";
+		public static final String RECAVES_BOSS    = "music/What-amIfightingfor.ogg";
+
+		public static final String HALLS_1      = "music/SeeYouAgain.ogg";
+		public static final String HALLS_BOSS   = "music/MindHack.ogg";
 	}
 
 	public static class Sounds {

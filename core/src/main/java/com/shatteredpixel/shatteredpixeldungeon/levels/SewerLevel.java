@@ -58,7 +58,12 @@ public class SewerLevel extends RegularLevel {
 	}
 
 	public void playLevelMusic(){
-		Music.INSTANCE.play(Assets.Music.SEWERS_1, true);
+		if (Ghost.Quest.active()){
+			Music.INSTANCE.play(Assets.Music.SEWERS_2, true);
+		} else {
+			Music.INSTANCE.play(Assets.Music.SEWERS_1, true);
+		}
+
 	}
 	
 	@Override
