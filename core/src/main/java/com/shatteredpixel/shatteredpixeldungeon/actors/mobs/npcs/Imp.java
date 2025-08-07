@@ -35,6 +35,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.CityLevel;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ImpSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.P7Sprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.quest.P7_Plot_L1;
 import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.quest.P7_Plot_L2;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
@@ -48,7 +49,7 @@ import com.watabou.utils.Random;
 public class Imp extends NPC {
 
 	{
-		spriteClass = ImpSprite.class;
+		spriteClass = P7Sprite.class;
 
 		properties.add(Property.IMMOVABLE);
 	}

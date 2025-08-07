@@ -54,7 +54,7 @@ public class P7Sprite extends MobSprite {
 		super.link( ch );
 		
 		if (ch instanceof Imp) {
-			alpha( 0.4f );
+			alpha( 0.6f );
 		}
 	}
 	
