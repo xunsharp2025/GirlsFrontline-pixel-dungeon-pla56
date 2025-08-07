@@ -653,7 +653,7 @@ public class ItemSpriteSheet {
 		assignItemRect(RECYCLE,         10, 15);
 	}
 	
-	private static final int FOOD       =                                   xy(1, 28);  //16 slots
+	private static final int FOOD       = xy(1, 28);  //16 slots
 	public static final int MEAT        = FOOD+0;
 	public static final int STEAK       = FOOD+1;
 	public static final int STEWED      = FOOD+2;
@@ -666,7 +666,7 @@ public class ItemSpriteSheet {
 	public static final int MEAT_PIE    = FOOD+9;
 	public static final int BLANDFRUIT  = FOOD+10;
 	public static final int BLAND_CHUNKS= FOOD+11;
-	public static final int BERRY =       FOOD+12;
+	public static final int BERRY 		= FOOD+12;
 	public static final int MACCOL      = FOOD+13;
 	public static final int CINNAMONROLL= FOOD+14;
 	static{
