@@ -33,6 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EnhancedRings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
@@ -57,6 +58,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun561;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun562;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
@@ -514,6 +517,18 @@ public enum Talent {
 
 			if(Random.Float()<chance){
 				Buff.affect(enemy,Terror.class,duration);
+			}
+		}
+
+		if(hero.hasTalent(JIEFANGCI)){
+			if(Dungeon.level.adjacent(hero.pos,enemy.pos)
+			&&(hero.belongings.weapon() instanceof Gun561
+			|| hero.belongings.weapon() instanceof Gun562)){
+				dmg+=1+4*hero.pointsInTalent(JIEFANGCI);
+				float chance=0.05f+0.1f*hero.pointsInTalent(JIEFANGCI);
+				if(Random.Float()<chance){
+					Buff.affect(enemy,Cripple.class,1f);
+				}
 			}
 		}
 
