@@ -685,8 +685,8 @@ public class ItemSpriteSheet {
 		assignItemRect(BERRY,       9, 11);
 		assignItemRect(MACCOL,       7,10);
 		assignItemRect(CINNAMONROLL, 8,8 );
-		assignItemRect(SUGARZONGZI ,16,12);
-		assignItemRect(SALTYZONGZI ,16,13);
+		assignItemRect(SUGARZONGZI ,16,14);
+		assignItemRect(SALTYZONGZI ,16,15);
 	}
 
 	private static final int QUEST  =                                       xy(1, 29);  //32 slots
