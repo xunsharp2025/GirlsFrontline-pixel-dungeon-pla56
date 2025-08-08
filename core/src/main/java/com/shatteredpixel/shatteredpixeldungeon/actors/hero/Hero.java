@@ -1991,14 +1991,20 @@ public class Hero extends Char {
 						//unintentional searches always fail with a cursed talisman
 						} else if (cursed) {
 							chance = 0f;
-							
-						//unintentional trap detection scales from 40% at floor 0 to 30% at floor 25
+						
+						//unintentional trap detection scales from 40% at floor 0 to 30% at floor 30
 						} else if (Dungeon.level.map[curr] == Terrain.SECRET_TRAP) {
-							chance = 0.4f - (Dungeon.depth / 250f);
+							chance=0.3f+0.1f*(1f-Dungeon.depth/30f);
 							
-						//unintentional door detection scales from 20% at floor 0 to 0% at floor 20
+							if(hasTalent(Talent.TRAP_EXPERT)){
+								chance*=1.5f;
+								if(pointsInTalent(Talent.TRAP_EXPERT)>=2){
+									chance=0.99f+chance/100f;
+								}
+							}
+						//unintentional door detection scales from 20% at floor 0 to 0% at floor 25
 						} else {
-							chance = 0.2f - (Dungeon.depth / 100f);
+							chance=     0.2f*(1f-Dungeon.depth/25f);
 						}
 						
 						if (Random.Float() < chance) {
