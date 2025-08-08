@@ -159,8 +159,8 @@ public class ItemSpriteSheet {
 
 		assignItemRect(SKELETON_KEY,    8,  14);
 
-		assignItemRect(MASK,            11,  9);
-		assignItemRect(CROWN,           13,  7);
+		assignItemRect(MASK,            13,  16);
+		assignItemRect(CROWN,           14,  15);
 		assignItemRect(AMULET,          16, 16);
 		assignItemRect(MASTERY,         13, 16);
 		assignItemRect(KIT,             16, 15);
