@@ -271,6 +271,16 @@ public enum Talent {
 			}
 		}
 
+		if (talent == OLD_SOLDIER && hero.pointsInTalent(OLD_SOLDIER) == 2){
+			if (hero.belongings.weapon() != null) hero.belongings.weapon().identify();
+			for (Item item : Dungeon.hero.belongings){
+				if(item instanceof MeleeWeapon){
+					item.cursedKnown=true;
+					item.updateQuickslot();
+				}
+			}
+		}
+
 		if (talent == HEIGHTENED_SENSES || talent == FARSIGHT){
 			Dungeon.observe();
 		}
@@ -326,20 +336,24 @@ public enum Talent {
 
 	public static float itemIDSpeedFactor( Hero hero, Item item ){
 		// 1.75x/2.5x speed with huntress talent
-		float factor = 1f + hero.pointsInTalent(SURVIVALISTS_INTUITION)*0.75f;
+		float factor=1f+hero.pointsInTalent(SURVIVALISTS_INTUITION)*0.75f;
 
 		// 2x/instant for Warrior (see onItemEquipped)
 		if (item instanceof MeleeWeapon || item instanceof Armor){
-			factor *= 1f + hero.pointsInTalent(ARMSMASTERS_INTUITION);
+			factor*=1f+hero.pointsInTalent(ARMSMASTERS_INTUITION);
 		}
 		// 3x/instant for mage (see Wand.wandUsed())
 		if (item instanceof Wand){
-			factor *= 1f + 2*hero.pointsInTalent(SCHOLARS_INTUITION);
+			factor*=1f+2*hero.pointsInTalent(SCHOLARS_INTUITION);
 		}
 		// 2x/instant for rogue (see onItemEqupped), also id's type on equip/on pickup
 		if (item instanceof Ring){
-			factor *= 1f + hero.pointsInTalent(THIEFS_INTUITION);
+			factor*=1f+hero.pointsInTalent(THIEFS_INTUITION);
 		}
+		if(item instanceof MeleeWeapon){
+			factor*=1f+2*hero.pointsInTalent(OLD_SOLDIER);
+		}
+
 		return factor;
 	}
 
@@ -409,21 +423,30 @@ public enum Talent {
 	}
 
 	public static void onItemEquipped( Hero hero, Item item ){
-		if (hero.pointsInTalent(ARMSMASTERS_INTUITION) == 2 && (item instanceof Weapon || item instanceof Armor)){
+		if(hero.pointsInTalent(ARMSMASTERS_INTUITION) == 2 && (item instanceof Weapon || item instanceof Armor)){
 			item.identify();
 		}
-		if (hero.hasTalent(THIEFS_INTUITION) && item instanceof Ring){
-			if (hero.pointsInTalent(THIEFS_INTUITION) == 2){
+		if(hero.hasTalent(THIEFS_INTUITION) && item instanceof Ring){
+			if(hero.pointsInTalent(THIEFS_INTUITION) == 2){
 				item.identify();
-			} else {
+			}else{
 				((Ring) item).setKnown();
 			}
+		}
+		if(hero.pointsInTalent(OLD_SOLDIER)==2&&(item instanceof MeleeWeapon)){
+			item.identify();
 		}
 	}
 
 	public static void onItemCollected( Hero hero, Item item ){
-		if (hero.pointsInTalent(THIEFS_INTUITION) == 2){
-			if (item instanceof Ring) ((Ring) item).setKnown();
+		if(hero.pointsInTalent(THIEFS_INTUITION) == 2){
+			if(item instanceof Ring) ((Ring) item).setKnown();
+		}
+		if(hero.pointsInTalent(OLD_SOLDIER)==2){
+			if(item instanceof MeleeWeapon){
+				item.cursedKnown=true;
+				item.updateQuickslot();
+			}
 		}
 	}
 

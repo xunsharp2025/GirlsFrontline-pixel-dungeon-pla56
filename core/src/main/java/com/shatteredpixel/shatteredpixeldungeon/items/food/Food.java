@@ -110,8 +110,6 @@ public class Food extends Item {
 			}
 		}
 
-		System.out.println(actualEnergy);
-
 		if (Dungeon.isChallenged(Challenges.NO_FOOD)){
 			Buff.affect(hero, Hunger.class).satisfy(actualEnergy/3f);
 		} else {
