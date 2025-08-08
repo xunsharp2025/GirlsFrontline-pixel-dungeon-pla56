@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.CounterBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EnhancedRings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
@@ -482,14 +483,14 @@ public enum Talent {
 	}
 
 	public static int onAttackProc( Hero hero, Char enemy, int dmg ){
-		if (hero.hasTalent(Talent.SUCKER_PUNCH)
+		if(hero.hasTalent(SUCKER_PUNCH)
 				&& enemy instanceof Mob && ((Mob) enemy).surprisedBy(hero)
 				&& enemy.buff(SuckerPunchTracker.class) == null){
-			dmg += Random.IntRange(hero.pointsInTalent(Talent.SUCKER_PUNCH) , 2);
+			dmg += Random.IntRange(hero.pointsInTalent(SUCKER_PUNCH) , 2);
 			Buff.affect(enemy, SuckerPunchTracker.class);
 		}
 
-		if (hero.hasTalent(Talent.FOLLOWUP_STRIKE)) {
+		if(hero.hasTalent(FOLLOWUP_STRIKE)) {
 			if (hero.belongings.weapon() instanceof MissileWeapon) {
 				Buff.affect(enemy, FollowupStrikeTracker.class);
 			} else if (enemy.buff(FollowupStrikeTracker.class) != null){
@@ -498,6 +499,21 @@ public enum Talent {
 					Sample.INSTANCE.play(Assets.Sounds.HIT_STRONG, 0.75f, 1.2f);
 				}
 				enemy.buff(FollowupStrikeTracker.class).detach();
+			}
+		}
+
+		if(hero.hasTalent(HOW_DARE_YOU)){
+			float chance  =0.15f;
+			float duration=5.01f;
+
+			if(hero.pointsInTalent(HOW_DARE_YOU)>=2){
+				float enemyHealthRate=((float)enemy.HP)/((float)enemy.HT);
+				chance+=0.1f*enemyHealthRate;
+				duration+=10f*enemyHealthRate;
+			}
+
+			if(Random.Float()<chance){
+				Buff.affect(enemy,Terror.class,duration);
 			}
 		}
 
