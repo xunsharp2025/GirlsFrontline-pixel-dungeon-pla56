@@ -26,13 +26,13 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandofNukeBomb;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
@@ -86,7 +86,7 @@ public class Gun561 extends ShootGun {
 	public ArrayList<String> actions(Hero hero) {
 		//动作列表
 		ArrayList<String> actions = super.actions(hero);
-		if (Dungeon.hero.buff(WandofNukeBomb.Cooldown.class) != null) {
+		if (Dungeon.hero.buff(Cooldown.class) != null) {
 			actions.remove(AC_RELOAD);
 			actions.remove(AC_SHOOT);
 			actions.add(AC_CD);
@@ -98,9 +98,9 @@ public class Gun561 extends ShootGun {
 
 	@Override
 	public String defaultAction(){
-		if (Dungeon.hero.buff(WandofNukeBomb.Cooldown.class) != null && curCharges > 0 || curCharges > 0) {
+		if (Dungeon.hero.buff(Cooldown.class) != null && curCharges > 0 || curCharges > 0) {
             defaultAction = AC_SHOOT;
-        } else if (Dungeon.hero.buff(WandofNukeBomb.Cooldown.class) != null) {
+        } else if (Dungeon.hero.buff(Cooldown.class) != null) {
 			defaultAction = AC_CD;
 		} else {
 			defaultAction = AC_RELOAD;
@@ -112,7 +112,7 @@ public class Gun561 extends ShootGun {
 	public void execute(Hero hero, String action) {
 		super.execute(hero, action);
 		if (action.equals(AC_CD)) {
-			WandofNukeBomb.Cooldown cooldown = hero.buff(WandofNukeBomb.Cooldown.class);
+			Cooldown cooldown = hero.buff(Cooldown.class);
 			int timeLeft = (cooldown != null) ? (int)cooldown.cooldown() : 0;
 			GLog.n(Messages.get(this, "cd_status", timeLeft));
 		}
@@ -158,8 +158,13 @@ public class Gun561 extends ShootGun {
 					if (target == Dungeon.hero && !target.isAlive())
 						Dungeon.fail(getClass());
 				}
-				if(Dungeon.hero.buff(WandofNukeBomb.Cooldown.class)==null){
-					Buff.affect(Dungeon.hero, WandofNukeBomb.Cooldown.class,200f);
+				if(Dungeon.hero.buff(Cooldown.class)==null){
+					Hero hero=Dungeon.hero;
+					float coolDownTurns=200f;
+					if(hero.hasTalent(Talent.FAST_RELOAD)){
+						coolDownTurns-=20*hero.pointsInTalent(Talent.FAST_RELOAD);
+					}
+					Buff.affect(hero, Cooldown.class,coolDownTurns);
 				}
 			}
 		}
@@ -181,11 +186,17 @@ public class Gun561 extends ShootGun {
 	public String desc(){
 		// 获取当前实际冷却剩余时间
 		int currentCooldown = 0;
-		WandofNukeBomb.Cooldown cooldownBuff = Dungeon.hero.buff(WandofNukeBomb.Cooldown.class);
+		Cooldown cooldownBuff = Dungeon.hero.buff(Cooldown.class);
 		if (Dungeon.hero != null && cooldownBuff != null) {
 			currentCooldown = (int)cooldownBuff.cooldown();
 		}
 		int displayTime = currentCooldown > 0 ? currentCooldown : 0;
 		return Messages.get(this, "desc", displayTime);
 	};
+
+	public static class Cooldown extends FlavourBuff {
+        {
+            type = buffType.NEGATIVE;
+        }
+    }
 }
