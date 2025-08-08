@@ -597,7 +597,8 @@ public class Generator {
 			Category.WEP_T2,
 			Category.WEP_T3,
 			Category.WEP_T4,
-			Category.WEP_T5
+			Category.WEP_T5,
+			Category.WEP_T6
 	};
 
 	public static MeleeWeapon randomWeapon(){
