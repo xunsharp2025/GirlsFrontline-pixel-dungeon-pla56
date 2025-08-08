@@ -617,8 +617,6 @@ public class ItemSpriteSheet {
 			assignItemRect(i, 12, 14);
 	}
 	
-	                                                                                    //16 free slots
-	
 	private static final int SPELLS         =                               xy(1, 27);  //16 slots
 	public static final int MAGIC_PORTER    = SPELLS+0;
 	public static final int PHASE_SHIFT     = SPELLS+1;
@@ -688,7 +686,7 @@ public class ItemSpriteSheet {
 		assignItemRect(MACCOL,       7,10);
 		assignItemRect(CINNAMONROLL, 8,8 );
 		assignItemRect(SUGARZONGZI ,16,12);
-		assignItemRect(SALTYZONGZI ,16,12);
+		assignItemRect(SALTYZONGZI ,16,13);
 	}
 
 	private static final int QUEST  =                                       xy(1, 29);  //32 slots

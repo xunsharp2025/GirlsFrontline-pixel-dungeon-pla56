@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.CounterBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EnhancedRings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevealedArea;
@@ -51,6 +52,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
@@ -327,6 +329,18 @@ public enum Talent {
 		if(hero.hasTalent(INVIGORATING_MEAL)){
 			//effectively 1/2 turns of haste
 			Buff.prolong( hero, Haste.class, 0.67f+hero.pointsInTalent(INVIGORATING_MEAL));
+		}
+		if(hero.hasTalent(NICE_FOOD)){
+			if(hero.buff(Hunger.class).isStarving()){
+				Buff.affect(hero, Hunger.class).satisfy(50*hero.pointsInTalent(NICE_FOOD));
+			}
+		}
+		if(hero.hasTalent(BETTER_FOOD)){
+			if(foodSource instanceof SaltyZongzi){
+				hero.HP=Math.min(hero.HP+1+2*hero.pointsInTalent(BETTER_FOOD),hero.HT);
+				hero.sprite.emitter().burst(Speck.factory(Speck.HEALING),hero.pointsInTalent(BETTER_FOOD));
+				Buff.affect(hero, Hunger.class).satisfy(10+15*hero.pointsInTalent(BETTER_FOOD));
+			}
 		}
 	}
 

@@ -34,6 +34,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Pasty;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.StewedMeat;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.SugarZongzi;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.AlchemicalCatalyst;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience;
@@ -441,16 +443,18 @@ public class TestPotion extends TestGenerator {
 
     private Class<? extends Food> idToFood(int id){
         switch (id){
-            case 0: return Food.class;
-            case 1: return SmallRation.class;
-            case 2: return Pasty.class;
-            case 3: return Blandfruit.class;
-            case 4: return MysteryMeat.class;
-            case 5: return StewedMeat.class;
-            case 6: return FrozenCarpaccio.class;
-            case 7: return ChargrilledMeat.class;
-            case 8: return Berry.class;
-            case 9: default: return Maccol.class;
+            case 0 :return Food.class;
+            case 1 :return SmallRation.class;
+            case 2 :return Pasty.class;
+            case 3 :return Blandfruit.class;
+            case 4 :return MysteryMeat.class;
+            case 5 :return StewedMeat.class;
+            case 6 :return FrozenCarpaccio.class;
+            case 7 :return ChargrilledMeat.class;
+            case 8 :return Berry.class;
+            case 9 :default: return Maccol.class;
+            case 10:return SaltyZongzi.class;
+            case 11:return SugarZongzi.class;
         }
     }
 
@@ -475,7 +479,6 @@ public class TestPotion extends TestGenerator {
     private int maxIndex(int cate){
         if(cate == 7) return 10;
         if(cate == 9) return 12;
-        if(cate == 10) return 9;
         if(cate == 11) return 12;
         return 11;
     }

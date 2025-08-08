@@ -9,5 +9,5 @@ public class SugarZongzi extends Food {
 		energy = Hunger.HUNGRY/2f;
 	}
 
-
+	
 }
