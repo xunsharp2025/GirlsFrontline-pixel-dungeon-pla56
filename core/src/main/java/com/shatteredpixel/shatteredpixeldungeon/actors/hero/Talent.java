@@ -280,7 +280,7 @@ public enum Talent {
 	public static class NatureBerriesAvailable extends CounterBuff{{revivePersists = true;}};
 
 	public static void onFoodEaten( Hero hero, float foodVal, Item foodSource ){
-		if (hero.hasTalent(HEARTY_MEAL)){
+		if(hero.hasTalent(HEARTY_MEAL)){
 			//3/5 HP healed, when hero is below 25% health
 			if (hero.HP <= hero.HT/4) {
 				hero.HP = Math.min(hero.HP + 1 + 2 * hero.pointsInTalent(HEARTY_MEAL), hero.HT);
@@ -291,22 +291,22 @@ public enum Talent {
 				hero.sprite.emitter().burst(Speck.factory(Speck.HEALING), hero.pointsInTalent(HEARTY_MEAL));
 			}
 		}
-		if (hero.hasTalent(IRON_STOMACH)){
+		if(hero.hasTalent(IRON_STOMACH)){
 			if (hero.cooldown() > 0) {
 				Buff.affect(hero, WarriorFoodImmunity.class, hero.cooldown());
 			}
 		}
-		if (hero.hasTalent(EMPOWERING_MEAL)){
+		if(hero.hasTalent(EMPOWERING_MEAL)){
 			//2/3 bonus wand damage for next 3 zaps
 			Buff.affect( hero, WandEmpower.class).set(1 + hero.pointsInTalent(EMPOWERING_MEAL), 3);
 			ScrollOfRecharging.charge( hero );
 		}
-		if (hero.hasTalent(ENERGIZING_MEAL)){
+		if(hero.hasTalent(ENERGIZING_MEAL)){
 			//5/8 turns of recharging
 			Buff.prolong( hero, Recharging.class, 2 + 3*(hero.pointsInTalent(ENERGIZING_MEAL)) );
 			ScrollOfRecharging.charge( hero );
 		}
-		if (hero.hasTalent(MYSTICAL_MEAL)){
+		if(hero.hasTalent(MYSTICAL_MEAL)){
 			//3/5 turns of recharging
 			ArtifactRecharge buff = Buff.affect( hero, ArtifactRecharge.class);
 			if (buff.left() < 1 + 2*(hero.pointsInTalent(MYSTICAL_MEAL))){
@@ -314,7 +314,7 @@ public enum Talent {
 			}
 			ScrollOfRecharging.charge( hero );
 		}
-		if (hero.hasTalent(INVIGORATING_MEAL)){
+		if(hero.hasTalent(INVIGORATING_MEAL)){
 			//effectively 1/2 turns of haste
 			Buff.prolong( hero, Haste.class, 0.67f+hero.pointsInTalent(INVIGORATING_MEAL));
 		}
