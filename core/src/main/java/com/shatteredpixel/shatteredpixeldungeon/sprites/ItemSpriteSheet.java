@@ -669,24 +669,26 @@ public class ItemSpriteSheet {
 	public static final int BERRY 		= FOOD+12;
 	public static final int MACCOL      = FOOD+13;
 	public static final int CINNAMONROLL= FOOD+14;
+	public static final int SUGARZONGZI = FOOD+27;
+	public static final int SALTYZONGZI = FOOD+28;
 	static{
-		assignItemRect(MEAT,        15, 11);
-		assignItemRect(STEAK,       15, 11);
-		assignItemRect(OVERPRICED,  15, 14);
-		assignItemRect(CARPACCIO,   15, 11);
-		assignItemRect(BLANDFRUIT,  9,  12);
-		assignItemRect(RATION,      16, 13);
-		assignItemRect(PASTY,       16, 11);
-		assignItemRect(PUMPKIN_PIE, 16, 12);
-		assignItemRect(CANDY_CANE,  13, 16);
-
-		assignItemRect(MEAT_PIE,    16, 11);
-		assignItemRect(BLANDFRUIT,  9,  12);
-		assignItemRect(BLAND_CHUNKS,14, 6);
-		assignItemRect(BERRY,       9,  11);
-
-		assignItemRect(MACCOL,       7, 10);
-		assignItemRect(CINNAMONROLL, 8, 8 );
+		assignItemRect(MEAT,        15,11);
+		assignItemRect(STEAK,       15,11);
+		assignItemRect(OVERPRICED,  15,14);
+		assignItemRect(CARPACCIO,   15,11);
+		assignItemRect(BLANDFRUIT,  9, 12);
+		assignItemRect(RATION,      16,13);
+		assignItemRect(PASTY,       16,11);
+		assignItemRect(PUMPKIN_PIE, 16,12);
+		assignItemRect(CANDY_CANE,  13,16);
+		assignItemRect(MEAT_PIE,    16,11);
+		assignItemRect(BLANDFRUIT,  9, 12);
+		assignItemRect(BLAND_CHUNKS,14,6);
+		assignItemRect(BERRY,       9, 11);
+		assignItemRect(MACCOL,       7,10);
+		assignItemRect(CINNAMONROLL, 8,8 );
+		assignItemRect(SUGARZONGZI ,16,12);
+		assignItemRect(SALTYZONGZI ,16,12);
 	}
 
 	private static final int QUEST  =                                       xy(1, 29);  //32 slots
