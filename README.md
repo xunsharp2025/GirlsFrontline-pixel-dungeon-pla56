@@ -10,7 +10,6 @@ Girls-Frontline Pixel Dungeon
  - 主美②：FTer<br/>
  - 摸鱼没干活的美术：若干<br/>
  - 程序 : 芊屵xunsharp<br/>
- - 程序 : choke cola<br/>
  - 程序 : Cat_Zs cola<br/>
 特别鸣谢：
  - 顾问:shower<br/>
