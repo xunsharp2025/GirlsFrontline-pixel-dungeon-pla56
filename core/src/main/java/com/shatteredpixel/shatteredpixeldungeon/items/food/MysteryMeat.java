@@ -47,10 +47,6 @@ public class MysteryMeat extends Food {
 		effect(hero);
 	}
 
-	public int value() {
-		return 5 * quantity;
-	}
-
 	public static void effect(Hero hero){
 		switch (Random.Int( 5 )) {
 			case 0:
@@ -89,4 +85,9 @@ public class MysteryMeat extends Food {
 			return "";
 		}
 	}
+
+	@Override
+    public int value() {
+        return (int)(1f*super.valueFloat());
+    }
 }

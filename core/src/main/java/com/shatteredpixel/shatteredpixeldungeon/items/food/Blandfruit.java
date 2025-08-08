@@ -142,11 +142,6 @@ public class Blandfruit extends Food {
 		}
 	}
 
-	@Override
-	public int value() {
-		return 20 * quantity;
-	}
-
 	public Item cook(Seed seed){
 		return imbuePotion(Reflection.newInstance(Potion.SeedToPotion.types.get(seed.getClass())));
 	}
@@ -301,4 +296,8 @@ public class Blandfruit extends Food {
 
 	}
 
+	@Override
+	public int value() {
+		return (int)(1f*super.valueFloat());
+	}
 }

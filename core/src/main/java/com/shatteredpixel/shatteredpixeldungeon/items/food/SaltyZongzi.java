@@ -8,5 +8,8 @@ public class SaltyZongzi extends Food {
 		image = ItemSpriteSheet.SALTYZONGZI;
 	}
 
-
+	@Override
+    public int value() {
+        return (int)(1.6f*super.valueFloat());
+    }
 }

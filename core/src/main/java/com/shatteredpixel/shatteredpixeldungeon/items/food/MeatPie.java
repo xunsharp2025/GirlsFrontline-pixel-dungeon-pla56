@@ -43,11 +43,6 @@ public class MeatPie extends Food {
 		Buff.affect(hero, WellFed.class).reset();
 	}
 	
-	@Override
-	public int value() {
-		return 40 * quantity;
-	}
-	
 	public static class Recipe extends com.shatteredpixel.shatteredpixeldungeon.items.Recipe {
 		
 		@Override
@@ -95,4 +90,9 @@ public class MeatPie extends Food {
 			return new MeatPie();
 		}
 	}
+
+	@Override
+    public int value() {
+        return (int)(2f*super.valueFloat());
+    }
 }

@@ -9,5 +9,8 @@ public class SugarZongzi extends Food {
 		energy = Hunger.HUNGRY/2f;
 	}
 
-	
+	@Override
+    public int value() {
+        return (int)(0.8f*super.valueFloat());
+    }
 }

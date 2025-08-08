@@ -63,7 +63,7 @@ public class Berry extends Food {
 
 	@Override
 	public int value() {
-		return 5 * quantity;
+		return (int)(1f*super.valueFloat());
 	}
 
 	public static class SeedCounter extends CounterBuff{{revivePersists = true;}};

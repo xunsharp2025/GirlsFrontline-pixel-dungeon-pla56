@@ -32,11 +32,6 @@ public class StewedMeat extends Food {
 		energy = Hunger.HUNGRY/2f;
 	}
 	
-	@Override
-	public int value() {
-		return 8 * quantity;
-	}
-	
 	public static class oneMeat extends Recipe.SimpleRecipe{
 		{
 			inputs =  new Class[]{MysteryMeat.class};
@@ -76,4 +71,8 @@ public class StewedMeat extends Food {
 		}
 	}
 
+	@Override
+    public int value() {
+        return (int)(1f*super.valueFloat());
+    }
 }

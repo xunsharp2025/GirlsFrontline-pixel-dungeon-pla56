@@ -35,11 +35,6 @@ public class Maccol extends Food {
     }
 
     @Override
-    public int value() {
-        return 10 * quantity;
-    }
-
-    @Override
     public void execute( Hero hero, String action ) {
         super.execute(hero, action);
         if (action == AC_EAT) {
@@ -47,4 +42,9 @@ public class Maccol extends Food {
         }
 
    }
+
+   @Override
+    public int value() {
+        return (int)(1f*super.valueFloat());
+    }
 }

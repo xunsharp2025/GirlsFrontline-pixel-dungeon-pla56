@@ -91,10 +91,11 @@ public class Food extends Item {
 	}
 
 	protected float eatingTime(){
-		if (Dungeon.hero.hasTalent(Talent.IRON_STOMACH)
-			|| Dungeon.hero.hasTalent(Talent.ENERGIZING_MEAL)
-			|| Dungeon.hero.hasTalent(Talent.MYSTICAL_MEAL)
-			|| Dungeon.hero.hasTalent(Talent.INVIGORATING_MEAL)){
+		if(Dungeon.hero.hasTalent(Talent.IRON_STOMACH)
+		|| Dungeon.hero.hasTalent(Talent.ENERGIZING_MEAL)
+		|| Dungeon.hero.hasTalent(Talent.MYSTICAL_MEAL)
+		|| Dungeon.hero.hasTalent(Talent.INVIGORATING_MEAL)
+		|| Dungeon.hero.hasTalent(Talent.BARGAIN_SKILLS)){
 			return TIME_TO_EAT - 2;
 		} else {
 			return TIME_TO_EAT;
@@ -119,8 +120,18 @@ public class Food extends Item {
 		return true;
 	}
 	
+	public float valueFloat(){
+		float rate=1.0f;
+
+		if(Dungeon.hero.hasTalent(Talent.BARGAIN_SKILLS)){
+			rate=1f-0.2f*Dungeon.hero.pointsInTalent(Talent.BARGAIN_SKILLS);
+		}
+
+		return 30f*rate*quantity;
+	}
+
 	@Override
 	public int value() {
-		return 10 * quantity;
+		return (int)valueFloat();
 	}
 }

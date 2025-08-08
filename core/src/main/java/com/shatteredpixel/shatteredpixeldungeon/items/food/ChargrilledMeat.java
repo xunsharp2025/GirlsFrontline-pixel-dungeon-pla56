@@ -31,14 +31,14 @@ public class ChargrilledMeat extends Food {
 		energy = Hunger.HUNGRY/2f;
 	}
 	
-	@Override
-	public int value() {
-		return 8 * quantity;
-	}
-	
 	public static Food cook( int quantity ) {
 		ChargrilledMeat result = new ChargrilledMeat();
 		result.quantity = quantity;
 		return result;
+	}
+	
+	@Override
+	public int value() {
+		return (int)(1f*super.valueFloat());
 	}
 }

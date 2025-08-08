@@ -45,10 +45,6 @@ public class FrozenCarpaccio extends Food {
 		super.satisfy(hero);
 		effect(hero);
 	}
-	
-	public int value() {
-		return 10 * quantity;
-	}
 
 	public static void effect(Hero hero){
 		switch (Random.Int( 5 )) {
@@ -78,5 +74,10 @@ public class FrozenCarpaccio extends Food {
 		FrozenCarpaccio result = new FrozenCarpaccio();
 		result.quantity = ingredient.quantity();
 		return result;
+	}
+
+	@Override
+	public int value() {
+		return (int)(1f*super.valueFloat());
 	}
 }
