@@ -246,10 +246,10 @@ public class TrapPlacer extends TestItem {
     private int shape(){ return row; }
 
     private class SettingsWindow extends Window{
-        private static final int WIDTH = 120;
+        private static final int WIDTH = 180;
         private static final int HEIGHT = 144;
 
-        private static final int BTN_SIZE = 14;
+        private static final int BTN_SIZE = 21;
 
         private static final int ROWS = 7;
         private static final int COLS = 8;
@@ -345,15 +345,15 @@ public class TrapPlacer extends TestItem {
         }
 
         private void refreshImage(){
-
             for(int i = 0, size = trapButtons.size(); i < size; ++i){
                 if(trapLib.get(i)==null && !enableInvalidImage){
-                    trapButtons.get(i).icon(new Image(Assets.Environment.TERRAIN_FEATURES, 128, 16*(i/COLS), 16, 16));
+                    trapButtons.get(i).icon(new Image(Assets.Environment.TERRAIN_FEATURES, 192, 24*(i/COLS), 24, 24));
                 }else{
-                    trapButtons.get(i).icon(new Image(Assets.Environment.TERRAIN_FEATURES, 16*(i%COLS), 16*(i/COLS), 16, 16));;
+                    trapButtons.get(i).icon(new Image(Assets.Environment.TERRAIN_FEATURES, 24*(i%COLS), 24*(i/COLS), 24, 24));
                 }
             }
         }
+
     }
 
     public static class EmptyTrap extends Trap{

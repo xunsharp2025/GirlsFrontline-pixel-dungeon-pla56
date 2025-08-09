@@ -152,4 +152,6 @@ public class CorpseDust extends Item {
 		}
 	}
 
+	public static class DustWraith extends Wraith{};
+
 }
