@@ -54,7 +54,7 @@ public class Gun561 extends ShootGun {
 		RCH = 2;
 		shootPrompt = Messages.get(this, "prompt");
 		needEquip = false;
-		image = ItemSpriteSheet.Gun561;
+		image = ItemSpriteSheet.GUN561;
 	}
 
 	@Override

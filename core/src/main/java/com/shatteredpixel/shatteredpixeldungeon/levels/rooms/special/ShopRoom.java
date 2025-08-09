@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
@@ -44,6 +45,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.bags.ScrollHolder;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.SugarZongzi;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
@@ -206,9 +209,21 @@ public class ShopRoom extends SpecialRoom {
 					Generator.randomUsingDefaults( Generator.Category.POTION ) :
 					Generator.randomUsingDefaults( Generator.Category.SCROLL ) );
 
-
-		itemsToSpawn.add( new SmallRation() );
-		itemsToSpawn.add( new SmallRation() );
+		if(Dungeon.hero.hasTalent(Talent.BARGAIN_SKILLS)){
+			if(Dungeon.hero.pointsInTalent(Talent.BARGAIN_SKILLS)>=2){
+				itemsToSpawn.add(new SaltyZongzi());
+				itemsToSpawn.add(new SaltyZongzi());
+				itemsToSpawn.add(new SaltyZongzi());
+			}else{
+				itemsToSpawn.add(new SugarZongzi());
+				itemsToSpawn.add(new SugarZongzi());
+				itemsToSpawn.add(new SmallRation());
+				itemsToSpawn.add(new SmallRation());
+			}
+		}else{
+			itemsToSpawn.add(new SmallRation());
+			itemsToSpawn.add(new SmallRation());
+		}
 		
 		switch (Random.Int(4)){
 			case 0:

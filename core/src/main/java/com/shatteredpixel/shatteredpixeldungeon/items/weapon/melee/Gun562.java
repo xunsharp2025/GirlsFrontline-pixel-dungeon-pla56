@@ -34,7 +34,7 @@ public class Gun562 extends ShootGun {
         useMissileSprite = false;
         RCH = 3;
         effectIndex = 2;
-        image = ItemSpriteSheet.Gun562;
+        image = ItemSpriteSheet.GUN562;
         needEquip = false;
     }
 

@@ -67,6 +67,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.bags.PotionBandolier;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.ScrollHolder;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfInvisibility;
@@ -252,7 +253,6 @@ public enum HeroClass {
 		CloakOfShadows cloak = new CloakOfShadows();
 		(hero.belongings.artifact = cloak).identify();
 		hero.belongings.artifact.activate( hero );
-		new PotionOfInvisibility().identify().collect();
 
 		ThrowingKnife knives = new ThrowingKnife();
 		knives.quantity(3).collect();
@@ -260,6 +260,7 @@ public enum HeroClass {
 		Dungeon.quickslot.setSlot(0, cloak);
 		Dungeon.quickslot.setSlot(1, knives);
 
+		new PotionOfInvisibility().identify().collect();
 		new ScrollOfMagicMapping().identify();
 	}
 
@@ -276,15 +277,17 @@ public enum HeroClass {
 	}
 
 	private static void initType561( Hero hero ) {
-		(hero.belongings.weapon = new Gun561()).identify();
-		SmallRation SmallRation = new SmallRation();
-		SmallRation.quantity(4).collect();
-		RedBook RedBook = new RedBook();
-		RedBook.collect();
+		Gun561 gun561=new Gun561();
+		(hero.belongings.weapon=gun561).identify();
 
-		Dungeon.quickslot.setSlot(0, SmallRation);
-		Dungeon.quickslot.setSlot(1, RedBook);
+		RedBook redBook = new RedBook();
+		(hero.belongings.artifact=redBook).identify();
+		hero.belongings.artifact.activate(hero);
 
+		Dungeon.quickslot.setSlot(0,redBook);
+		Dungeon.quickslot.setSlot(1,gun561);
+
+		new SaltyZongzi().collect();
 		new PotionOfMindVision().identify();
 	}
 

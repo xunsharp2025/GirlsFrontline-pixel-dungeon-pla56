@@ -93,6 +93,6 @@ public class MeatPie extends Food {
 
 	@Override
     public int value() {
-        return (int)(2f*super.valueFloat());
+        return 40*quantity;
     }
 }

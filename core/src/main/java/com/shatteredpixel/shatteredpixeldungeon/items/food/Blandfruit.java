@@ -298,6 +298,6 @@ public class Blandfruit extends Food {
 
 	@Override
 	public int value() {
-		return (int)(1f*super.valueFloat());
+		return 10*quantity;
 	}
 }

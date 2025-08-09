@@ -235,6 +235,7 @@ public abstract class Level implements Bundlable {
 					case 3:
 						feeling = Feeling.DARK;
 						addItemToSpawn(new Torch());
+
 						viewDistance = Math.round(viewDistance/2f);
 						break;
 					case 4:
@@ -1114,6 +1115,9 @@ public abstract class Level implements Bundlable {
 			
 			int viewDist = c.viewDistance;
 			if (c instanceof Hero){
+				if(((Hero) c).hasTalent(Talent.NIGHT_EXPERT)&&Dungeon.level.feeling==Feeling.DARK){
+					viewDist += 1f;
+				}
 				viewDist *= 1f + 0.25f*((Hero) c).pointsInTalent(Talent.FARSIGHT);
 			}
 			

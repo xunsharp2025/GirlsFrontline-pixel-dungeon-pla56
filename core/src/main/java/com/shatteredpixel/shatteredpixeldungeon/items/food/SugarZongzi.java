@@ -11,6 +11,6 @@ public class SugarZongzi extends Food {
 
 	@Override
     public int value() {
-        return (int)(0.8f*super.valueFloat());
+        return 16*quantity;
     }
 }

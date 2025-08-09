@@ -142,6 +142,6 @@ public class Pasty extends Food {
 	
 	@Override
     public int value() {
-        return (int)(2f*super.valueFloat());
+        return 20*quantity;
     }
 }

@@ -778,17 +778,14 @@ public class ItemSpriteSheet {
 		assignItemRect(FORCE_CUBE,      11, 12);
 	}
 
-	private static final int Gun561_NUKE   =                                       xy(1, 38);  //32 slots
-	public static final int  Gun561      	=  Gun561_NUKE+2;
-	public static final int    Gun562    	= Gun561_NUKE+3;
-
-	public static final int REDBOOK =	Gun561_NUKE+5;
-
+	private static final int GUN561_NUKE=xy(1, 38);  //32 slots
+	public static final  int GUN561     =GUN561_NUKE+2;
+	public static final  int GUN562    	=GUN561_NUKE+3;
+	public static final  int REDBOOK    =GUN561_NUKE+5;
 	static {
+		assignItemRect(GUN561, 14, 16);
+		assignItemRect(GUN562, 16, 15);
 		assignItemRect(REDBOOK, 13, 16);
-
-		assignItemRect(Gun561, 14, 16);
-		assignItemRect(Gun562, 16, 15);
 	}                                                               //16 free slots
 
 	//for smaller 8x8 icons that often accompany an item sprite

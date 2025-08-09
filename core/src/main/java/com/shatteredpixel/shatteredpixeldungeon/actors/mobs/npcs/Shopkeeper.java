@@ -24,10 +24,12 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -85,7 +87,7 @@ public class Shopkeeper extends NPC {
 				CellEmitter.get( heap.pos ).burst( ElmoParticle.FACTORY, 4 );
 				if (heap.size() == 1) {
 					heap.destroy();
-				} else {
+				}else{
 					heap.items.remove(heap.size()-1);
 					heap.type = Heap.Type.HEAP;
 				}
@@ -100,7 +102,14 @@ public class Shopkeeper extends NPC {
 
 	//shopkeepers are greedy!
 	public static int sellPrice(Item item){
-		return item.value() * 5 * (Dungeon.depth / 5 + 1);
+		float rate=1f;
+
+		if(Dungeon.hero.hasTalent(Talent.BARGAIN_SKILLS)
+		&& item instanceof Food){
+			rate-=0.2f*Dungeon.hero.pointsInTalent(Talent.BARGAIN_SKILLS);
+		}
+
+		return (int)(item.value()*(rate*5f*(Dungeon.depth/5f+1f)));
 	}
 	
 	public static WndBag sell() {

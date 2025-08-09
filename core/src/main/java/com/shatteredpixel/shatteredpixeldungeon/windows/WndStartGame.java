@@ -333,8 +333,8 @@ public class WndStartGame extends Window {
 							heroMisc.icon(new ItemSprite(ItemSpriteSheet.DART, null));
 							break;
 						case TYPE561:
-							heroItem.icon(new ItemSprite(ItemSpriteSheet.OVERPRICED, null));
-							heroLoadout.icon(new ItemSprite(ItemSpriteSheet.Gun561, null));
+							heroItem.icon(new ItemSprite(ItemSpriteSheet.SALTYZONGZI, null));
+							heroLoadout.icon(new ItemSprite(ItemSpriteSheet.GUN561, null));
 							heroMisc.icon(new ItemSprite(ItemSpriteSheet.REDBOOK, null));
 							break;
 					}
