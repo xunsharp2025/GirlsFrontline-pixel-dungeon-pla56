@@ -133,7 +133,7 @@ public enum HeroClass {
 
 			new MobPlacer().collect();
 
-			new Cannon().collect();
+			new Cannon().identify().collect();
 
 			new TimeReverser().collect();
 

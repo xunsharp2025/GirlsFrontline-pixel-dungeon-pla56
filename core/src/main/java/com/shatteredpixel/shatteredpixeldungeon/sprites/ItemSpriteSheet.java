@@ -62,7 +62,7 @@ public class ItemSpriteSheet {
 	public static final int SPELL_HOLDER    = PLACEHOLDERS+15;
 	static{
 		assignItemRect(SOMETHING,       8,  13);
-		assignItemRect(WEAPON_HOLDER,   14, 14);
+		assignItemRect(WEAPON_HOLDER,   16, 12);
 		assignItemRect(ARMOR_HOLDER,    14, 12);
 		assignItemRect(MISSILE_HOLDER,  15, 15);
 		assignItemRect(WAND_HOLDER,     14, 14);
@@ -757,16 +757,16 @@ public class ItemSpriteSheet {
 	static{
 		assignItemRect(SPIRIT_BOW,      16, 16);
 
-		assignItemRect(DART,            15, 15);
+		assignItemRect(DART,            11, 11);
 		assignItemRect(THROWING_KNIFE,  16, 14);
 		assignItemRect(THROWING_STONE,  12, 13);
 
 		assignItemRect(FISHING_SPEAR,   11, 12);
 		assignItemRect(SHURIKEN,        12, 12);
-		assignItemRect(THROWING_CLUB,   12, 12);
+		assignItemRect(THROWING_CLUB,   15, 14);
 
-		assignItemRect(THROWING_SPEAR,  13, 13);
-		assignItemRect(BOLAS,           15, 14);
+		assignItemRect(THROWING_SPEAR,  15, 13);
+		assignItemRect(BOLAS,           9, 16);
 		assignItemRect(KUNAI,           15, 15);
 
 		assignItemRect(JAVELIN,         16, 16);
