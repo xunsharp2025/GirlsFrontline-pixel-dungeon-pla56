@@ -49,6 +49,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfBlink;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfFlock;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Greatsword;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG.Cannon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Dart;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Blindweed;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Earthroot;
@@ -102,10 +103,6 @@ public class LazyTest extends TestGenerator {
             PlateArmor plateArmor = new PlateArmor();
             plateArmor.level(15);
             plateArmor.identify().collect();
-
-            Greatsword greatsword = new Greatsword();
-            greatsword.level(15);
-            greatsword.identify().collect();
 
             new Gold().quantity(16000000).doPickUp(hero);
 
