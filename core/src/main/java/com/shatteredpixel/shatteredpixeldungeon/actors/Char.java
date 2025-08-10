@@ -152,6 +152,10 @@ public abstract class Char extends Actor {
 		return false;
 	}
 
+	public boolean isActive() {
+		return isAlive();
+	}
+
 	protected void throwItems(){
 		Heap heap = Dungeon.level.heaps.get( pos );
 		if (heap != null && heap.type == Heap.Type.HEAP) {
