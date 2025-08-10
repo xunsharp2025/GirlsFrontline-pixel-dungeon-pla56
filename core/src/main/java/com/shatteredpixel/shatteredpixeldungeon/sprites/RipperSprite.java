@@ -39,16 +39,16 @@ public class RipperSprite extends MobSprite {
 
 		texture( Assets.Sprites.RIPPER );
 
-		TextureFilm frames = new TextureFilm( texture, 15, 14 );
+		TextureFilm frames = new TextureFilm( texture, 24, 24 );
 
 		idle = new Animation( 4, true );
-		idle.frames( frames, 1, 0, 1, 2 );
+		idle.frames( frames, 0,1,2,3 );
 
 		run = new Animation( 15, true );
-		run.frames( frames, 3, 4, 5, 6, 7, 8 );
+		run.frames( frames,  4,5, 6, 7, 8,9 );
 
 		attack = new Animation( 12, false );
-		attack.frames( frames, 0, 9, 10, 9 );
+		attack.frames( frames, 10, 11, 12 );
 
 		stab = new Animation( 12, false );
 		stab.frames( frames, 0, 9, 11, 9 );
@@ -60,7 +60,7 @@ public class RipperSprite extends MobSprite {
 		leap.frames( frames, 12 );
 
 		die = new Animation( 15, false );
-		die.frames( frames, 1, 13, 14, 15, 16 );
+		die.frames( frames, 13, 14, 15, 16,17,18 );
 
 		play( idle );
 	}

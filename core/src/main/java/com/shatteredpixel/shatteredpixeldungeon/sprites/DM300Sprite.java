@@ -43,7 +43,7 @@ public class DM300Sprite extends MobSprite {
 	public DM300Sprite() {
 		super();
 		
-		texture( Assets.Sprites.DM300 );
+		texture( Assets.GAGER );
 		
 		updateChargeState(false);
 	}
@@ -51,32 +51,32 @@ public class DM300Sprite extends MobSprite {
 	public void updateChargeState( boolean enraged ){
 		if (superchargeSparks != null) superchargeSparks.on = enraged;
 
-		int c = enraged ? 10 : 0;
+		int c = enraged ? 15: 0;
 
-		TextureFilm frames = new TextureFilm( texture, 25, 22 );
+		TextureFilm frames = new TextureFilm( texture, 26, 22 );
 
 		idle = new Animation( enraged ? 15 : 10, true );
-		idle.frames( frames, c+0, c+1 );
+		idle.frames( frames, c+0 );
 
 		run = new Animation( enraged ? 15 : 10, true );
-		run.frames( frames, c+0, c+2 );
+		run.frames( frames, c+0, c+1, c+2,c+3,c+3,c+4,c+5 );
 
 		attack = new Animation( 15, false );
-		attack.frames( frames, c+3, c+4, c+5 );
+		attack.frames( frames, c+6,c+7 );
 
 		//unaffected by enrage state
 
 		if (charge == null) {
 			charge = new Animation(4, true);
-			charge.frames(frames, 0, 10);
+			charge.frames(frames, 0, 15);
 
 			slam = attack.clone();
 
 			zap = new Animation(15, false);
-			zap.frames(frames, 6, 7, 7, 6);
+			zap.frames(frames, 7,7,8,9,9);
 
-			die = new Animation(20, false);
-			die.frames(frames, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10);
+			die = new Animation(16, false);
+			die.frames(frames, 10,10,11,11,12,12,13,13);
 		}
 
 		if (curAnim != charge) play(idle);
@@ -123,12 +123,6 @@ public class DM300Sprite extends MobSprite {
 		}
 
 		super.onComplete( anim );
-		
-		if (anim == die) {
-			Sample.INSTANCE.play(Assets.Sounds.BLAST);
-			emitter().burst( BlastParticle.FACTORY, 100 );
-			killAndErase();
-		}
 	}
 
 	@Override

@@ -106,7 +106,7 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
 		
 		ANGULAR_SPEEDS.put(Shuriken.class,      2160);
 		
-		ANGULAR_SPEEDS.put(TenguSprite.TenguShuriken.class,      2160);
+		ANGULAR_SPEEDS.put(TenguSprite.TenguShuriken.class,      0);
 	}
 
 	//TODO it might be nice to have a source and destination angle, to improve thrown weapon visuals

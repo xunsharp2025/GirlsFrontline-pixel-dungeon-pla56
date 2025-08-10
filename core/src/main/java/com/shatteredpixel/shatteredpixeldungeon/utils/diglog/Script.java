@@ -18,7 +18,7 @@ public class Script {
 
     public enum Character{
        NONE,UMP45,HK416,G11,UMP9,STAR_45,EXCU_TIONER,M16A1,
-       UROBOROS,PPSH_47,P7,DESTROYER,DREAM
+       UROBOROS,PPSH_47,P7,DESTROYER,DREAM,GAGER
     }
 
     public static Image AvatarG11(int index) {
@@ -204,6 +204,12 @@ public class Script {
         return i;
     }
 
+    public static Image BossGager() {
+        Image i;
+        i = new Image(Assets.EMOTION,216,48,24,24);
+        return i;
+    }
+
 
 
     public enum FormalPlot
@@ -281,6 +287,9 @@ public class Script {
                 break;
             case DREAM:
                 str = Messages.get(Script.class,"name_dream");
+                break;
+            case GAGER:
+                str = Messages.get(Script.class,"name_gager");
                 break;
         }
         //GLog.i(str);

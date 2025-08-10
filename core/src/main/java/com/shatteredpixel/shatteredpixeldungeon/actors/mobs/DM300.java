@@ -62,11 +62,16 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.DM300Sprite;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BossHealthBar;
+import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.boss.Excutioner_Plot;
+import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.boss.Gager_Plot;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
 import com.watabou.noosa.Camera;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
@@ -344,6 +349,14 @@ public class DM300 extends Mob {
 		if (!BossHealthBar.isAssigned()) {
 			BossHealthBar.assignBoss(this);
 			turnsSinceLastAbility = 0;
+
+			Game.runOnRenderThread(new Callback() {
+				@Override
+				public void call() {
+					GameScene.scene.add(new WndDialog(new Gager_Plot(),false));
+				}
+			});
+
 			yell(Messages.get(this, "notice"));
 			for (Char ch : Actor.chars()){
 				if (ch instanceof DriedRose.GhostHero){
