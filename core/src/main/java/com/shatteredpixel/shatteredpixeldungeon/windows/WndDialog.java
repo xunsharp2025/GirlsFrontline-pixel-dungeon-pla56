@@ -76,7 +76,6 @@ public class WndDialog extends Window {
 
         int chromeHeight = PixelScene.uiCamera.height / heightUnit - MARGIN_Y;
         int chromeWidth = PixelScene.uiCamera.width - 2 * MARGIN_X;
-        final float AvatarScaleMultiplier = SPDSettings.landscape() ? 2f : 1.5f;
 
         shadow.am = 0;
 
@@ -227,7 +226,7 @@ public class WndDialog extends Window {
     public void setMainAvatar(Image mainAvatar) {
         this.mainAvatar.copy(mainAvatar);
         this.mainAvatar.visible = true;
-        float AvatarScaleMultiplier = SPDSettings.landscape() ? 2f : 1.5f;
+        float AvatarScaleMultiplier = 1.5f;
         this.mainAvatar.scale.set(AvatarScaleMultiplier);
     }
 
