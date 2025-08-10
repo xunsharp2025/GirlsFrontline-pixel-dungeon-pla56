@@ -25,15 +25,21 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Chains;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.KindOfWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.GuardSprite;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
@@ -41,146 +47,76 @@ import com.watabou.utils.Random;
 
 public class Guard extends Mob {
 
-	//they can only use their chains once
-	private boolean chainsUsed = false;
-
 	{
 		spriteClass = GuardSprite.class;
 
-		HP = HT = 40;
-		defenseSkill = 10;
+		HP = HT = 300;
+		EXP = 15;
+		defenseSkill = 5;
+		baseSpeed = 0.8f;
+		maxLvl = 26;
 
-		EXP = 7;
-		maxLvl = 14;
-
-		loot = Generator.Category.ARMOR;
-		lootChance = 0.2f; //by default, see lootChance()
-
-		properties.add(Property.UNDEAD);
-		
-		HUNTING = new Hunting();
+		loot = new PotionOfHealing();
+		lootChance = 0.3333f;
 	}
 
 	@Override
 	public int damageRoll() {
-		return Random.NormalIntRange(4, 12);
-	}
-
-	private boolean chain(int target){
-		if (chainsUsed || enemy.properties().contains(Property.IMMOVABLE))
-			return false;
-
-		Ballistica chain = new Ballistica(pos, target, Ballistica.PROJECTILE);
-
-		if (chain.collisionPos != enemy.pos
-				|| chain.path.size() < 2
-				|| Dungeon.level.pit[chain.path.get(1)])
-			return false;
-		else {
-			int newPos = -1;
-			for (int i : chain.subPath(1, chain.dist)){
-				if (!Dungeon.level.solid[i] && Actor.findChar(i) == null){
-					newPos = i;
-					break;
-				}
-			}
-
-			if (newPos == -1){
-				return false;
-			} else {
-				final int newPosFinal = newPos;
-				this.target = newPos;
-
-				if (sprite.visible || enemy.sprite.visible) {
-					yell(Messages.get(this, "scorpion"));
-					new Item().throwSound();
-					Sample.INSTANCE.play(Assets.Sounds.CHAINS);
-					sprite.parent.add(new Chains(sprite.center(), enemy.sprite.destinationCenter(), new Callback() {
-						public void call() {
-							Actor.addDelayed(new Pushing(enemy, enemy.pos, newPosFinal, new Callback() {
-								public void call() {
-									pullEnemy(enemy, newPosFinal);
-								}
-							}), -1);
-							next();
-						}
-					}));
-				} else {
-					pullEnemy(enemy, newPos);
-				}
-			}
-		}
-		chainsUsed = true;
-		return true;
-	}
-
-	private void pullEnemy( Char enemy, int pullPos ){
-		enemy.pos = pullPos;
-		enemy.sprite.place(pullPos);
-		Dungeon.level.occupyCell(enemy);
-		Cripple.prolong(enemy, Cripple.class, 4f);
-		if (enemy == Dungeon.hero) {
-			Dungeon.hero.interrupt();
-			Dungeon.observe();
-			GameScene.updateFog();
-		}
+		return Random.NormalIntRange( 5, 15 );
 	}
 
 	@Override
 	public int attackSkill( Char target ) {
-		return 12;
+		return 15;
 	}
 
 	@Override
 	public int drRoll() {
-		return Random.NormalIntRange(0, 7);
+		return Random.NormalIntRange(0, 5);
 	}
+	private int hitsToDisarm = 0;
 
 	@Override
-	public float lootChance() {
-		//each drop makes future drops 1/2 as likely
-		// so loot chance looks like: 1/5, 1/10, 1/20, 1/40, etc.
-		return super.lootChance() * (float)Math.pow(1/2f, Dungeon.LimitedDrops.GUARD_ARM.count);
+	public int attackProc( Char enemy, int damage ) {
+		damage = super.attackProc( enemy, damage );
+
+		if (enemy == Dungeon.hero) {
+
+			Hero hero = Dungeon.hero;
+			KindOfWeapon weapon = hero.belongings.weapon;
+
+			if (weapon != null  && !weapon.cursed) {
+				if (hitsToDisarm == 0) hitsToDisarm = Random.NormalIntRange(4, 8);
+
+				if (--hitsToDisarm == 0) {
+					hero.belongings.weapon = null;
+					Dungeon.quickslot.convertToPlaceholder(weapon);
+					Item.updateQuickslot();
+					Dungeon.level.drop(weapon, hero.pos).sprite.drop();
+					GLog.w(Messages.get(this, "disarm", weapon.name()));
+				}
+			}
+		}
+
+		return damage;
 	}
 
-	@Override
-	public Item createLoot() {
-		Dungeon.LimitedDrops.GUARD_ARM.count++;
-		return super.createLoot();
+	{
+		immunities.add( Amok.class );
+		immunities.add( Terror.class );
 	}
 
-	private final String CHAINSUSED = "chainsused";
+	private static String DISARMHITS = "hitsToDisarm";
 
 	@Override
 	public void storeInBundle(Bundle bundle) {
 		super.storeInBundle(bundle);
-		bundle.put(CHAINSUSED, chainsUsed);
+		bundle.put(DISARMHITS, hitsToDisarm);
 	}
 
 	@Override
 	public void restoreFromBundle(Bundle bundle) {
 		super.restoreFromBundle(bundle);
-		chainsUsed = bundle.getBoolean(CHAINSUSED);
-	}
-	
-	private class Hunting extends Mob.Hunting{
-		@Override
-		public boolean act( boolean enemyInFOV, boolean justAlerted ) {
-			enemySeen = enemyInFOV;
-			
-			if (!chainsUsed
-					&& enemyInFOV
-					&& !isCharmedBy( enemy )
-					&& !canAttack( enemy )
-					&& Dungeon.level.distance( pos, enemy.pos ) < 5
-
-					
-					&& chain(enemy.pos)){
-				return !(sprite.visible || enemy.sprite.visible);
-			} else {
-				return super.act( enemyInFOV, justAlerted );
-			}
-			
-		}
+		hitsToDisarm = bundle.getInt(DISARMHITS);
 	}
 }
