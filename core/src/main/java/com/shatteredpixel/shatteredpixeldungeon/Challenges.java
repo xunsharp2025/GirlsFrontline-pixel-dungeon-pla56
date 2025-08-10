@@ -72,15 +72,6 @@ public class Challenges {
 
 	public static boolean isItemBlocked( Item item ){
 
-		if (Dungeon.isChallenged(NO_FOOD)){
-			if (item instanceof Food) {
-				if (!(item instanceof SmallRation) && !(item instanceof Maccol)) {
-					return true;
-				}
-			} else if (item instanceof HornOfPlenty){
-				return true;
-			}
-		}
 		if (Dungeon.isChallenged(NO_HERBALISM) && item instanceof Dewdrop){
 			return true;
 		}
