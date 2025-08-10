@@ -33,19 +33,19 @@ public class SuccubusSprite extends MobSprite {
 		
 		texture( Assets.Sprites.SUCCUBUS );
 		
-		TextureFilm frames = new TextureFilm( texture, 12, 15 );
+		TextureFilm frames = new TextureFilm( texture, 24, 14 );
 		
 		idle = new Animation( 8, true );
-		idle.frames( frames, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 1 );
-		
+		idle.frames( frames, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+
 		run = new Animation( 15, true );
-		run.frames( frames, 3, 4, 5, 6, 7, 8 );
+		run.frames( frames, 2, 3 );
 		
 		attack = new Animation( 12, false );
-		attack.frames( frames, 9, 10, 11 );
+		attack.frames( frames, 4, 5, 6, 7);
 		
 		die = new Animation( 10, false );
-		die.frames( frames, 12 );
+		die.frames( frames, 8, 9, 10);
 		
 		play( idle );
 	}
