@@ -137,8 +137,6 @@ public enum HeroClass {
 
 			new TimeReverser().collect();
 
-			new ImmortalShieldAffecter().collect();
-
 			new BackpackCleaner().collect();
 
 			new LevelTeleporter().collect();
