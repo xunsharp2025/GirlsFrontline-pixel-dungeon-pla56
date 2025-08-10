@@ -46,25 +46,4 @@ public class SkeletonKey extends Key {
 		super();
 		this.depth = depth;
 	}
-
-	@Override
-	public boolean doPickUp(Hero hero, int pos) {
-		if(!SPDSettings.supportNagged()){
-			try {
-				Dungeon.saveAll();
-				Game.runOnRenderThread(new Callback() {
-					@Override
-					public void call() {
-						GirlsFrontlinePixelDungeon.scene().add(new WndSupportPrompt());
-					}
-				});
-			} catch (IOException e) {
-				GirlsFrontlinePixelDungeon.reportException(e);
-			}
-			
-		}
-		
-		return super.doPickUp(hero, pos);
-	}
-
 }

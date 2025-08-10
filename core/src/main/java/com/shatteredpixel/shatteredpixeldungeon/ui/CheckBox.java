@@ -25,7 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 
 public class CheckBox extends RedButton {
 
-	private boolean checked = false;
+	public boolean checked = false;
 	
 	public CheckBox( String label ) {
 		super( label );
@@ -33,6 +33,11 @@ public class CheckBox extends RedButton {
 		icon( Icons.get( Icons.UNCHECKED ) );
 	}
 
+	public CheckBox( String label,int size ) {
+		super( label,size );
+
+		icon( Icons.get( Icons.UNCHECKED ) );
+	}
 	@Override
 	protected void layout() {
 		super.layout();

@@ -29,6 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Fire;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.watabou.noosa.Image;
@@ -37,6 +38,8 @@ import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
 public abstract class ChampionEnemy extends Buff {
+
+
 
 	{
 		type = buffType.POSITIVE;
@@ -265,6 +268,46 @@ public abstract class ChampionEnemy extends Buff {
 		public void restoreFromBundle(Bundle bundle) {
 			super.restoreFromBundle(bundle);
 			multiplier = bundle.getFloat(MULTIPLIER);
+		}
+	}
+
+	public static class AllyToRestartOK extends ChampionEnemy {
+
+		@Override
+		public boolean attachTo(Char target) {
+			if (super.attachTo(target)){
+				target.alignment = Char.Alignment.ALLY;
+				if (target.buff(PinCushion.class) != null){
+					target.buff(PinCushion.class).detach();
+				}
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+
+		@Override
+		public void fx(boolean on) {
+			if (on) {target.sprite.add(CharSprite.State.HEARTS);
+			} else target.sprite.remove(CharSprite.State.HEARTS);
+		}
+		@Override
+		public String toString() {
+			return "";
+		}
+
+		@Override
+		public String desc() {
+			return "";
+		}
+		@Override
+		public void tintIcon(Image icon) {
+			icon.hardlight(0x66bbcc);
+		}
+
+		public int icon() {
+			return BuffIndicator.NONE;
 		}
 	}
 
