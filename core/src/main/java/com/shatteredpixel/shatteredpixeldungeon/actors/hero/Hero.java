@@ -94,6 +94,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.keys.IronKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.Key;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.SkeletonKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfMight;
@@ -106,6 +107,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfHaste;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfMight;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfTenacity;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfChallenge;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
@@ -445,6 +447,12 @@ public class Hero extends Char {
 		
 		float accuracy = 1;
 		accuracy *= RingOfAccuracy.accuracyMultiplier( this );
+		switch(pointsInTalent(Talent.MORE_ACCURATE)){
+			case 0:default:break;
+			case 1:accuracy*=1.3f;break;
+			case 2:accuracy*=1.6f;break;
+			case 3:accuracy*=2f;break;
+		}
 		
 		if (wep instanceof MissileWeapon){
 			if (Dungeon.level.adjacent( pos, target.pos )) {
@@ -1662,6 +1670,20 @@ public class Hero extends Char {
 		if (ankh != null) {
 			interrupt();
 			resting = false;
+
+			if(hasTalent(Talent.NEWLIFE)){
+				if(ankh.isBlessed()){
+					new PotionOfHealing().apply(this);
+				}
+				
+				if(pointsInTalent(Talent.NEWLIFE)>=2){
+					new PotionOfStrength().apply(this);
+				}
+
+				if(pointsInTalent(Talent.NEWLIFE)>=3){
+					new ScrollOfUpgrade().collect();
+				}
+			}
 
 			if (ankh.isBlessed()) {
 				this.HP = HT / 4;

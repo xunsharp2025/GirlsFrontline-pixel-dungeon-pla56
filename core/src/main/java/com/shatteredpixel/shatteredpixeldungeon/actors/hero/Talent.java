@@ -527,7 +527,7 @@ public enum Talent {
 				dmg+=1+4*hero.pointsInTalent(JIEFANGCI);
 				float chance=0.05f+0.1f*hero.pointsInTalent(JIEFANGCI);
 				if(Random.Float()<chance){
-					Buff.affect(enemy,Cripple.class,1f);
+					Buff.affect(enemy,Cripple.class,2f);
 				}
 			}
 		}

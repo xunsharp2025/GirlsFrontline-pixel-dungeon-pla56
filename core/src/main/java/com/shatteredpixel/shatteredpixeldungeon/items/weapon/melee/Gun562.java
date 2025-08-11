@@ -5,9 +5,12 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bleeding;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
@@ -104,30 +107,39 @@ public class Gun562 extends ShootGun {
         }
 
         //判定伤害
-        int baseDamage = curUser.HT * 2 / 3;
+        float baseDamage = curUser.HT * 2 / 3;
+        float damage=baseDamage;
         if (mainActor != null) {
-            mainActor.damage(baseDamage, this);
-            if (mainActor == Dungeon.hero && !mainActor.isAlive()) {
-                Dungeon.fail(getClass());
-            }
-        }
-
-        if (!subActors.isEmpty()) {
-            for (Char sub : subActors) {
-                sub.damage(baseDamage * 3 / 4,this);
-                if (sub == Dungeon.hero && !sub.isAlive()) {
-                    Dungeon.fail(getClass());
+            mainActor.damage(Math.round(damage),this);
+            if(Dungeon.hero.hasTalent(Talent.ENHANCE_GRENADE)){
+                Buff.affect(mainActor,Bleeding.class ).set( Math.round(damage*0.4f));
+                if(Dungeon.hero.pointsInTalent(Talent.ENHANCE_GRENADE)>=2){
+                    Buff.affect(mainActor,Cripple.class,3f);
                 }
             }
         }
 
-        if (!outerActors.isEmpty()) {
-            for (Char outer : outerActors) {
-                outer.damage(baseDamage / 5, this);
-                if (outer == Dungeon.hero && !outer.isAlive()) {
-                    Dungeon.fail(getClass());
+        damage=baseDamage*0.75f;
+        for(Char sub : subActors) {
+            sub.damage(Math.round(damage),this);
+            if(Dungeon.hero.hasTalent(Talent.ENHANCE_GRENADE)){
+                Buff.affect(sub,Bleeding.class ).set( Math.round(damage*0.3f));
+                if(Dungeon.hero.pointsInTalent(Talent.ENHANCE_GRENADE)>=2){
+                    Buff.affect(sub,Cripple.class,3f);
                 }
             }
+        }
+
+        damage=baseDamage*0.2f;
+        for(Char outer : outerActors) {
+            outer.damage(Math.round(damage),this);
+            if(Dungeon.hero.pointsInTalent(Talent.ENHANCE_GRENADE)>=2){
+                Buff.affect(outer,Cripple.class,3f);
+            }
+        }
+
+        if(!Dungeon.hero.isAlive()){
+            Dungeon.fail(getClass());
         }
 
         super.onShootComplete(cell);
@@ -220,7 +232,7 @@ public class Gun562 extends ShootGun {
             int missingCharges = maxCharges - curCharges;
             missingCharges = Math.max(0, missingCharges);
 
-            float turnsToCharge =200f;
+            float turnsToCharge=(Dungeon.hero.pointsInTalent(Talent.ENHANCE_GRENADE)>=3?170f:200f);
 
             LockedFloor lock = target.buff(LockedFloor.class);
             if (lock == null || lock.regenOn()){
