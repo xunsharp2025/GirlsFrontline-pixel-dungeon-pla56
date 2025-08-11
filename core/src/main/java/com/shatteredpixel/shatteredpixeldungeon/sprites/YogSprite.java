@@ -33,11 +33,11 @@ public class YogSprite extends MobSprite {
 
 		perspectiveRaise = 5 / 16f;
 
-		texture( Assets.Sprites.YOG );
+		texture( Assets.MASTAR_HEAD );
 		
-		TextureFilm frames = new TextureFilm( texture, 20, 19 );
+		TextureFilm frames = new TextureFilm( texture, 36, 52 );
 		
-		idle = new Animation( 10, true );
+		idle = new Animation( 5, true );
 		idle.frames( frames, 0, 1, 2, 2, 1, 0, 3, 4, 4, 3, 0, 5, 6, 6, 5 );
 		
 		run = new Animation( 12, true );
