@@ -158,12 +158,17 @@ public class Gun561 extends ShootGun {
 					if (target == Dungeon.hero && !target.isAlive())
 						Dungeon.fail(getClass());
 				}
+
 				if(Dungeon.hero.buff(Cooldown.class)==null){
 					Hero hero=Dungeon.hero;
 					float coolDownTurns=200f;
-					if(hero.hasTalent(Talent.FAST_RELOAD)){
-						coolDownTurns-=20*hero.pointsInTalent(Talent.FAST_RELOAD);
+
+					coolDownTurns-=20f*hero.pointsInTalent(Talent.FAST_RELOAD);
+
+					if(hero.hasTalent(Talent.SIMPLE_RELOAD)){
+						coolDownTurns-=-5f+25f*hero.pointsInTalent(Talent.SIMPLE_RELOAD);
 					}
+
 					Buff.affect(hero, Cooldown.class,coolDownTurns);
 				}
 			}
