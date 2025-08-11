@@ -532,6 +532,12 @@ public enum Talent {
 			}
 		}
 
+		if(hero.hasTalent(SERACH_ARMY)
+		&& enemy instanceof Mob
+		&& ((Mob) enemy).surprisedBy(hero)){
+			dmg*=1f+0.1f*hero.pointsInTalent(SERACH_ARMY);
+		}
+
 		return dmg;
 	}
 

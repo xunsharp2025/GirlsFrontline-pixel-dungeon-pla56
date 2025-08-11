@@ -1513,8 +1513,9 @@ public class Hero extends Char {
 	}
 	
 	public void earnExp( int exp, Class source ) {
-		
+		exp*=1f+2f/3f*pointsInTalent(Talent.ELITE_ARMY);
 		this.exp += exp;
+
 		float percent = exp/(float)maxExp();
 
 		EtherealChains.chainsRecharge chains = buff(EtherealChains.chainsRecharge.class);
