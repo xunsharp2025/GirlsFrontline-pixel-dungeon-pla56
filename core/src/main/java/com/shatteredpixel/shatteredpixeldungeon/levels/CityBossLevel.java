@@ -527,7 +527,7 @@ public class CityBossLevel extends Level {
 			//demon halls tiles
 			if (cell < Dungeon.level.width*22){
 				if (Dungeon.level.map[cell] == Terrain.STATUE){
-					return Messages.get(HallsLevel.class, "statue_name");
+					return Messages.get(DeepCaveLevel.class, "statue_name");
 				}
 
 				//DK arena tiles
@@ -551,7 +551,7 @@ public class CityBossLevel extends Level {
 				if (Dungeon.level.map[cell] == Terrain.EXIT){
 					return Messages.get(HallsLevel.class, "exit_desc");
 				} else if (Dungeon.level.map[cell] == Terrain.STATUE){
-					return Messages.get(HallsLevel.class, "statue_desc");
+					return Messages.get(DeepCaveLevel.class, "statue_desc");
 				} else if (Dungeon.level.map[cell] == Terrain.EMPTY_DECO){
 					return "";
 				}
