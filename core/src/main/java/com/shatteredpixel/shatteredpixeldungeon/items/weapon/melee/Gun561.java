@@ -27,9 +27,12 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.EnergyParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
@@ -120,20 +123,42 @@ public class Gun561 extends ShootGun {
 
 
 	@Override
-	public void onShootComplete(int cell) {
-		//播放音效
-		Sample.INSTANCE.play(Assets.Sounds.BLAST);
+	public void onShootComplete(int cell){
+		float rate=1f;
+		float duration=0f;
 
-		//处理地形和物品互动
-		//爆炸特效
-		if (Dungeon.level.heroFOV[cell]) {
-			CellEmitter.center(cell).burst(BlastParticle.FACTORY,30);
+		if(Dungeon.hero.subClass==HeroSubClass.PULSETROOPER){
+			rate=Dungeon.hero.pointsInTalent(Talent.MORE_POWER)/6f;
+
+			Sample.INSTANCE.play( Assets.Sounds.LIGHTNING);
+
+			switch(Dungeon.hero.pointsInTalent(Talent.ENDURE_EMP)){
+				case 0:default:duration=10f;break;
+				case 1:        duration=16f;break;
+				case 2:        duration=22f;break;
+				case 3:        duration=30f;break;
+			}
 		}
-		for (int n : PathFinder.NEIGHBOURS9) {
+
+		if(rate>0.01f){
+			Sample.INSTANCE.play(Assets.Sounds.BLAST);
+			if (Dungeon.level.heroFOV[cell]) {
+				CellEmitter.get(cell).burst(BlastParticle.FACTORY,30);
+			}
+		}
+
+		for(int n : PathFinder.NEIGHBOURS9) {
 			int c =cell + n;
 			if (c >= 0 && c < Dungeon.level.length()) {
-				if (Dungeon.level.heroFOV[c]) {
-					CellEmitter.get(c).burst(SmokeParticle.FACTORY, 4);
+				Char target = Actor.findChar(c);
+
+				if(target!=null&&duration>0.01f){
+					Buff.prolong(target,Paralysis.class,duration);
+					CellEmitter.get(c).burst(EnergyParticle.FACTORY, 10);
+				}
+
+				if(rate<=0.01f){
+					continue;
 				}
 
 				if (Dungeon.level.flamable[c]) {
@@ -146,32 +171,32 @@ public class Gun561 extends ShootGun {
 				if (heap != null)
 					heap.explode();
 
-				Char target = Actor.findChar(c);
+				if (Dungeon.level.heroFOV[c]) {
+					CellEmitter.get(c).burst(SmokeParticle.FACTORY,4);
+				}
+
 				if (target != null) {
-					// 如果是中心地格，则施加完整伤害
-					// 如果不是中心地格，则施加四分之三的伤害
-					int damage = n == 0 ?
-							Random.NormalIntRange(Dungeon.hero.HT/2+5,Dungeon.hero.HT/2+8) :
-							(int) (Random.NormalIntRange(Dungeon.hero.HT / 2 + 5, Dungeon.hero.HT / 2 + 8) * 0.75f);
-					target.damage(damage, this);
+					int damage=Random.NormalIntRange(Dungeon.hero.HT/2+5,Dungeon.hero.HT/2+8);
+					rate*=(n==0?1f:0.75f);
+					target.damage((int)(damage*rate),this);
 
 					if (target == Dungeon.hero && !target.isAlive())
 						Dungeon.fail(getClass());
 				}
-
-				if(Dungeon.hero.buff(Cooldown.class)==null){
-					Hero hero=Dungeon.hero;
-					float coolDownTurns=200f;
-
-					coolDownTurns-=20f*hero.pointsInTalent(Talent.FAST_RELOAD);
-
-					if(hero.hasTalent(Talent.SIMPLE_RELOAD)){
-						coolDownTurns-=-5f+25f*hero.pointsInTalent(Talent.SIMPLE_RELOAD);
-					}
-
-					Buff.affect(hero, Cooldown.class,coolDownTurns);
-				}
 			}
+		}
+
+		if(Dungeon.hero.buff(Cooldown.class)==null){
+			Hero hero=Dungeon.hero;
+			float coolDownTurns=200f;
+
+			coolDownTurns-=20f*hero.pointsInTalent(Talent.FAST_RELOAD);
+
+			if(hero.hasTalent(Talent.SIMPLE_RELOAD)){
+				coolDownTurns-=-5f+25f*hero.pointsInTalent(Talent.SIMPLE_RELOAD);
+			}
+
+			Buff.affect(hero, Cooldown.class,coolDownTurns);
 		}
 
 		super.onShootComplete(cell);

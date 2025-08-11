@@ -38,8 +38,8 @@ public class Gun562 extends ShootGun {
         needEquip = false;
     }
 
-    private static final String CUR_CHARGES         = "curCharges";
-    private static final String PARTIALCHARGE       = "partialCharge";
+    private static final String CUR_CHARGES  = "curCharges";
+    private static final String PARTIALCHARGE= "partialCharge";
 
     @Override
     public void storeInBundle( Bundle bundle ) {
@@ -220,7 +220,7 @@ public class Gun562 extends ShootGun {
             int missingCharges = maxCharges - curCharges;
             missingCharges = Math.max(0, missingCharges);
 
-            float turnsToCharge =100;
+            float turnsToCharge =200f;
 
             LockedFloor lock = target.buff(LockedFloor.class);
             if (lock == null || lock.regenOn()){

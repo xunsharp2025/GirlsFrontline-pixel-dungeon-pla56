@@ -157,7 +157,7 @@ public enum Talent {
 	//type561 T2
 	BARGAIN_SKILLS(132),TRAP_EXPERT(133),HOW_DARE_YOU(134),JIEFANGCI(135),NIGHT_EXPERT(136),
 	//type561 T3
-	SERACH_ARMY(137, 3), ELITE_ARMY(138, 3),
+	SEARCH_ARMY(137, 3), ELITE_ARMY(138, 3),
 	//pulseTrooper T3
 	SIMPLE_RELOAD(139, 3), MORE_POWER(140, 3), ENDURE_EMP(141, 3),
 	//modernReborner T3
@@ -532,10 +532,10 @@ public enum Talent {
 			}
 		}
 
-		if(hero.hasTalent(SERACH_ARMY)
+		if(hero.hasTalent(SEARCH_ARMY)
 		&& enemy instanceof Mob
 		&& ((Mob) enemy).surprisedBy(hero)){
-			dmg*=1f+0.1f*hero.pointsInTalent(SERACH_ARMY);
+			dmg*=1f+0.1f*hero.pointsInTalent(SEARCH_ARMY);
 		}
 
 		return dmg;
@@ -628,7 +628,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, POINT_BLANK, SEER_SHOT);
 				break;
 			case TYPE561:
-				Collections.addAll(tierTalents, SERACH_ARMY, ELITE_ARMY);
+				Collections.addAll(tierTalents, SEARCH_ARMY, ELITE_ARMY);
 				break;
 		}
 		for (Talent talent : tierTalents){
