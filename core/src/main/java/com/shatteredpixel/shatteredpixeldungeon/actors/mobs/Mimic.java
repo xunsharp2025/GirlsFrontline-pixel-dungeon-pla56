@@ -50,7 +50,7 @@ import java.util.List;
 
 public class Mimic extends Mob {
 	
-	private int level;
+	public int level;
 	
 	{
 		spriteClass = MimicSprite.class;

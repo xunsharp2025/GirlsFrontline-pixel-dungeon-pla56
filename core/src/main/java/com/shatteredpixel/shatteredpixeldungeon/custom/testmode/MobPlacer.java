@@ -7,8 +7,13 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AllyBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.CrystalMimic;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.custom.messages.M;
+import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -76,6 +81,10 @@ public class MobPlacer extends TestItem{
         return actions;
     }
 
+    private List<Item> crystal = new ArrayList<Item>() {{
+        add(Generator.random());
+    }};
+
     @Override
     public void execute(Hero hero, String action) {
         super.execute(hero, action);
@@ -87,8 +96,16 @@ public class MobPlacer extends TestItem{
                         if (canPlaceMob(cell)) {
                             try {
                                 Mob m = Reflection.newInstance(getMobClass());
-                                m.pos = cell;
                                 m.state = m.HUNTING;
+                                if(m instanceof Mimic){
+                                    m.HP = m.HT = (1 + ((Mimic) m).level) * 6;
+                                    m.defenseSkill = 2 + ((Mimic) m).level/2;
+                                    if(m instanceof CrystalMimic){
+                                        ((CrystalMimic) m).items = (ArrayList<Item>) crystal;
+                                    } else {
+                                        m.pos = cell;
+                                    }
+                                }
                                 GameScene.add(m);
 
                                 if( HT > 0 && shouldOverride ){
