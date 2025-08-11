@@ -277,6 +277,8 @@ public class DeepCaveBossLevel extends Level {
                 return Messages.get(CavesLevel.class, "high_grass_name");
             case Terrain.WATER:
                 return Messages.get(CavesLevel.class, "water_name");
+            case Terrain.STATUE:case Terrain.STATUE_SP:
+                return Messages.get(DeepCaveLevel.class, "statue_name2");
             default:
                 return super.tileName( tile );
         }
@@ -295,6 +297,9 @@ public class DeepCaveBossLevel extends Level {
                 return Messages.get(CavesLevel.class, "wall_deco_desc");
             case Terrain.BOOKSHELF:
                 return Messages.get(CavesLevel.class, "bookshelf_desc");
+            case Terrain.STATUE:
+            case Terrain.STATUE_SP:
+                return Messages.get(DeepCaveLevel.class, "statue_desc2");
             default:
                 return super.tileDesc( tile );
         }
