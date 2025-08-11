@@ -109,12 +109,12 @@ public class ArmoredStatue extends Statue {
 		Item.updateQuickslot();
 	}
 
-	@Override
-	public CharSprite sprite() {
-		CharSprite sprite = super.sprite();
-		((StatueSprite)sprite).setArmor(armor.tier);
-		return sprite;
-	}
+//	@Override
+//	public CharSprite sprite() {
+//		CharSprite sprite = super.sprite();
+//		((StatueSprite)sprite).setArmor(armor.tier);
+//		return sprite;
+//	}
 
 	@Override
 	public float speed() {

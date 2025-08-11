@@ -44,6 +44,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Game;
+import com.watabou.noosa.TextureFilm;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundle;
@@ -330,10 +331,13 @@ public class SentryRoom extends SpecialRoom {
 		private Emitter chargeParticles;
 
 		public SentrySprite(){
+
 			texture( Assets.Sprites.RED_SENTRY );
 
-			idle = new Animation(1, true);
-			idle.frames(texture.uvRect(0, 0, 8, 15));
+			TextureFilm frames = new TextureFilm( texture, 28, 28 );
+
+			idle = new Animation( 12, true );
+			idle.frames( frames, 0, 0, 0, 1,1,1,2,2,2, 3,3, 3 );
 
 			run = idle.clone();
 			attack = idle.clone();
@@ -396,29 +400,6 @@ public class SentryRoom extends SpecialRoom {
 		public void play(Animation anim) {
 			if (chargeParticles != null) chargeParticles.on = anim == charging;
 			super.play(anim);
-		}
-
-		private float baseY = Float.NaN;
-
-		@Override
-		public void place(int cell) {
-			super.place(cell);
-			baseY = y;
-		}
-
-		@Override
-		public void update() {
-			super.update();
-			if (chargeParticles != null){
-				chargeParticles.pos( center() );
-				chargeParticles.visible = visible;
-			}
-
-			if (!paused){
-				if (Float.isNaN(baseY)) baseY = y;
-				y = baseY + (float) Math.sin(Game.timeTotal);
-				shadowOffset = 0.25f - 0.8f*(float) Math.sin(Game.timeTotal);
-			}
 		}
 
 	}

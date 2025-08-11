@@ -26,34 +26,34 @@ import com.watabou.noosa.TextureFilm;
 import com.watabou.utils.Random;
 
 public class SeniorSprite extends MobSprite {
-	
+
 	private Animation kick;
-	
+
 	public SeniorSprite() {
 		super();
-		
-		texture( Assets.Sprites.MONK );
-		
-		TextureFilm frames = new TextureFilm( texture, 15, 14 );
-		
+
+		texture( Assets.Sprites.ESTRIKER );
+
+		TextureFilm frames = new TextureFilm( texture, 21, 20 );
+
 		idle = new Animation( 6, true );
-		idle.frames( frames, 18, 17, 18, 19 );
-		
+		idle.frames( frames, 0 );
+
 		run = new Animation( 15, true );
-		run.frames( frames, 28, 29, 30, 31, 32, 33 );
-		
-		attack = new Animation( 12, false );
-		attack.frames( frames, 20, 21, 20, 21 );
-		
-		kick = new Animation( 10, false );
-		kick.frames( frames, 22, 23, 22 );
-		
+		run.frames( frames, 5, 6, 7, 8, 9, 10 );
+
+		attack = new Animation( 18, false );
+		attack.frames( frames, 4, 1, 4, 2, 4, 3, 4, 4 );
+
+		kick = new Animation( 18, false );
+		kick.frames( frames, 4, 1, 4, 2, 4, 3, 4, 4 );
+
 		die = new Animation( 15, false );
-		die.frames( frames, 18, 24, 25, 25, 26, 27 );
-		
+		die.frames( frames, 1, 11, 12, 13 );
+
 		play( idle );
 	}
-	
+
 	@Override
 	public void attack( int cell ) {
 		super.attack( cell );
@@ -61,7 +61,7 @@ public class SeniorSprite extends MobSprite {
 			play( kick );
 		}
 	}
-	
+
 	@Override
 	public void onComplete( Animation anim ) {
 		super.onComplete( anim == kick ? attack : anim );

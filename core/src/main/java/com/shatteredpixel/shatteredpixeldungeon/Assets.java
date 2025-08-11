@@ -344,8 +344,17 @@ public class Assets {
 		public static final String LOTUS    = "sprites/lotus.png";
 		public static final String NINJA_LOG= "sprites/ninja_log.png";
 		public static final String SPIRIT_HAWK= "sprites/spirit_hawk.png";
-		public static final String RED_SENTRY= "sprites/red_sentry.png";
+		public static final String RED_SENTRY= "sprites/girlpd/red_pointer.png";
 
 		public static final String AEGIS    = "sprites/girlpd/aegis.png";
+		public static final String JAEGER    = "sprites/girlpd/jaeger.png";
+
+		public static final String JAEGER_LOCK    = "sprites/girlpd/jager_lock.png";
+
+		public static final String SKS  = "sprites/girlpd/sks.png";
+		public static final String MANTI  = "sprites/girlpd/manti.png";
+
+		public static final String STRIKER			= "sprites/girlpd/striker.png";
+		public static final String ESTRIKER			= "sprites/girlpd/elitestriker.png";
 	}
 }

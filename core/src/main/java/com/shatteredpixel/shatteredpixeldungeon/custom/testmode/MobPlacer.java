@@ -351,7 +351,7 @@ public class MobPlacer extends TestItem{
             selectedPage.maxWidth(WIDTH / 2);
             selectedPage.setPos((WIDTH - selectedPage.width())/2, 5);
             selectedMob.maxWidth(WIDTH);
-            selectedMob.setPos(eliteOptions.get(5).right()+15, 132);
+            selectedMob.setPos(eliteOptions.get(5).right(), 132);
             resize(WIDTH, (int)eliteOptions.get(5).bottom() + 1);
         }
 

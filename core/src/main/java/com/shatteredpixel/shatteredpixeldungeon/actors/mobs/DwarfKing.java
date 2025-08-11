@@ -137,6 +137,9 @@ public class DwarfKing extends Mob {
 		abilityCooldown = bundle.getFloat( ABILITY_CD );
 		lastAbility = bundle.getInt( LAST_ABILITY );
 
+		if (state != SLEEPING) BossHealthBar.assignBoss(this);
+		if ((HP*2 <= HT)) BossHealthBar.bleed(true);
+
 		if (phase == 2) properties.add(Property.IMMOVABLE);
 	}
 
@@ -604,7 +607,7 @@ public class DwarfKing extends Mob {
 					particles.burst(ElmoParticle.FACTORY, 10);
 					Sample.INSTANCE.play(Assets.Sounds.BURNING);
 				} else {
-					particles.burst(Speck.factory(Speck.BONE), 10);
+					particles.burst(Speck.factory(Speck.LIGHT), 10);
 					Sample.INSTANCE.play(Assets.Sounds.BONES);
 				}
 				particles = null;
@@ -665,7 +668,7 @@ public class DwarfKing extends Mob {
 				} else if (summon == DKMonk.class){
 					particles.pour(ElmoParticle.FACTORY, 0.1f);
 				} else {
-					particles.pour(Speck.factory(Speck.RATTLE), 0.1f);
+					particles.pour(Speck.factory(Speck.SMOKE), 0.1f);
 				}
 
 			} else if (!on && particles != null) {

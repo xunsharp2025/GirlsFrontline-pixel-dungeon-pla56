@@ -28,11 +28,12 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ImpSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.P7Sprite;
 
 public class ImpShopkeeper extends Shopkeeper {
 
 	{
-		spriteClass = ImpSprite.class;
+		spriteClass = P7Sprite.class;
 	}
 	
 	private boolean seenBefore = false;

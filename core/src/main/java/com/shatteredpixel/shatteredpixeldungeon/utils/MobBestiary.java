@@ -235,10 +235,9 @@ public enum MobBestiary {
 
         RARE.addEntities(
                 Albino.class, CausticSlime.class,
-                Bandit.class, SpectralNecromancer.class,
-                ArmoredBrute.class, DM201.class,
+                Bandit.class,
+                ArmoredBrute.class,
                 Elemental.ChaosElemental.class, Senior.class,
-                Acidic.class,
                 CrystalMimic.class, ArmoredStatue.class);
 
         QUEST.addEntities(

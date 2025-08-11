@@ -39,15 +39,15 @@ public abstract class ShamanSprite extends MobSprite {
 		
 		int c = texOffset();
 		
-		texture( Assets.Sprites.SHAMAN );
+		texture( Assets.Sprites.JAEGER );
 		
-		TextureFilm frames = new TextureFilm( texture, 12, 15 );
+		TextureFilm frames = new TextureFilm( texture, 20, 20 );
 		
 		idle = new Animation( 2, true );
 		idle.frames( frames, c+0, c+0, c+0, c+1, c+0, c+0, c+1, c+1 );
 		
 		run = new Animation( 12, true );
-		run.frames( frames, c+4, c+5, c+6, c+7 );
+		run.frames( frames, c+4, c+5, c+6, c+7,c+8,c+9 );
 		
 		attack = new Animation( 12, false );
 		attack.frames( frames, c+2, c+3, c+0 );
@@ -55,7 +55,7 @@ public abstract class ShamanSprite extends MobSprite {
 		zap = attack.clone();
 		
 		die = new Animation( 12, false );
-		die.frames( frames, c+8, c+9, c+10 );
+		die.frames( frames, c+10, c+11, c+12 );
 		
 		play( idle );
 	}
@@ -104,7 +104,7 @@ public abstract class ShamanSprite extends MobSprite {
 		
 		@Override
 		protected int texOffset() {
-			return 21;
+			return 13;
 		}
 	}
 	
@@ -115,7 +115,7 @@ public abstract class ShamanSprite extends MobSprite {
 		
 		@Override
 		protected int texOffset() {
-			return 42;
+			return 26;
 		}
 	}
 }
