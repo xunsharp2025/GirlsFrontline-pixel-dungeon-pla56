@@ -42,6 +42,7 @@ import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ElementalSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.PyroSprite;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -231,7 +232,7 @@ public abstract class Elemental extends Mob {
 	public static class NewbornFireElemental extends FireElemental {
 		
 		{
-			spriteClass = ElementalSprite.NewbornFire.class;
+			spriteClass = PyroSprite.class;
 			
 			HT = 60;
 			HP = HT/2; //30

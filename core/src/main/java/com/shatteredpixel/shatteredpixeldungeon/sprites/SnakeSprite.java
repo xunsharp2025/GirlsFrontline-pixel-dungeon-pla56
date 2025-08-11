@@ -31,7 +31,7 @@ public class SnakeSprite extends MobSprite {
 		
 		texture( Assets.Sprites.SNAKE );
 		
-		TextureFilm frames = new TextureFilm( texture, 12, 11 );
+		TextureFilm frames = new TextureFilm( texture, 16, 16 );
 		
 		//many frames here as we want the rising/falling to be slow but the tongue to be fast
 		idle = new Animation( 10, true );

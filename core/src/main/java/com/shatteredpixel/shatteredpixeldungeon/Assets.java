@@ -30,7 +30,7 @@ public class Assets {
 	public static final String SAVESLOT		= "new_ui.png";
 	public static final String PORTRAIT1	= "portrait1.png";
 	public static final String EMOTION 		= "emotion.png";
-	public static final String PYRO			= "pyro.png";
+	public static final String PYRO			= "sprites/girlpd/pyro.png";
 	public static final String NOEL			= "noel.png";
 	public static final String P7			= "p7.png";
 	public static final String SVESPID		= "shieldvespid.png";
@@ -345,5 +345,7 @@ public class Assets {
 		public static final String NINJA_LOG= "sprites/ninja_log.png";
 		public static final String SPIRIT_HAWK= "sprites/spirit_hawk.png";
 		public static final String RED_SENTRY= "sprites/red_sentry.png";
+
+		public static final String AEGIS    = "sprites/girlpd/aegis.png";
 	}
 }
