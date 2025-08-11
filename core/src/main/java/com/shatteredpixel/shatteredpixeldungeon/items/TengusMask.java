@@ -89,13 +89,16 @@ public class TengusMask extends Item {
 	}
 	
 	public void choose( HeroSubClass way ) {
-		
 		detach( curUser.belongings.backpack );
 		
 		curUser.spend( Actor.TICK );
 		curUser.busy();
 		
 		curUser.subClass = way;
+		if(way==HeroSubClass.MODERN_REBORNER){
+			new Gun562Accessories().collect();
+		}
+		
 		Talent.initSubclassTalents(curUser);
 		
 		curUser.sprite.operate( curUser.pos );
