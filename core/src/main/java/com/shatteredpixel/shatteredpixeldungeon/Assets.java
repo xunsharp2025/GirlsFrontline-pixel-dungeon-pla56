@@ -52,6 +52,9 @@ public class Assets {
 	public static final String FNC			= "sprites/girlpd/fnc.png";
 	public static final String PROWLER		= "sprites/girlpd/prowler.png";
 	public static final String EXCU			= "sprites/boss/excutioner.png";
+
+	public static final String MASTAR_HEAD			= "sprites/boss/master_head.png";
+	public static final String DISTORY		= "sprites/boss/disloli.png";
 	public static final String GOLYAT		= "sprites/girlpd/golyat.png";
 	public static final String MG5	    	= "sprites/girlpd/mg5.png";
 	public static final String URO			= "sprites/boss/uro.png";
