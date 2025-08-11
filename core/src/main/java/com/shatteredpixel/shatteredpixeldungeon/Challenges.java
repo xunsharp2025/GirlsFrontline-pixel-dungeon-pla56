@@ -43,7 +43,9 @@ public class Challenges {
 	public static final int STRONGER_BOSSES 	= 256;
 	public static final int INFLATION				= 512;
 
-	public static final int MAX_VALUE           = 1023;
+	public static final int TEST_MODE = 1024;
+
+	public static final int MAX_VALUE           = 2048;
 
 	public static final String[] NAME_IDS = {
 			"champion_enemies",
@@ -55,17 +57,18 @@ public class Challenges {
 			"swarm_intelligence",
 			"darkness",
 			"no_scrolls",
-			"inflation"
+			"inflation",
+			"test_mode"
 	};
 
 	public static final int[] MASKS = {
-			CHAMPION_ENEMIES, STRONGER_BOSSES, NO_FOOD, NO_ARMOR, NO_HEALING, NO_HERBALISM, SWARM_INTELLIGENCE, DARKNESS, NO_SCROLLS,INFLATION
+			CHAMPION_ENEMIES, STRONGER_BOSSES, NO_FOOD, NO_ARMOR, NO_HEALING, NO_HERBALISM, SWARM_INTELLIGENCE, DARKNESS, NO_SCROLLS,INFLATION,TEST_MODE
 	};
 
 	public static int activeChallenges(){
 		int chCount = 0;
 		for (int ch : Challenges.MASKS){
-			if ((Dungeon.challenges & ch) != 0) chCount++;
+			if ((Dungeon.challenges & ch) != 0 && ch <= INFLATION) chCount++;
 		}
 		return chCount;
 	}

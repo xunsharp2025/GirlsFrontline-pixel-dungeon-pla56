@@ -253,7 +253,9 @@ public class WndSelectGameInProgress extends Window {
             }
 
             for (int i = 0; i < Challenges.MASKS.length; ++i) {
-                challengeMarks[ i ].visible = ((Info.challenges) & Challenges.MASKS[i]) != 0 ;
+                if(!(Challenges.NAME_IDS[i].equals("test_mode"))){
+                    challengeMarks[ i ].visible = ((Info.challenges) & Challenges.MASKS[i]) != 0 ;
+                }
             }
 
             int procTheme = Math.min( (Info.maxDepth-1)/5 + 1, 6 );
