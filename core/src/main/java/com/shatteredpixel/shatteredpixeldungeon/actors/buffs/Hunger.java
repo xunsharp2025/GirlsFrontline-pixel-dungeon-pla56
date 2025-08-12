@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
 import com.shatteredpixel.shatteredpixeldungeon.items.journal.Guidebook;
@@ -191,6 +192,9 @@ public class Hunger extends Buff implements Hero.Doom {
 			result = Messages.get(this, "desc_intro_hungry");
 		} else {
 			result = Messages.get(this, "desc_intro_starving");
+			if(Dungeon.hero.heroClass == HeroClass.TYPE561){
+				result += Messages.get(this, "desc_type561");
+			}
 		}
 
 		result += Messages.get(this, "desc");
