@@ -219,7 +219,7 @@ public class WndSelectGameInProgress extends Window {
             if (Info.heroClass == HeroClass.NONE) {
                 name.text( Info.heroClass.title() );
             } else {
-                name.text( Info.subClass.title() );
+                name.text( Info.subClass != HeroSubClass.NONE ? Info.subClass.title() :Info.heroClass.title() );
             }
 
 
