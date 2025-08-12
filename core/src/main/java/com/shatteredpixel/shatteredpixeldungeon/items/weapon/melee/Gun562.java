@@ -69,22 +69,31 @@ public class Gun562 extends ShootGun {
             CellEmitter.center(cell).burst(BlastParticle.FACTORY,30);
         }
         //周围25格
+        int width = Dungeon.level.width();
+        int height = Dungeon.level.height();
+        int totalCells = width * height;
+
         for (int i : PathFinder.NEIGHBOURS25) {
-            if (Dungeon.level.heroFOV[cell + i]) {
-                //烟雾特效
-                CellEmitter.get(cell + i).burst(SmokeParticle.FACTORY,4);
-            }
-            //烧毁地形
-            if (Dungeon.level.flamable[cell + i]) {
-                Dungeon.level.destroy(cell + i);
-                GameScene.updateMap(cell + i);
-            }
-            //烧毁物品
-            Heap heap = Dungeon.level.heaps.get(cell + i);
-            if (heap != null) {
-                heap.explode();
+            int targetCell = cell + i;
+            // 检查是否在地图范围内
+            if (targetCell >= 0 && targetCell < totalCells) {
+                if (Dungeon.level.heroFOV[targetCell]) {
+                    //烟雾特效
+                    CellEmitter.get(targetCell).burst(SmokeParticle.FACTORY, 4);
+                }
+                //烧毁地形
+                if (Dungeon.level.flamable[targetCell]) {
+                    Dungeon.level.destroy(targetCell);
+                    GameScene.updateMap(targetCell);
+                }
+                //烧毁物品
+                Heap heap = Dungeon.level.heaps.get(targetCell);
+                if (heap != null) {
+                    heap.explode();
+                }
             }
         }
+
 
         //查找目标这里可以考虑判定友伤
         //中心目标
