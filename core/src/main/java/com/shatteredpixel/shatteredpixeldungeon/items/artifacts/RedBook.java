@@ -14,8 +14,10 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;
+
 
 public class RedBook extends Artifact{
 
@@ -34,6 +36,20 @@ public class RedBook extends Artifact{
     @Override
     protected ArtifactBuff passiveBuff() {
         return new Cooldowncharge();
+    }
+
+    private static final String COOLDOWN  = "cooldown";
+
+    @Override
+    public void storeInBundle( Bundle bundle ) {
+        super.storeInBundle(bundle);
+        bundle.put(COOLDOWN,cooldown);
+    }
+    
+    @Override
+    public void restoreFromBundle( Bundle bundle ) {
+        super.restoreFromBundle(bundle);
+        cooldown=bundle.getInt(COOLDOWN);
     }
 
     @Override
