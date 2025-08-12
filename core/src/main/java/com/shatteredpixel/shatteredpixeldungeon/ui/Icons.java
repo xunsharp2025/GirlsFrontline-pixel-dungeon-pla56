@@ -113,6 +113,27 @@ public enum Icons {
 	PURIGRO,
 	ARCNOR,
 
+	/* Made People */
+	GIRLPD,
+	BAKA,
+	LANGLING,
+
+	WOLF,
+	CATZS,
+	SEA,
+
+	LING,
+	SHOWER,
+	COLA,
+
+	FTER,
+	CHOCOSUKI,
+	DOGE,
+
+	AWSL,
+	ALEX,
+
+
 	SKIP;
 
 	public Image get() {
@@ -359,6 +380,53 @@ public enum Icons {
 				icon.frame( icon.texture.uvRectBySize( 224, 32, 24, 14 ) );
 				break;
 
+			/* Made Group */
+			case GIRLPD:
+				icon.frame( icon.texture.uvRectBySize( 144, 65, 16, 16 ) );
+				break;
+			case BAKA:
+				icon.frame( icon.texture.uvRectBySize( 0, 129, 14, 14 ) );
+				break;
+			case LANGLING:
+				icon.frame( icon.texture.uvRectBySize( 0, 145, 14, 14 ) );
+				break;
+
+			case FTER:
+				icon.frame( icon.texture.uvRectBySize( 96, 129, 14, 14 ) );
+				break;
+			case CHOCOSUKI:
+				icon.frame( icon.texture.uvRectBySize( 112, 129, 14, 14 ) );
+				break;
+			case DOGE:
+				icon.frame( icon.texture.uvRectBySize( 128, 129, 14, 14 ) );
+				break;
+
+			case WOLF:
+				icon.frame( icon.texture.uvRectBySize( 32, 129, 14, 14 ) );
+				break;
+			case CATZS:
+				icon.frame( icon.texture.uvRectBySize( 224, 101, 19, 19 ) );
+				break;
+			case SEA:
+				icon.frame( icon.texture.uvRectBySize( 64, 129, 14, 14 ) );
+				break;
+
+			case LING:
+				icon.frame( icon.texture.uvRectBySize( 32, 145, 14, 14 ) );
+				break;
+			case SHOWER:
+				icon.frame( icon.texture.uvRectBySize( 48, 145, 14, 14 ) );
+				break;
+			case COLA:
+				icon.frame( icon.texture.uvRectBySize( 64, 145, 14, 14 ) );
+				break;
+
+			case AWSL:
+				icon.frame( icon.texture.uvRectBySize( 96, 145, 14, 14 ) );
+				break;
+			case ALEX:
+				icon.frame( icon.texture.uvRectBySize( 112, 145, 14, 14 ) );
+				break;
 		}
 		return icon;
 	}
