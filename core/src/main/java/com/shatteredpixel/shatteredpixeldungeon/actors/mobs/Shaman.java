@@ -41,11 +41,11 @@ import com.watabou.utils.Random;
 public abstract class Shaman extends Mob {
 	
 	{
-		HP = HT = 35;
-		defenseSkill = 15;
+		HP = HT = 20;
+		defenseSkill = 8;
 		
-		EXP = 8;
-		maxLvl = 16;
+		EXP = 6;
+		maxLvl = 13;
 		
 		loot = Generator.Category.WAND;
 		lootChance = 0.03f; //initially, see lootChance()
@@ -53,17 +53,17 @@ public abstract class Shaman extends Mob {
 	
 	@Override
 	public int damageRoll() {
-		return Random.NormalIntRange( 5, 10 );
+		return Random.NormalIntRange( 3, 6 );
 	}
 	
 	@Override
 	public int attackSkill( Char target ) {
-		return 18;
+		return 10;
 	}
 	
 	@Override
 	public int drRoll() {
-		return Random.NormalIntRange(0, 6);
+		return Random.NormalIntRange(0, 3);
 	}
 	
 	@Override
@@ -115,7 +115,7 @@ public abstract class Shaman extends Mob {
 				if (enemy == Dungeon.hero) Sample.INSTANCE.play( Assets.Sounds.DEBUFF );
 			}
 			
-			int dmg = Random.NormalIntRange( 6, 15 );
+			int dmg = Random.NormalIntRange( 2, 10);
 			enemy.damage( dmg, new EarthenBolt() );
 			
 			if (!enemy.isAlive() && enemy == Dungeon.hero) {
