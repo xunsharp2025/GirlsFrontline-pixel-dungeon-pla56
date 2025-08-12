@@ -53,17 +53,17 @@ public abstract class Shaman extends Mob {
 	
 	@Override
 	public int damageRoll() {
-		return Random.NormalIntRange( 3, 6 );
+		return Random.NormalIntRange( 2, 8 );
 	}
 	
 	@Override
 	public int attackSkill( Char target ) {
-		return 10;
+		return 11;
 	}
 	
 	@Override
 	public int drRoll() {
-		return Random.NormalIntRange(0, 3);
+		return Random.NormalIntRange(0, 4);
 	}
 	
 	@Override
@@ -115,7 +115,7 @@ public abstract class Shaman extends Mob {
 				if (enemy == Dungeon.hero) Sample.INSTANCE.play( Assets.Sounds.DEBUFF );
 			}
 			
-			int dmg = Random.NormalIntRange( 2, 10);
+			int dmg = Random.NormalIntRange( 3, 9);
 			enemy.damage( dmg, new EarthenBolt() );
 			
 			if (!enemy.isAlive() && enemy == Dungeon.hero) {
