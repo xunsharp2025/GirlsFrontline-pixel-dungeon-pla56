@@ -102,6 +102,9 @@ public class Amulet extends Item {
 					Badges.validateVictory();
 					Badges.validateChampion(Challenges.activeChallenges());
 					Badges.saveGlobal();
+					if(Challenges.activeChallenges()>=10){
+						Badges.LIMIT_CHALLENGES();
+					}
 				}
 			});
 		} catch (IOException e) {

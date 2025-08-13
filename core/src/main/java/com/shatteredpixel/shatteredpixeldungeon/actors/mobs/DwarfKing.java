@@ -511,6 +511,8 @@ public class DwarfKing extends Mob {
 
 		super.die( cause );
 
+		Badges.KILL_DISPORE();
+
 		if (Dungeon.level.solid[pos]){
 			Heap h = Dungeon.level.heaps.get(pos);
 			if (h != null) {

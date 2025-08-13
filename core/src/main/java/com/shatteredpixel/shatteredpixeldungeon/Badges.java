@@ -59,7 +59,7 @@ public class Badges {
 		UNLOCK_MAGE                 ( 1 ),
 		UNLOCK_ROGUE                ( 2 ),
 		UNLOCK_HUNTRESS             ( 3 ),
-		UNLOCK_TYPE561              ( 115 ),
+		UNLOCK_TYPE561              ( 20 ),
 
         //silver
 		MONSTERS_SLAIN_1            ( 4 ),
@@ -148,6 +148,11 @@ public class Badges {
 		BOSS_SLAIN_3_ALL_SUBCLASSES ( 87, true ),
 		GAMES_PLAYED_3              ( 88, true ),
 
+		KILL_EXCUTION(89),
+		KILL_SNAKE(90),
+		KILL_CALC(91),
+		KILL_DISPORE(92),
+
 		//platinum
 		HAPPY_END                   ( 96 ),
 		ALL_ITEMS_IDENTIFIED        ( 97, true ),
@@ -162,7 +167,9 @@ public class Badges {
 		//diamond
 		GAMES_PLAYED_5              ( 112, true ),
 		CHAMPION_2                  ( 113 ),
-		CHAMPION_3                  ( 114 );
+		CHAMPION_3                  ( 114 ),
+
+		CRYSTAL_TROPHY					(115,true);
 
 		public boolean meta;
 
@@ -207,6 +214,27 @@ public class Badges {
 	static{
 		//no recently removed badges
 	}
+
+	public static void KILL_EXCUTION() {
+		displayBadge( Badge.KILL_EXCUTION );
+	}
+
+	public static void KILL_SNAKE() {
+		displayBadge( Badge.KILL_SNAKE );
+	}
+
+	public static void KILL_CALC() {
+		displayBadge( Badge.KILL_CALC );
+	}
+
+	public static void KILL_DISPORE() {
+		displayBadge( Badge.KILL_DISPORE );
+	}
+
+	public static void LIMIT_CHALLENGES() {
+		displayBadge(Badge.CRYSTAL_TROPHY);
+	}
+
 
 	private static final HashMap<String, String> renamedBadges = new HashMap<>();
 	static{
@@ -772,6 +800,10 @@ public class Badges {
 		if (Statistics.thrownAssists >= 10 && !isUnlocked(Badge.UNLOCK_HUNTRESS)){
 			displayBadge( Badge.UNLOCK_HUNTRESS );
 		}
+	}
+
+	public static void validateType561Unlock(){
+		displayBadge(Badge.UNLOCK_TYPE561);
 	}
 	
 	public static void validateMasteryCombo( int n ) {

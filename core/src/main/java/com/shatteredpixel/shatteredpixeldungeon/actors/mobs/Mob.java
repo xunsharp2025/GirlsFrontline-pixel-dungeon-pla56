@@ -818,9 +818,11 @@ public abstract class Mob extends Char {
 	}
 	
 	public void beckon( int cell ) {
-		
-		notice();
-		
+
+		if(!properties.contains(Property.BOSS)){
+			notice();
+		}
+
 		if (state != HUNTING && state != FLEEING) {
 			state = WANDERING;
 		}

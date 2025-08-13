@@ -534,7 +534,7 @@ public class DM300 extends Mob {
 
 		GameScene.bossSlain();
 		Dungeon.level.unseal();
-
+		Badges.KILL_CALC();
 		//60% chance of 2 shards, 30% chance of 3, 10% chance for 4. Average of 2.5
 		int shards = Random.chances(new float[]{0, 0, 6, 3, 1});
 		for (int i = 0; i < shards; i++){

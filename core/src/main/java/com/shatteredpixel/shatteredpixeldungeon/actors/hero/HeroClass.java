@@ -39,6 +39,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.Smok
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Endure;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.HeroicLeap;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Shockwave;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.AttributeViewer;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.BackpackCleaner;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.CustomWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.ImmortalShieldAffecter;
@@ -149,6 +150,7 @@ public enum HeroClass {
 			new TestMissile().collect();
 			new TestRing().collect();
 			new TestPotion().collect();
+			new AttributeViewer().collect();
 
 			new ScrollHolder().collect();
 			Dungeon.LimitedDrops.SCROLL_HOLDER.drop();
