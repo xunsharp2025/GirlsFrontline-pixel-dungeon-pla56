@@ -85,7 +85,7 @@ runtime {
             javaHome = file("./build/jdks/linux/jdk-16.0.1+9").getAbsolutePath()
             jpackage {
                 jpackageHome = file("./build/jdks/linux/jdk-16.0.1+9")
-                imageOptions = ["--icon", file("./src/main/assets/icons/icon_256.png")]
+                imageOptions = ["--icon", file("./src/main/assets/icons/linux.png")]
                 //assumes ubuntu linux, changes needed to generate .rpm files
                 installerType = "deb"
                 installerName = appName
