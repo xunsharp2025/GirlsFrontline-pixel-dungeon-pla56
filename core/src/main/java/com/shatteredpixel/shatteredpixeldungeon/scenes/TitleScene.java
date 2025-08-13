@@ -161,8 +161,15 @@ public class TitleScene extends PixelScene {
 				GirlsFrontlinePixelDungeon.switchNoFade( AboutScene.class );
 			}
 		};
-		btnAbout.icon(Icons.get(Icons.SHPX));
+		Image xs = Icons.get(Icons.GIRLPDS);
+		xs.scale.set(PixelScene.align(0.6f));
+		btnAbout.icon(xs);
 		add(btnAbout);
+
+		StyledButton btnChanges = new ChangesButton(Chrome.Type.TOAST_TR, Messages.get(this, "changes"));
+		btnChanges.icon(new Image(Icons.get(Icons.CHANGESLOG)));
+		btnChanges.setRect(0, h - 20, 50, 20);
+		add(btnChanges);
 
 		final int BTN_HEIGHT = 20;
 		final int GAP = 2;
@@ -314,7 +321,7 @@ public class TitleScene extends PixelScene {
 				icon(Icons.get(Icons.LANGS));
 				icon.hardlight(1.5f, 0, 0);
 			} else {
-				icon(Icons.get(Icons.PREFS));
+				icon(Icons.get(Icons.SETTINGS));
 			}
 		}
 
@@ -349,4 +356,5 @@ public class TitleScene extends PixelScene {
 			GirlsFrontlinePixelDungeon.switchNoFade(SupporterScene.class);
 		}
 	}
+
 }
