@@ -51,7 +51,7 @@ public class Jupiter extends Mob {
         baseSpeed = 1f;
         maxLvl = 26;
 
-
+        HUNTING = new Hunting();
 
         properties.add(Property.ARMO);
     }
@@ -101,9 +101,10 @@ public class Jupiter extends Mob {
     protected boolean act() {
         if (beamCharged && state != HUNTING){
             beamCharged = false;
+            sprite.idle();
         }
         if (beam == null && beamTarget != -1) {
-            beam = new Ballistica(pos, beamTarget, Ballistica.STOP_TARGET);
+            beam = new Ballistica(pos, beamTarget, Ballistica.STOP_SOLID);
             sprite.turnTo(pos, beamTarget);
         }
         if (beamCooldown > 0)
@@ -125,11 +126,12 @@ public class Jupiter extends Mob {
 
             spend( attackDelay() );
 
-            beam = new Ballistica(pos, beamTarget, Ballistica.STOP_TARGET);
+            beam = new Ballistica(pos, beamTarget, Ballistica.STOP_SOLID);
             if (Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[beam.collisionPos] ) {
                 sprite.zap( beam.collisionPos );
                 return false;
             } else {
+                sprite.idle();
                 deathGaze();
                 return true;
             }

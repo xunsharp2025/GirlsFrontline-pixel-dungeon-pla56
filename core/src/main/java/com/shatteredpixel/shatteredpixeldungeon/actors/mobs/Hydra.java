@@ -51,7 +51,7 @@ public class Hydra extends Mob {
         viewDistance = Light.DISTANCE;
         baseSpeed = 0.9f;
         maxLvl = 36;
-
+        HUNTING = new Hunting();
         properties.add(Property.ARMO);
     }
 
@@ -86,7 +86,7 @@ public class Hydra extends Mob {
     protected boolean canAttack( Char enemy ) {
 
         if (beamCooldown == 0) {
-            Ballistica aim = new Ballistica(pos, enemy.pos, Ballistica.STOP_TARGET);
+            Ballistica aim = new Ballistica(pos, enemy.pos, Ballistica.STOP_SOLID);
 
             if (enemy.invisible == 0 && !isCharmedBy(enemy) && fieldOfView[enemy.pos] && aim.subPath(1, aim.dist).contains(enemy.pos)){
                 beam = aim;
@@ -103,9 +103,10 @@ public class Hydra extends Mob {
     protected boolean act() {
         if (beamCharged && state != HUNTING){
             beamCharged = false;
+            sprite.idle();
         }
         if (beam == null && beamTarget != -1) {
-            beam = new Ballistica(pos, beamTarget, Ballistica.STOP_TARGET);
+            beam = new Ballistica(pos, beamTarget, Ballistica.STOP_SOLID);
             sprite.turnTo(pos, beamTarget);
         }
         if (beamCooldown > 0)
@@ -132,6 +133,7 @@ public class Hydra extends Mob {
                 sprite.zap( beam.collisionPos );
                 return false;
             } else {
+                sprite.idle();
                 deathGaze();
                 return true;
             }
