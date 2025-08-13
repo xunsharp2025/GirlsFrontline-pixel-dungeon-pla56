@@ -80,6 +80,8 @@ public class Bestiary {
 					cl = SpectralNecromancer.class;
 				} else if (cl == Brute.class) {
 					cl = ArmoredBrute.class;
+				} else if (cl == Spinner.class) {
+					cl = SpinnerCat.class;
 				} else if (cl == DM200.class) {
 					cl = DM201.class;
 				} else if (cl == Monk.class) {
