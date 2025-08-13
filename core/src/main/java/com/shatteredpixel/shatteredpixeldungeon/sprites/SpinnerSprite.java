@@ -33,13 +33,17 @@ import com.watabou.utils.Callback;
 public class SpinnerSprite extends MobSprite {
 	
 	public SpinnerSprite() {
+		this(Assets.Sprites.SPINNER,16,16);
+	}
+
+	public SpinnerSprite(String sprite,int width,int height) {
 		super();
 
 		perspectiveRaise = 0f;
 
-		texture( Assets.Sprites.SPINNER );
+		texture(sprite);
 		
-		TextureFilm frames = new TextureFilm( texture, 16, 16 );
+		TextureFilm frames = new TextureFilm(texture,width,height );
 		
 		idle = new Animation( 10, true );
 		idle.frames( frames, 0, 0, 0, 0, 0, 1, 0, 1 );
