@@ -52,10 +52,13 @@ public class TyphoonSprite extends MobSprite {
         charging = new Animation( 14, true);
         charging.frames( frames, 4 );
 
-        chargeParticles = centerEmitter();
-        chargeParticles.autoKill = false;
-        chargeParticles.pour(MagicMissile.MagicParticle.ATTRACTING, 0.05f);
-        chargeParticles.on = false;
+        if(chargeParticles != null){
+            chargeParticles = centerEmitter();
+            chargeParticles.autoKill = false;
+            chargeParticles.pour(MagicMissile.MagicParticle.ATTRACTING, 0.05f);
+            chargeParticles.on = false;
+        }
+
 
         run = new Animation( 8, true );
         run.frames( frames, 0, 1, 2, 3, 0 );
@@ -81,8 +84,10 @@ public class TyphoonSprite extends MobSprite {
     @Override
     public void update() {
         super.update();
-        chargeParticles.pos(center());
-        chargeParticles.visible = visible;
+        if(chargeParticles != null) {
+            chargeParticles.pos(center());
+            chargeParticles.visible = visible;
+        }
     }
 
     public void charge( int pos ){
@@ -92,7 +97,9 @@ public class TyphoonSprite extends MobSprite {
 
     @Override
     public void play(Animation anim) {
-        chargeParticles.on = anim == charging;
+        if(chargeParticles != null) {
+            chargeParticles.on = anim == charging;
+        }
         super.play(anim);
     }
 

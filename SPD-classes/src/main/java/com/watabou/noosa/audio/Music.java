@@ -73,7 +73,12 @@ public enum Music {
 			return;
 		}
 
-		play(assetName, null);
+		if(DeviceCompat.isDesktop()){
+			String finalAssetName = assetName;
+			Game.runOnRenderThread(() -> play(finalAssetName, null));
+		} else {
+			play(assetName, null);
+		}
 	}
 
 	public synchronized void playTracks( String[] tracks, float[] chances, boolean shuffle){

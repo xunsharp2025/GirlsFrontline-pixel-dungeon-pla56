@@ -34,7 +34,7 @@ public class Typhoon extends Hydra {
         maxLvl = 50;
 
         properties.add(Property.ARMO);
-
+        HUNTING = new Hunting();
 
         flying = true;
     }
@@ -83,9 +83,10 @@ public class Typhoon extends Hydra {
     protected boolean act() {
         if (beamCharged && state != HUNTING){
             beamCharged = false;
+            sprite.idle();
         }
         if (beam == null && beamTarget != -1) {
-            beam = new Ballistica(pos, beamTarget, Ballistica.STOP_TARGET);
+            beam = new Ballistica(pos, beamTarget, Ballistica.STOP_SOLID);
             sprite.turnTo(pos, beamTarget);
         }
         if (beamCooldown > 0)
@@ -107,11 +108,12 @@ public class Typhoon extends Hydra {
 
             spend( attackDelay() );
 
-            beam = new Ballistica(pos, beamTarget, Ballistica.STOP_TARGET);
+            beam = new Ballistica(pos, beamTarget, Ballistica.STOP_SOLID);
             if (Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[beam.collisionPos] ) {
                 sprite.zap( beam.collisionPos );
                 return false;
             } else {
+                sprite.idle();
                 deathGaze();
                 return true;
             }

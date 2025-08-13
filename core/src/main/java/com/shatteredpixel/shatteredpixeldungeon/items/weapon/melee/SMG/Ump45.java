@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Ump45 extends SubMachineGun {
@@ -42,6 +43,14 @@ public class Ump45 extends SubMachineGun {
 
     @Override
     public int defenseFactor( Char owner ) {
-        return 0 + 1 * level();
+        return 1 + level();
+    }
+
+    public String statsInfo(){
+        if (isIdentified()){
+            return Messages.get(this, "stats_desc", 1 + 1 * level());
+        } else {
+            return Messages.get(this, "typical_stats_desc", 1);
+        }
     }
 }

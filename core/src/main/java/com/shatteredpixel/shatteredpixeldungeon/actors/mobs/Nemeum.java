@@ -33,6 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.EyeSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.NemeumSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
@@ -48,6 +49,8 @@ public class Nemeum extends Mob {
         defenseSkill = 5;
         baseSpeed = 0.8f;
         maxLvl = 17;
+
+        HUNTING = new Hunting();
 
         properties.add(Property.ARMO);
     }
@@ -100,9 +103,10 @@ public class Nemeum extends Mob {
     protected boolean act() {
         if (beamCharged && state != HUNTING){
             beamCharged = false;
+            sprite.idle();
         }
         if (beam == null && beamTarget != -1) {
-            beam = new Ballistica(pos, beamTarget, Ballistica.STOP_TARGET);
+            beam = new Ballistica(pos, beamTarget, Ballistica.STOP_SOLID);
             sprite.turnTo(pos, beamTarget);
         }
         if (beamCooldown > 0)
@@ -124,11 +128,12 @@ public class Nemeum extends Mob {
 
             spend( attackDelay() );
 
-            beam = new Ballistica(pos, beamTarget, Ballistica.STOP_TARGET);
+            beam = new Ballistica(pos, beamTarget, Ballistica.STOP_SOLID);
             if (Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[beam.collisionPos] ) {
                 sprite.zap( beam.collisionPos );
                 return false;
             } else {
+                sprite.idle();
                 deathGaze();
                 return true;
             }

@@ -2,22 +2,28 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Bones;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Typhootin;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.TrapPlacer;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.SkeletonKey;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.CorrosionTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.DisarmingTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.DisintegrationTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ToxicTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTileSheet;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.audio.Music;
@@ -132,12 +138,36 @@ public class DeepCaveBossLevel extends Level {
         }
 
         for (int i=0; i < length(); i++) {
-            if (map[i] == Terrain.EMPTY && Random.Int( 6 ) == 0) {
-                map[i] = Terrain.INACTIVE_TRAP;
-                Trap t = new ToxicTrap().reveal();
-                t.active = false;
-                setTrap(t, i);
+            if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)){
+                if (map[i] == Terrain.EMPTY && Random.Int( 6 ) == 0) {
+                    map[i] = Terrain.INACTIVE_TRAP;
+                    Trap t;
+                    if (Random.Int( 8 ) == 0) {
+                        t = new CorrosionTrap().reveal();
+                        t.active = true;
+                        map[i] = Terrain.TRAP;
+                    } else if(Random.Int(3) ==0) {
+                        t = new ToxicTrap().reveal();
+                        t.active = true;
+                        map[i] = Terrain.TRAP;
+                    } else {
+                        DisintegrationTrap emptyTrap = new DisintegrationTrap();
+                        emptyTrap.active = false;
+                        emptyTrap.reveal();
+                        t = emptyTrap;
+                        map[i] = Terrain.INACTIVE_TRAP;
+                    }
+                    setTrap(t, i);
+                }
+            } else {
+                if (map[i] == Terrain.EMPTY && Random.Int( 6 ) == 0) {
+                    map[i] = Terrain.INACTIVE_TRAP;
+                    Trap t = new ToxicTrap().reveal();
+                    t.active = false;
+                    setTrap(t, i);
+                }
             }
+
         }
 
         for (int i=width() + 1; i < length() - width(); i++) {
@@ -235,6 +265,10 @@ public class DeepCaveBossLevel extends Level {
             set( arenaDoor, Terrain.WALL );
             GameScene.updateMap( arenaDoor );
             Dungeon.observe();
+
+            entrance = Random.Int( ROOM_LEFT + 1, ROOM_RIGHT - 1 ) +
+                    Random.Int( ROOM_TOP + 1, ROOM_BOTTOM - 1 ) * width();
+            map[entrance] = Terrain.ENTRANCE;
 
             CellEmitter.get( arenaDoor ).start( Speck.factory( Speck.ROCK ), 0.07f, 10 );
             Camera.main.shake( 3, 0.7f );

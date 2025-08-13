@@ -116,9 +116,10 @@ public class DesktopLauncher {
 			Game.versionCode = Integer.parseInt(System.getProperty("Implementation-Version"));
 		}
 
-		if (UpdateImpl.supportsUpdates()){
-			Updates.service = UpdateImpl.getUpdateService();
-		}
+		//TODO 暂时禁用检查更新
+//		if (UpdateImpl.supportsUpdates()){
+//			Updates.service = UpdateImpl.getUpdateService();
+//		}
 		if (NewsImpl.supportsNews()){
 			News.service = NewsImpl.getNewsService();
 		}

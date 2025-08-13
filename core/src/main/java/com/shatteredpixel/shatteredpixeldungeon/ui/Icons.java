@@ -37,6 +37,9 @@ public enum Icons {
 	NEWS,
 	CHANGES,
 	PREFS,
+	SETTINGS,
+	GIRLPDS,
+	CHANGESLOG,
 	SHPX,
 
 	//rankings and hero select icons, spacing for 16x16
@@ -165,8 +168,17 @@ public enum Icons {
 			case PREFS:
 				icon.frame( icon.texture.uvRectBySize( 102, 0, 14, 14 ) );
 				break;
+			case SETTINGS:
+				icon.frame( icon.texture.uvRectBySize( 138, 0, 13, 13 ) );
+				break;
+			case GIRLPDS:
+				icon.frame( icon.texture.uvRectBySize( 224, 128, 24, 24 ) );
+				break;
 			case SHPX:
 				icon.frame( icon.texture.uvRectBySize( 119, 0, 16, 16 ) );
+				break;
+			case CHANGESLOG:
+				icon.frame( icon.texture.uvRectBySize( 155, 1, 10, 12 ) );
 				break;
 
 			case STAIRS:
