@@ -533,9 +533,12 @@ public enum Talent {
 		}
 
 		if(hero.hasTalent(SEARCH_ARMY)
-		&& enemy instanceof Mob
-		&& ((Mob) enemy).surprisedBy(hero)){
-			dmg*=1f+0.1f*hero.pointsInTalent(SEARCH_ARMY);
+		&& enemy instanceof Mob){
+			if(enemy.paralysed>0){
+				dmg*=1f+(0.4f/3f)*hero.pointsInTalent(SEARCH_ARMY);
+			}else if(((Mob) enemy).surprisedBy(hero)){
+				dmg*=1f+0.1f*hero.pointsInTalent(SEARCH_ARMY);
+			}
 		}
 
 		return dmg;
