@@ -74,10 +74,10 @@ public class AndroidGame extends AndroidApplication {
 			} catch (PackageManager.NameNotFoundException e) {
 				Game.versionCode = 0;
 			}
-
-			if (UpdateImpl.supportsUpdates()) {
-				Updates.service = UpdateImpl.getUpdateService();
-			}
+			//TODO 暂时禁用检查更新
+//			if (UpdateImpl.supportsUpdates()) {
+//				Updates.service = UpdateImpl.getUpdateService();
+//			}
 			if (NewsImpl.supportsNews()) {
 				News.service = NewsImpl.getNewsService();
 			}
