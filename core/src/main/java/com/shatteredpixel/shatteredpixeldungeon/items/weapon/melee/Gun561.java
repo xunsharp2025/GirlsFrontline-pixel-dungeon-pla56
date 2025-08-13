@@ -133,10 +133,10 @@ public class Gun561 extends ShootGun {
 			Sample.INSTANCE.play( Assets.Sounds.LIGHTNING);
 
 			switch(Dungeon.hero.pointsInTalent(Talent.ENDURE_EMP)){
-				case 0:default:duration=10f;break;
-				case 1:        duration=16f;break;
-				case 2:        duration=22f;break;
-				case 3:        duration=30f;break;
+				case 0:default:duration=5f;break;
+				case 1:        duration=8f;break;
+				case 2:        duration=11f;break;
+				case 3:        duration=15f;break;
 			}
 		}
 
