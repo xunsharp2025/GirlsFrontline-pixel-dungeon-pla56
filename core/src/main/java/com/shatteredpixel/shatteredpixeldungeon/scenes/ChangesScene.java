@@ -145,19 +145,19 @@ public class ChangesScene extends PixelScene {
 				panel.innerHeight() + 2);
 		list.scrollTo(0, 0);
 
-		StyledButton btn1_1 = new StyledButton(Chrome.Type.GREY_BUTTON_TR, "1.X"){
-			@Override
-			protected void onClick() {
-				super.onClick();
-				if (changesSelected != 0) {
-					changesSelected = 0;
-					GirlsFrontlinePixelDungeon.seamlessResetScene();
-				}
-			}
-		};
-		if (changesSelected != 0) btn1_1.textColor( 0xBBBBBB );
-		btn1_1.setRect(list.left()-4f, list.bottom(), 141, changesSelected == 0 ? 19 : 15);
-		addToBack(btn1_1);
+//		StyledButton btn1_1 = new StyledButton(Chrome.Type.GREY_BUTTON_TR, "1.X"){
+//			@Override
+//			protected void onClick() {
+//				super.onClick();
+//				if (changesSelected != 0) {
+//					changesSelected = 0;
+//					GirlsFrontlinePixelDungeon.seamlessResetScene();
+//				}
+//			}
+//		};
+//		if (changesSelected != 0) btn1_1.textColor( 0xBBBBBB );
+//		btn1_1.setRect(list.left()-4f, list.bottom(), 141, changesSelected == 0 ? 19 : 15);
+//		addToBack(btn1_1);
 
 //		StyledButton btn0_9 = new StyledButton(Chrome.Type.GREY_BUTTON_TR, "0.9"){
 //			@Override

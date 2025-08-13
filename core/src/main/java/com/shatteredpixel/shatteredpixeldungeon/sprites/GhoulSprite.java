@@ -33,22 +33,22 @@ public class GhoulSprite extends MobSprite {
 		
 		texture( Assets.Sprites.GHOUL );
 		
-		TextureFilm frames = new TextureFilm( texture, 12, 14 );
+		TextureFilm frames = new TextureFilm( texture, 21, 16 );
 
 		idle = new Animation( 2, true );
 		idle.frames( frames, 0, 0, 0, 1 );
 
 		run = new Animation( 12, true );
-		run.frames( frames, 2, 3, 4, 5, 6, 7 );
+		run.frames( frames, 2, 3, 4, 5, 6 );
 
 		attack = new Animation( 12, false );
-		attack.frames( frames, 0, 8, 9 );
+		attack.frames( frames, 0, 7, 8 );
 
 		crumple = new Animation( 15, false);
-		crumple.frames( frames, 0, 10, 11, 12 );
+		crumple.frames( frames, 0, 9 );
 
 		die = new Animation( 15, false );
-		die.frames( frames, 0, 10, 11, 12, 13 );
+		die.frames( frames, 0, 10, 11 );
 		
 		play( idle );
 	}
@@ -62,7 +62,7 @@ public class GhoulSprite extends MobSprite {
 	public void die() {
 		if (curAnim == crumple){
 			//causes the sprite to not rise then fall again when dieing.
-			die.frames[0] = die.frames[1] = die.frames[2] = die.frames[3];
+			die.frames[0] = die.frames[1] = die.frames[2];
 		}
 		super.die();
 	}

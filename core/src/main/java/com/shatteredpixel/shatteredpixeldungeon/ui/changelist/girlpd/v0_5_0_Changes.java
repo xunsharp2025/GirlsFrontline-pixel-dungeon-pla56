@@ -51,11 +51,13 @@ public class v0_5_0_Changes {
         Image ks = new Image(new DM300Sprite());
         ks.scale.set(PixelScene.align(0.65f));
         changes.addButton( new ChangeButton(ks, "Boss调整",
-                "受益于新版本破碎底层的支持，以下Boss都为破碎新版后的状态\n\n" +
-                        "_-_ 衔尾蛇-仍为两个阶段，但作战将比老版本更加困难\n" +
-                        "_-_ 计量官-变为三个阶段，而不是之前的大号怪物\n" +
-                        "_-_ 破坏者-变为三个阶段，而不是之前的大号怪物\n" +
-                        "_-_ 主脑 伊莱莎-变为五个阶段，而不是之前的大号怪物"));
+                "由于少前地牢新版本基于的破碎地牢底层版本改变，大部分原有BOSS的战斗机制也发生了改变\n" +
+                        "\n" +
+                        "_-_ 衔尾蛇：一阶段陷阱会逐渐隐形，二阶段将利用更多样化的投掷物攻击\n\n" +
+                        "_-_ 计量官：改为三段式战斗，每一阶段结束会进入狂暴，获得强化的同时需要破坏特定单位才能进入下一阶段\n\n" +
+                        "_-_ 破坏者：改为三段式战斗，所能召唤的敌人更加多样化，且召唤的敌人与破坏者本身有着某种链接，不断击败召唤的敌人才能最终击败破坏者\n\n" +
+                        "_-_ 军方小队：它还是大号敌人，但是在挑战模式下获得额外增强\n\n" +
+                        "_-_ 主脑：替换M4成为了新BOSS，改为五段式战斗，所能召唤的精锐铁血变得更加多样化，且自身攻击能力也得到了加强"));
 
         changes.addButton( new ChangeButton(Icons.get(Icons.LIBGDX), "LibGDX引擎系统",
                 "_-_ 游戏的文本渲染器现已采用libGDX Freetype。这与现有文本几乎完全相同，但略微更加清晰，且具有平台独立性，效率也大幅提升!\n\n" +
@@ -76,31 +78,46 @@ public class v0_5_0_Changes {
 
         changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_ON), "新挑战：深入敌腹",
                 "感觉Boss太简单，想挑战更高难度？\n\n" +
-                        "深入敌腹会满足你的需求，所有的Boss都会被加强\n" +
+                        "深入敌腹会满足你的需求，所有的Boss都会被加强。\n" +
                         "你将会遭遇更加困难的作战，祝你好运！\n\n" +
-                        "此挑战在破碎原形为：绝命头目"));
+                        "此挑战在破碎原型为：绝命头目"));
+
+        changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_ON), "新挑战：精英强敌",
+                "感觉敌人太简单，想挑战更高难度？\n\n" +
+                        "精英强敌会满足你的需求，部分敌人都会被加强\n" +
+                        "你将会遭遇更加困难的作战，祝你好运！\n\n" +
+                        "此挑战在破碎原型为：精英强敌"));
+
+        changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_ON), "特殊挑战：测试时间",
+                "玩累了？想体验上帝模式？\n\n" +
+                        "测试时间让你深度探索游戏，拥有完整的测试工具，\n\n" +
+                        "但是此挑战不计入挑战数量，也无法在这里面获得成就和计入到排行榜。"));
 
         changes.addButton( new ChangeButton(new Image(Assets.Sprites.SNAKE, 0, 0, 16, 16), "新敌人：靶机",
                 "第一大区追加了新敌人：靶机。\n\n" +
-                        "其破碎怪物原形为：下水道巨蛇"));
+                        "其破碎怪物原型为：下水道巨蛇"));
 
         Image kst = new Image(new SpawnerSprite());
         kst.scale.set(PixelScene.align(0.40f));
         changes.addButton( new ChangeButton(kst, "新敌人：侦查中枢",
                 "第六大区追加了新敌人：侦查中枢。\n\n" +
-                        "其破碎怪物原形为：恶魔血巢"));
+                        "其破碎怪物原型为：恶魔血巢"));
 
         Image kt = new Image(new RipperSprite());
         kt.scale.set(PixelScene.align(0.70f));
         changes.addButton( new ChangeButton(kt, "新敌人：尖兵",
                 "第六大区追加了新敌人：尖兵。\n\n" +
-                        "其破碎怪物原形为：恶魔撕裂者\n\n" +
+                        "其破碎怪物原型为：恶魔撕裂者\n\n" +
                         "它通过_侦查中枢_来生成。"));
 
         Image gun561 = new Image(HeroSprite.avatar(HeroClass.TYPE561, 5));
         gun561.scale.set(0.75f);
         changes.addButton( new ChangeButton(gun561, "新角色：56-1式",
-                ""));
+                "增加了新角色战术人形56-1式。\n" +
+                        "\n" +
+                        "56-1自带强力专属遗物，并且会根据饱食度改变战斗力。\n" +
+                        "\n" +
+                        "56-1拥有两种转职。"));
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.GUN561, null), "新初始武器：56-1式",
                 "“56-1式突击步枪，前来报到！我会坚决消灭每一个敌人！" +
@@ -129,7 +146,7 @@ public class v0_5_0_Changes {
         changeInfos.add(changes);
 
         Image tp = new Image(new TyphoonSprite());
-        tp.scale.set(PixelScene.align(0.20f));
+        tp.scale.set(PixelScene.align(0.30f));
         changes.addButton( new ChangeButton(tp, "AI优化",
                 "现在 _提丰/钢狮/九头蛇/木星_ 这四个敌人不会将蓄力激光攒着" +
                         "\n\n瞄准一个区域后必定释放(也就是和破碎原版大眼一致的AI)"));

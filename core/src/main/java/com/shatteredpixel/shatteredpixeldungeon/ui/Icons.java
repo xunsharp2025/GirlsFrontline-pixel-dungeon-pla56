@@ -185,19 +185,19 @@ public enum Icons {
 				icon.frame( icon.texture.uvRectBySize( 0, 16, 13, 16 ) );
 				break;
 			case WARRIOR:
-				icon.frame( icon.texture.uvRectBySize( 16, 16, 9, 15 ) );
+				icon.frame( icon.texture.uvRectBySize( 16, 16, 9, 12 ) );
 				break;
 			case MAGE:
-				icon.frame( icon.texture.uvRectBySize( 32, 16, 15, 14 ) );
+				icon.frame( icon.texture.uvRectBySize( 32, 16, 14, 15 ) );
 				break;
 			case ROGUE:
-				icon.frame( icon.texture.uvRectBySize( 48, 16, 9, 15 ) );
+				icon.frame( icon.texture.uvRectBySize( 48, 16, 15, 14 ) );
 				break;
 			case HUNTRESS:
-				icon.frame( icon.texture.uvRectBySize( 64, 16, 16, 16 ) );
+				icon.frame( icon.texture.uvRectBySize( 64, 16, 15, 15 ) );
 				break;
 			case TYPE561:
-				icon.frame( icon.texture.uvRectBySize( 80, 16, 16, 16 ) );
+				icon.frame( icon.texture.uvRectBySize( 80, 16, 12, 16 ) );
 				break;
 
 			case EXIT:
