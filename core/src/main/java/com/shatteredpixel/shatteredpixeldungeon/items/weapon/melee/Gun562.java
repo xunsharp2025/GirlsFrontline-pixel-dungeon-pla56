@@ -29,6 +29,7 @@ import java.util.ArrayList;
 public class Gun562 extends ShootGun {
     protected Charger charger=null;
     public float partialCharge = 0f;
+    protected int cooldown = 0;
 
     {
         curCharges = 1;
@@ -44,11 +45,14 @@ public class Gun562 extends ShootGun {
     private static final String CUR_CHARGES  = "curCharges";
     private static final String PARTIALCHARGE= "partialCharge";
 
+    private static final String COOLDOWN = "cooldown";
+
     @Override
     public void storeInBundle( Bundle bundle ) {
         super.storeInBundle( bundle );
         bundle.put( CUR_CHARGES, curCharges );
         bundle.put( PARTIALCHARGE , partialCharge );
+        bundle.put( COOLDOWN , cooldown );
     }
     
     @Override
@@ -56,6 +60,16 @@ public class Gun562 extends ShootGun {
         super.restoreFromBundle( bundle );
         curCharges = bundle.getInt( CUR_CHARGES );
         partialCharge = bundle.getFloat( PARTIALCHARGE );
+        cooldown = bundle.getInt( COOLDOWN );
+    }
+
+    @Override
+    public String status() {
+       String stats = super.status();
+        if (cooldown != 0) {
+            stats = "CD:"+Messages.format("%d", cooldown);
+        }
+        return stats;
     }
 
     @Override
@@ -151,6 +165,8 @@ public class Gun562 extends ShootGun {
             Dungeon.fail(getClass());
         }
 
+        cooldown = (Dungeon.hero.pointsInTalent(Talent.ENHANCE_GRENADE)>=3? 171: 201);
+
         super.onShootComplete(cell);
     }
 
@@ -180,7 +196,7 @@ public class Gun562 extends ShootGun {
     public void execute(Hero hero,String action) {
         if(action.equals(AC_SHOOT)){
             if(curCharges < 1){
-                GLog.n(Messages.get(this, "empty"));
+                GLog.n(Messages.get(this, "empty",cooldown));
             }else{
                 curUser = hero;
                 curItem = this;
@@ -220,6 +236,10 @@ public class Gun562 extends ShootGun {
         public boolean act() {
             if (curCharges < maxCharges){
                 recharge();
+            }
+
+            if(cooldown >0){
+                cooldown--;
             }
             
             while (partialCharge >= 1 && curCharges < maxCharges) {

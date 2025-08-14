@@ -49,7 +49,7 @@ public class Gun562Accessories extends Item{
 			if(id>=0){
 				Dungeon.quickslot.setSlot(id,gun562);
 			}
-			
+			gun562.activate(hero);
 			gun562.level(gun561.trueLevel());
 
 			hero.spendAndNext(3f);
