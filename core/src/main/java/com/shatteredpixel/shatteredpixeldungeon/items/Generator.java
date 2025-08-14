@@ -503,6 +503,15 @@ public class Generator {
 		}
 	}
 
+	private static final float[][] WeaponTierProbs = new float[][]{
+			{0, 63, 20, 12,  2,  3},
+			{0, 25, 54, 14,  6,  1},
+			{0, 10, 35, 43,  7,  2},
+			{0,  5, 30, 33, 27,  5},
+			{0,  0,  8, 35, 30, 35},
+			{0,  0,  8, 20, 40, 10}
+	};
+
 	private static final float[][] floorSetTierProbs = new float[][] {
 			{0, 75, 20,  4,  1},
 			{0, 25, 50, 20,  5},
@@ -607,9 +616,9 @@ public class Generator {
 	
 	public static MeleeWeapon randomWeapon(int floorSet) {
 
-		floorSet = (int)GameMath.gate(0, floorSet, floorSetTierProbs.length-1);
+		floorSet = (int)GameMath.gate(0, floorSet, WeaponTierProbs.length-1);
 		
-		Category c = wepTiers[Random.chances(floorSetTierProbs[floorSet])];
+		Category c = wepTiers[Random.chances(WeaponTierProbs[floorSet])];
 		MeleeWeapon w = (MeleeWeapon)Reflection.newInstance(c.classes[Random.chances(c.probs)]);
 		w.random();
 		return w;
