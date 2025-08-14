@@ -29,7 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Crossbow;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Launcher.SRS;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
@@ -95,11 +95,11 @@ public class Dart extends MissileWeapon {
 		}
 	}
 	
-	private static Crossbow bow;
+	private static SRS bow;
 	
-	private void updateCrossbow(){
-		if (Dungeon.hero.belongings.weapon() instanceof Crossbow){
-			bow = (Crossbow) Dungeon.hero.belongings.weapon();
+	private void updateSRS(){
+		if (Dungeon.hero.belongings.weapon() instanceof SRS){
+			bow = (SRS) Dungeon.hero.belongings.weapon();
 		} else {
 			bow = null;
 		}
@@ -129,19 +129,19 @@ public class Dart extends MissileWeapon {
 
 	@Override
 	public int throwPos(Hero user, int dst) {
-		updateCrossbow();
+		updateSRS();
 		return super.throwPos(user, dst);
 	}
 
 	@Override
 	protected void onThrow(int cell) {
-		updateCrossbow();
+		updateSRS();
 		super.onThrow(cell);
 	}
 
 	@Override
 	public void throwSound() {
-		updateCrossbow();
+		updateSRS();
 		if (bow != null) {
 			Sample.INSTANCE.play(Assets.Sounds.ATK_CROSSBOW, 1, Random.Float(0.87f, 1.15f));
 		} else {
@@ -151,7 +151,7 @@ public class Dart extends MissileWeapon {
 	
 	@Override
 	public String info() {
-		updateCrossbow();
+		updateSRS();
 		if (bow != null && !bow.isIdentified()){
 			int level = bow.level();
 			//temporarily sets the level of the bow to 0 for IDing purposes
