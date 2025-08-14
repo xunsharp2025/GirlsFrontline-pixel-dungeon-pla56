@@ -52,13 +52,10 @@ public class TyphoonSprite extends MobSprite {
         charging = new Animation( 14, true);
         charging.frames( frames, 4 );
 
-        if(chargeParticles != null){
-            chargeParticles = centerEmitter();
-            chargeParticles.autoKill = false;
-            chargeParticles.pour(MagicMissile.MagicParticle.ATTRACTING, 0.05f);
-            chargeParticles.on = false;
-        }
-
+        chargeParticles = centerEmitter();
+        chargeParticles.autoKill = false;
+        chargeParticles.pour(MagicMissile.MagicParticle.ATTRACTING, 0.05f);
+        chargeParticles.on = false;
 
         run = new Animation( 8, true );
         run.frames( frames, 0, 1, 2, 3, 0 );
@@ -84,10 +81,8 @@ public class TyphoonSprite extends MobSprite {
     @Override
     public void update() {
         super.update();
-        if(chargeParticles != null) {
-            chargeParticles.pos(center());
-            chargeParticles.visible = visible;
-        }
+        chargeParticles.pos(center());
+        chargeParticles.visible = visible;
     }
 
     public void charge( int pos ){
@@ -97,9 +92,7 @@ public class TyphoonSprite extends MobSprite {
 
     @Override
     public void play(Animation anim) {
-        if(chargeParticles != null) {
-            chargeParticles.on = anim == charging;
-        }
+        chargeParticles.on = anim == charging;
         super.play(anim);
     }
 
@@ -129,4 +122,19 @@ public class TyphoonSprite extends MobSprite {
             chargeParticles.killAndErase();
         }
     }
+
+    public static class TyphoonSpriteRe extends MobSprite {
+        public TyphoonSpriteRe() {
+            super();
+
+            texture( Assets.TYPHOON );
+
+            TextureFilm frames = new TextureFilm( texture, 76, 48 );
+
+            idle = new Animation( 2, true );
+            idle.frames( frames, 0 );
+            play( idle );
+        }
+    }
+
 }
