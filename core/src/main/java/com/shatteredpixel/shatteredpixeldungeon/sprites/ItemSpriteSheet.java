@@ -766,7 +766,7 @@ public class ItemSpriteSheet {
 		assignItemRect(THROWING_CLUB,   12, 12);
 
 		assignItemRect(THROWING_SPEAR,  15, 13);
-		assignItemRect(BOLAS,           9, 16);
+		assignItemRect(BOLAS,           15, 14);
 		assignItemRect(KUNAI,           15, 15);
 
 		assignItemRect(JAVELIN,         16, 16);
