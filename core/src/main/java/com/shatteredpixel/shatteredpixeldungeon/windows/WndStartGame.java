@@ -157,7 +157,7 @@ public class WndStartGame extends Window {
 
 		private HeroClass cl;
 
-		private Image hero;
+		private Image heroIcon;
 
 		private static final int WIDTH = HeroSprite.FRAME_WIDTH;
 		private static final int HEIGHT = HeroSprite.FRAME_HEIGHT;
@@ -166,28 +166,17 @@ public class WndStartGame extends Window {
 			super();
 
 			this.cl = cl;
-			//hero = new Image(Assets.WARRIOR, 0, 0, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
-			if (cl == HeroClass.WARRIOR){
-				hero = new Image(Assets.Sprites.WARRIOR, 0, HeroSprite.FRAME_HEIGHT * 2 /*tier*/, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
-			} else if (cl == HeroClass.MAGE){
-				hero = new Image(Assets.Sprites.MAGE, 0, HeroSprite.FRAME_HEIGHT * 2 /*tier*/, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
-			} else if (cl == HeroClass.ROGUE){
-				hero = new Image(Assets.Sprites.ROGUE, 0, HeroSprite.FRAME_HEIGHT * 2 /*tier*/, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
-			} else if (cl == HeroClass.HUNTRESS){
-				hero = new Image(Assets.Sprites.HUNTRESS, 0, HeroSprite.FRAME_HEIGHT * 2 /*tier*/, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
-			} else {
-				hero = new Image(Assets.Sprites.TYPE561, 0, HeroSprite.FRAME_HEIGHT * 2 /*tier*/, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
-			}
-			add(hero);
+			heroIcon = new Image(cl.spritesheet(), 0, HeroSprite.FRAME_HEIGHT * 2 /*tier*/, HeroSprite.FRAME_WIDTH, HeroSprite.FRAME_HEIGHT);
+			add(heroIcon);
 		}
 
 		@Override
 		protected void layout() {
 			super.layout();
-			if (hero != null){
-				hero.x = x + (width - hero.width()) / 2f;
-				hero.y = y + (height - hero.height()) / 2f;
-				PixelScene.align(hero);
+			if (heroIcon != null){
+				heroIcon.x = x + (width - heroIcon.width()) / 2f;
+				heroIcon.y = y + (height - heroIcon.height()) / 2f;
+				PixelScene.align(heroIcon);
 			}
 		}
 
@@ -195,9 +184,13 @@ public class WndStartGame extends Window {
 		public void update() {
 			super.update();
 			if (cl != GamesInProgress.selectedClass){
-				hero.brightness(0.6f);
+				if (!cl.isUnlocked()){
+					heroIcon.brightness(0.1f);
+				} else {
+					heroIcon.brightness(0.6f);
+				}
 			} else {
-				hero.brightness(1f);
+				heroIcon.brightness(1f);
 			}
 		}
 
@@ -205,7 +198,13 @@ public class WndStartGame extends Window {
 		protected void onClick() {
 			super.onClick();
 
-			GamesInProgress.selectedClass = cl;
+			if( !cl.isUnlocked() ){
+				GirlsFrontlinePixelDungeon.scene().addToFront( new WndMessage(cl.unlockMsg()));
+			} else if (GamesInProgress.selectedClass == cl) {
+				GirlsFrontlinePixelDungeon.scene().add(new WndHeroInfo(cl));
+			} else {
+				GamesInProgress.selectedClass = cl;
+			}
 		}
 	}
 
