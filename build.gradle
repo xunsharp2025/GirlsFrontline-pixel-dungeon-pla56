@@ -12,7 +12,7 @@ buildscript {
 allprojects {
 
     ext {
-        appName = 'GirlFront Pixel Dungeon'
+        appName = '少前地牢'
         appPackageName = 'com.ngfpixel.gfchemistrypixeldungeon'
 
         appVersionCode = 628
