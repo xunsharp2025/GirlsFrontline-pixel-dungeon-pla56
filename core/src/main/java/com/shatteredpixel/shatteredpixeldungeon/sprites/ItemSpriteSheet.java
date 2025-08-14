@@ -346,20 +346,20 @@ public class ItemSpriteSheet {
 
 	
 	public static final int TIPPED_DARTS    =                               xy(1, 11);  //16 slots
-	public static final int ROT_DART        = TIPPED_DARTS+0;
-	public static final int INCENDIARY_DART = TIPPED_DARTS+1;
-	public static final int ADRENALINE_DART = TIPPED_DARTS+2;
-	public static final int HEALING_DART    = TIPPED_DARTS+3;
-	public static final int CHILLING_DART   = TIPPED_DARTS+4;
-	public static final int SHOCKING_DART   = TIPPED_DARTS+5;
-	public static final int POISON_DART     = TIPPED_DARTS+6;
-	public static final int CLEANSING_DART  = TIPPED_DARTS+7;
-	public static final int PARALYTIC_DART  = TIPPED_DARTS+8;
-	public static final int HOLY_DART       = TIPPED_DARTS+9;
-	public static final int DISPLACING_DART = TIPPED_DARTS+10;
-	public static final int BLINDING_DART   = TIPPED_DARTS+11;
+	public static final int ADRENALINE_DART = TIPPED_DARTS+1 ;
+	public static final int BLINDING_DART   = TIPPED_DARTS+2 ;
+	public static final int CHILLING_DART   = TIPPED_DARTS+3 ;
+	public static final int DISPLACING_DART = TIPPED_DARTS+4 ;
+	public static final int CLEANSING_DART  = TIPPED_DARTS+5 ;
+	public static final int HEALING_DART    = TIPPED_DARTS+6 ;
+	public static final int HOLY_DART       = TIPPED_DARTS+7 ;
+	public static final int INCENDIARY_DART = TIPPED_DARTS+8 ;
+	public static final int PARALYTIC_DART  = TIPPED_DARTS+9 ;
+	public static final int POISON_DART     = TIPPED_DARTS+10;
+	public static final int ROT_DART        = TIPPED_DARTS+11;
+	public static final int SHOCKING_DART   = TIPPED_DARTS+12;
 	static {
-		for (int i = TIPPED_DARTS; i < TIPPED_DARTS+16; i++)
+		for (int i = TIPPED_DARTS; i < TIPPED_DARTS+13; i++)
 			assignItemRect(i, 15, 15);
 	}
 	
