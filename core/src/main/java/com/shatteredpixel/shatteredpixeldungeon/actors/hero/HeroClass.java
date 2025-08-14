@@ -408,8 +408,7 @@ public enum HeroClass {
 			case HUNTRESS:
 				return Badges.isUnlocked(Badges.Badge.UNLOCK_HUNTRESS);
 			case TYPE561:
-				return true;
-				//return Badges.isUnlocked(Badges.Badge.UNLOCK_TYPE561);
+				return Badges.isUnlocked(Badges.Badge.UNLOCK_TYPE561);
 		}
 	}
 	

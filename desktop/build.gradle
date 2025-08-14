@@ -27,6 +27,20 @@ task debug(type: JavaExec) {
     }
 }
 
+task alpha(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    ignoreExitValue = true
+
+    main = appMainClass
+    systemProperty 'Specification-Title', appName
+    systemProperty 'Specification-Version', appVersionName + "-alpha"
+    systemProperty 'Implementation-Version', appVersionCode
+
+    if (osName.contains('mac')) {
+        jvmArgs '-XstartOnFirstThread'
+    }
+}
+
 task release(type: Jar) {
     //FIXME this is now needed as of gradle 7.0, due to our weird sourceSets setup. Should see if there's a better way to do this
     setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
