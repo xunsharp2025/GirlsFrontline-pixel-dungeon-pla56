@@ -119,6 +119,9 @@ public class RedBook extends Artifact{
     }
 
 
+    public String desc() {
+        return Messages.get(this, "desc", cooldown);
+    }
     public class Cooldowncharge extends ArtifactBuff{
         @Override
         public boolean act() {
