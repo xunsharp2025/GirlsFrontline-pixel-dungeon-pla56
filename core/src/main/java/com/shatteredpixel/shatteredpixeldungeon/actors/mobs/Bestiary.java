@@ -33,6 +33,7 @@ public class Bestiary {
 		ArrayList<Class<? extends Mob>> mobs = getRotation( depth );
 		addRareMobs(depth, mobs);
 		swapMobAlts(mobs);
+		swapRareMobAlts(mobs);
 		Random.shuffle(mobs);
 		return mobs;
 	}
@@ -80,16 +81,24 @@ public class Bestiary {
 					cl = SpectralNecromancer.class;
 				} else if (cl == Brute.class) {
 					cl = ArmoredBrute.class;
-				} else if (cl == Spinner.class) {
-					cl = SpinnerCat.class;
 				} else if (cl == DM200.class) {
 					cl = DM201.class;
 				} else if (cl == Monk.class) {
 					cl = Senior.class;
 				} else if (cl == Scorpio.class) {
 					cl = Acidic.class;
-				} else if (cl == Hydra.class) {
-					cl = Typhoon.class;
+				}
+				rotation.set(i, cl);
+			}
+		}
+	}
+
+	private static void swapRareMobAlts(ArrayList<Class<?extends Mob>> rotation) {
+		for (int i = 0; i < rotation.size(); i++){
+			Class<? extends Mob> cl = rotation.get(i);
+			if (Random.Int( 500 ) == 0) {
+				if (cl == Spinner.class) {
+					cl = SpinnerCat.class;
 				}
 				rotation.set(i, cl);
 			}

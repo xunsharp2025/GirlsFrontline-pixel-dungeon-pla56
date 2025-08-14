@@ -29,6 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Dread;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -54,6 +55,11 @@ public class Spinner extends Mob {
 		FLEEING = new Fleeing();
 	}
 
+	public int getWebCoolDown(){
+		return webCoolDown;
+	}
+
+
 	@Override
 	public int damageRoll() {
 		return Random.NormalIntRange(10, 20);
@@ -69,7 +75,7 @@ public class Spinner extends Mob {
 		return Random.NormalIntRange(0, 6);
 	}
 
-	private int webCoolDown = 0;
+	public int webCoolDown = 0;
 	private int lastEnemyPos = -1;
 
 	private static final String WEB_COOLDOWN = "web_cooldown";
@@ -109,7 +115,7 @@ public class Spinner extends Mob {
 		}
 		
 		if (state == FLEEING && buff( Terror.class ) == null && buff( Dread.class ) == null &&
-				enemy != null && enemySeen && enemy.buff( Poison.class ) == null) {
+				enemy != null && enemySeen && enemy.buff( Poison.class ) == null && enemy.buff( Vertigo.class ) == null) {
 			state = HUNTING;
 		}
 		return result;
@@ -182,7 +188,11 @@ public class Spinner extends Mob {
 		}
 		
 	}
-	
+
+	protected void applyWebToCell(int cell){
+		GameScene.add(Blob.seed(cell, 20, Web.class));
+	}
+
 	public void shootWeb(){
 		int webPos = webPos();
 		if (webPos != -1){
@@ -192,15 +202,15 @@ public class Spinner extends Mob {
 					break;
 				}
 			}
-			
+
 			//spread to the tile hero was moving towards and the two adjacent ones
 			int leftPos = enemy.pos + PathFinder.CIRCLE8[left(i)];
 			int rightPos = enemy.pos + PathFinder.CIRCLE8[right(i)];
-			
-			if (Dungeon.level.passable[leftPos]) GameScene.add(Blob.seed(leftPos, 20, Web.class));
-			if (Dungeon.level.passable[webPos])  GameScene.add(Blob.seed(webPos, 20, Web.class));
-			if (Dungeon.level.passable[rightPos])GameScene.add(Blob.seed(rightPos, 20, Web.class));
-			
+
+			if (Dungeon.level.passable[leftPos]) applyWebToCell(leftPos);
+			if (Dungeon.level.passable[webPos])  applyWebToCell(webPos);
+			if (Dungeon.level.passable[rightPos])applyWebToCell(rightPos);
+
 			webCoolDown = 10;
 
 			if (Dungeon.level.heroFOV[enemy.pos]){
