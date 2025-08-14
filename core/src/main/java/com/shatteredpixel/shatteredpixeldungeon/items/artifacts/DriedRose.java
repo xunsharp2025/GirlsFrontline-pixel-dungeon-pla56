@@ -764,7 +764,10 @@ public class DriedRose extends Artifact {
 				case 3:
 					yell( Messages.get( this, "dialogue_city_" + variant ));
 					break;
-				case 4: default:
+				case 4:
+					yell( Messages.get( this, "dialogue_recaves_" + variant ));
+					break;
+				case 5: default:
 					yell( Messages.get( this, "dialogue_halls_" + variant ));
 					break;
 			}
@@ -789,7 +792,10 @@ public class DriedRose extends Artifact {
 				case 3:
 					yell( Messages.get( this, "seen_king_" + Random.IntRange(1, 3) ));
 					break;
-				case 4: default:
+				case 4:
+					yell( Messages.get( this, "seen_army_" + Random.IntRange(1, 3) ));
+					break;
+				case 5: default:
 					yell( Messages.get( this, "seen_yog_" + Random.IntRange(1, 3) ));
 					break;
 			}
