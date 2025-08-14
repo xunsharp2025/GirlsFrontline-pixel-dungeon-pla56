@@ -218,7 +218,7 @@ public enum MobBestiary {
                 Mg5.class,Elemental.NewbornFireElemental.class);
 
         CAVES.addEntities(Bat.class,Brute.class,
-                Spinner.class, Nemeum.class);
+                Spinner.class,Nemeum.class);
 
         CITYS.addEntities(Elemental.FireElemental.class,Elemental.FrostElemental.class,Elemental.ChaosElemental.class,
                 Monk.class,Warlock.class,Golem.class);
