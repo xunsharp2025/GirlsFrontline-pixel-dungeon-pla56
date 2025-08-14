@@ -145,7 +145,7 @@ public class v0_5_0_Changes {
         changes.hardlight( CharSprite.NEGATIVE );
         changeInfos.add(changes);
 
-        Image tp = new Image(new TyphoonSprite());
+        Image tp = new Image(new TyphoonSprite.TyphoonSpriteRe());
         tp.scale.set(PixelScene.align(0.30f));
         changes.addButton( new ChangeButton(tp, "AI优化",
                 "现在 _提丰/钢狮/九头蛇/木星_ 这四个敌人不会将蓄力激光攒着" +
