@@ -209,23 +209,22 @@ public class Bestiary {
 			case 21:
 				//5x elemental, 5x warlock, 1x monk
 				return new ArrayList<>(Arrays.asList(
-						Dragun.class, Dragun.class));
+						Guard.class, Guard.class));
 			case 22:
 				//2x elemental, 2x warlock, 2x monk
 				return new ArrayList<>(Arrays.asList(
-						Dragun.class, Dragun.class, Dragun.class,
+						Dragun.class, Jupiter.class, Guard.class,
 						Guard.class, Guard.class));
 			case 23:
 				//1x elemental, 1x warlock, 2x monk, 1x golem
 				return new ArrayList<>(Arrays.asList(
-						Dragun.class, Dragun.class, Dragun.class,
+						Dragun.class, Dragun.class, Jupiter.class,
 						Guard.class, Guard.class, Guard.class, Guard.class));
 			case 24:
 				//All Hydra Ha Ha Ha..........
 				return new ArrayList<>(Arrays.asList(
-						Dragun.class, Dragun.class, Dragun.class,
-						Guard.class, Guard.class, Guard.class, Guard.class,
-						Jupiter.class, Jupiter.class));
+						Dragun.class, Dragun.class, Jupiter.class,
+						Guard.class, Guard.class, Guard.class, Guard.class));
 			case 26:
 				return new ArrayList<>(Arrays.asList(
 						Cyclops.class, Cyclops.class,Cyclops.class, Cyclops.class,
