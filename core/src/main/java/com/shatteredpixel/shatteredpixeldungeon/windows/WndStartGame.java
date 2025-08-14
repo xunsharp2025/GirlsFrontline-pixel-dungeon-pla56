@@ -118,7 +118,7 @@ public class WndStartGame extends Window {
 		start.setRect(0, HEIGHT - 20, WIDTH, 20);
 		add(start);
 
-		if (Badges.isUnlocked(Badges.Badge.VICTORY) || DeviceCompat.isDebug()){
+		if (Badges.isUnlocked(Badges.Badge.KILL_CALC) || DeviceCompat.isDebug()){
 			IconButton challengeButton = new IconButton(
 					Icons.get( SPDSettings.challenges() > 0 ? Icons.CHALLENGE_ON :Icons.CHALLENGE_OFF)){
 				@Override
