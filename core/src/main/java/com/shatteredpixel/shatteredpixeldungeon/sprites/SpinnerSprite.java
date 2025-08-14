@@ -39,8 +39,6 @@ public class SpinnerSprite extends MobSprite {
 	public SpinnerSprite(String sprite,int width,int height) {
 		super();
 
-		perspectiveRaise = 0f;
-
 		texture(sprite);
 		
 		TextureFilm frames = new TextureFilm(texture,width,height );
