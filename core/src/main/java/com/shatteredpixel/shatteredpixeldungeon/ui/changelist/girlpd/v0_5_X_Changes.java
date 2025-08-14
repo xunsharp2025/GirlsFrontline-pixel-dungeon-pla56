@@ -14,6 +14,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.RipperSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SpawnerSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.SpinnerCatSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.TyphoonSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
@@ -45,13 +46,23 @@ public class v0_5_X_Changes {
         changes.hardlight( CharSprite.WARNING );
         changeInfos.add(changes);
 
-        Image tp = new Image(new TyphoonSprite.TyphoonSpriteRe());
-        tp.scale.set(PixelScene.align(0.30f));
+        Image tp = new Image(new SpinnerCatSprite());
+        tp.scale.set(PixelScene.align(0.80f));
         changes.addButton( new ChangeButton(tp, "特别稀有怪",
-                "现在 _提丰_仅在29层有0.5%的生成，且生成时会有文本提示。"));
+                "现在 _提丰_仅在27~29层有1%的生成，且生成时会有文本提示，并且限制生成一个。\n\n" +
+                        "而_耄耋_生成概率仅有0.2%，在矿洞层有概率生成。"));
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.GUN562, null), "56-2式 武器优化",
                 "现在装填冷却会显示在快捷栏中，且提示文本也有具体的回合冷却显示。"));
+
+        Image sss = new Image(Assets.Sprites.GHOUL, 0, 0, 21, 16);
+        sss.scale.set(PixelScene.align(0.7f));
+        changes.addButton( new ChangeButton(sss, "五区敌人生成调整",
+                "_-_ 21层 2护卫者\n" +
+                        "_-_ 22层 3护卫者1龙骑\n" +
+                        "_-_ 23层 4护卫者2龙骑1木星\n" +
+                        "_-_ 24层 4护卫者3龙骑2木星\n\n" +
+                        "注意此代表敌人生成权重，实际数量可能会更高"));
 
         changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
                 "以下Bug已被修复:\n" +

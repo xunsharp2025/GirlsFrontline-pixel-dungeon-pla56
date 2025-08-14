@@ -183,11 +183,11 @@ public class HallsLevel extends RegularLevel {
 	@Override
 	public void occupyCell(Char ch) {
 		super.occupyCell(ch);
-		boolean chance = Random.Int(200) == 0;
+		boolean chance = Random.Int(100) == 0;
 		if(!chance && !typhootinSpawned){
 			typhootinSpawned = true;
 		}
-		if (depth == 29) {
+		if (depth == 29 || depth == 28 || depth == 27) {
 			if(chance){
 				for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])) {
 					if (mob instanceof Hydra && !typhootinSpawned) {
