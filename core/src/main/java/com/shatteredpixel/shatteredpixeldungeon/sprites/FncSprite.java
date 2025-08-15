@@ -21,7 +21,9 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.Ratmogrify;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.watabou.noosa.TextureFilm;
 
 import java.util.Calendar;
@@ -33,11 +35,19 @@ public class FncSprite extends MobSprite {
     public FncSprite() {
         super();
 
+        resetAnims();
+    }
+
+    public void resetAnims(){
         final Calendar calendar = Calendar.getInstance();
         //once a year the rat king feels a bit festive!
         festive = (calendar.get(Calendar.MONTH) == 11 && calendar.get(Calendar.WEEK_OF_MONTH) > 2);
 
-        final int c = festive ? 8 : 0;
+        int c = festive ? 8 : 0;
+        if (Dungeon.hero != null && Dungeon.hero.armorAbility instanceof Ratmogrify){
+            c = 8;
+            if (parent != null) aura(0xFFFF00);
+        }
 
         texture( Assets.FNC );
 

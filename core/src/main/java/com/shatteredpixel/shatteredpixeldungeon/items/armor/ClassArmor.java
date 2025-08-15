@@ -92,7 +92,7 @@ abstract public class ClassArmor extends Armor {
 				classArmor.affixSeal(seal);
 			}
 			break;
-		case ROGUE:
+		case ROGUE:default:
 			classArmor = new RogueArmor();
 			break;
 		case MAGE:
@@ -101,6 +101,8 @@ abstract public class ClassArmor extends Armor {
 		case HUNTRESS:
 			classArmor = new HuntressArmor();
 			break;
+		case TYPE561:
+			classArmor = new Type561Armor();
 		}
 		
 		classArmor.level(armor.trueLevel());
