@@ -281,5 +281,7 @@ public class Gun562 extends ShootGun {
             }
         }
     }
-
+    public String desc() {
+        return Messages.get(this, "desc", cooldown);
+    }
 }
