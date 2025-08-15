@@ -128,7 +128,9 @@ public class G11 extends MeleeWeapon {
 
 	@Override
 	public int proc(Char attacker, Char defender, int damage) {
-		if (wand != null && Dungeon.hero.subClass == HeroSubClass.BATTLEMAGE) {
+		if (wand != null 
+		&& attacker==Dungeon.hero
+		&& Dungeon.hero.subClass == HeroSubClass.BATTLEMAGE) {
 			if (wand.curCharges < wand.maxCharges) wand.partialCharge += 0.33f;
 			ScrollOfRecharging.charge((Hero)attacker);
 			wand.onHit(this, attacker, defender, damage);
