@@ -25,9 +25,10 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Speed;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
-public class Kriss extends HitBuffer {
+public class Kriss extends MeleeWeapon {
 
 	{
 		image = ItemSpriteSheet.KRISS;
@@ -36,11 +37,11 @@ public class Kriss extends HitBuffer {
 	}
 
 	@Override
-	public int proc(Char attacker, Char owner, int damage ) {
-		if (owner instanceof Hero && owner.buffs(Speed.class).isEmpty()) {
-			Buff.prolong(owner, Speed.class, 1.5f);
+	public int proc(Char attacker, Char defender, int damage ) {
+		if (attacker instanceof Hero && attacker.buffs(Speed.class).isEmpty()) {
+			Buff.prolong(attacker, Speed.class, 1.5f);
 		}
-		return super.proc(attacker, owner, damage);
+		return super.proc(attacker, defender, damage);
 	}
 
 	@Override
