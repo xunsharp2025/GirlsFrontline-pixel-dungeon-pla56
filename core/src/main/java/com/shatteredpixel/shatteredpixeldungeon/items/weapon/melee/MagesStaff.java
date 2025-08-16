@@ -70,7 +70,7 @@ public class MagesStaff extends MeleeWeapon {
     private static final float STAFF_SCALE_FACTOR = 0.75f;
 
     {
-        image = ItemSpriteSheet.G11;
+        image = ItemSpriteSheet.MAGESSTAFF;
         hitSound = Assets.Sounds.HIT;
         hitSoundPitch = 1.1f;
 
@@ -89,7 +89,7 @@ public class MagesStaff extends MeleeWeapon {
 
     @Override
     public int max(int lvl) {
-        return  Math.round(3f*(tier+1)) +   //6 base damage, down from 10
+        return  3*(tier+1) +   //6 base damage, down from 10
                 lvl*(tier+1);               //scaling unaffected
     }
 
@@ -100,6 +100,7 @@ public class MagesStaff extends MeleeWeapon {
         this.wand = wand;
         updateWand(false);
         wand.curCharges = wand.maxCharges;
+        //name = Messages.get(wand, "staff_name");
     }
 
     @Override
@@ -173,7 +174,7 @@ public class MagesStaff extends MeleeWeapon {
                 attacker instanceof Hero && ((Hero)attacker).subClass == HeroSubClass.BATTLEMAGE) {
             if (wand.curCharges < wand.maxCharges) wand.partialCharge += 0.5f;
             ScrollOfRecharging.charge((Hero)attacker);
-            wand.onHit(new G11(), attacker, defender, damage);
+            wand.onHit(this, attacker, defender, damage);
         }
         return super.proc(attacker, defender, damage);
     }

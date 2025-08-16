@@ -46,7 +46,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -124,7 +123,7 @@ public abstract class Wand extends Item {
 
 	public abstract void onZap(Ballistica attack);
 
-	public abstract void onHit(G11 staff, Char attacker, Char defender, int damage);
+	public abstract void onHit(MagesStaff staff, Char attacker, Char defender, int damage);
 
 	public boolean tryToZap( Hero owner, int target ){
 
@@ -544,10 +543,6 @@ public abstract class Wand extends Item {
 		public void onZap(Ballistica attack) {}
 
 		@Override
-		public void onHit(G11 staff, Char attacker, Char defender, int damage) {
-
-		}
-
 		public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {}
 
 		@Override

@@ -9,7 +9,6 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.Beam;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.PurpleParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfDisintegration;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -216,7 +215,7 @@ public class WandOfReflectDisintegration extends WandOfDisintegration {
     }
 
     @Override
-    public void onHit(G11 staff, Char attacker, Char defender, int damage) {
+    public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
         //no direct effect, see magesStaff.reachfactor
     }
 

@@ -41,7 +41,7 @@ public class ShootGun extends MeleeWeapon {
 
     {
         //贴图
-        image = ItemSpriteSheet.G11;
+        image = ItemSpriteSheet.MAGESSTAFF;
         //阶数
         tier = 1;
         //设置到快捷栏的默认动作

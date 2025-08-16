@@ -98,7 +98,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SR.AWP;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG.C96;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MG.Dp;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.Dragunov;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.AR.G36;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SA.GROZA;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SA.GUA91;
@@ -168,7 +168,7 @@ public enum Catalog {
 	static {
 		WEAPONS.seen.put( M9.class,                   false);
 		WEAPONS.seen.put( Welrod.class,                     false);
-		WEAPONS.seen.put( G11.class,                 false);
+		WEAPONS.seen.put( MagesStaff.class,                 false);
 		WEAPONS.seen.put( Ump45.class,                   false);
 		WEAPONS.seen.put( Gun561.class,                   false);
 		WEAPONS.seen.put( Gun562.class,                   false);

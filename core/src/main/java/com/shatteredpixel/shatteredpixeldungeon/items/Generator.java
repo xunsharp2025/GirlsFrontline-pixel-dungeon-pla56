@@ -122,7 +122,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.Kar98;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.M16;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.M99;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.Sass;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun561;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun562;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.HB.Kriss;
@@ -353,7 +353,7 @@ public class Generator {
 			WEP_T1.classes = new Class<?>[]{
 					Gun561.class,
 					Ump45.class,
-					G11.class,
+					MagesStaff.class,
                     Welrod.class,
 					M9.class,
 					Dp.class,

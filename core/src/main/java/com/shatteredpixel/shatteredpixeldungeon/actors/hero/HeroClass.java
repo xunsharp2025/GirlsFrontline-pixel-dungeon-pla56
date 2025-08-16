@@ -79,7 +79,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun561;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SA.Welrod;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.M9;
@@ -232,9 +232,9 @@ public enum HeroClass {
 	}
 
 	private static void initMage( Hero hero ) {
-		G11 staff;
+		MagesStaff staff;
 
-		staff = new G11(new WandOfMagicMissile());
+		staff = new MagesStaff(new WandOfMagicMissile());
 		new ScrollOfRecharging().identify().collect();
 
 		(hero.belongings.weapon = staff).identify();

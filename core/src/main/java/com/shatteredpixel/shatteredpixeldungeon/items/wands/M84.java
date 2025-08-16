@@ -29,7 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.ParalyticGas;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.StaffParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Venomous;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -82,7 +82,7 @@ public class M84 extends Wand {
     }
 
     @Override
-    public void onHit(G11 staff, Char attacker, Char defender, int damage) {
+    public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
         //acts like venomous enchantment
         new Venomous().proc(staff, attacker, defender, damage);
     }

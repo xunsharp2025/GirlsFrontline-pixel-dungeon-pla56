@@ -205,23 +205,23 @@ public class ItemSpriteSheet {
 	public static final int M9   			= WEP_TIER1+2;
 	public static final int UMP40          	= WEP_TIER1+3;
 	public static final int DAGGER          = WEP_TIER1+4;
-	public static final int G11             = WEP_TIER1+5;
+	public static final int MAGESSTAFF      = WEP_TIER1+5;
 	public static final int SR3             = WEP_TIER1+6;
 	public static final int CANNON         	= WEP_TIER1+7;
 	public static final int SRS         	= WEP_TIER1+8;
-	public static final int THUNDER         	= WEP_TIER1+9;
+	public static final int THUNDER         = WEP_TIER1+9;
 
 	static{
-		assignItemRect(UMP45, 	15, 16);
-		assignItemRect(DP,     	15, 16);
-		assignItemRect(M9,   	14, 16);
-		assignItemRect(UMP40, 	16, 16);
-		assignItemRect(DAGGER,  12, 13);
-		assignItemRect(G11,     15, 16);
-		assignItemRect(SR3,     16, 16);
-		assignItemRect(CANNON,  15, 15);
-		assignItemRect(SRS, 	16, 16);
-		assignItemRect(THUNDER, 	16, 16);
+		assignItemRect(UMP45, 	  15, 16);
+		assignItemRect(DP,     	  15, 16);
+		assignItemRect(M9,   	  14, 16);
+		assignItemRect(UMP40, 	  16, 16);
+		assignItemRect(DAGGER,    12, 13);
+		assignItemRect(MAGESSTAFF,15, 16);
+		assignItemRect(SR3,       16, 16);
+		assignItemRect(CANNON,    15, 15);
+		assignItemRect(SRS, 	  16, 16);
+		assignItemRect(THUNDER,   16, 16);
 	}
 
 	private static final int WEP_TIER2      =                               xy(1, 8);   //8 slots
