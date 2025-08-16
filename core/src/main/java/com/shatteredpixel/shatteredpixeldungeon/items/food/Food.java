@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -71,7 +72,7 @@ public class Food extends Item {
 		if (action.equals( AC_EAT )) {
 			
 			detach( hero.belongings.backpack );
-			
+
 			satisfy(hero);
 			GLog.i( Messages.get(this, "eat_msg") );
 			
@@ -107,11 +108,23 @@ public class Food extends Item {
 	}
 	
 	protected void satisfy( Hero hero ){
-		if (Dungeon.isChallenged(Challenges.NO_FOOD)){
-			Buff.affect(hero, Hunger.class).satisfy(energy/3f);
-		} else {
-			Buff.affect(hero, Hunger.class).satisfy(energy);
+		float buffedEnergy=energy;
+
+		if(hero.hasTalent(Talent.NICE_FOOD)&&hero.isStarving()){
+			buffedEnergy+=50f*hero.pointsInTalent(Talent.NICE_FOOD);
 		}
+
+		if(hero.hasTalent(Talent.BETTER_FOOD)&&this instanceof SaltyZongzi){
+			hero.HP=Math.min(hero.HP+1+2*hero.pointsInTalent(Talent.BETTER_FOOD),hero.HT);
+			hero.sprite.emitter().burst(Speck.factory(Speck.HEALING),hero.pointsInTalent(Talent.BETTER_FOOD));
+			buffedEnergy+=10+15*hero.pointsInTalent(Talent.BETTER_FOOD);
+		}
+
+		if (Dungeon.isChallenged(Challenges.NO_FOOD)){
+			buffedEnergy/=3f;
+		}
+
+		Buff.affect(hero, Hunger.class).satisfy(buffedEnergy);
 	}
 	
 	@Override

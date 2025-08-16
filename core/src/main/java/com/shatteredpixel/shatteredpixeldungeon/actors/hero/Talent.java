@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -296,7 +297,7 @@ public enum Talent {
 	public static class CachedRationsDropped extends CounterBuff{{revivePersists = true;}};
 	public static class NatureBerriesAvailable extends CounterBuff{{revivePersists = true;}};
 
-	public static void onFoodEaten( Hero hero, float foodVal, Item foodSource ){
+	public static void onFoodEaten(Hero hero,float foodVal,Item foodSource){
 		if(hero.hasTalent(HEARTY_MEAL)){
 			//3/5 HP healed, when hero is below 25% health
 			if (hero.HP <= hero.HT/4) {
@@ -334,18 +335,6 @@ public enum Talent {
 		if(hero.hasTalent(INVIGORATING_MEAL)){
 			//effectively 1/2 turns of haste
 			Buff.prolong( hero, Haste.class, 0.67f+hero.pointsInTalent(INVIGORATING_MEAL));
-		}
-		if(hero.hasTalent(NICE_FOOD)){
-			if(hero.buff(Hunger.class).isStarving()){
-				Buff.affect(hero, Hunger.class).satisfy(50*hero.pointsInTalent(NICE_FOOD));
-			}
-		}
-		if(hero.hasTalent(BETTER_FOOD)){
-			if(foodSource instanceof SaltyZongzi){
-				hero.HP=Math.min(hero.HP+1+2*hero.pointsInTalent(BETTER_FOOD),hero.HT);
-				hero.sprite.emitter().burst(Speck.factory(Speck.HEALING),hero.pointsInTalent(BETTER_FOOD));
-				Buff.affect(hero, Hunger.class).satisfy(10+15*hero.pointsInTalent(BETTER_FOOD));
-			}
 		}
 	}
 
