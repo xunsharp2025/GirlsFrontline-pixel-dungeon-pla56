@@ -181,7 +181,7 @@ public class MagesStaff extends MeleeWeapon {
                 attacker instanceof Hero && ((Hero)attacker).subClass == HeroSubClass.BATTLEMAGE) {
             if (wand.curCharges < wand.maxCharges) wand.partialCharge += 0.5f;
             ScrollOfRecharging.chargeParticle((Hero)attacker);
-            wand.onHit(this, attacker, defender, damage);
+            //wand.onHit(this, attacker, defender, damage);
         }
         return super.proc(attacker, defender, damage);
     }
@@ -348,9 +348,9 @@ public class MagesStaff extends MeleeWeapon {
             if (!cursed || !cursedKnown)    info += " " + wand.statsDesc();
             else                            info += " " + Messages.get(this, "cursed_wand");
 
-            if (Dungeon.hero.subClass == HeroSubClass.BATTLEMAGE){
-                info += "\n\n" + Messages.get(wand, "bmage_desc");
-            }
+            //if (Dungeon.hero.subClass == HeroSubClass.BATTLEMAGE){
+            //    info += "\n\n" + Messages.get(wand, "bmage_desc");
+            //}
         }
 
         return info;
