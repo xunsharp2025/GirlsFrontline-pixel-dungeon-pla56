@@ -103,6 +103,13 @@ public class MagesStaff extends MeleeWeapon {
         //name = Messages.get(wand, "staff_name");
     }
 
+    public void overCharge(int amount){
+        if(wand!=null){
+            wand.curCharges=Math.min(wand.curCharges+amount,wand.maxCharges+amount);
+            updateQuickslot();
+        }
+    }
+
     @Override
     public ArrayList<String> actions(Hero hero) {
         ArrayList<String> actions = super.actions( hero );
@@ -173,7 +180,7 @@ public class MagesStaff extends MeleeWeapon {
         if (wand != null &&
                 attacker instanceof Hero && ((Hero)attacker).subClass == HeroSubClass.BATTLEMAGE) {
             if (wand.curCharges < wand.maxCharges) wand.partialCharge += 0.5f;
-            ScrollOfRecharging.charge((Hero)attacker);
+            ScrollOfRecharging.chargeParticle((Hero)attacker);
             wand.onHit(this, attacker, defender, damage);
         }
         return super.proc(attacker, defender, damage);

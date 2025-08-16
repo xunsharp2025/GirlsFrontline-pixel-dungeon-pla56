@@ -67,7 +67,7 @@ public class ReclaimTrap extends TargetedSpell {
 				t.disarm(); //even disarms traps that normally wouldn't be
 				
 				Sample.INSTANCE.play(Assets.Sounds.LIGHTNING);
-				ScrollOfRecharging.charge(hero);
+				ScrollOfRecharging.chargeParticle(hero);
 				storedTrap = t.getClass();
 				
 			} else {

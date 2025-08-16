@@ -53,7 +53,7 @@ public class WildEnergy extends TargetedSpell {
 	protected void affectTarget(Ballistica bolt, final Hero hero) {
 		Sample.INSTANCE.play( Assets.Sounds.LIGHTNING );
 		Sample.INSTANCE.play( Assets.Sounds.CHARGEUP );
-		ScrollOfRecharging.charge(hero);
+		ScrollOfRecharging.chargeParticle(hero);
 
 		hero.belongings.charge(1f);
 		for (Buff b : hero.buffs()){

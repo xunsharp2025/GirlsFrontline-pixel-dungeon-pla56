@@ -58,6 +58,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun561;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun562;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
@@ -315,12 +316,12 @@ public enum Talent {
 		if(hero.hasTalent(EMPOWERING_MEAL)){
 			//2/3 bonus wand damage for next 3 zaps
 			Buff.affect( hero, WandEmpower.class).set(1 + hero.pointsInTalent(EMPOWERING_MEAL), 3);
-			ScrollOfRecharging.charge( hero );
+			ScrollOfRecharging.chargeParticle( hero );
 		}
 		if(hero.hasTalent(ENERGIZING_MEAL)){
 			//5/8 turns of recharging
 			Buff.prolong( hero, Recharging.class, 2 + 3*(hero.pointsInTalent(ENERGIZING_MEAL)) );
-			ScrollOfRecharging.charge( hero );
+			ScrollOfRecharging.chargeParticle( hero );
 		}
 		if(hero.hasTalent(MYSTICAL_MEAL)){
 			//3/5 turns of recharging
@@ -328,7 +329,7 @@ public enum Talent {
 			if (buff.left() < 1 + 2*(hero.pointsInTalent(MYSTICAL_MEAL))){
 				Buff.affect( hero, ArtifactRecharge.class).set(1 + 2*(hero.pointsInTalent(MYSTICAL_MEAL))).ignoreHornOfPlenty = foodSource instanceof HornOfPlenty;
 			}
-			ScrollOfRecharging.charge( hero );
+			ScrollOfRecharging.chargeParticle( hero );
 		}
 		if(hero.hasTalent(INVIGORATING_MEAL)){
 			//effectively 1/2 turns of haste
@@ -422,13 +423,18 @@ public enum Talent {
 
 	public static void onUpgradeScrollUsed( Hero hero ){
 		if (hero.hasTalent(ENERGIZING_UPGRADE)){
-			//TODO MAGESTAFF
+			MagesStaff staff=hero.belongings.getItem(MagesStaff.class);
+			if(staff!=null){
+				staff.overCharge(2+2*hero.pointsInTalent(ENERGIZING_UPGRADE));
+				ScrollOfRecharging.chargeParticle( Dungeon.hero );
+				SpellSprite.show( hero, SpellSprite.CHARGE );
+			}
 		}
 		if (hero.hasTalent(MYSTICAL_UPGRADE)){
 			CloakOfShadows cloak = hero.belongings.getItem(CloakOfShadows.class);
 			if (cloak != null){
 				cloak.overCharge(1 + hero.pointsInTalent(MYSTICAL_UPGRADE));
-				ScrollOfRecharging.charge( Dungeon.hero );
+				ScrollOfRecharging.chargeParticle( Dungeon.hero );
 				SpellSprite.show( hero, SpellSprite.CHARGE );
 			}
 		}
@@ -481,7 +487,7 @@ public enum Talent {
 		if (hero.hasTalent(TESTED_HYPOTHESIS)){
 			//2/3 turns of wand recharging
 			Buff.affect(hero, Recharging.class, 1f + hero.pointsInTalent(TESTED_HYPOTHESIS));
-			ScrollOfRecharging.charge(hero);
+			ScrollOfRecharging.chargeParticle(hero);
 		}
 	}
 

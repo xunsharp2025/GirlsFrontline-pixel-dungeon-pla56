@@ -111,7 +111,7 @@ public class Pasty extends Food {
 				break;
 			case XMAS:
 				Buff.affect( hero, Recharging.class, 2f ); //half of a charge
-				ScrollOfRecharging.charge( hero );
+				ScrollOfRecharging.chargeParticle( hero );
 				break;
 		}
 	}

@@ -43,7 +43,7 @@ public class ScrollOfRecharging extends Scroll {
 	public void doRead() {
 
 		Buff.affect(curUser, Recharging.class, Recharging.DURATION);
-		charge(curUser);
+		chargeParticle(curUser);
 
 		Sample.INSTANCE.play( Assets.Sounds.READ );
 		Sample.INSTANCE.play( Assets.Sounds.CHARGEUP );
@@ -55,7 +55,7 @@ public class ScrollOfRecharging extends Scroll {
 		readAnimation();
 	}
 	
-	public static void charge( Char user ) {
+	public static void chargeParticle( Char user ) {
 		if (user.sprite != null) {
 			Emitter e = user.sprite.centerEmitter();
 			if (e != null) e.burst(EnergyParticle.FACTORY, 15);

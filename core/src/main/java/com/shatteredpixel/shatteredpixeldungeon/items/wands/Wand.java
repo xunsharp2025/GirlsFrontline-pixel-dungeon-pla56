@@ -578,7 +578,7 @@ public abstract class Wand extends Item {
 						curWand.curCharges = 0;
 						curUser.sprite.operate(curUser.pos);
 						Sample.INSTANCE.play(Assets.Sounds.CHARGEUP);
-						ScrollOfRecharging.charge(curUser);
+						ScrollOfRecharging.chargeParticle(curUser);
 						updateQuickslot();
 						curUser.spend(Actor.TICK);
 						return;
