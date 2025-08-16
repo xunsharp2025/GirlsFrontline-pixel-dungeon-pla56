@@ -106,6 +106,17 @@ public class Guard extends Mob {
 		immunities.add( Terror.class );
 	}
 
+	@Override
+	public float lootChance() {
+		return super.lootChance() * (5f - Dungeon.LimitedDrops.GUARD_HP.count) / 5f;
+	}
+
+	@Override
+	public Item createLoot(){
+		Dungeon.LimitedDrops.GUARD_HP.count++;
+		return super.createLoot();
+	}
+
 	private static String DISARMHITS = "hitsToDisarm";
 
 	@Override
