@@ -11,6 +11,7 @@
 
 	<uses-permission android:name="android.permission.VIBRATE" />
 	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
 	<!-- We perform a runtime check to ensure controllers are disabled on API 14 & 15 -->
