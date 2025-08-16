@@ -84,7 +84,7 @@ public class Chasm implements Hero.Doom {
 		
 		jumpConfirmed = false;
 				
-		Sample.INSTANCE.play( Assets.Sounds.AIC2 );
+		Sample.INSTANCE.play(Assets.Sounds.AIC2,0.67f);
 
 		TimekeepersHourglass.timeFreeze timeFreeze = Dungeon.hero.buff(TimekeepersHourglass.timeFreeze.class);
 		if (timeFreeze != null) timeFreeze.disarmPressedTraps();
