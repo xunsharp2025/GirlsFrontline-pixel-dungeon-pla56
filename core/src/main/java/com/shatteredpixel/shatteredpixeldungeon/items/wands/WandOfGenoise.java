@@ -9,7 +9,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.GooWarn;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Noel;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.StaffParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -62,7 +61,7 @@ public class WandOfGenoise extends Wand {
     public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {}
 
     @Override
-    public void staffFx(StaffParticle particle) {
+    public void staffFx(MagesStaff.StaffParticle particle) {
         particle.color( 0xCC0000 );
         particle.am = 0.6f;
         particle.setLifespan(1f);

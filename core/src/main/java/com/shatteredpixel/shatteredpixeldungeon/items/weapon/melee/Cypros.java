@@ -30,7 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Beam;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.StaffParticle;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
@@ -434,12 +434,12 @@ public class Cypros extends MeleeWeapon {
         @Override
         //reimplementing this is needed as instance creation of new staff particles must be within this class.
         public void emit(Emitter emitter, int index, float x, float y ) {
-            StaffParticle c = (StaffParticle)emitter.getFirstAvailable(StaffParticle.class);
+            MagesStaff.StaffParticle c = (MagesStaff.StaffParticle)emitter.getFirstAvailable(MagesStaff.StaffParticle.class);
             if (c == null) {
-                c = new StaffParticle();
+                c = new MagesStaff.StaffParticle();
                 emitter.add(c);
             }
-            c.reset(x, y);
+            c.reset(x,y,wand);
         }
 
         @Override
@@ -448,7 +448,4 @@ public class Cypros extends MeleeWeapon {
             return wand.curCharges != 0;
         }
     };
-
-
-
 }

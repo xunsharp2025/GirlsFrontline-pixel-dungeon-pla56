@@ -493,7 +493,7 @@ public class MagesStaff extends MeleeWeapon {
                 c = new StaffParticle();
                 emitter.add(c);
             }
-            c.reset(x, y);
+            c.reset(x,y,wand);
         }
 
         @Override
@@ -508,7 +508,7 @@ public class MagesStaff extends MeleeWeapon {
     };
 
     //determines particle effects to use based on wand the staff owns.
-    public class StaffParticle extends PixelParticle{
+    public static class StaffParticle extends PixelParticle{
 
         private float minSize;
         private float maxSize;
@@ -518,7 +518,7 @@ public class MagesStaff extends MeleeWeapon {
             super();
         }
 
-        public void reset( float x, float y ) {
+        public void reset(float x,float y,Wand wand){
             revive();
 
             speed.set(0);

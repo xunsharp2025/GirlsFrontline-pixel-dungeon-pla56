@@ -27,7 +27,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.ParalyticGas;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.StaffParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Venomous;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
@@ -88,7 +87,7 @@ public class M84 extends Wand {
     }
 
     @Override
-    public void staffFx(StaffParticle particle) {
+    public void staffFx(MagesStaff.StaffParticle particle) {
         particle.color( ColorMath.random( 0x8844FF, 0x00FF00) );
         particle.am = 0.6f;
         particle.setLifespan( 1f );
