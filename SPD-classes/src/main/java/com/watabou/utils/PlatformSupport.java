@@ -30,40 +30,68 @@ import com.watabou.noosa.Game;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 public abstract class PlatformSupport {
-	
+
+	public void setOnscreenKeyboardVisible(boolean value){
+		Gdx.input.setOnscreenKeyboardVisible(value);
+	}
 	public abstract void updateDisplaySize();
-	
+
 	public abstract void updateSystemUI();
 
 	public abstract boolean connectedToUnmeteredNetwork();
+
+	public abstract boolean supportsVibration();
 
 	public void vibrate( int millis ){
 		//regular GDX vibration by default
 		Gdx.input.vibrate( millis );
 	}
 
-	public void setHonorSilentSwitch( boolean value ){
-		//does nothing by default
-	}
-
-	public boolean openURI( String uri ){
-		return Gdx.net.openURI( uri );
-	}
-
 	//TODO should consider spinning this into its own class, rather than platform support getting ever bigger
 	protected static HashMap<FreeTypeFontGenerator, HashMap<Integer, BitmapFont>> fonts;
+
+	protected static FreeTypeFontGenerator fallbackFontGenerator;
+
+	//splits on newlines, underscores, and chinese/japaneses characters
+	protected static Pattern regularsplitter = Pattern.compile(
+			"(?<=\n)|(?=\n)|(?<=_)|(?=_)|(?<=\\\\)|(?=\\\\)|" +
+					"(?<=[^\\x00-\\xff])|(?=[^\\x00-\\xff])|" +
+					"(?<=\\p{InHiragana})|(?=\\p{InHiragana})|" +
+					"(?<=\\p{InKatakana})|(?=\\p{InKatakana})|" +
+					"(?<=\\p{InHangul_Syllables})|(?=!\\p{InHangul_Syllables})|" +
+					"(?<=\\p{InCJK_Unified_Ideographs})|(?=\\p{InCJK_Unified_Ideographs})|" +
+					"(?<=\\p{InCJK_Symbols_and_Punctuation})|(?=\\p{InCJK_Symbols_and_Punctuation})" +
+					"(?<=\\p{InHalfwidth_and_Fullwidth_Forms})|(?=\\p{InHalfwidth_and_Fullwidth_Forms})");
+
+	//additionally splits on words, so that each word can be arranged individually
+	protected static Pattern regularsplitterMultiline = Pattern.compile(
+			"(?<= )|(?= )|(?<=\n)|(?=\n)|(?<=_)|(?=_)|(?<=\\\\)|(?=\\\\)|" +
+					"(?<=[^\\x00-\\xff])|(?=[^\\x00-\\xff])|" +
+					"(?<=\\p{InHiragana})|(?=\\p{InHiragana})|" +
+					"(?<=\\p{InKatakana})|(?=\\p{InKatakana})|" +
+					"(?<=\\p{InHangul_Syllables})|(?=!\\p{InHangul_Syllables})|" +
+					"(?<=\\p{InCJK_Unified_Ideographs})|(?=\\p{InCJK_Unified_Ideographs})|" +
+					"(?<=\\p{InCJK_Symbols_and_Punctuation})|(?=\\p{InCJK_Symbols_and_Punctuation})" +
+					"(?<=\\p{InHalfwidth_and_Fullwidth_Forms})|(?=\\p{InHalfwidth_and_Fullwidth_Forms})");
 
 	protected int pageSize;
 	protected PixmapPacker packer;
 	protected boolean systemfont;
-	
+
 	public abstract void setupFontGenerators(int pageSize, boolean systemFont );
 
 	protected abstract FreeTypeFontGenerator getGeneratorForString( String input );
 
-	public abstract String[] splitforTextBlock( String text, boolean multiline );
+	public String[] splitforTextBlock(String text, boolean multiline) {
+		if (multiline) {
+			return regularsplitterMultiline.split(text);
+		} else {
+			return regularsplitter.split(text);
+		}
+	}
 
 	public void resetGenerators(){
 		resetGenerators( true );
@@ -110,8 +138,8 @@ public abstract class PlatformSupport {
 
 	//flipped is needed because Shattered's graphics are y-down, while GDX graphics are y-up.
 	//this is very confusing, I know.
-	public BitmapFont getFont(int size, String text, boolean flipped, boolean border) {
-		FreeTypeFontGenerator generator = getGeneratorForString(text);
+	public BitmapFont getFont(int size, String text, boolean flipped, boolean border, boolean fallback) {
+		FreeTypeFontGenerator generator = fallback ? fallbackFontGenerator : getGeneratorForString(text);
 
 		if (generator == null){
 			return null;
@@ -142,13 +170,17 @@ public abstract class PlatformSupport {
 				BitmapFont font = generator.generateFont(parameters);
 				font.getData().missingGlyph = font.getData().getGlyph('�');
 				fonts.get(generator).put(key, font);
-			} catch ( Exception e ){
+			} catch ( Exception e ) {
 				Game.reportException(e);
 				return null;
 			}
 		}
 
 		return fonts.get(generator).get(key);
+	}
+
+	public void setHonorSilentSwitch( boolean value ){
+		//does nothing by default
 	}
 
 	// 更新游戏
@@ -196,6 +228,10 @@ public abstract class PlatformSupport {
 		 * 取消
 		 */
 		void onCancel();
+	}
+
+	public boolean openURI( String uri ){
+		return Gdx.net.openURI( uri );
 	}
 
 }
