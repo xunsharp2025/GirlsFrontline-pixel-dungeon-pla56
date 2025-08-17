@@ -30,7 +30,6 @@ android {
             applicationIdSuffix ".debug"
             versionNameSuffix '-debug'
             dependencies {
-                debugImplementation project(':services:updates:debugUpdates')
                 debugImplementation project(':services:news:debugNews')
             }
         }
@@ -48,7 +47,6 @@ android {
             versionNameSuffix '-build'
 
             dependencies {
-                releaseImplementation project(':services:updates:githubUpdates')
                 releaseImplementation project(':services:news:shatteredNews')
             }
         }
@@ -84,6 +82,13 @@ dependencies {
     natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
     natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
     implementation "com.badlogicgames.gdx-controllers:gdx-controllers-android:$gdxControllersVersion"
+
+    //只考虑安卓端 电脑端直接呼出URL
+    //----------AndroidX 版本
+    //app-updater
+    implementation 'com.github.jenly1314.AppUpdater:app-updater:1.2.0'
+    //app-dialog
+    implementation 'com.github.jenly1314.AppUpdater:app-dialog:1.2.0'
 }
 
 // called every time gradle gets executed, takes the native dependencies of
