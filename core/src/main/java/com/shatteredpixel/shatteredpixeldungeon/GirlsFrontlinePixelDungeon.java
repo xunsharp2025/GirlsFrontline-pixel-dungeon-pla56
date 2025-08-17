@@ -46,6 +46,11 @@ public class GirlsFrontlinePixelDungeon extends Game {
 	public GirlsFrontlinePixelDungeon( PlatformSupport platform ) {
 		super( sceneClass == null ? WelcomeScene.class : sceneClass, platform );
 
+		//Old And New
+		com.watabou.utils.Bundle.addAlias(
+				com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff.class,
+				"com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.G11" );
+
 		//v1.2.0
 		com.watabou.utils.Bundle.addAlias(
 				com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.CleansingDart.class,
