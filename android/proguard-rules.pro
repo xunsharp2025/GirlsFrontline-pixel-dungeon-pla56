@@ -22,6 +22,10 @@
 -keepnames class com.badlogic.gdx.graphics.Color { *; }
 -keepnames class com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle { *; }
 
+# JackSon stuff
+-dontwarn java.beans.ConstructorProperties
+-dontwarn java.beans.Transient
+
 # needed for libGDX controllers
 -keep class com.badlogic.gdx.controllers.android.AndroidControllers { *; }
 
