@@ -32,7 +32,10 @@ import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.services.news.News;
 import com.shatteredpixel.shatteredpixeldungeon.services.news.NewsImpl;
+import com.shatteredpixel.shatteredpixeldungeon.update.UpdateImpl;
+import com.shatteredpixel.shatteredpixeldungeon.update.Updates;
 import com.watabou.noosa.Game;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.Point;
 
@@ -111,12 +114,9 @@ public class DesktopLauncher {
 			Game.versionCode = Integer.parseInt(System.getProperty("Implementation-Version"));
 		}
 
-		//TODO 暂时禁用检查更新
-//		if (UpdateImpl.supportsUpdates()){
-//			Updates.service = UpdateImpl.getUpdateService();
-//		}
-		if (NewsImpl.supportsNews()){
+		if (NewsImpl.supportsNews() && !DeviceCompat.isDebug()){
 			News.service = NewsImpl.getNewsService();
+			Updates.service = UpdateImpl.getUpdateService();
 		}
 		
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();

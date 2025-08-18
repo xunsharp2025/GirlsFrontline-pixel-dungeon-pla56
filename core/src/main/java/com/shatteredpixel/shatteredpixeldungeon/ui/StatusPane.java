@@ -21,6 +21,10 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.ui;
 
+import static com.shatteredpixel.shatteredpixeldungeon.ui.MenuPane.version;
+import static com.shatteredpixel.shatteredpixeldungeon.update.GDChangesButton.downloadSuccess;
+import static com.shatteredpixel.shatteredpixeldungeon.update.GDChangesButton.updateProgress;
+
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
@@ -310,6 +314,16 @@ public class StatusPane extends Component {
 		if (tier != lastTier) {
 			lastTier = tier;
 			avatar.copy( HeroSprite.avatar( Dungeon.hero.heroClass, tier ) );
+		}
+
+		if(downloadSuccess) {
+			version.text("Download,Completed");
+			version.alpha(1f);
+			version.x = x + width - version.width();
+		} else if (!updateProgress.isEmpty()) {
+			version.text("Download:" + updateProgress);
+			version.alpha(1f);
+			version.x = x + width - version.width();
 		}
 
 		counter.setSweep((1f - Actor.now()%1f)%1f);

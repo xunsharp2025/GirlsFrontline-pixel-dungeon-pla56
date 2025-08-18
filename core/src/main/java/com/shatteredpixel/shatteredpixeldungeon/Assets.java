@@ -141,6 +141,10 @@ public class Assets {
 		public static final String HERO_ICONS   = "interfaces/hero_icons.png";
 
 		public static final String DASHBORD = "interfaces/dashboard.png";
+
+		public static final String UPBARS  = "interfaces/progress.png";
+		public static final String DOWNLOAD    = "interfaces/downloadbar.png";
+		public static final String LOADING  = "interfaces/loading.png";
 	}
 
 	//these points to resource bundles, not raw asset files

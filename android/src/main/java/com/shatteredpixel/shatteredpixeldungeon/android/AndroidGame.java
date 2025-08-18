@@ -33,12 +33,15 @@ import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.backends.android.AndroidAudio;
 import com.badlogic.gdx.backends.android.AsynchronousAndroidAudio;
-import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.services.news.News;
 import com.shatteredpixel.shatteredpixeldungeon.services.news.NewsImpl;
-import com.watabou.noosa.Game;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Button;
+import com.shatteredpixel.shatteredpixeldungeon.update.UpdateImpl;
+import com.shatteredpixel.shatteredpixeldungeon.update.Updates;
+import com.watabou.noosa.Game;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 
 import cat.ereza.customactivityoncrash.config.CaocConfig;
@@ -72,11 +75,9 @@ public class AndroidGame extends AndroidApplication {
 			} catch (PackageManager.NameNotFoundException e) {
 				Game.versionCode = 0;
 			}
-			//TODO 暂时禁用检查更新
-//			if (UpdateImpl.supportsUpdates()) {
-//				Updates.service = UpdateImpl.getUpdateService();
-//			}
-			if (NewsImpl.supportsNews()) {
+
+			if (NewsImpl.supportsNews() && !DeviceCompat.isDebug()){
+				Updates.service = UpdateImpl.getUpdateService();
 				News.service = NewsImpl.getNewsService();
 			}
 

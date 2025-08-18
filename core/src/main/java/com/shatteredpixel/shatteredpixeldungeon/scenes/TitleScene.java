@@ -22,27 +22,25 @@
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
 import static com.shatteredpixel.shatteredpixeldungeon.Chrome.Type.GREY_BUTTON;
+import static com.shatteredpixel.shatteredpixeldungeon.Chrome.Type.TOAST_TR;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BannerSprites;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Fireball;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Languages;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.services.news.News;
-import com.shatteredpixel.shatteredpixeldungeon.services.updates.AvailableUpdateData;
-import com.shatteredpixel.shatteredpixeldungeon.services.updates.Updates;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Archs;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
+import com.shatteredpixel.shatteredpixeldungeon.update.GDChangesButton;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndSelectGameInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndSettings;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndStartGame;
@@ -166,7 +164,7 @@ public class TitleScene extends PixelScene {
 		btnAbout.icon(xs);
 		add(btnAbout);
 
-		StyledButton btnChanges = new ChangesButton(Chrome.Type.TOAST_TR, Messages.get(this, "changes"));
+		StyledButton btnChanges = new GDChangesButton(TOAST_TR, Messages.get(this, "changes"));
 		btnChanges.icon(new Image(Icons.get(Icons.CHANGESLOG)));
 		btnChanges.setRect(0, h - 20, 50, 20);
 		add(btnChanges);
@@ -255,63 +253,7 @@ public class TitleScene extends PixelScene {
 		}
 	}
 
-	private static class ChangesButton extends StyledButton {
 
-		public ChangesButton( Chrome.Type type, String label ){
-			super(type, label);
-			if (SPDSettings.updates()) Updates.checkForUpdate();
-		}
-
-		boolean updateShown = false;
-
-		@Override
-		public void update() {
-			super.update();
-
-			if (!updateShown && (Updates.updateAvailable() || Updates.isInstallable())){
-				updateShown = true;
-				if (Updates.isInstallable())    text(Messages.get(TitleScene.class, "install"));
-				else                            text(Messages.get(TitleScene.class, "update"));
-			}
-
-			if (updateShown){
-				textColor(ColorMath.interpolate( 0xFFFFFF, Window.SHPX_COLOR, 0.5f + (float)Math.sin(Game.timeTotal*5)/2f));
-			}
-		}
-
-		@Override
-		protected void onClick() {
-			if (Updates.isInstallable()){
-				Updates.launchInstall();
-
-			} else if (Updates.updateAvailable()){
-				AvailableUpdateData update = Updates.updateData();
-
-				GirlsFrontlinePixelDungeon.scene().addToFront(new WndOptions(
-						Icons.get(Icons.CHANGES),
-						update.versionName == null ? Messages.get(this,"title") : Messages.get(this,"versioned_title", update.versionName),
-						update.desc == null ? Messages.get(this,"desc") : update.desc,
-						Messages.get(this,"update"),
-						Messages.get(this,"changes")
-				) {
-					@Override
-					protected void onSelect(int index) {
-						if (index == 0) {
-							Updates.launchUpdate(Updates.updateData());
-						} else if (index == 1){
-							ChangesScene.changesSelected = 0;
-							GirlsFrontlinePixelDungeon.switchNoFade( ChangesScene.class );
-						}
-					}
-				});
-
-			} else {
-				ChangesScene.changesSelected = 0;
-				GirlsFrontlinePixelDungeon.switchNoFade( ChangesScene.class );
-			}
-		}
-
-	}
 
 	private static class SettingsButton extends StyledButton {
 
