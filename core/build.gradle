@@ -7,4 +7,8 @@ dependencies {
     api project(':SPD-classes')
     //TODO might be nice to remove this, should decide
     implementation project(':services')
+
+    //Add JackSon
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.14.3'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.3'
 }
