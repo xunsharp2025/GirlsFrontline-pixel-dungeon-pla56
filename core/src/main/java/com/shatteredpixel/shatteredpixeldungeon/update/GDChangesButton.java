@@ -251,19 +251,31 @@ public class GDChangesButton extends StyledButton {
 			add(btn3);
 			pos += BUTTON_HEIGHT + MARGIN;
 
-
 			RedButton btn4 = new RedButton(Messages.get(GDChangesButton.class,"join")) {
 				@Override
 				protected void onClick() {
-					if(Objects.equals(update.URL4, "null")){
+					if(Objects.equals(update.URL2, "null")){
 						GirlsFrontlinePixelDungeon.platform.openURI( "https://qm.qq.com/q/9DnEp6FpNS" );
+					} else {
+						GirlsFrontlinePixelDungeon.platform.openURI( update.URL2 );
+					}
+				}
+			};
+			btn4.setRect(0, pos, width/2f, BUTTON_HEIGHT);
+			add(btn4);
+
+			RedButton btn5 = new RedButton(Messages.get(GDChangesButton.class,"join2")) {
+				@Override
+				protected void onClick() {
+					if(Objects.equals(update.URL3, "null")){
+						GirlsFrontlinePixelDungeon.platform.openURI( "https://qm.qq.com/q/i3ZenvhANa" );
 					} else {
 						GirlsFrontlinePixelDungeon.platform.openURI( update.URL4 );
 					}
 				}
 			};
-			btn4.setRect(0, pos, width, BUTTON_HEIGHT);
-			add(btn4);
+			btn5.setRect(btn4.right(), pos, width/2f, BUTTON_HEIGHT);
+			add(btn5);
 
 
 			pos += BUTTON_HEIGHT + MARGIN;

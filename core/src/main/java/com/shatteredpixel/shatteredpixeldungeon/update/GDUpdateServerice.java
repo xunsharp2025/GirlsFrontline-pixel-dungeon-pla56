@@ -51,6 +51,7 @@ public class GDUpdateServerice extends UpdateService {
 
 						update.URL1 = UpdateChecker.config.get("DownloadLink1").asText();
 						update.URL3 = UpdateChecker.config.get("DownloadLink3").asText();
+						update.URL2 = UpdateChecker.config.get("Join2").asText();
 						update.URL4 = UpdateChecker.config.get("Join").asText();
 						callback.onUpdateAvailable(update);
 					} else {
