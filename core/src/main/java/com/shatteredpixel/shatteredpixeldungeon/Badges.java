@@ -695,9 +695,9 @@ public class Badges {
 				addGlobal(badge);
 				
 				if (isUnlocked( Badge.BOSS_SLAIN_1_WARRIOR ) &&
-						isUnlocked( Badge.BOSS_SLAIN_1_MAGE ) &&
-						isUnlocked( Badge.BOSS_SLAIN_1_ROGUE ) &&
-						isUnlocked( Badge.BOSS_SLAIN_1_HUNTRESS) &&
+					isUnlocked( Badge.BOSS_SLAIN_1_MAGE ) &&
+					isUnlocked( Badge.BOSS_SLAIN_1_ROGUE ) &&
+					isUnlocked( Badge.BOSS_SLAIN_1_HUNTRESS) &&
 					isUnlocked( Badge.BOSS_SLAIN_1_TYPE561)) {
 					
 					badge = Badge.BOSS_SLAIN_1_ALL_CLASSES;
@@ -739,13 +739,13 @@ public class Badges {
 				addGlobal(badge);
 				
 				if (isUnlocked( Badge.BOSS_SLAIN_3_GLADIATOR ) &&
-						isUnlocked( Badge.BOSS_SLAIN_3_BERSERKER ) &&
-						isUnlocked( Badge.BOSS_SLAIN_3_WARLOCK ) &&
-						isUnlocked( Badge.BOSS_SLAIN_3_BATTLEMAGE ) &&
-						isUnlocked( Badge.BOSS_SLAIN_3_FREERUNNER ) &&
-						isUnlocked( Badge.BOSS_SLAIN_3_ASSASSIN ) &&
-						isUnlocked( Badge.BOSS_SLAIN_3_SNIPER ) &&
-						isUnlocked( Badge.BOSS_SLAIN_3_WARDEN )) {
+					isUnlocked( Badge.BOSS_SLAIN_3_BERSERKER ) &&
+					isUnlocked( Badge.BOSS_SLAIN_3_WARLOCK ) &&
+					isUnlocked( Badge.BOSS_SLAIN_3_BATTLEMAGE ) &&
+					isUnlocked( Badge.BOSS_SLAIN_3_FREERUNNER ) &&
+					isUnlocked( Badge.BOSS_SLAIN_3_ASSASSIN ) &&
+					isUnlocked( Badge.BOSS_SLAIN_3_SNIPER ) &&
+					isUnlocked( Badge.BOSS_SLAIN_3_WARDEN )) {
 					
 					badge = Badge.BOSS_SLAIN_3_ALL_SUBCLASSES;
 					if (!isUnlocked( badge )) {
