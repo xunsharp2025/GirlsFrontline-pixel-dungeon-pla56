@@ -216,4 +216,9 @@ public class Momentum extends Buff implements ActionIndicator.Action {
 		ActionIndicator.clearAction(this);
 	}
 
+	@Override
+	public void detach() {
+		super.detach();
+		ActionIndicator.clearAction(this);
+	}
 }
