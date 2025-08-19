@@ -82,6 +82,12 @@ public class JupiterSprite extends MobSprite {
         chargeParticles.visible = visible;
     }
 
+    @Override
+    public void kill(){
+        super.kill();
+        chargeParticles.killAndErase();
+    }
+
     public void charge( int pos ){
         turnTo(ch.pos, pos);
         play(charging);
