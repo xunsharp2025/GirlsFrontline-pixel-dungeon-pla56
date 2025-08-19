@@ -177,24 +177,23 @@ public class Bestiary {
 						Nemeum.class,Nemeum.class,Nemeum.class));
 			case 16:
 				return new ArrayList<>(Arrays.asList(
-						Elemental.random(), Elemental.random(), Elemental.random(), Elemental.random(), Elemental.random(),
-						Warlock.class, Warlock.class, Warlock.class, Warlock.class, Warlock.class,
-						Monk.class));
+						Elemental.random(),Elemental.random(),Elemental.random(),
+						Ghoul.class,Ghoul.class));
 			case 17:
 				return new ArrayList<>(Arrays.asList(
 						Elemental.random(), Elemental.random(),
-						Warlock.class, Warlock.class,
+						Ghoul.class, Ghoul.class, Ghoul.class,
 						Monk.class, Monk.class));
 			case 18:
 				return new ArrayList<>(Arrays.asList(
-						Warlock.class,
 						Monk.class, Monk.class, Monk.class,
+						Warlock.class, Warlock.class,
 						Golem.class));
 			case 19:
 				return new ArrayList<>(Arrays.asList(
-						Warlock.class, Warlock.class,
-						Monk.class, Golem.class,
-						Golem.class, Golem.class, Golem.class));
+						Monk.class,
+						Warlock.class, Warlock.class,Warlock.class,
+						Golem.class,Golem.class));
 			case 21:
 				return new ArrayList<>(Arrays.asList(
 						Guard.class, Guard.class));
