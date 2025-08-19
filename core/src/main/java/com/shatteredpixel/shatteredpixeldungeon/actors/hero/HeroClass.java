@@ -233,14 +233,12 @@ public enum HeroClass {
 
 	private static void initMage( Hero hero ) {
 		MagesStaff staff;
-
 		staff = new MagesStaff(new WandOfMagicMissile());
-		new ScrollOfRecharging().identify().collect();
-
 		(hero.belongings.weapon = staff).identify();
 		hero.belongings.weapon.activate(hero);
-
 		Dungeon.quickslot.setSlot(0, staff);
+
+		new ScrollOfRecharging().identify().collect();
 
 		new ScrollOfUpgrade().identify();
 	}
@@ -263,15 +261,11 @@ public enum HeroClass {
 	}
 
 	private static void initHuntress( Hero hero ) {
-
 		(hero.belongings.weapon = new M9()).identify();
+
 		SpiritBow bow = new SpiritBow();
 		bow.identify().collect();
-
 		Dungeon.quickslot.setSlot(0, bow);
-
-		new VelvetPouch().collect();
-		Dungeon.LimitedDrops.VELVET_POUCH.drop();
 
 		new PotionOfMindVision().identify();
 		new ScrollOfLullaby().identify();
