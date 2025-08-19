@@ -112,50 +112,42 @@ public class Bestiary {
 				return new ArrayList<>(Arrays.asList(
                         Rat.class));
 			case 1:
-				//10x rat
 				return new ArrayList<Class<? extends Mob>>(Arrays.asList(
 						Rat.class, Rat.class, Rat.class, Rat.class, Rat.class, Rat.class,
 						Snake.class,Snake.class));
             case 2:
-				//3x rat, 3x gnoll
 				return new ArrayList<>(Arrays.asList(
 						Rat.class, Rat.class, Rat.class,
 						Gnoll.class, Gnoll.class, Gnoll.class));
 			case 3:
-				//2x rat, 4x gnoll, 1x crab, 1x swarm
 				return new ArrayList<>(Arrays.asList(
 						Rat.class, Rat.class,
 						Gnoll.class, Gnoll.class, Gnoll.class, Gnoll.class,
 						Crab.class, Swarm.class));
 			case 4:
-				//1x rat, 2x gnoll, 3x crab, 1x swarm
 				return new ArrayList<>(Arrays.asList(
 						Rat.class,
 						Gnoll.class, Gnoll.class,
 						Crab.class, Crab.class, Crab.class,
 						Swarm.class));
 			case 6:
-				//3x skeleton, 1x thief, 1x swarm
 				return new ArrayList<>(Arrays.asList(
 						Golyat.class, Golyat.class, Golyat.class,
 						Thief.class,
 						Swarm.class));
 			case 7:
-				//3x skeleton, 1x thief, 1x shaman, 1x guard
 				return new ArrayList<>(Arrays.asList(
 						Golyat.class, Golyat.class, Golyat.class,
 						Thief.class,
 						Shaman.random(),
 						Mg5.class));
 			case 8:
-				//3x skeleton, 1x thief, 2x shaman, 2x guard
 				return new ArrayList<>(Arrays.asList(
 						Golyat.class, Golyat.class, Golyat.class,
 						Thief.class,
 						Shaman.random(), Shaman.random(),
 						Mg5.class, Mg5.class));
 			case 9:
-				//3x skeleton, 1x thief, 2x shaman, 3x guard
 				return new ArrayList<>(Arrays.asList(
 						Golyat.class, Golyat.class, Golyat.class,
 						Thief.class,
@@ -184,19 +176,16 @@ public class Bestiary {
 						Spinner.class,Spinner.class,
 						Nemeum.class,Nemeum.class,Nemeum.class));
 			case 16:
-				//5x bat, 1x brute
 				return new ArrayList<>(Arrays.asList(
 						Elemental.random(), Elemental.random(), Elemental.random(), Elemental.random(), Elemental.random(),
 						Warlock.class, Warlock.class, Warlock.class, Warlock.class, Warlock.class,
 						Monk.class));
 			case 17:
-				//5x bat, 5x brute, 1x spinner
 				return new ArrayList<>(Arrays.asList(
 						Elemental.random(), Elemental.random(),
 						Warlock.class, Warlock.class,
 						Monk.class, Monk.class));
 			case 18:
-				//1x bat, 3x brute, 1x shaman, 1x spinner
 				return new ArrayList<>(Arrays.asList(
 						Warlock.class,
 						Monk.class, Monk.class, Monk.class,
@@ -207,21 +196,17 @@ public class Bestiary {
 						Monk.class, Golem.class,
 						Golem.class, Golem.class, Golem.class));
 			case 21:
-				//5x elemental, 5x warlock, 1x monk
 				return new ArrayList<>(Arrays.asList(
 						Guard.class, Guard.class));
 			case 22:
-				//2x elemental, 2x warlock, 2x monk
 				return new ArrayList<>(Arrays.asList(
 						Dragun.class, Jupiter.class, Guard.class,
 						Guard.class, Guard.class));
 			case 23:
-				//1x elemental, 1x warlock, 2x monk, 1x golem
 				return new ArrayList<>(Arrays.asList(
 						Dragun.class, Dragun.class, Jupiter.class,
 						Guard.class, Guard.class, Guard.class, Guard.class));
 			case 24:
-				//All Hydra Ha Ha Ha..........
 				return new ArrayList<>(Arrays.asList(
 						Dragun.class, Dragun.class, Jupiter.class,
 						Guard.class, Guard.class, Guard.class, Guard.class));
