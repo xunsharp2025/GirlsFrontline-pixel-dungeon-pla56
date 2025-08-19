@@ -29,11 +29,11 @@ public class BallisticaFloat{
     public static final int STOP_SOLID = 4;     //ballistica will stop on solid terrain
     public static final int IGNORE_SOFT_SOLID = 8; //ballistica will ignore soft solid terrain, such as doors and webs
 
-    public static final int PROJECTILE =  	STOP_TARGET	| STOP_CHARS	| STOP_SOLID;
+    public static final int PROJECTILE = STOP_TARGET|STOP_CHARS|STOP_SOLID;
 
-    public static final int MAGIC_BOLT =    STOP_CHARS  | STOP_SOLID;
+    public static final int MAGIC_BOLT = STOP_CHARS |STOP_SOLID;
 
-    public static final int WONT_STOP =     0;
+    public static final int WONT_STOP  = 0;
 
     public BallisticaFloat(int from, int to, int params) {
         sourcePosI = from;

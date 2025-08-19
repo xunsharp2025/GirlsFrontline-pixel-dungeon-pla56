@@ -115,9 +115,10 @@ public class Food extends Item {
 		}
 
 		if(hero.hasTalent(Talent.BETTER_FOOD)&&this instanceof SaltyZongzi){
-			hero.HP=Math.min(hero.HP+1+2*hero.pointsInTalent(Talent.BETTER_FOOD),hero.HT);
+			int heal=(int)(hero.HT*(0.08f*hero.pointsInTalent(Talent.BETTER_FOOD)-0.06f));
+			hero.HP=Math.min(hero.HP+heal,hero.HT);
 			hero.sprite.emitter().burst(Speck.factory(Speck.HEALING),hero.pointsInTalent(Talent.BETTER_FOOD));
-			buffedEnergy+=10+15*hero.pointsInTalent(Talent.BETTER_FOOD);
+			buffedEnergy+=30f+10f*hero.pointsInTalent(Talent.BETTER_FOOD);
 		}
 
 		if (Dungeon.isChallenged(Challenges.NO_FOOD)){

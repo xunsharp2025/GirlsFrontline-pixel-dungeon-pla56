@@ -48,79 +48,19 @@ import com.watabou.utils.Random;
 import java.util.ArrayList;
 
 public class Gun561 extends ShootGun {
-	public static final String AC_CD = "CD";
 	{
-		curCharges = 0;
-		maxCharges = 1;
-		useMissileSprite = false;
-		effectIndex = 2;
-		RCH = 2;
-		shootPrompt = Messages.get(this, "prompt");
-		needEquip = false;
 		image = ItemSpriteSheet.GUN561;
+		RCH = 2;
 	}
 
 	@Override
 	public int min(int lvl) {
-		return curCharges == 0 ?  2 + lvl : 1;
+		return hasCharge ? 1 :2+lvl  ;
 	}
 	@Override
 	public int max(int lvl) {
-		return curCharges == 0 ?  6 + lvl * 2 : 2;
+		return hasCharge ? 2 :6+lvl*2;
 	}
-
-	@Override
-	public boolean reload() {
-		if (curCharges < maxCharges) {
-			curUser.sprite.showStatus( CharSprite.POSITIVE, Messages.get(this, "reload") );
-			curCharges++;
-
-			curUser.busy();
-			curUser.sprite.operate( curUser.pos );
-			updateQuickslot();
-			return true;
-		} else {
-			GLog.w(Messages.get(this, "full"));
-			return false;
-		}
-	}
-
-	@Override
-	public ArrayList<String> actions(Hero hero) {
-		//动作列表
-		ArrayList<String> actions = super.actions(hero);
-		if (Dungeon.hero.buff(Cooldown.class) != null) {
-			actions.remove(AC_RELOAD);
-			actions.remove(AC_SHOOT);
-			actions.add(AC_CD);
-		} else {
-			actions.remove(AC_CD);
-		}
-		return actions;
-	}
-
-	@Override
-	public String defaultAction(){
-		if (Dungeon.hero.buff(Cooldown.class) != null && curCharges > 0 || curCharges > 0) {
-            defaultAction = AC_SHOOT;
-        } else if (Dungeon.hero.buff(Cooldown.class) != null) {
-			defaultAction = AC_CD;
-		} else {
-			defaultAction = AC_RELOAD;
-        }
-		return defaultAction;
-	}
-
-	@Override
-	public void execute(Hero hero, String action) {
-		super.execute(hero, action);
-		if (action.equals(AC_CD)) {
-			Cooldown cooldown = hero.buff(Cooldown.class);
-			int timeLeft = (cooldown != null) ? (int)cooldown.cooldown() : 0;
-			GLog.n(Messages.get(this, "cd_status", timeLeft));
-		}
-	}
-
 
 	@Override
 	public void onShootComplete(int cell){
@@ -179,54 +119,21 @@ public class Gun561 extends ShootGun {
 					int damage=Random.NormalIntRange(Dungeon.hero.HT/2+5,Dungeon.hero.HT/2+8);
 					rate*=(n==0?1f:0.75f);
 					target.damage((int)(damage*rate),this);
-
-					if (target == Dungeon.hero && !target.isAlive())
-						Dungeon.fail(getClass());
 				}
 			}
 		}
 
-		if(Dungeon.hero.buff(Cooldown.class)==null){
-			Hero hero=Dungeon.hero;
-			float coolDownTurns=200f;
+		if(!Dungeon.hero.isAlive()){
+			Dungeon.fail(getClass());
+		}
 
-			coolDownTurns-=20f*hero.pointsInTalent(Talent.FAST_RELOAD);
+		Hero hero=Dungeon.hero;
+		cooldownTurns=200-20*hero.pointsInTalent(Talent.FAST_RELOAD);
 
-			if(hero.hasTalent(Talent.SIMPLE_RELOAD)){
-				coolDownTurns-=-5f+25f*hero.pointsInTalent(Talent.SIMPLE_RELOAD);
-			}
-
-			Buff.affect(hero, Cooldown.class,coolDownTurns);
+		if(hero.hasTalent(Talent.SIMPLE_RELOAD)){
+			cooldownTurns-=-5+25*hero.pointsInTalent(Talent.SIMPLE_RELOAD);
 		}
 
 		super.onShootComplete(cell);
 	}
-
-
-	@Override
-	public void activate(Char ch) {
-		//
-	}
-
-	@Override
-	public void onDetach( ) {
-		//
-	}
-
-	public String desc(){
-		// 获取当前实际冷却剩余时间
-		int currentCooldown = 0;
-		Cooldown cooldownBuff = Dungeon.hero.buff(Cooldown.class);
-		if (Dungeon.hero != null && cooldownBuff != null) {
-			currentCooldown = (int)cooldownBuff.cooldown();
-		}
-		int displayTime = currentCooldown > 0 ? currentCooldown : 0;
-		return Messages.get(this, "desc", displayTime);
-	};
-
-	public static class Cooldown extends FlavourBuff {
-        {
-            type = buffType.NEGATIVE;
-        }
-    }
 }

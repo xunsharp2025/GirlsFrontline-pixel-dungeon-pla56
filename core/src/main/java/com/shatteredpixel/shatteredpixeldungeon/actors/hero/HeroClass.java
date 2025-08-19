@@ -280,6 +280,7 @@ public enum HeroClass {
 	private static void initType561( Hero hero ) {
 		Gun561 gun561=new Gun561();
 		(hero.belongings.weapon=gun561).identify();
+		hero.belongings.weapon.activate(hero);
 
 		RedBook redBook = new RedBook();
 		(hero.belongings.artifact=redBook).identify();
