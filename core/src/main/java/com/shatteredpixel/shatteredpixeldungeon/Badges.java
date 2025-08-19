@@ -840,10 +840,10 @@ public class Badges {
 		addGlobal(badge);
 		
 		if (isUnlocked( Badge.VICTORY_WARRIOR ) &&
-				isUnlocked( Badge.VICTORY_MAGE ) &&
-				isUnlocked( Badge.VICTORY_ROGUE ) &&
-				isUnlocked( Badge.VICTORY_TYPE561 ) &&
-				isUnlocked( Badge.VICTORY_HUNTRESS )) {
+			isUnlocked( Badge.VICTORY_MAGE )    &&
+			isUnlocked( Badge.VICTORY_ROGUE )   &&
+			isUnlocked( Badge.VICTORY_TYPE561 ) &&
+			isUnlocked( Badge.VICTORY_HUNTRESS )) {
 			
 			badge = Badge.VICTORY_ALL_CLASSES;
 			displayBadge( badge );
