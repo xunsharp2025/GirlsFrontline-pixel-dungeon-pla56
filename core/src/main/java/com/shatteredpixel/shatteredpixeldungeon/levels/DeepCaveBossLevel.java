@@ -24,11 +24,13 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTileSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 import com.watabou.utils.Rect;
@@ -46,7 +48,7 @@ public class DeepCaveBossLevel extends Level {
     public void playLevelMusic() {
         if (locked){
             Music.INSTANCE.play(Assets.Music.RECAVES_BOSS, true);
-        } else if (map[arenaDoor] == Terrain.DOOR){
+        } else if (!enteredArena){
             Music.INSTANCE.end();
         } else {
             Music.INSTANCE.play(Assets.Music.RECAVES_1, true);
@@ -61,9 +63,7 @@ public class DeepCaveBossLevel extends Level {
     private static final int ROOM_TOP		= HEIGHT / 2 - 2;
     private static final int ROOM_BOTTOM	= HEIGHT / 2 + 2;
 
-    private int arenaDoor;
     private boolean enteredArena = false;
-    private boolean keyDropped = false;
 
     @Override
     public String tilesTex() {
@@ -75,24 +75,18 @@ public class DeepCaveBossLevel extends Level {
         return Assets.Environment.WATER_HALLS;
     }
 
-    private static final String DOOR	= "door";
     private static final String ENTERED	= "entered";
-    private static final String DROPPED	= "droppped";
 
     @Override
     public void storeInBundle( Bundle bundle ) {
         super.storeInBundle( bundle );
-        bundle.put( DOOR, arenaDoor );
         bundle.put( ENTERED, enteredArena );
-        bundle.put( DROPPED, keyDropped );
     }
 
     @Override
     public void restoreFromBundle( Bundle bundle ) {
         super.restoreFromBundle( bundle );
-        arenaDoor = bundle.getInt( DOOR );
         enteredArena = bundle.getBoolean( ENTERED );
-        keyDropped = bundle.getBoolean( DROPPED );
     }
 
     @Override
@@ -115,16 +109,12 @@ public class DeepCaveBossLevel extends Level {
 
         map[exit] = Terrain.LOCKED_EXIT;
 
-        Painter.fill( this, ROOM_LEFT - 1, ROOM_TOP - 1,
-                ROOM_RIGHT - ROOM_LEFT + 3, ROOM_BOTTOM - ROOM_TOP + 3, Terrain.WALL );
-        Painter.fill( this, ROOM_LEFT, ROOM_TOP + 1,
-                ROOM_RIGHT - ROOM_LEFT + 1, ROOM_BOTTOM - ROOM_TOP, Terrain.EMPTY );
-
-        Painter.fill( this, ROOM_LEFT, ROOM_TOP,
-                ROOM_RIGHT - ROOM_LEFT + 1, 1, Terrain.EMPTY_DECO );
-
-        arenaDoor = Random.Int( ROOM_LEFT, ROOM_RIGHT ) + (ROOM_BOTTOM + 1) * width();
-        map[arenaDoor] = Terrain.DOOR;
+        Painter.fill( this,ROOM_LEFT-1,ROOM_TOP-1,
+                ROOM_RIGHT-ROOM_LEFT+3,ROOM_BOTTOM-ROOM_TOP+3,Terrain.WALL );
+        Painter.fill( this,ROOM_LEFT  ,ROOM_TOP  ,
+                ROOM_RIGHT-ROOM_LEFT+1,ROOM_BOTTOM-ROOM_TOP+1,Terrain.EMPTY);
+        Painter.fill( this,ROOM_LEFT-1,ROOM_TOP+1,
+                ROOM_RIGHT-ROOM_LEFT+3,ROOM_BOTTOM-ROOM_TOP-1,Terrain.EMPTY);
 
         entrance = Random.Int( ROOM_LEFT + 1, ROOM_RIGHT - 1 ) +
                 Random.Int( ROOM_TOP + 1, ROOM_BOTTOM - 1 ) * width();
@@ -235,62 +225,59 @@ public class DeepCaveBossLevel extends Level {
 
     @Override
     public void occupyCell( Char ch ) {
-
         super.occupyCell( ch );
-
         if (!enteredArena && outsideEntraceRoom( ch.pos ) && ch == Dungeon.hero) {
-
             enteredArena = true;
             seal();
-
-            for (Mob m : mobs){
-                //bring the first ally with you
-                if (m.alignment == Char.Alignment.ALLY){
-                    m.pos = Dungeon.hero.pos + (Random.Int(2) == 0 ? +1 : -1);
-                    m.sprite.place(m.pos);
-                    break;
-                }
-            }
-
-            Typhootin boss = new Typhootin();
-            boss.state = boss.WANDERING;
-            do {
-                boss.pos = Random.Int( length() );
-            }while(
-               !passable[boss.pos]
-            || !outsideEntraceRoom(boss.pos)
-            ||  heroFOV[boss.pos]);
-
-            GameScene.add( boss );
-
-            set( arenaDoor, Terrain.WALL );
-            GameScene.updateMap( arenaDoor );
-            Dungeon.observe();
-
-            CellEmitter.get( arenaDoor ).start( Speck.factory( Speck.ROCK ), 0.07f, 10 );
-            Camera.main.shake( 3, 0.7f );
-            Sample.INSTANCE.play( Assets.Sounds.ROCKS );
-            playLevelMusic();
         }
     }
 
     @Override
-    public Heap drop( Item item, int cell ) {
+    public void seal(){
+        super.seal();
 
-        if (!keyDropped && item instanceof SkeletonKey) {
-
-            keyDropped = true;
-            unseal();
-
-            CellEmitter.get( arenaDoor ).start( Speck.factory( Speck.ROCK ), 0.07f, 10 );
-
-            set( arenaDoor, Terrain.EMPTY_DECO );
-            GameScene.updateMap( arenaDoor );
-            Dungeon.observe();
-            Music.INSTANCE.end();
+        for (Mob m : mobs){
+            //bring the first ally with you
+            if (m.alignment == Char.Alignment.ALLY){
+                m.pos = Dungeon.hero.pos + (Random.Int(2) == 0 ? +1 : -1);
+                m.sprite.place(m.pos);
+                break;
+            }
         }
 
-        return super.drop( item, cell );
+        Typhootin boss = new Typhootin();
+        boss.state = boss.WANDERING;
+        do {
+            boss.pos = Random.Int( length() );
+        } while (
+           !passable[boss.pos]
+        || !outsideEntraceRoom( boss.pos )
+        ||  heroFOV[boss.pos]);
+        GameScene.add( boss );
+
+        set(entrance ,Terrain.EMPTY);
+        GameScene.updateMap(entrance );
+        Dungeon.observe();
+
+        Camera.main.shake( 3, 0.7f );
+        Sample.INSTANCE.play( Assets.Sounds.ROCKS );
+        playLevelMusic();
+    }
+
+    @Override
+    public void unseal() {
+        super.unseal();
+
+        set(entrance ,Terrain.ENTRANCE  );
+        GameScene.updateMap(entrance );
+        Dungeon.observe();
+
+        Game.runOnRenderThread(new Callback() {
+            @Override
+            public void call() {
+                Music.INSTANCE.end();
+            }
+        });
     }
 
     private boolean outsideEntraceRoom( int cell ) {

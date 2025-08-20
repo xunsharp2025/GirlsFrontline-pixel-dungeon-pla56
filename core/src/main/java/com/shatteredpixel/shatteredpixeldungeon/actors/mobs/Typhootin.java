@@ -219,6 +219,7 @@ public class Typhootin extends Mob {
 
         super.die( cause );
 
+        Dungeon.level.unseal();
         GameScene.bossSlain();
         Dungeon.level.drop( new SkeletonKey( Dungeon.depth  ), pos ).sprite.drop();
 
