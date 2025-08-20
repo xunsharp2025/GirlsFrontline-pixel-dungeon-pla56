@@ -26,10 +26,61 @@ import java.util.ArrayList;
 
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
+    	add_0_5_3_Changes(changeInfos);
 		add_0_5_2_Changes(changeInfos);
 		add_0_5_1_Changes(changeInfos);
 		add_0_5_0_Changes(changeInfos);
     }
+
+    public static void add_0_5_3_Changes( ArrayList<ChangeInfo> changeInfos ){
+		ChangeInfo changes = new ChangeInfo("v0.5.3", true, "");
+		changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		changes.hardlight( CharSprite.WARNING );
+		changeInfos.add(changes);
+
+		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.GUN562, null), "游戏改动",
+			"_-_ 字体渲染：现已可使用系统字体和像素字体。\n"+
+			"_-_ 主界面图标调整\n"+
+			"_-_ 调整了宝箱怪的贴图，现在更容易辨识了\n"+
+			"_-_ 新功能：在线更新系统\n"+
+			"_-_ 减小了56-2榴弹的爆炸和伤害范围\n"+
+			"_-_ 调整了56-1和56-2的弹道逻辑\n"+
+			"_-_ 调整了56-1快捷栏的CD显示：现在更加明了了\n"+
+			"_-_ 修改了\"咸派的认可\"天赋：提高了其后期收益\n"+
+			"_-_ 增强了鉴定符石，现在不需要猜对也能使用两次\n"+
+			"_-_ 现在炼化物品时能顺便将其鉴定了\n"+
+			"_-_ 修改了矮人层怪组，加入了蚁群，强度更合理了\n"+
+			"_-_ 将坠落音效和死亡音效换成原来的\n"+
+			"_-_ 修改了军方小队boss层地形，防止\"空间信标\"返回进去"
+		));
+
+		changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+			"_-_ 更换了第三boss层遗漏的地块贴图\n"+
+			"_-_ 修复了56-2在楼层封锁时CD显示不正确的问题\n"+
+			"_-_ 恢复G11的初始伤害为1-8\n"+
+			"_-_ 修复了楼层封锁时56-1的CD不受限制的问题\n"+
+			"_-_ 更正了56-1的介绍文本\n"+
+			"_-_ 补充了被猎鸥远程杀死时缺少的文本\n"+
+			"_-_ 修复了眼镜(先见护符)相关的文本问题\n"+
+			"_-_ 修复了\"不动如山\"的文本问题(现在不再是小南娘了^-^)\n"+
+			"_-_ 修复了徽章\"全能大师\"的文本问题\n"+
+			"_-_ 修复了\"多面手\"与\"全面手\"的文本问题\n"+
+			"_-_ 修复了徽章文本问题:“戒指研究员”-->“瞄准镜研究员”,“瞄具研究员”-->“药水研究员”\n"+
+			"_-_ 修复了魔法免疫时使用卷轴的文本问题\n"+
+			"_-_ 修复了虚弱buff的文本问题\n"+
+			"_-_ 修复了HK416两个绒布袋的问题\n"+
+			"_-_ 修复了HK416浆果的文本问题\n"+
+			"_-_ 修复了\"斥候\"的动量在角色死亡后没有清除的bug\n"+
+			"_-_ 修改了矮人城地块贴图，现在不会混淆能种草的地和不能种草的地了\n"+
+			"_-_ 修复了木星和钢狮的粒子效果在某些情况下不能被正常消除的问题\n"+
+			"_-_ 修改了矮人城草地贴图不对的问题\n"+
+			"_-_ 补充、修改了元素风暴的文本\n"+
+			"_-_ 修复了军方小队boss层两个梯子的问题"
+		));
+	};
 
     public static void add_0_5_2_Changes( ArrayList<ChangeInfo> changeInfos ){
 		ChangeInfo changes = new ChangeInfo("v0.5.2", true, "");
