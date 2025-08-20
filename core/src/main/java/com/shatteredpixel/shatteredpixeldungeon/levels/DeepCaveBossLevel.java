@@ -256,19 +256,16 @@ public class DeepCaveBossLevel extends Level {
             boss.state = boss.WANDERING;
             do {
                 boss.pos = Random.Int( length() );
-            } while (
-                    !passable[boss.pos] ||
-                            !outsideEntraceRoom( boss.pos ) ||
-                            heroFOV[boss.pos]);
+            }while(
+               !passable[boss.pos]
+            || !outsideEntraceRoom(boss.pos)
+            ||  heroFOV[boss.pos]);
+
             GameScene.add( boss );
 
             set( arenaDoor, Terrain.WALL );
             GameScene.updateMap( arenaDoor );
             Dungeon.observe();
-
-            entrance = Random.Int( ROOM_LEFT + 1, ROOM_RIGHT - 1 ) +
-                    Random.Int( ROOM_TOP + 1, ROOM_BOTTOM - 1 ) * width();
-            map[entrance] = Terrain.ENTRANCE;
 
             CellEmitter.get( arenaDoor ).start( Speck.factory( Speck.ROCK ), 0.07f, 10 );
             Camera.main.shake( 3, 0.7f );
