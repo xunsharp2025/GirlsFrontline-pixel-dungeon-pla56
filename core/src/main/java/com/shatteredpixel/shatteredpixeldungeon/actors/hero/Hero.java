@@ -1793,7 +1793,7 @@ public class Hero extends Char {
 			@Override
 			public void call() {
 				GameScene.gameOver();
-				Sample.INSTANCE.play(Assets.Sounds.AIC1,0.67f);
+				Sample.INSTANCE.play(Assets.Sounds.DEATH);
 			}
 		});
 		
