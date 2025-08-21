@@ -114,7 +114,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLivingEarth;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Flail;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.AK47;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
@@ -589,7 +589,7 @@ public class Hero extends Char {
 	public boolean canSurpriseAttack(){
 		if (belongings.weapon() == null || !(belongings.weapon() instanceof Weapon))    return true;
 		if (STR() < ((Weapon)belongings.weapon()).STRReq())                             return false;
-		if (belongings.weapon() instanceof Flail)                                       return false;
+		if (belongings.weapon() instanceof AK47)                                       return false;
 
 		return true;
 	}

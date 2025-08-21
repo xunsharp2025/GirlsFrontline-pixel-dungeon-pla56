@@ -22,14 +22,17 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR;
 
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 
 public class AK47 extends DesignatedMarksmanRifle {
 
 	{
 		image = ItemSpriteSheet.AK47;
+		hitSound = Assets.Sounds.HIT_CRUSH;
+		hitSoundPitch = 0.8f;
 
 		tier = 4;
-		ACC = 0.9f; //0.9x accuracy
+		ACC = 0.8f;
 		//also cannot surprise attack, see Hero.canSurpriseAttack
 	}
 
