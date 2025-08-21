@@ -143,7 +143,7 @@ public class ShootGun extends MeleeWeapon {
                 int cell = shot.collisionPos;
 
                 if (target == curUser.pos || cell == curUser.pos) {
-                    GLog.i( Messages.get(this, "self_target") );
+                    GLog.i( Messages.get(ShootGun.class, "self_target") );
                     return;
                 }
 
