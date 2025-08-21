@@ -43,6 +43,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
@@ -94,8 +95,9 @@ public class WndStartGame extends Window {
 
 				super.onClick();
 
-				GamesInProgress.curSlot = slot;
 				Dungeon.hero = null;
+				GamesInProgress.curSlot = slot;
+				ActionIndicator.action = null;
 				InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
 
 				if (SPDSettings.intro()) {

@@ -251,7 +251,6 @@ public class StartScene extends PixelScene {
 		@Override
 		protected void onClick() {
 			if (newGame) {
-				//GirlsFrontlinePixelDungeon.scene().add( new WndStartGame(slot) );
 				GirlsFrontlinePixelDungeon.scene().add( new WndSelectGameInProgress() );
 			} else {
 				GirlsFrontlinePixelDungeon.scene().add( new WndGameInProgress(slot));
