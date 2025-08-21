@@ -43,6 +43,7 @@ import com.watabou.utils.Random;
 
 public class Gun561 extends ShootGun {
 	{
+		hasCharge=false;
 		image = ItemSpriteSheet.GUN561;
 		RCH = 2;
 	}
