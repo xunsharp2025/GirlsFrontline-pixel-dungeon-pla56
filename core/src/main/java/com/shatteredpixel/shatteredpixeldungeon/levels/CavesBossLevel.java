@@ -85,7 +85,7 @@ public class CavesBossLevel extends Level {
 
 	@Override
 	public String tilesTex() {
-		return Assets.Environment.TILES_CAVES;
+		return Assets.Environment.TILES_CAVES_BOSS;
 	}
 
 	@Override
