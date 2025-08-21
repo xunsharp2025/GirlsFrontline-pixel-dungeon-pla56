@@ -221,7 +221,7 @@ public enum MobBestiary {
                 Spinner.class,Nemeum.class);
 
         CITYS.addEntities(Elemental.FireElemental.class,Elemental.FrostElemental.class,Elemental.ChaosElemental.class,
-                Monk.class,Warlock.class,Golem.class);
+                Ghoul.class,Monk.class,Warlock.class,Golem.class);
 
         RECAVES.addEntities(
                 Dragun.class,Guard.class,Jupiter.class
