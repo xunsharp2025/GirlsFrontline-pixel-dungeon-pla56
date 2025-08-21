@@ -133,8 +133,7 @@ public class WelcomeScene extends PixelScene {
 				if (previousVersion == 0 || SPDSettings.intro()){
 					SPDSettings.version(GirlsFrontlinePixelDungeon.versionCode);
 					GamesInProgress.selectedClass = null;
-					GamesInProgress.curSlot = 1;
-					GirlsFrontlinePixelDungeon.scene().add( new WndStartGame(1) );
+					new WndStartGame(GamesInProgress.firstEmpty());
 				} else {
 					updateVersion(previousVersion);
 					GirlsFrontlinePixelDungeon.switchScene(TitleScene.class);

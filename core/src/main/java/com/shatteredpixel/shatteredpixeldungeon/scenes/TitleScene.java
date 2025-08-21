@@ -122,8 +122,7 @@ public class TitleScene extends PixelScene {
 				//making it easier to start runs quickly while debugging
 				if (DeviceCompat.isDebug()) {
 					GamesInProgress.selectedClass = null;
-					GamesInProgress.curSlot = 1;
-					GirlsFrontlinePixelDungeon.scene().add( new WndStartGame(1) );
+					new WndStartGame(GamesInProgress.firstEmpty());
 					return true;
 				}
 				return super.onLongClick();
