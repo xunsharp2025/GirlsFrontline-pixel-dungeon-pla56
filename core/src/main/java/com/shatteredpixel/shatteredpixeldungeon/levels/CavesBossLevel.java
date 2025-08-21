@@ -147,7 +147,8 @@ public class CavesBossLevel extends Level {
 
 		exit = 16 + 2*width();
 
-		CustomTilemap customVisuals = new CityEntrance();
+		CustomTilemap customVisuals;
+		customVisuals = new CityEntrance();
 		customVisuals.setRect(0, 0, width(), 11);
 		customTiles.add(customVisuals);
 
@@ -155,9 +156,9 @@ public class CavesBossLevel extends Level {
 		customVisuals.setRect(0, 0, width(), 11);
 		customWalls.add(customVisuals);
 
-		customVisuals = customArenaVisuals = new ArenaVisuals();
-		customVisuals.setRect(0, 12, width(), 27);
-		customTiles.add(customVisuals);
+		customArenaVisuals = new ArenaVisuals();
+		customArenaVisuals.setRect(0, 12, width(), 27);
+		customTiles.add(customArenaVisuals);
 
 		return true;
 
