@@ -102,6 +102,12 @@ public class Bestiary {
 				}
 				rotation.set(i, cl);
 			}
+			if (Random.Int( 250 ) == 0) {
+				if (cl == Hydra.class) {
+					cl = Typhoon.class;
+				}
+				rotation.set(i, cl);
+			}
 		}
 	}
 

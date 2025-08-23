@@ -21,14 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels;
 
-import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.depth;
-
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Hydra;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Typhoon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Torch;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.HallsPainter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
@@ -53,15 +47,12 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.traps.SummoningTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.WarpingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.WeakeningTrap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
-import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.glwrap.Blending;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.particles.PixelParticle;
-import com.watabou.utils.Bundle;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
@@ -176,47 +167,6 @@ public class HallsLevel extends RegularLevel {
 			default:
 				return super.tileDesc( tile );
 		}
-	}
-
-	private boolean typhootinSpawned = false;
-
-	@Override
-	public void occupyCell(Char ch) {
-		super.occupyCell(ch);
-		boolean chance = Random.Int(100) == 0;
-		if(!chance && !typhootinSpawned){
-			typhootinSpawned = true;
-		}
-		if (depth == 29 || depth == 28 || depth == 27) {
-			if(chance){
-				for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])) {
-					if (mob instanceof Hydra && !typhootinSpawned) {
-						mob.destroy();
-						Typhoon typhootin = new Typhoon();
-						typhootin.state = typhootin.HUNTING;
-						typhootin.pos = randomRespawnCell(typhootin);
-						GameScene.add(typhootin);
-						typhootinSpawned = true;
-						GLog.w(Messages.get(this,"warning_typhoon"));
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	private static final String STATE	        = "state";
-
-	@Override
-	public void storeInBundle( Bundle bundle ) {
-		super.storeInBundle(bundle);
-		bundle.put( STATE, typhootinSpawned );
-	}
-
-	@Override
-	public void restoreFromBundle( Bundle bundle ) {
-		super.restoreFromBundle(bundle);
-		typhootinSpawned = bundle.getBoolean(STATE);
 	}
 
 	
