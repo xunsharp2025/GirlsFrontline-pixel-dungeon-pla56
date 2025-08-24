@@ -110,6 +110,7 @@ public class LastShopLevel extends RegularLevel {
 	protected void createMobs() {
 	}
 	
+	@Override
 	public Actor addRespawner() {
 		return null;
 	}

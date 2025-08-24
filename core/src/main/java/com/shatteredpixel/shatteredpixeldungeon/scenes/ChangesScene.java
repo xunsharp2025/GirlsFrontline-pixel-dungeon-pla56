@@ -23,7 +23,6 @@ package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Languages;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
@@ -149,11 +148,6 @@ public class ChangesScene extends PixelScene {
 		addToBack( archs );
 
 		fadeIn();
-	}
-	
-	@Override
-	protected void onBackPressed() {
-		GirlsFrontlinePixelDungeon.switchNoFade(TitleScene.class);
 	}
 
 }

@@ -549,7 +549,6 @@ public class Dungeon {
 			saveLevel( GamesInProgress.curSlot );
 
 			GamesInProgress.set( GamesInProgress.curSlot, depth, challenges, hero );
-
 		}
 	}
 	

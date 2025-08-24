@@ -27,14 +27,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 
 public class DeadEndLevel extends Level {
-
-	private static final int SIZE = 5;
-	
-	{
-		color1 = 0x534f3e;
-		color2 = 0xb9d661;
-	}
-	
 	@Override
 	public String tilesTex() {
 		return Assets.Environment.TILES_CAVES;
@@ -47,27 +39,23 @@ public class DeadEndLevel extends Level {
 	
 	@Override
 	protected boolean build() {
-		
-		setSize(7, 7);
-		
-		for (int i=2; i < SIZE; i++) {
-			for (int j=2; j < SIZE; j++) {
-				map[i * width() + j] = Terrain.EMPTY;
+		final int SIZE = 7;
+
+		setSize(SIZE, SIZE);
+
+		for(int i=1;i<SIZE-1;i++){
+			for(int j=1;j<SIZE-1;j++){
+				map[i*width()+j]=Terrain.EMPTY;
 			}
 		}
 		
-		for (int i=1; i <= SIZE; i++) {
-			map[width() + i] =
-			map[width() * SIZE + i] =
-			map[width() * i + 1] =
-			map[width() * i + SIZE] =
-				Terrain.WATER;
-		}
-		
-		entrance = SIZE * width() + SIZE / 2 + 1;
-		map[entrance] = Terrain.ENTRANCE;
-		
-		exit = 0;
+		int max=(SIZE-2);
+		int min=1;
+		int center=(max+min)/2;
+		entrance  =center*width()+center;
+		//map[entrance]=Terrain.ENTRANCE;
+		exit      =center*width()+center;
+		map[exit    ]=Terrain.EXIT;
 		
 		return true;
 	}
@@ -81,6 +69,7 @@ public class DeadEndLevel extends Level {
 	protected void createMobs() {
 	}
 
+	@Override
 	public Actor addRespawner() {
 		return null;
 	}
@@ -88,10 +77,4 @@ public class DeadEndLevel extends Level {
 	@Override
 	protected void createItems() {
 	}
-	
-	@Override
-	public int randomRespawnCell( Char ch ) {
-		return entrance-width();
-	}
-
 }

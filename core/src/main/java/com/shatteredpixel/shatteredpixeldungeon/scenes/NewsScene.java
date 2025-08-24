@@ -162,7 +162,7 @@ public class NewsScene extends PixelScene {
 
 	@Override
 	protected void onBackPressed() {
-		GirlsFrontlinePixelDungeon.switchNoFade( TitleScene.class );
+		GirlsFrontlinePixelDungeon.switchScene( ZeroLevelScene.class );
 	}
 
 	@Override

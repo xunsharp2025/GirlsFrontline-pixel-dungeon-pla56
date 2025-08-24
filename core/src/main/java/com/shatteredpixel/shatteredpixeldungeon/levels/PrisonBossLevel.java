@@ -544,6 +544,7 @@ public class PrisonBossLevel extends Level {
 		tengu = new Tengu(); //We want to keep track of tengu independently of other mobs, he's not always in the level.
 	}
 	
+	@Override
 	public Actor addRespawner() {
 		return null;
 	}

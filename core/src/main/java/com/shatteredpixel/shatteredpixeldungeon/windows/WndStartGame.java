@@ -51,16 +51,14 @@ import com.watabou.noosa.RenderedText;
 import com.watabou.noosa.ui.Component;
 import com.watabou.utils.DeviceCompat;
 
+import java.io.IOException;
+
 public class WndStartGame extends Window {
 
 	private static final int WIDTH    = 117;
 	private static final int HEIGHT   = 150;
 
 	public WndStartGame(final int slot){
-
-		Badges.loadGlobal();
-		Journal.loadGlobal();
-
 		RenderedTextBlock title = PixelScene.renderTextBlock(Messages.get(this, "title"), 12 );
 		title.hardlight(Window.TITLE_COLOR);
 		title.setPos((WIDTH - title.width())/2f,2);
@@ -92,12 +90,13 @@ public class WndStartGame extends Window {
 			@Override
 			protected void onClick() {
 				if (GamesInProgress.selectedClass == null) return;
-
 				super.onClick();
+				try{Dungeon.saveAll();}
+				catch(IOException e){Game.reportException(e);}
 
 				Dungeon.hero = null;
-				GamesInProgress.curSlot = slot;
 				ActionIndicator.action = null;
+				GamesInProgress.curSlot = slot;
 				InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
 
 				if (SPDSettings.intro()) {

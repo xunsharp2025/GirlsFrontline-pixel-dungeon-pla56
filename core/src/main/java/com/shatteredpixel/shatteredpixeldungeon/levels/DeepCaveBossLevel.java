@@ -196,6 +196,7 @@ public class DeepCaveBossLevel extends Level {
     protected void createMobs() {
     }
 
+    @Override
     public Actor addRespawner() {
         return null;
     }

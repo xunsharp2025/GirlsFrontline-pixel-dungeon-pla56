@@ -73,7 +73,7 @@ public class WelcomeScene extends PixelScene {
 		}
 
 		if (GirlsFrontlinePixelDungeon.versionCode == previousVersion && !SPDSettings.intro()) {
-			GirlsFrontlinePixelDungeon.switchNoFade(TitleScene.class);
+			GirlsFrontlinePixelDungeon.switchScene(ZeroLevelScene.class);
 			return;
 		}
 
@@ -136,7 +136,7 @@ public class WelcomeScene extends PixelScene {
 					new WndStartGame(GamesInProgress.firstEmpty());
 				} else {
 					updateVersion(previousVersion);
-					GirlsFrontlinePixelDungeon.switchScene(TitleScene.class);
+					GirlsFrontlinePixelDungeon.switchScene(ZeroLevelScene.class);
 				}
 			}
 		};
@@ -144,7 +144,7 @@ public class WelcomeScene extends PixelScene {
 		float buttonY = Math.min(topRegion + (PixelScene.landscape() ? 60 : 120), h - 24);
 
 		if (previousVersion != 0 && !SPDSettings.intro()){
-			StyledButton changes = new StyledButton(Chrome.Type.GREY_BUTTON_TR, Messages.get(TitleScene.class, "changes")){
+			StyledButton changes = new StyledButton(Chrome.Type.GREY_BUTTON_TR, Messages.get(ZeroLevelScene.class, "changes")){
 				@Override
 				protected void onClick() {
 					super.onClick();
@@ -159,7 +159,7 @@ public class WelcomeScene extends PixelScene {
 			changes.icon(Icons.get(Icons.CHANGES));
 			add(changes);
 		} else {
-			okay.text(Messages.get(TitleScene.class, "enter"));
+			okay.text(Messages.get(ZeroLevelScene.class, "enter"));
 			okay.setRect(title.x, buttonY, title.width(), 20);
 			okay.icon(Icons.get(Icons.ENTER));
 			add(okay);

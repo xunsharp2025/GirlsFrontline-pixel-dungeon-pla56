@@ -74,7 +74,7 @@ public class InterlevelScene extends PixelScene {
 	public enum Mode {
 		DESCEND, ASCEND, CONTINUE, RESURRECT, RETURN, FALL, RESET, NONE
 	}
-	public static Mode mode;
+	public static Mode mode=Mode.NONE;
 	
 	public static int returnDepth;
 	public static int returnPos;
@@ -344,7 +344,7 @@ public class InterlevelScene extends PixelScene {
 				add( new WndError( errorMsg ) {
 					public void onBackPressed() {
 						super.onBackPressed();
-						Game.switchScene( StartScene.class );
+						Game.switchScene( ZeroLevelScene.class );
 					}
 				} );
 				thread = null;
@@ -366,7 +366,7 @@ public class InterlevelScene extends PixelScene {
 		}
 	}
 
-	private void descend() throws IOException {
+	public static void descend() throws IOException {
 
 		if (Dungeon.hero == null) {
 			Mob.clearHeldAllies();
@@ -428,8 +428,7 @@ public class InterlevelScene extends PixelScene {
 		Dungeon.switchLevel( level, returnPos );
 	}
 	
-	private void restore() throws IOException {
-		
+	public static void restore() throws IOException {
 		Mob.clearHeldAllies();
 
 		GameLog.wipe();

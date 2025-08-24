@@ -28,7 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.RankingsScene;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.ZeroLevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.services.updates.Updates;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
@@ -72,32 +72,11 @@ public class WndGame extends Window {
 			curBtn.icon(Icons.get(Icons.CHANGES));
 		}
 
-		// Challenges window
-		if (Dungeon.challenges > 0) {
-			addButton( curBtn = new RedButton( Messages.get(this, "challenges") ) {
-				@Override
-				protected void onClick() {
-					hide();
-					GameScene.show( new WndChallenges( Dungeon.challenges, false ) );
-				}
-			} );
-			curBtn.icon(Icons.get(Icons.CHALLENGE_ON));
-		}
-
-		// Restart
-		if (Dungeon.hero == null || !Dungeon.hero.isAlive()) {
-
-			addButton( curBtn = new RedButton( Messages.get(this, "start") ) {
-				@Override
-				protected void onClick() {
-					InterlevelScene.noStory = true;
-					GamesInProgress.selectedClass = Dungeon.hero.heroClass;
-					GirlsFrontlinePixelDungeon.scene().add( new WndStartGame(GamesInProgress.firstEmpty()) );
-				}
-			} );
-			curBtn.icon(Icons.get(Icons.ENTER));
-			curBtn.textColor(Window.TITLE_COLOR);
-			
+		// hero is dead
+		boolean heroDied=(Dungeon.hero == null || !Dungeon.hero.isAlive());
+		
+		//rankings scene
+		if (heroDied) {
 			addButton( curBtn = new RedButton( Messages.get(this, "rankings") ) {
 				@Override
 				protected void onClick() {
@@ -109,18 +88,30 @@ public class WndGame extends Window {
 		}
 
 		// Main menu
-		addButton(curBtn = new RedButton( Messages.get(this, "menu") ) {
-			@Override
-			protected void onClick() {
-				try {
-					Dungeon.saveAll();
-				} catch (IOException e) {
-					GirlsFrontlinePixelDungeon.reportException(e);
+		if(0!=GamesInProgress.curSlot||heroDied){
+			addButton(curBtn = new RedButton( Messages.get(this, "menu") ) {
+				@Override
+				protected void onClick() {
+					try{Dungeon.saveAll();
+					}catch(IOException e){Game.reportException(e);}
+					Game.switchScene(ZeroLevelScene.class);
 				}
-				Game.switchScene(TitleScene.class);
-			}
-		} );
-		curBtn.icon(Icons.get(Icons.DISPLAY));
+			} );
+			curBtn.icon(Icons.get(Icons.DISPLAY));
+		}
+
+		//exit
+		if(0==GamesInProgress.curSlot){
+			addButton(curBtn = new RedButton( Messages.get(this, "exit") ) {
+				@Override
+				protected void onClick() {
+					try{Dungeon.saveAll();
+					}catch(IOException e){Game.reportException(e);}
+					Game.instance.finish();
+				}
+			} );
+			curBtn.icon(Icons.get(Icons.EXIT));
+		}
 
 		resize( WIDTH, pos );
 	}

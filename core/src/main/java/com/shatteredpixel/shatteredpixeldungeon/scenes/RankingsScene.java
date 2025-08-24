@@ -139,11 +139,6 @@ public class RankingsScene extends PixelScene {
 		fadeIn();
 	}
 	
-	@Override
-	protected void onBackPressed() {
-		GirlsFrontlinePixelDungeon.switchNoFade(TitleScene.class);
-	}
-	
 	public static class Record extends Button {
 		
 		private static final float GAP	= 4;

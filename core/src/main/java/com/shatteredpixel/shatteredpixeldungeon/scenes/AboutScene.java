@@ -21,7 +21,6 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Archs;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
@@ -31,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.ScrollPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.watabou.input.PointerEvent;
 import com.watabou.noosa.Camera;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.Image;
@@ -269,11 +269,6 @@ public class AboutScene extends PixelScene {
 		//fadeIn();
 	}
 
-	@Override
-	protected void onBackPressed() {
-		GirlsFrontlinePixelDungeon.switchScene(TitleScene.class);
-	}
-
 	private void addLine( float y, Group content ){
 		ColorBlock line = new ColorBlock(Camera.main.width, 1, 0xFF333333);
 		line.y = y;
@@ -333,7 +328,7 @@ public class AboutScene extends PixelScene {
 				linkButton = new PointerArea(0, 0, 0, 0){
 					@Override
 					protected void onClick( PointerEvent event ) {
-						GirlsFrontlinePixelDungeon.platform.openURI( linkUrl );
+						Game.platform.openURI( linkUrl );
 					}
 				};
 				add(linkButton);

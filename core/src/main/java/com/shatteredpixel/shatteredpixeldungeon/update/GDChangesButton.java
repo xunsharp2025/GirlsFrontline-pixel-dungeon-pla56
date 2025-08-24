@@ -6,7 +6,7 @@ import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.ChangesScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.ZeroLevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
@@ -49,7 +49,7 @@ public class GDChangesButton extends StyledButton {
 
 		if (!updateShown && Updates.updateAvailable()) {
 			updateShown = true;
-			text(Messages.get(TitleScene.class, "update"));
+			text(Messages.get(ZeroLevelScene.class, "update"));
 		} else if(downloadFailure) {
 			text(Messages.get(GDChangesButton.class, "updatefailed"));
 		} else if(updateProgressValue<100f && downloadStart){

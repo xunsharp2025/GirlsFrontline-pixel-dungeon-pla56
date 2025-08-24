@@ -159,6 +159,7 @@ public abstract class Level implements Bundlable {
 
 	protected Group visuals;
 	
+	//leaf particle color (blobs/Regrowth and so on)
 	public int color1 = 0x004400;
 	public int color2 = 0x88CC44;
 
@@ -448,13 +449,9 @@ public abstract class Level implements Bundlable {
 		return length;
 	}
 	
-	public String tilesTex() {
-		return null;
-	}
+	abstract public String tilesTex();
 	
-	public String waterTex() {
-		return null;
-	}
+	abstract public String waterTex();
 	
 	abstract protected boolean build();
 	

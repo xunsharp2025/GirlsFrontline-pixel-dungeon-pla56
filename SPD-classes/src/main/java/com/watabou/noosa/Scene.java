@@ -68,7 +68,6 @@ public class Scene extends Group {
 	}
 	
 	protected void onBackPressed() {
-		Game.instance.finish();
 	}
 
 }

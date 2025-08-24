@@ -118,6 +118,7 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndInfoTrap;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndKeyBindings;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndMessage;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndSaveSlot;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndStartGame;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndStory;
@@ -206,7 +207,7 @@ public class GameScene extends PixelScene {
 	public void create() {
 		
 		if (Dungeon.hero == null || Dungeon.level == null){
-			GirlsFrontlinePixelDungeon.switchNoFade(TitleScene.class);
+			GirlsFrontlinePixelDungeon.switchScene(ZeroLevelScene.class);
 			return;
 		}
 
@@ -1216,56 +1217,7 @@ public class GameScene extends PixelScene {
 	}
 
 	public static void gameOver() {
-		Banner gameOver = new Banner( BannerSprites.get( BannerSprites.Type.GAME_OVER ) );
-		gameOver.show( 0x000000, 2f );
-		scene.showBanner( gameOver );
-
-		StyledButton restart = new StyledButton(Chrome.Type.GREY_BUTTON_TR, Messages.get(StartScene.class, "new"), 9){
-			@Override
-			protected void onClick() {
-				InterlevelScene.noStory = true;
-				GamesInProgress.selectedClass = Dungeon.hero.heroClass;
-				GirlsFrontlinePixelDungeon.scene().addToFront( new WndStartGame(GamesInProgress.firstEmpty()) );
-			}
-
-			@Override
-			public void update() {
-				alpha(gameOver.am);
-				super.update();
-			}
-		};
-		restart.icon(Icons.get(Icons.ENTER));
-		restart.alpha(0);
-		restart.camera = uiCamera;
-		float offset = Camera.main.centerOffset.y;
-		restart.setSize(Math.max(80, restart.reqWidth()), 20);
-		restart.setPos(
-				align(uiCamera, (restart.camera.width - restart.width()) / 2),
-				align(uiCamera, (restart.camera.height - restart.height()) / 2 + restart.height()/2 + 16 - offset)
-		);
-		scene.add(restart);
-
-		StyledButton menu = new StyledButton(Chrome.Type.GREY_BUTTON_TR, Messages.get(WndKeyBindings.class, "menu"), 9){
-			@Override
-			protected void onClick() {
-				GameScene.show(new WndGame());
-			}
-
-			@Override
-			public void update() {
-				alpha(gameOver.am);
-				super.update();
-			}
-		};
-		menu.icon(Icons.get(Icons.PREFS));
-		menu.alpha(0);
-		menu.camera = uiCamera;
-		menu.setSize(Math.max(80, menu.reqWidth()), 20);
-		menu.setPos(
-				align(uiCamera, (menu.camera.width - menu.width()) / 2),
-				restart.bottom() + 2
-		);
-		scene.add(menu);
+		scene.add(new WndGame());
 	}
 	
 	public static void bossSlain() {

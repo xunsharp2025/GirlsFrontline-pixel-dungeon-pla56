@@ -23,7 +23,6 @@ package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Archs;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BadgesGrid;
@@ -81,11 +80,6 @@ public class BadgesScene extends PixelScene {
 		Badges.saveGlobal();
 
 		super.destroy();
-	}
-
-	@Override
-	protected void onBackPressed() {
-		GirlsFrontlinePixelDungeon.switchNoFade( TitleScene.class );
 	}
 
 }

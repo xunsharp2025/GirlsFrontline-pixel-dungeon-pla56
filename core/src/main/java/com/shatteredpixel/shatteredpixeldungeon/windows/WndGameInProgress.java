@@ -30,7 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.ZeroLevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Button;
@@ -127,11 +127,12 @@ public class WndGameInProgress extends Window {
 			@Override
 			protected void onClick() {
 				super.onClick();
-				
-				GamesInProgress.curSlot = slot;
+				try{Dungeon.saveAll();}
+				catch(IOException e){Game.reportException(e);}
 				
 				Dungeon.hero = null;
 				ActionIndicator.action = null;
+				GamesInProgress.curSlot = slot;
 				InterlevelScene.mode = InterlevelScene.Mode.CONTINUE;
 				GirlsFrontlinePixelDungeon.switchScene(InterlevelScene.class);
 			}
