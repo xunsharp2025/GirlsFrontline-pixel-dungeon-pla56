@@ -266,7 +266,7 @@ public class AboutScene extends PixelScene {
 		btnExit.setPos( Camera.main.width - btnExit.width(), 0 );
 		add( btnExit );
 
-		//fadeIn();
+		fadeIn();
 	}
 
 	private void addLine( float y, Group content ){

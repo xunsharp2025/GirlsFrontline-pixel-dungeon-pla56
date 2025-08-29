@@ -48,6 +48,7 @@ import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.TestBag;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.TimeReverser;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.TrapPlacer;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.WandOfReflectDisintegration;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.MapEditor;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.LazyTest;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestArmor;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestArtifact;
@@ -120,6 +121,10 @@ public enum HeroClass {
 
 		Waterskin waterskin = new Waterskin();
 		waterskin.collect();
+
+		if (DeviceCompat.isDebug()){
+			new MapEditor().collect();
+		}
 
 		if (DeviceCompat.isDebug() || Dungeon.isChallenged(Challenges.TEST_MODE)){
 			CustomWeapon customWeapon = new CustomWeapon();

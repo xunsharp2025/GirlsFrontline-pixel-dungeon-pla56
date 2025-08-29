@@ -27,8 +27,6 @@ public class Assets {
 	public static final String TOW 			= "tow.png";
 
 	//need Organize
-	public static final String SAVESLOT		= "new_ui.png";
-	public static final String PORTRAIT1	= "portrait1.png";
 	public static final String EMOTION 		= "emotion.png";
 	public static final String PYRO			= "sprites/girlpd/pyro.png";
 	public static final String NOEL			= "noel.png";
@@ -53,7 +51,7 @@ public class Assets {
 	public static final String PROWLER		= "sprites/girlpd/prowler.png";
 	public static final String EXCU			= "sprites/boss/excutioner.png";
 
-	public static final String MASTAR_HEAD			= "sprites/boss/master_head.png";
+	public static final String MASTAR_HEAD	= "sprites/boss/master_head.png";
 	public static final String DISTORY		= "sprites/boss/disloli.png";
 	public static final String GOLYAT		= "sprites/girlpd/golyat.png";
 	public static final String MG5	    	= "sprites/girlpd/mg5.png";
@@ -63,7 +61,7 @@ public class Assets {
 	public static final String ACYCLOPS		= "sprites/girlpd/acyclops.png";
 	public static final String HYDRA		= "sprites/girlpd/hydra.png";
 	public static final String GOLYATPLUS	= "sprites/girlpd/golyatplus.png";
-
+	
 	public static class Effects {
 		public static final String EFFECTS      = "effects/effects.png";
 		public static final String FIREBALL     = "effects/fireball.png";
@@ -79,14 +77,14 @@ public class Assets {
 		public static final String VISUAL_GRID  = "environment/visual_grid.png";
 		public static final String WALL_BLOCKING= "environment/wall_blocking.png";
 
-		public static final String TILES_SEWERS     = "environment/tiles_sewers.png";
-		public static final String TILES_PRISON     = "environment/tiles_prison.png";
-		public static final String TILES_CAVES      = "environment/tiles_caves.png";
-		public static final String TILES_CAVES_BOSS = "environment/tiles_caves_boss.png";
-		public static final String TILES_CITY       = "environment/tiles_city.png";
-
-		public static final String TILES_RECAVES   = "environment/tiles_recaves.png";
-		public static final String TILES_HALLS  = "environment/tiles_halls.png";
+		public static final String TILES_ZERO_LEVEL="environment/tiles_zero_level.png";
+		public static final String TILES_SEWERS    ="environment/tiles_sewers.png";
+		public static final String TILES_PRISON    ="environment/tiles_prison.png";
+		public static final String TILES_CAVES     ="environment/tiles_caves.png";
+		public static final String TILES_CAVES_BOSS="environment/tiles_caves_boss.png";
+		public static final String TILES_CITY      ="environment/tiles_city.png";
+		public static final String TILES_RECAVES   ="environment/tiles_recaves.png";
+		public static final String TILES_HALLS     ="environment/tiles_halls.png";
 
 		public static final String WATER_SEWERS = "environment/water0.png";
 		public static final String WATER_PRISON = "environment/water1.png";
@@ -110,6 +108,9 @@ public class Assets {
 	}
 
 	public static class Interfaces {
+		public static final String SAVESLOT	= "interfaces/new_ui.png";
+		public static final String PORTRAIT1= "interfaces/portrait1.png";
+		
 		public static final String ARCS_BG  = "interfaces/arcs1.png";
 		public static final String ARCS_FG  = "interfaces/arcs2.png";
 

@@ -75,7 +75,7 @@ public class ZeroLevel extends Level {
 
 	@Override
 	public String tilesTex() {
-		return Assets.Environment.TILES_CAVES;
+		return Assets.Environment.TILES_ZERO_LEVEL;
 	}
 	
 	@Override
@@ -203,12 +203,7 @@ public class ZeroLevel extends Level {
 		}
 		if(onSaveSlot){
 			int finalSaveSlot=curSaveSlot;
-			Game.runOnRenderThread(new Callback() {
-				@Override
-				public void call() {
-					GameScene.show(new WndSaveSlot(finalSaveSlot));
-				}
-			});
+			Game.runOnRenderThread(()->GameScene.show(new WndSaveSlot(finalSaveSlot)));
 		}
 
 		if(about    ==pos){

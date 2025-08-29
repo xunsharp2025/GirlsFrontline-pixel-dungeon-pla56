@@ -41,9 +41,8 @@ public class Challenges {
 	public static final int NO_SCROLLS		    = 64;
 	public static final int CHAMPION_ENEMIES	= 128;
 	public static final int STRONGER_BOSSES 	= 256;
-	public static final int INFLATION				= 512;
-
-	public static final int TEST_MODE = 1024;
+	public static final int INFLATION			= 512;
+	public static final int TEST_MODE           = 1024;
 
 	public static final int MAX_VALUE           = 2048;
 

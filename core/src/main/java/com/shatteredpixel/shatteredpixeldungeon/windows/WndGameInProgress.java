@@ -54,6 +54,7 @@ public class WndGameInProgress extends Window {
 	private float pos;
 	
 	public WndGameInProgress(final int slot){
+		super();
 		
 		final GamesInProgress.Info info = GamesInProgress.check(slot);
 		

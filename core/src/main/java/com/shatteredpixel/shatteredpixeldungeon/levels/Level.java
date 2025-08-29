@@ -746,6 +746,27 @@ public abstract class Level implements Bundlable {
 			discoverable[i] = d;
 		}
 	}
+
+	public static void cleanWalls(int cell,Level level){
+		int[] map=level.map;
+		boolean[] discoverable=level.discoverable;
+		int length=level.length;
+
+		for (int i=0; i < PathFinder.NEIGHBOURS9.length; i++) {
+			int cellAndAround=cell+PathFinder.NEIGHBOURS9[i];
+
+			boolean d = false;
+			for (int j=0; j < PathFinder.NEIGHBOURS9.length; j++) {
+				int n = cellAndAround + PathFinder.NEIGHBOURS9[j];
+				if (n >= 0 && n < length && map[n] != Terrain.WALL && map[n] != Terrain.WALL_DECO) {
+					d = true;
+					break;
+				}
+			}
+			
+			discoverable[cellAndAround]=d;
+		}
+	}
 	
 	public static void set( int cell, int terrain ){
 		set( cell, terrain, Dungeon.level );
@@ -753,6 +774,8 @@ public abstract class Level implements Bundlable {
 	
 	public static void set( int cell, int terrain, Level level ) {
 		Painter.set( level, cell, terrain );
+
+		cleanWalls(cell,level);
 
 		if (terrain != Terrain.TRAP && terrain != Terrain.SECRET_TRAP && terrain != Terrain.INACTIVE_TRAP){
 			level.traps.remove( cell );

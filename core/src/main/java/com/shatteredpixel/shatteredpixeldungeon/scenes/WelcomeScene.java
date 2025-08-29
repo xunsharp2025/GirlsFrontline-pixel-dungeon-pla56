@@ -72,11 +72,6 @@ public class WelcomeScene extends PixelScene {
 			return;
 		}
 
-		if (GirlsFrontlinePixelDungeon.versionCode == previousVersion && !SPDSettings.intro()) {
-			GirlsFrontlinePixelDungeon.switchScene(ZeroLevelScene.class);
-			return;
-		}
-
 		Music.INSTANCE.playTracks(
 				new String[]{Assets.Music.THEME_1, Assets.Music.THEME_2},
 				new float[]{1, 1},
@@ -91,42 +86,16 @@ public class WelcomeScene extends PixelScene {
 		archs.setSize( w, h );
 		add( archs );
 
-		//darkens the arches
-		add(new ColorBlock(w, h, 0x88000000));
-
 		Image title = BannerSprites.get( BannerSprites.Type.PIXEL_DUNGEON );
 		add( title );
-
 		float topRegion = Math.max(title.height - 6, h*0.45f);
-
 		title.x = (w - title.width()) / 2f;
 		title.y = 2 + (topRegion - title.height()) / 2f;
-
 		align(title);
-
 		placeTorch(title.x + 22, title.y + 46);
 		placeTorch(title.x + title.width - 22, title.y + 46);
-
-		Image signs = new Image( BannerSprites.get( BannerSprites.Type.PIXEL_DUNGEON_SIGNS ) ) {
-			private float time = 0;
-			@Override
-			public void update() {
-				super.update();
-				am = Math.max(0f, (float)Math.sin( time += Game.elapsed ));
-				if (time >= 1.5f*Math.PI) time = 0;
-			}
-			@Override
-			public void draw() {
-				Blending.setLightMode();
-				super.draw();
-				Blending.setNormalMode();
-			}
-		};
-		signs.x = title.x + (title.width() - signs.width())/2f;
-		signs.y = title.y;
-		add( signs );
 		
-		StyledButton okay = new StyledButton(Chrome.Type.GREY_BUTTON_TR, Messages.get(this, "continue")){
+		StyledButton okay = new StyledButton(Chrome.Type.GREY_BUTTON_TR,null){
 			@Override
 			protected void onClick() {
 				super.onClick();
@@ -140,48 +109,20 @@ public class WelcomeScene extends PixelScene {
 				}
 			}
 		};
-
 		float buttonY = Math.min(topRegion + (PixelScene.landscape() ? 60 : 120), h - 24);
-
-		if (previousVersion != 0 && !SPDSettings.intro()){
-			StyledButton changes = new StyledButton(Chrome.Type.GREY_BUTTON_TR, Messages.get(ZeroLevelScene.class, "changes")){
-				@Override
-				protected void onClick() {
-					super.onClick();
-					updateVersion(previousVersion);
-					GirlsFrontlinePixelDungeon.switchScene(ChangesScene.class);
-				}
-			};
-			okay.setRect(title.x, buttonY, (title.width()/2)-2, 20);
-			add(okay);
-
-			changes.setRect(okay.right()+2, buttonY, (title.width()/2)-2, 20);
-			changes.icon(Icons.get(Icons.CHANGES));
-			add(changes);
-		} else {
-			okay.text(Messages.get(ZeroLevelScene.class, "enter"));
-			okay.setRect(title.x, buttonY, title.width(), 20);
-			okay.icon(Icons.get(Icons.ENTER));
-			add(okay);
-		}
+		okay.text(Messages.get(this,"enter"));
+		okay.setRect(title.x, buttonY, title.width(), 20);
+		okay.icon(Icons.get(Icons.ENTER));
+		add(okay);
 
 		RenderedTextBlock text = PixelScene.renderTextBlock(6);
 		String message;
-		if (previousVersion == 0 || SPDSettings.intro()) {
+		if(GirlsFrontlinePixelDungeon.versionCode == previousVersion && !SPDSettings.intro()){
+			message = Messages.get(this, "coutinue_msg");
+		}else if (previousVersion == 0 || SPDSettings.intro()) {
 			message = Messages.get(this, "welcome_msg");
 		} else if (previousVersion <= GirlsFrontlinePixelDungeon.versionCode) {
-			if (previousVersion < LATEST_UPDATE){
-				message = Messages.get(this, "update_intro");
-				message += "\n\n" + Messages.get(this, "update_msg");
-			} else {
-				//TODO: change the messages here in accordance with the type of patch.
-				message = Messages.get(this, "patch_intro");
-				message += "\n";
-				//message += "\n" + Messages.get(this, "patch_balance");
-				message += "\n" + Messages.get(this, "patch_bugfixes");
-				message += "\n" + Messages.get(this, "patch_translations");
-
-			}
+			message = Messages.get(this, "update_msg");
 		} else {
 			message = Messages.get(this, "what_msg");
 		}
@@ -189,7 +130,6 @@ public class WelcomeScene extends PixelScene {
 		float textSpace = okay.top() - topRegion - 4;
 		text.setPos((w - text.width()) / 2f, (topRegion + 2) + (textSpace - text.height())/2);
 		add(text);
-
 	}
 
 	private void placeTorch( float x, float y ) {

@@ -619,7 +619,7 @@ public class ItemSpriteSheet {
 			assignItemRect(i, 12, 14);
 	}
 	
-	private static final int SPELLS         =                               xy(1, 27);  //16 slots
+	private static final int SPELLS         = xy(1, 27);  //16 slots
 	public static final int MAGIC_PORTER    = SPELLS+0;
 	public static final int PHASE_SHIFT     = SPELLS+1;
 	public static final int TELE_GRAB       = SPELLS+2;

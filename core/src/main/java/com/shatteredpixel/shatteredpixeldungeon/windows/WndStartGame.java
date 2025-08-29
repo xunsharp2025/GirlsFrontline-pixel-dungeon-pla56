@@ -59,6 +59,8 @@ public class WndStartGame extends Window {
 	private static final int HEIGHT   = 150;
 
 	public WndStartGame(final int slot){
+		super();
+
 		RenderedTextBlock title = PixelScene.renderTextBlock(Messages.get(this, "title"), 12 );
 		title.hardlight(Window.TITLE_COLOR);
 		title.setPos((WIDTH - title.width())/2f,2);

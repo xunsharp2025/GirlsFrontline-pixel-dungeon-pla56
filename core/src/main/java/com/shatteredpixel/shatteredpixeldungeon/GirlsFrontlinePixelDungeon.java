@@ -26,7 +26,6 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.ZeroLevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.WelcomeScene;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.ZeroLevelScene;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
@@ -45,9 +44,7 @@ public class GirlsFrontlinePixelDungeon extends Game {
 	public static final int v1_2_0   = 609;
 	
 	public GirlsFrontlinePixelDungeon( PlatformSupport platform ) {
-		//super( sceneClass == null ? WelcomeScene.class : sceneClass, platform );
-		super(ZeroLevelScene.class,platform);
-		
+		super(sceneClass==null?WelcomeScene.class:sceneClass,platform );
 
 		//Old And New
 		com.watabou.utils.Bundle.addAlias(
