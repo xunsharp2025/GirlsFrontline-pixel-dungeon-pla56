@@ -403,7 +403,6 @@ public class ItemSpriteSheet {
 	public static final int WAND_WARDING        = WANDS+10;
 	public static final int WAND_REGROWTH       = WANDS+11;
 	public static final int WAND_TRANSFUSION    = WANDS+12;
-	public static final int WAND_Reflect_DISINTEGRATION    = WANDS+15;
 
 	//TODO 贴图需要优化
 	public static final int M79                   = WANDS+13;
