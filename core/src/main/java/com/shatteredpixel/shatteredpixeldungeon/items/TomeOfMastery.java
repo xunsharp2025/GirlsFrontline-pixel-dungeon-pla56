@@ -85,6 +85,8 @@ public class TomeOfMastery extends Item {
 				way2 = HeroSubClass.WARDEN;
 				break;
 			case TYPE561:
+				way1 = HeroSubClass.PULSETROOPER;
+				way2 = HeroSubClass.MODERN_REBORNER;
 				break;
 			}
 			GameScene.show( new WndChooseWay( this, way1, way2 ) );
