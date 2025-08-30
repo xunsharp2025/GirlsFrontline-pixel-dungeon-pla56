@@ -22,10 +22,6 @@ import com.watabou.utils.Random;
 import java.util.ArrayList;
 
 public class WandOfReflectDisintegration extends WandOfDisintegration {
-    
-    {
-        image = ItemSpriteSheet.WAND_Reflect_DISINTEGRATION;
-    }
 
     public int min(int lvl){
         return 2+lvl;
