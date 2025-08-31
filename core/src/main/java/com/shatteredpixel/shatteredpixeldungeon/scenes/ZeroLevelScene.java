@@ -20,9 +20,6 @@ import java.io.IOException;
 public class ZeroLevelScene extends Scene {
 	@Override
 	public void create() {
-		Badges.loadGlobal();
-		Journal.loadGlobal();
-
 		Dungeon.hero=null;
 		enterMainGame();
 	}

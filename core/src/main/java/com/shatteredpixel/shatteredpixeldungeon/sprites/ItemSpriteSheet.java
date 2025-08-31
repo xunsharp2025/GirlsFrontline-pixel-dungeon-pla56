@@ -455,6 +455,12 @@ public class ItemSpriteSheet {
 	public static final int ARTIFACT_ROSE1      = ARTIFACTS+20;
 	public static final int ARTIFACT_ROSE2      = ARTIFACTS+21;
 	public static final int ARTIFACT_ROSE3      = ARTIFACTS+22;
+	public static final int ARTIFACT_UNKNOWN    = ARTIFACTS+23;
+	public static final int ARTIFACT_UNKNOWN2   = ARTIFACTS+24;
+	public static final int ARTIFACT_UNKNOWN3   = ARTIFACTS+25;
+	public static final int REDBOOK             = ARTIFACTS+26;
+	public static final int REDBOOK2            = ARTIFACTS+27;
+	public static final int REDBOOK3            = ARTIFACTS+28;
 	static{
 		assignItemRect(ARTIFACT_CLOAK,      16,  14);
 		assignItemRect(ARTIFACT_ARMBAND,    16, 13);
@@ -479,6 +485,9 @@ public class ItemSpriteSheet {
 		assignItemRect(ARTIFACT_ROSE1,      14, 14);
 		assignItemRect(ARTIFACT_ROSE2,      14, 14);
 		assignItemRect(ARTIFACT_ROSE3,      14, 14);
+		assignItemRect(REDBOOK,             13, 16);
+		assignItemRect(REDBOOK2,            13, 16);
+		assignItemRect(REDBOOK3,            13, 16);
 	}
 
 	                                                                                    //16 free slots
@@ -784,12 +793,10 @@ public class ItemSpriteSheet {
 	public static final  int GUN561           =GUN561_NUKE+2;
 	public static final  int GUN562    	      =GUN561_NUKE+3;
 	public static final  int GUN562ACCESSORIES=GUN561_NUKE+4;
-	public static final  int REDBOOK          =GUN561_NUKE+5;
 	static {
 		assignItemRect(GUN561,            14, 16);
 		assignItemRect(GUN562,            16, 15);
 		assignItemRect(GUN562ACCESSORIES, 16, 15);
-		assignItemRect(REDBOOK,           13, 16);
 	}                                                               //16 free slots
 
 	//for smaller 8x8 icons that often accompany an item sprite

@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
@@ -54,6 +55,9 @@ public class WelcomeScene extends PixelScene {
 	@Override
 	public void create() {
 		super.create();
+
+		Badges.loadGlobal();
+		Journal.loadGlobal();
 
 		final int previousVersion = SPDSettings.version();
 
@@ -101,12 +105,10 @@ public class WelcomeScene extends PixelScene {
 				super.onClick();
 				if (previousVersion == 0 || SPDSettings.intro()){
 					SPDSettings.version(GirlsFrontlinePixelDungeon.versionCode);
-					GamesInProgress.selectedClass = null;
-					new WndStartGame(GamesInProgress.firstEmpty());
 				} else {
 					updateVersion(previousVersion);
-					GirlsFrontlinePixelDungeon.switchScene(ZeroLevelScene.class);
 				}
+				GirlsFrontlinePixelDungeon.switchScene(ZeroLevelScene.class);
 			}
 		};
 		float buttonY = Math.min(topRegion + (PixelScene.landscape() ? 60 : 120), h - 24);
@@ -164,16 +166,11 @@ public class WelcomeScene extends PixelScene {
 		}
 
 		//if the player has beaten Goo, automatically give all guidebook pages
-		if (previousVersion <= GirlsFrontlinePixelDungeon.v0_9_3c){
-			Badges.loadGlobal();
-			if (Badges.isUnlocked(Badges.Badge.BOSS_SLAIN_1)){
-				for (String page : Document.ADVENTURERS_GUIDE.pageNames()){
-					Document.ADVENTURERS_GUIDE.readPage(page);
-				}
+		Badges.loadGlobal();
+		if (Badges.isUnlocked(Badges.Badge.BOSS_SLAIN_1)){
+			for (String page : Document.ADVENTURERS_GUIDE.pageNames()){
+				Document.ADVENTURERS_GUIDE.readPage(page);
 			}
 		}
-
-		SPDSettings.version(GirlsFrontlinePixelDungeon.versionCode);
 	}
-	
 }
