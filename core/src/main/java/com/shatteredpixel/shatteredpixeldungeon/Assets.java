@@ -108,7 +108,7 @@ public class Assets {
 	}
 
 	public static class Interfaces {
-		public static final String SAVESLOT	= "interfaces/new_ui.png";
+		public static final String SAVESLOT	= "interfaces/save_slot_ui.png";
 		public static final String PORTRAIT1= "interfaces/portrait1.png";
 		
 		public static final String ARCS_BG  = "interfaces/arcs1.png";

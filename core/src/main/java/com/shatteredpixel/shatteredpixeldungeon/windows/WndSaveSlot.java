@@ -15,7 +15,7 @@ import com.watabou.noosa.Image;
 import com.watabou.noosa.particles.Emitter;
 
 public class WndSaveSlot extends Window {
-    private static final float SCALE = 3f;
+    private static final float SCALE = 3;
 
     public WndSaveSlot(int slotId){
         SaveSlot saveSlotButton = new SaveSlot(slotId);
@@ -46,16 +46,18 @@ public class WndSaveSlot extends Window {
                 default      :order = 0;break;
             }
 
+            float bias=0.5f;//do not delete this,otherwise you will be angry.
+
             Image portrait = new Image(Assets.Interfaces.PORTRAIT1,(order%6)*38,(order/6)*60,38,60);
-            portrait.scale.set( 8.0f / 17.0f * SCALE );
-            portrait.x = x + 2 * SCALE;
-            portrait.y = y + 2 * SCALE;
+            portrait.scale.set(19f/38f*SCALE);
+            portrait.x=x+bias+SCALE;
+            portrait.y=y+bias+SCALE;
             add(portrait);
 
             Image frame    = new Image(Assets.Interfaces.SAVESLOT,0,0,21,52);
             frame.scale.set( SCALE );
-            frame.x = x;
-            frame.y = y;
+            frame.x=x+bias;
+            frame.y=y+bias;
             add(frame   );
 
             Image[] challengeMarks = new Image[Challenges.MASKS.length-1];
