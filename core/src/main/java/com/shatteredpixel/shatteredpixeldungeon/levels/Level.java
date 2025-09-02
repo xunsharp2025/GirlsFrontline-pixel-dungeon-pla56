@@ -747,11 +747,7 @@ public abstract class Level implements Bundlable {
 		}
 	}
 
-	public static void cleanWalls(int cell,Level level){
-		int[] map=level.map;
-		boolean[] discoverable=level.discoverable;
-		int length=level.length;
-
+	public void cleanWalls(int cell){
 		for (int i=0; i < PathFinder.NEIGHBOURS9.length; i++) {
 			int cellAndAround=cell+PathFinder.NEIGHBOURS9[i];
 
@@ -774,8 +770,6 @@ public abstract class Level implements Bundlable {
 	
 	public static void set( int cell, int terrain, Level level ) {
 		Painter.set( level, cell, terrain );
-
-		cleanWalls(cell,level);
 
 		if (terrain != Terrain.TRAP && terrain != Terrain.SECRET_TRAP && terrain != Terrain.INACTIVE_TRAP){
 			level.traps.remove( cell );

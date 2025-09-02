@@ -57,6 +57,7 @@ public class MapEditor extends TestItem {
             	}
                 
                 Dungeon.level.set(cell,terrain);
+                Dungeon.level.cleanWalls(cell);
                 GameScene.updateMap(cell);
                 Dungeon.observe();
             }
