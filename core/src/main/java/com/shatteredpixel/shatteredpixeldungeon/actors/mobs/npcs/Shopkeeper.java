@@ -109,7 +109,7 @@ public class Shopkeeper extends NPC {
 			rate-=0.2f*Dungeon.hero.pointsInTalent(Talent.BARGAIN_SKILLS);
 		}
 
-		return (int)(item.value()*(rate*5f*(Dungeon.depth/5f+1f)));
+		return Math.min(item.value()*2,(int)(item.value()*rate*(Dungeon.curDepth()+4f)));
 	}
 	
 	public static WndBag sell() {

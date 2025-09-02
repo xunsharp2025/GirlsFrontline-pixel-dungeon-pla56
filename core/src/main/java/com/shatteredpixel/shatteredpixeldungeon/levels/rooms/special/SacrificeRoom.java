@@ -58,7 +58,7 @@ public class SacrificeRoom extends SpecialRoom {
 		Painter.fill( level, c.x - 1, c.y - 1, 3, 3, Terrain.EMBERS );
 		Painter.set( level, c, Terrain.PEDESTAL );
 
-		Blob.seed( level.pointToCell(c), 6 + Dungeon.depth * 4, SacrificialFire.class, level );
+		Blob.seed( level.pointToCell(c), 6 + Dungeon.curDepth() * 4, SacrificialFire.class, level );
 
 		door.set( Door.Type.EMPTY );
 	}
@@ -66,7 +66,7 @@ public class SacrificeRoom extends SpecialRoom {
 	public static Item prize( Level level ) {
 
 		//1 floor set higher than normal
-		Weapon prize = Generator.randomWeapon( (Dungeon.depth / 5) + 1);
+		Weapon prize = Generator.randomWeapon( (Dungeon.curDepth() / 5) + 1);
 
 		if (Challenges.isItemBlocked(prize)){
 			return new Gold().random();

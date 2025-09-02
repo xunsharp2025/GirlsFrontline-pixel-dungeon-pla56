@@ -182,9 +182,9 @@ public class SentryRoom extends SpecialRoom {
 		//1 floor set higher in probability, never cursed
 		do {
 			if (Random.Int(2) == 0) {
-				prize = Generator.randomWeapon((Dungeon.depth / 5) + 1);
+				prize = Generator.randomWeapon((Dungeon.curDepth() / 5) + 1);
 			} else {
-				prize = Generator.randomArmor((Dungeon.depth / 5) + 1);
+				prize = Generator.randomArmor((Dungeon.curDepth() / 5) + 1);
 			}
 		} while (prize.cursed || Challenges.isItemBlocked(prize));
 		prize.cursedKnown = true;
@@ -274,7 +274,7 @@ public class SentryRoom extends SpecialRoom {
 		}
 
 		public void onZapComplete(){
-			Dungeon.hero.damage(Random.NormalIntRange(2+Dungeon.depth/2, 4+Dungeon.depth), new Eye.DeathGaze());
+			Dungeon.hero.damage(Random.NormalIntRange(2+Dungeon.curDepth()/2, 4+Dungeon.curDepth()), new Eye.DeathGaze());
 			if (!Dungeon.hero.isAlive()){
 				GLog.n( Messages.capitalize(Messages.get(Char.class, "kill", name())) );
 				Dungeon.fail( getClass() );

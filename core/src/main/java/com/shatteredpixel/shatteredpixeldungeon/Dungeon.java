@@ -327,6 +327,10 @@ public class Dungeon {
 		switchLevel( level, level.entrance );
 	}
 
+	public static int curDepth(){
+		return depth;
+	}
+
 	public static long seedCurDepth(){
 		return seedForDepth(depth);
 	}

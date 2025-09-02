@@ -145,8 +145,8 @@ public class Bomb extends Item {
 				Char ch = Actor.findChar( c );
 				if (ch != null) {
 					//those not at the center of the blast take damage less consistently.
-					int minDamage = c == cell ? Dungeon.depth+5 : 1;
-					int maxDamage = 10 + Dungeon.depth * 2;
+					int minDamage = c == cell ? Dungeon.curDepth()+5 : 1;
+					int maxDamage = 10 + Dungeon.curDepth() * 2;
 
 					int dmg = Random.NormalIntRange( minDamage, maxDamage ) - ch.drRoll();
 					if (dmg > 0) {

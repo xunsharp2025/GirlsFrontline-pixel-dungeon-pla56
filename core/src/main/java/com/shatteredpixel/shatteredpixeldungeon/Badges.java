@@ -654,7 +654,7 @@ public class Badges {
 	
 	public static void validateBossSlain() {
 		Badge badge = null;
-		switch (Dungeon.depth) {
+		switch (Dungeon.curDepth()) {
 		case 5:
 			badge = Badge.BOSS_SLAIN_1;
 			break;

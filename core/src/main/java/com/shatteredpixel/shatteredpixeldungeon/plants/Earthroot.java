@@ -96,7 +96,7 @@ public class Earthroot extends Plant {
 		}
 		
 		private static int blocking(){
-			return (Dungeon.depth + 5)/2;
+			return (Dungeon.curDepth() + 5)/2;
 		}
 		
 		public int absorb( int damage ) {

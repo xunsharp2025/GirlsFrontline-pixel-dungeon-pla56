@@ -203,7 +203,7 @@ public class CursedWand {
 			case 1:
 				final Char target = Actor.findChar( targetPos );
 				if (target != null) {
-					int damage = Dungeon.depth * 2;
+					int damage = Dungeon.curDepth() * 2;
 					Char toHeal, toDamage;
 
 					if (Random.Int(2) == 0){
