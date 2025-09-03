@@ -32,6 +32,7 @@ public class SceneSwitcher extends Trigger{
 		scene=bundle.getClass(SCENE);
 	}
 	
+	@Override
 	public void activate(Char ch){
 		if(ch==Dungeon.hero){
 			Game.switchScene(scene);
