@@ -72,6 +72,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.features.Door;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.HighGrass;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Trigger;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.ShadowCaster;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
@@ -152,6 +153,7 @@ public abstract class Level implements Bundlable {
 	public HashMap<Class<? extends Blob>,Blob> blobs;
 	public SparseArray<Plant> plants;
 	public SparseArray<Trap> traps;
+	public SparseArray<Trigger> triggers;
 	public HashSet<CustomTilemap> customTiles;
 	public HashSet<CustomTilemap> customWalls;
 	
@@ -175,6 +177,7 @@ public abstract class Level implements Bundlable {
 	private static final String HEAPS		= "heaps";
 	private static final String PLANTS		= "plants";
 	private static final String TRAPS       = "traps";
+	private static final String TRIGGERS    = "triggers";
 	private static final String CUSTOM_TILES= "customTiles";
 	private static final String CUSTOM_WALLS= "customWalls";
 	private static final String MOBS		= "mobs";
@@ -261,6 +264,7 @@ public abstract class Level implements Bundlable {
 			blobs = new HashMap<>();
 			plants = new SparseArray<>();
 			traps = new SparseArray<>();
+			triggers = new SparseArray<>();
 			customTiles = new HashSet<>();
 			customWalls = new HashSet<>();
 			
@@ -334,6 +338,7 @@ public abstract class Level implements Bundlable {
 		blobs = new HashMap<>();
 		plants = new SparseArray<>();
 		traps = new SparseArray<>();
+		triggers = new SparseArray<>();
 		customTiles = new HashSet<>();
 		customWalls = new HashSet<>();
 		
@@ -364,6 +369,12 @@ public abstract class Level implements Bundlable {
 		for (Bundlable p : collection) {
 			Trap trap = (Trap)p;
 			traps.put( trap.pos, trap );
+		}
+
+		collection = bundle.getCollection( TRIGGERS );
+		for (Bundlable p : collection) {
+			Trigger trigger = (Trigger)p;
+			triggers.put( trigger.pos, trigger );
 		}
 
 		collection = bundle.getCollection( CUSTOM_TILES );
@@ -424,6 +435,7 @@ public abstract class Level implements Bundlable {
 		bundle.put( HEAPS, heaps.valueList() );
 		bundle.put( PLANTS, plants.valueList() );
 		bundle.put( TRAPS, traps.valueList() );
+		bundle.put( TRIGGERS, triggers.valueList() );
 		bundle.put( CUSTOM_TILES, customTiles );
 		bundle.put( CUSTOM_WALLS, customWalls );
 		bundle.put( MOBS, mobs );
@@ -850,6 +862,14 @@ public abstract class Level implements Bundlable {
 		return heap;
 	}
 	
+	public void placeTrigger(Trigger trigger){
+		triggers.put(trigger.pos,trigger);
+	}
+
+	public void removeTrigger(Trigger trigger){
+		triggers.remove(trigger.pos);
+	}
+
 	public Plant plant( Plant.Seed seed, int pos ) {
 		
 		if (Dungeon.isChallenged(Challenges.NO_HERBALISM)){
@@ -961,6 +981,9 @@ public abstract class Level implements Bundlable {
 	}
 	
 	public void occupyCell( Char ch ){
+		Trigger trigger=triggers.get(ch.pos);
+		if(null!=trigger){trigger.activate(ch);}
+
 		if (!ch.isImmune(Web.class) && Blob.volumeAt(ch.pos, Web.class) > 0){
 			blobs.get(Web.class).clear(ch.pos);
 			Web.affectChar( ch );

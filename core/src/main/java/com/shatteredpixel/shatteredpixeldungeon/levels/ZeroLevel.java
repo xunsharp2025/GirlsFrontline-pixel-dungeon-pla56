@@ -2,7 +2,7 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.ZeroLevelScene;
+import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.SceneSwitcher;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.AboutScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.BadgesScene;
@@ -118,14 +118,19 @@ public class ZeroLevel extends Level {
 		map[saveSlot4]=Terrain.EMPTY_DECO;
 		map[saveSlot5]=Terrain.EMPTY_DECO;
 		map[saveSlot6]=Terrain.EMPTY_DECO;
-		about    =(min+2)*width()+min   ;
-		rankings =(min+2)*width()+min+ 2;
-		badges   =(min+2)*width()+min+ 4;
-		changes  =(min+2)*width()+min+ 6;
-		map[about    ]=Terrain.WATER;
-		map[rankings ]=Terrain.EMBERS;
-		map[badges   ]=Terrain.EMPTY_SP;
-		map[changes  ]=Terrain.GRASS;
+
+		about   =(min+2)*width()+min   ;
+		rankings=(min+2)*width()+min+ 2;
+		badges  =(min+2)*width()+min+ 4;
+		changes =(min+2)*width()+min+ 6;
+		map[about   ]=Terrain.WATER;
+		map[rankings]=Terrain.EMBERS;
+		map[badges  ]=Terrain.EMPTY_SP;
+		map[changes ]=Terrain.GRASS;
+		placeTrigger(new SceneSwitcher().create(about   ,AboutScene   .class));
+		placeTrigger(new SceneSwitcher().create(rankings,RankingsScene.class));
+		placeTrigger(new SceneSwitcher().create(badges  ,BadgesScene  .class));
+		placeTrigger(new SceneSwitcher().create(changes ,ChangesScene .class));
 
 		CustomTilemap customBottomTile=new CustomBottomTile();
 		customBottomTile.setRect(0,0,width(),height());
@@ -205,23 +210,6 @@ public class ZeroLevel extends Level {
 			int finalSaveSlot=curSaveSlot;
 			Game.runOnRenderThread(()->GameScene.show(new WndSaveSlot(finalSaveSlot)));
 		}
-
-		if(about    ==pos){
-			Game.switchScene(AboutScene.class);
-		}
-
-		if(rankings ==pos){
-			Game.switchScene(BadgesScene.class);
-		}
-
-		if(badges   ==pos){
-			Game.switchScene(ChangesScene.class);
-		}
-
-		if(changes  ==pos){
-			Game.switchScene(RankingsScene.class);
-		}
-
 	}
 	
 	@Override
