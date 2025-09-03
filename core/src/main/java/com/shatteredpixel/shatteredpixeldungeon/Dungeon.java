@@ -232,6 +232,14 @@ public class Dungeon {
 		return (challenges & mask) != 0;
 	}
 	
+	public static Level newLevel(Level level,int curDepth,int id){
+		Dungeon.level = null;
+		Actor.clear();
+		depth=id*1000+curDepth;
+		level.create();
+		return level;
+	}
+
 	public static Level newLevel() {
 		
 		Dungeon.level = null;
@@ -328,7 +336,7 @@ public class Dungeon {
 	}
 
 	public static int curDepth(){
-		return depth;
+		return depth%1000;
 	}
 
 	public static long seedCurDepth(){

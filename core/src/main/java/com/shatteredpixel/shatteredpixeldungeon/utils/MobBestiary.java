@@ -120,7 +120,6 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GrimTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GrippingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GuardianTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.OozeTrap;
-import com.shatteredpixel.shatteredpixeldungeon.levels.traps.PitfallTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.PoisonDartTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.RockfallTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ShockingTrap;
@@ -260,7 +259,7 @@ public enum MobBestiary {
                 FrostTrap.class, BlazingTrap.class, StormTrap.class, GuardianTrap.class, FlashingTrap.class, WarpingTrap.class,
                 ConfusionTrap.class, ToxicTrap.class, CorrosionTrap.class,
                 FlockTrap.class, SummoningTrap.class, WeakeningTrap.class, CursingTrap.class,
-                GeyserTrap.class, ExplosiveTrap.class, RockfallTrap.class, PitfallTrap.class,
+                GeyserTrap.class, ExplosiveTrap.class, RockfallTrap.class,
                 DistortionTrap.class, DisarmingTrap.class, GrimTrap.class);
 
         PLANT.addEntities(Rotberry.class, Sungrass.class, Fadeleaf.class, Icecap.class,
