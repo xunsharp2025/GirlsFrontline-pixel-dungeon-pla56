@@ -63,6 +63,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.ZeroLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.RabbitBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -173,6 +174,7 @@ public class Dungeon {
 	public static SparseArray<ArrayList<Item>> portedItems;
 
 	public static int version;
+	public static int levelId;
 
 	public static long seed;
 	
@@ -278,6 +280,8 @@ public class Dungeon {
 			level = new DeepCaveLevel();break;
 		case 25:
 			level = new DeepCaveBossLevel();break;
+		//case 1025:
+		//	level = new RabbitBossLevel();break;
 		case 26:case 27:case 28:case 29:
 			level = new HallsLevel();break;
 		case 30:
@@ -341,6 +345,7 @@ public class Dungeon {
 		
 		PathFinder.setMapSize(level.width(), level.height());
 		
+		levelId=level.levelId;
 		Dungeon.level = level;
 		Mob.restoreAllies( level, pos );
 		Actor.init();
@@ -425,26 +430,28 @@ public class Dungeon {
 		return Random.Int(5 - floorThisSet) < asLeftThisSet;
 	}
 	
-	private static final String VERSION		= "version";
-	private static final String SEED		= "seed";
-	private static final String CHALLENGES	= "challenges";
-	private static final String MOBS_TO_CHAMPION	= "mobs_to_champion";
-	private static final String HERO		= "hero";
-	private static final String DEPTH		= "depth";
-	private static final String GOLD		= "gold";
-	private static final String ENERGY		= "energy";
-	private static final String DROPPED     = "dropped%d";
-	private static final String PORTED      = "ported%d";
-	private static final String LEVEL		= "level";
-	private static final String LIMDROPS    = "limited_drops";
-	private static final String CHAPTERS	= "chapters";
-	private static final String QUESTS		= "quests";
-	private static final String BADGES		= "badges";
+	private static final String LEVEL_ID        = "level_id";
+	private static final String VERSION		    = "version";
+	private static final String SEED		    = "seed";
+	private static final String CHALLENGES	    = "challenges";
+	private static final String MOBS_TO_CHAMPION= "mobs_to_champion";
+	private static final String HERO		    = "hero";
+	private static final String DEPTH		    = "depth";
+	private static final String GOLD		    = "gold";
+	private static final String ENERGY		    = "energy";
+	private static final String DROPPED         = "dropped%d";
+	private static final String PORTED          = "ported%d";
+	private static final String LEVEL		    = "level";
+	private static final String LIMDROPS        = "limited_drops";
+	private static final String CHAPTERS	    = "chapters";
+	private static final String QUESTS		    = "quests";
+	private static final String BADGES		    = "badges";
 	
 	public static void saveGame( int save ) {
 		try {
 			Bundle bundle = new Bundle();
 
+			bundle.put( LEVEL_ID,levelId);
 			version = Game.versionCode;
 			bundle.put( VERSION, version );
 			bundle.put( SEED, seed );
@@ -532,9 +539,9 @@ public class Dungeon {
 	}
 	
 	public static void loadGame( int save, boolean fullLoad ) throws IOException {
-		
 		Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.gameFile( save ) );
 
+		levelId = bundle.getInt( LEVEL_ID );
 		version = bundle.getInt( VERSION );
 
 		seed = bundle.contains( SEED ) ? bundle.getLong( SEED ) : DungeonSeed.randomSeed();
@@ -547,9 +554,6 @@ public class Dungeon {
 
 		Dungeon.challenges = bundle.getInt( CHALLENGES );
 		Dungeon.mobsToChampion = bundle.getInt( MOBS_TO_CHAMPION );
-		
-		Dungeon.level = null;
-		Dungeon.depth = -1;
 		
 		Scroll.restore( bundle );
 		Potion.restore( bundle );

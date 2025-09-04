@@ -30,8 +30,7 @@ public class ZeroLevelScene extends Scene {
 		GamesInProgress.selectedClass=HeroClass.TYPE561;
 		boolean	newGame = null == GamesInProgress.check(GamesInProgress.curSlot);
 		if(newGame){
-			try{InterlevelScene.start();}
-			catch(IOException e){Game.reportException(e);}
+			InterlevelScene.start();
 		}else{
 			try{InterlevelScene.restore();}
 			catch(IOException e){Game.reportException(e);}

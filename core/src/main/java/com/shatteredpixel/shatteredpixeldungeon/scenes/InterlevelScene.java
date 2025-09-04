@@ -72,12 +72,15 @@ public class InterlevelScene extends PixelScene {
 	private static float fadeTime;
 	
 	public enum Mode {
-		DESCEND, ASCEND, CONTINUE, RESURRECT, RETURN, FALL, RESET, NONE
+		ACCESS,DESCEND, ASCEND, CONTINUE, RESURRECT, RETURN, FALL, RESET, NONE
 	}
 	public static Mode mode=Mode.NONE;
 	
 	public static int returnDepth;
 	public static int returnPos;
+
+	public static int accessPos;
+	public static int accessLevelId;
 	
 	public static boolean noStory = false;
 
@@ -258,6 +261,9 @@ public class InterlevelScene extends PixelScene {
 						Actor.fixTime();
 
 						switch (mode) {
+							case ACCESS:
+								access();
+								break;
 							case DESCEND:
 								descend();
 								break;
@@ -366,7 +372,7 @@ public class InterlevelScene extends PixelScene {
 		}
 	}
 
-	public static void start() throws IOException {
+	public static void start(){
 		Mob.clearHeldAllies();
 		Dungeon.init();
 		GameLog.wipe();
@@ -375,20 +381,21 @@ public class InterlevelScene extends PixelScene {
 		Dungeon.switchLevel( level, level.entrance );
 	}
 
-	public static void access(int pos,int levelId) throws IOException{
-		Level level=Dungeon.tryLoadLevel(levelId);
+	private void access(){
+		Mob.holdAllies(Dungeon.level);
+		try{Dungeon.saveAll();}
+		catch(IOException e){Game.reportException(e);}
+
+		Level level=Dungeon.tryLoadLevel(accessLevelId);
 		if(null==level){
-			level=Dungeon.newLevel(levelId);
+			level=Dungeon.newLevel(accessLevelId);
 		}
 
-		Mob.holdAllies(Dungeon.level);
-		Dungeon.saveAll();
-
 		Dungeon.depth=level.levelDepth;
-		Dungeon.switchLevel(level,pos);
+		Dungeon.switchLevel(level,accessPos);
 	}
 
-	public static void descend() throws IOException {
+	private static void descend() throws IOException {
 
 		if (Dungeon.hero == null) {
 			Mob.clearHeldAllies();
@@ -456,13 +463,8 @@ public class InterlevelScene extends PixelScene {
 		GameLog.wipe();
 
 		Dungeon.loadGame( GamesInProgress.curSlot );
-		if (Dungeon.depth == -1) {
-			Dungeon.depth = Statistics.deepestFloor;
-			Dungeon.switchLevel(Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.depth),-1);
-		} else {
-			Level level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.depth);
-			Dungeon.switchLevel(level,Dungeon.hero.pos);
-		}
+		Level level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.levelId);
+		Dungeon.switchLevel(level,Dungeon.hero.pos);
 	}
 	
 	private void resurrect() {

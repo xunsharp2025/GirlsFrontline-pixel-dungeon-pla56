@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Teleporter;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -53,9 +54,8 @@ public class DeadEndLevel extends Level {
 		int min=1;
 		int center=(max+min)/2;
 		entrance  =center*width()+center;
-		//map[entrance]=Terrain.ENTRANCE;
 		exit      =center*width()+center;
-		map[exit    ]=Terrain.EXIT;
+		placeTrigger(new Teleporter().create(exit,78,0));
 		
 		return true;
 	}

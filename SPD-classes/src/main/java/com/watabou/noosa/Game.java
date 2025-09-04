@@ -301,6 +301,7 @@ public class Game implements ApplicationListener {
 		tr.printStackTrace(pw);
 		pw.flush();
 		Gdx.app.error("GAME", sw.toString());
+		Gdx.app.exit();
 	}
 	
 	public static void runOnRenderThread(Callback c){
