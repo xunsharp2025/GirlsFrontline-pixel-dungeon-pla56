@@ -61,8 +61,8 @@ public class GamesInProgress {
 		return gameFolder(slot) + "/" + GAME_FILE;
 	}
 	
-	public static String depthFile( int slot, int depth ) {
-		return gameFolder(slot) + "/" + Messages.format(DEPTH_FILE, depth);
+	public static String depthFile( int slot, int levelId ) {
+		return gameFolder(slot) + "/" + Messages.format(DEPTH_FILE,levelId);
 	}
 	
 	public static int firstEmpty(){

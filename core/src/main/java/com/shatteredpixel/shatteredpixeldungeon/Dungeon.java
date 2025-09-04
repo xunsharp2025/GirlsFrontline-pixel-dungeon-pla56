@@ -62,6 +62,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ZeroLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -232,20 +233,11 @@ public class Dungeon {
 		return (challenges & mask) != 0;
 	}
 	
-	public static Level newLevel(Level level,int curDepth,int id){
+	public static Level newLevel(Level level,int levelDepth,int id){
 		Dungeon.level = null;
 		Actor.clear();
-		depth=id*1000+curDepth;
-		level.create();
-		return level;
-	}
 
-	public static Level newLevel() {
-		
-		Dungeon.level = null;
-		Actor.clear();
-		
-		depth++;
+		depth=levelDepth;
 		if (depth > Statistics.deepestFloor) {
 			Statistics.deepestFloor = depth;
 			
@@ -255,76 +247,48 @@ public class Dungeon {
 				Statistics.completedWithNoKilling = false;
 			}
 		}
-		
+
+		level.create(depth,id);
+		Statistics.qualifiedForNoKilling = !bossLevel();
+		return level;
+	}
+
+	public static Level newLevel(int id){
 		Level level;
-		switch (depth) {
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-			level = new SewerLevel();
-			break;
+		switch(id){
+		case 0:
+			level = new ZeroLevel();break;
+		case 1:case 2:case 3:case 4:
+			level = new SewerLevel();break;
 		case 5:
-			level = new SewerBossLevel();
-			break;
-		case 6:
-		case 7:
-		case 8:
-		case 9:
-			level = new PrisonLevel();
-			break;
+			level = new SewerBossLevel();break;
+		case 6:case 7:case 8:case 9:
+			level = new PrisonLevel();break;
 		case 10:
-			level = new PrisonBossLevel();
-			break;
-		case 11:
-		case 12:
-		case 13:
-		case 14:
-			level = new CavesLevel();
-			break;
+			level = new PrisonBossLevel();break;
+		case 11:case 12:case 13:case 14:
+			level = new CavesLevel();break;
 		case 15:
-			level = new CavesBossLevel();
-			break;
-		case 16:
-		case 17:
-		case 18:
-		case 19:
-			level = new CityLevel();
-			break;
+			level = new CavesBossLevel();break;
+		case 16:case 17:case 18:case 19:
+			level = new CityLevel();break;
 		case 20:
-			level = new CityBossLevel();
-			break;
-		case 21:
-		case 22:
-		case 23:
-		case 24:
-			level = new DeepCaveLevel();
-			break;
+			level = new CityBossLevel();break;
+		case 21:case 22:case 23:case 24:
+			level = new DeepCaveLevel();break;
 		case 25:
-			level = new DeepCaveBossLevel();
-			break;
-		case 26:
-		case 27:
-		case 28:
-		case 29:
-			level = new HallsLevel();
-			break;
+			level = new DeepCaveBossLevel();break;
+		case 26:case 27:case 28:case 29:
+			level = new HallsLevel();break;
 		case 30:
-			level = new HallsBossLevel();
-			break;
+			level = new HallsBossLevel();break;
 		case 31:
-			level = new LastLevel();
-			break;
+			level = new LastLevel();break;
 		default:
 			level = new DeadEndLevel();
-			Statistics.deepestFloor--;
 		}
 		
-		level.create();
-		
-		Statistics.qualifiedForNoKilling = !bossLevel();
-		
-		return level;
+		return newLevel(level,id%1000,id);
 	}
 	
 	public static void resetLevel() {
@@ -549,7 +513,7 @@ public class Dungeon {
 		Bundle bundle = new Bundle();
 		bundle.put( LEVEL, level );
 		
-		FileUtils.bundleToFile(GamesInProgress.depthFile( save, depth), bundle);
+		FileUtils.bundleToFile(GamesInProgress.depthFile(save,level.levelId),bundle);
 	}
 	
 	public static void saveAll() throws IOException {
@@ -667,13 +631,27 @@ public class Dungeon {
 			}
 		}
 	}
+
+	public static Level tryLoadLevel(int levelId){
+		final int save=GamesInProgress.curSlot;
+		final String fileName=GamesInProgress.depthFile(save,levelId);
+		if(FileUtils.fileExists(fileName)){
+			//file may be deleted between fileExists and loadLevel,who knows.
+			try{
+				return loadLevel(save,levelId);
+			}catch(IOException e){
+				Game.reportException(e);
+			}
+		}
+
+		return null;
+	}
 	
-	public static Level loadLevel( int save ) throws IOException {
-		
+	public static Level loadLevel(int save,int levelId) throws IOException {
 		Dungeon.level = null;
 		Actor.clear();
 		
-		Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.depthFile( save, depth)) ;
+		Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.depthFile(save,levelId));
 		
 		Level level = (Level)bundle.get( LEVEL );
 		

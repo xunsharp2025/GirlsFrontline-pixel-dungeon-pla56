@@ -12,12 +12,12 @@ public abstract class Trigger implements Bundlable {
 
 	@Override
 	public void storeInBundle( Bundle bundle ) {
-		bundle.put( POS, pos );
+		bundle.put(POS,pos);
 	}
 	
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
-		pos = bundle.getInt( POS );
+		pos = bundle.getInt(POS);
 	}
 	
 	public abstract void activate(Char ch);

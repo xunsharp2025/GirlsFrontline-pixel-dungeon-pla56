@@ -30,20 +30,17 @@ public class ZeroLevelScene extends Scene {
 		GamesInProgress.selectedClass=HeroClass.TYPE561;
 		boolean	newGame = null == GamesInProgress.check(GamesInProgress.curSlot);
 		if(newGame){
-			Mob.clearHeldAllies();
-			Dungeon.init();
-			GameLog.wipe();
-			Actor.clear();
-			Dungeon.depth=Statistics.deepestFloor=0;
-			Level level=new ZeroLevel();
-			level.create();
-			Dungeon.switchLevel(level,level.entrance);
+			try{InterlevelScene.start();}
+			catch(IOException e){Game.reportException(e);}
 		}else{
-			InterlevelScene.mode=InterlevelScene.Mode.CONTINUE;
 			try{InterlevelScene.restore();}
 			catch(IOException e){Game.reportException(e);}
 		}
 		Game.switchScene(GameScene.class);
 	}
 
+	@Override
+	protected void onBackPressed() {
+		//Do nothing
+	}
 }

@@ -118,6 +118,8 @@ public abstract class Level implements Bundlable {
 	
 	protected static final float TIME_TO_RESPAWN	= 50;
 
+	public int levelDepth;
+	public int levelId;
 	public int version;
 	
 	public int[] map;
@@ -165,6 +167,8 @@ public abstract class Level implements Bundlable {
 	public int color1 = 0x004400;
 	public int color2 = 0x88CC44;
 
+	private static final String LEVEL_DEPTH = "levelDepth";
+	private static final String LEVEL_ID    = "levelId";
 	private static final String VERSION     = "version";
 	private static final String WIDTH       = "width";
 	private static final String HEIGHT      = "height";
@@ -184,8 +188,9 @@ public abstract class Level implements Bundlable {
 	private static final String BLOBS		= "blobs";
 	private static final String FEELING		= "feeling";
 
-	public void create() {
-
+	public void create(int levelDepth,int levelId){
+		this.levelDepth=levelDepth;
+		this.levelId   =levelId;
 		Random.pushGenerator( Dungeon.seedCurDepth() );
 		
 		if (!(Dungeon.bossLevel())) {
@@ -323,8 +328,9 @@ public abstract class Level implements Bundlable {
 	
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
-
-		version = bundle.getInt( VERSION );
+		levelDepth=bundle.getInt(LEVEL_DEPTH);
+		levelId   =bundle.getInt(LEVEL_ID   );
+		version   =bundle.getInt(VERSION    );
 		
 		//saves from before v0.9.2b are not supported
 		if (version < GirlsFrontlinePixelDungeon.v0_9_2b){
@@ -423,26 +429,28 @@ public abstract class Level implements Bundlable {
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
-		bundle.put( VERSION, Game.versionCode );
-		bundle.put( WIDTH, width );
-		bundle.put( HEIGHT, height );
-		bundle.put( MAP, map );
-		bundle.put( VISITED, visited );
-		bundle.put( MAPPED, mapped );
-		bundle.put( ENTRANCE, entrance );
-		bundle.put( EXIT, exit );
-		bundle.put( LOCKED, locked );
-		bundle.put( HEAPS, heaps.valueList() );
-		bundle.put( PLANTS, plants.valueList() );
-		bundle.put( TRAPS, traps.valueList() );
-		bundle.put( TRIGGERS, triggers.valueList() );
-		bundle.put( CUSTOM_TILES, customTiles );
-		bundle.put( CUSTOM_WALLS, customWalls );
-		bundle.put( MOBS, mobs );
-		bundle.put( BLOBS, blobs.values() );
-		bundle.put( FEELING, feeling );
-		bundle.put( "mobs_to_spawn", mobsToSpawn.toArray(new Class[0]));
-		bundle.put( "respawner", respawner );
+		bundle.put(LEVEL_DEPTH,levelDepth);
+		bundle.put(LEVEL_ID,levelId);
+		bundle.put(VERSION, Game.versionCode );
+		bundle.put(WIDTH, width );
+		bundle.put(HEIGHT, height );
+		bundle.put(MAP, map );
+		bundle.put(VISITED, visited );
+		bundle.put(MAPPED, mapped );
+		bundle.put(ENTRANCE, entrance );
+		bundle.put(EXIT, exit );
+		bundle.put(LOCKED, locked );
+		bundle.put(HEAPS, heaps.valueList() );
+		bundle.put(PLANTS, plants.valueList() );
+		bundle.put(TRAPS, traps.valueList() );
+		bundle.put(TRIGGERS, triggers.valueList() );
+		bundle.put(CUSTOM_TILES, customTiles );
+		bundle.put(CUSTOM_WALLS, customWalls );
+		bundle.put(MOBS, mobs );
+		bundle.put(BLOBS, blobs.values() );
+		bundle.put(FEELING, feeling );
+		bundle.put("mobs_to_spawn", mobsToSpawn.toArray(new Class[0]));
+		bundle.put("respawner", respawner );
 	}
 	
 	public int tunnelTile() {
