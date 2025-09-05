@@ -39,7 +39,7 @@ public class Gun562 extends ShootGun {
             CellEmitter.center(cell).burst(BlastParticle.FACTORY,30);
         }
 
-        for (int i : PathFinder.NEIGHBOURS8) {
+        for (int i : PathFinder.NEIGHBOURS9) {
             int targetCell = cell + i;
             // 检查是否在地图范围内
             if (targetCell >= 0 && targetCell < Dungeon.level.length()) {
@@ -57,42 +57,18 @@ public class Gun562 extends ShootGun {
                 if (heap != null) {
                     heap.explode();
                 }
-            }
-        }
 
-
-        //查找目标这里可以考虑判定友伤
-        //中心目标
-        Char mainActor = Actor.findChar(cell);
-        //周围八格
-        ArrayList<Char> subActors = new ArrayList<>();
-        for (int i : PathFinder.NEIGHBOURS8) {
-            Char subactor = Actor.findChar(cell + i);
-            if (subactor != null) {
-                subActors.add(subactor);
-            }
-        }
-
-        //判定伤害
-        float baseDamage = curUser.HT * 2 / 3;
-        float damage=baseDamage;
-        if (mainActor != null) {
-            mainActor.damage(Math.round(damage),this);
-            if(Dungeon.hero.hasTalent(Talent.ENHANCE_GRENADE)){
-                Buff.affect(mainActor,Bleeding.class ).set( Math.round(damage*0.4f));
-                if(Dungeon.hero.pointsInTalent(Talent.ENHANCE_GRENADE)>=2){
-                    Buff.affect(mainActor,Cripple.class,3f);
-                }
-            }
-        }
-
-        damage=baseDamage*0.75f;
-        for(Char sub : subActors) {
-            sub.damage(Math.round(damage),this);
-            if(Dungeon.hero.hasTalent(Talent.ENHANCE_GRENADE)){
-                Buff.affect(sub,Bleeding.class ).set( Math.round(damage*0.3f));
-                if(Dungeon.hero.pointsInTalent(Talent.ENHANCE_GRENADE)>=2){
-                    Buff.affect(sub,Cripple.class,3f);
+                //伤害
+                Char target = Actor.findChar(targetCell);
+                if (null!=target){
+                    int damage=curUser.HT*2/3;
+                    target.damage(Math.round(damage),this);
+                    if(Dungeon.hero.hasTalent(Talent.ENHANCE_GRENADE)){
+                        Buff.affect(target,Bleeding.class ).set( Math.round(damage*0.4f));
+                        if(Dungeon.hero.pointsInTalent(Talent.ENHANCE_GRENADE)>=2){
+                            Buff.affect(target,Cripple.class,3f);
+                        }
+                    }
                 }
             }
         }
