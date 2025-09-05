@@ -116,7 +116,6 @@ public class LazyTest extends TestGenerator {
 
             new Bomb().quantity(100).collect();
 
-            //new TomeOfMastery().collect();
             new TengusMask().collect();
 
             new Honeypot().quantity(100).collect();

@@ -223,8 +223,6 @@ public class Typhootin extends Mob {
         GameScene.bossSlain();
         Dungeon.level.drop( new SkeletonKey( Dungeon.depth  ), pos ).sprite.drop();
 
-        Badges.validateBossSlain();
-
         LloydsBeacon beacon = Dungeon.hero.belongings.getItem(LloydsBeacon.class);
         if (beacon != null) {
             beacon.upgrade();

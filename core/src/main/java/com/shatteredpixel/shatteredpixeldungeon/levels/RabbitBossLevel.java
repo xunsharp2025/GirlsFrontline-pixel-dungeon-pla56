@@ -158,10 +158,14 @@ public class RabbitBossLevel extends Level {
 	}
 
 	@Override
-	public void seal( ) {
-		super.seal();
-		if (state == State.READY) {
-			progress();
+	public void occupyCell(Char ch) {
+		super.occupyCell(ch);
+
+		if (ch == Dungeon.hero) {
+			//hero enters tengu's chamber
+			if (state == State.READY) {
+				progress();
+			}
 		}
 	}
 

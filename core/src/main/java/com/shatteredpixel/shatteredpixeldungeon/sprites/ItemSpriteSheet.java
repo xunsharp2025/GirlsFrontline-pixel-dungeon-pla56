@@ -232,15 +232,15 @@ public class ItemSpriteSheet {
 	public static final int DIRK            = WEP_TIER2+14;
 
 	/** SP2 贴图 */
-	public static final int M16      = WEP_TIER2+0;
-	public static final int M1911        = WEP_TIER2+1;
-	public static final int M1903           = WEP_TIER2+2;
-	public static final int M1A1    = WEP_TIER2+3;
-	public static final int NAGANTREVOLVER      = WEP_TIER2+4;
+	public static final int M16            = WEP_TIER2+0;
+	public static final int M1911          = WEP_TIER2+1;
+	public static final int M1903          = WEP_TIER2+2;
+	public static final int M1A1           = WEP_TIER2+3;
+	public static final int NAGANTREVOLVER = WEP_TIER2+4;
 	public static final int G36            = WEP_TIER2+5;
-	public static final int TRAVAILLER           = WEP_TIER2+6;
-	public static final int CONFIRE          = WEP_TIER2+7;
-	public static final int MAGNUMWEDDING	 = WEP_TIER2+8;
+	public static final int TRAVAILLER     = WEP_TIER2+6;
+	public static final int CONFIRE        = WEP_TIER2+7;
+	public static final int MAGNUMWEDDING  = WEP_TIER2+8;
 	static{
 		assignItemRect(M16,					15, 16);
 		assignItemRect(M1911,				12, 14);

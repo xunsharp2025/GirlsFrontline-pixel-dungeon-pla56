@@ -21,7 +21,6 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
-import com.shatteredpixel.shatteredpixeldungeon.DialogInfo;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -82,7 +81,7 @@ public class Noel extends NPC {
             // 퀘스트 완료
             if (item != null) {
 
-                int DialogID = DialogInfo.ID_NOEL_QUEST + DialogInfo.COMPLETE;
+                //int DialogID = DialogInfo.ID_NOEL_QUEST + DialogInfo.COMPLETE;
 //                WndDialog wnd = new WndDialog( DialogID ) {
 //                    @Override
 //                    protected void onFinish() {
@@ -96,7 +95,7 @@ public class Noel extends NPC {
 
             } else {
                 // 진행중 대사 출력
-                int DialogID = DialogInfo.ID_NOEL_QUEST + DialogInfo.INPROGRESS;
+                //int DialogID = DialogInfo.ID_NOEL_QUEST + DialogInfo.INPROGRESS;
 
                 //WndDialog.setBRANCH(DialogID, 0);
                 //WndDialog.ShowChapter(DialogID);
@@ -105,7 +104,7 @@ public class Noel extends NPC {
 
         } else {
             // 퀘스트 수주
-            int DialogID = DialogInfo.ID_NOEL_QUEST;
+            //int DialogID = DialogInfo.ID_NOEL_QUEST;
 
             //WndDialog.setBRANCH(DialogID, 0);
             //WndDialog.ShowChapter(DialogID);

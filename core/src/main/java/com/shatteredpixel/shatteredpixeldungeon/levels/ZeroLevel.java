@@ -83,7 +83,11 @@ public class ZeroLevel extends Level {
 
 		int teleporter=changes+2;
 		map[teleporter]=Terrain.DOOR;
-		placeTrigger(new Teleporter().create(teleporter,1,1000));
+		placeTrigger(new Teleporter().create(teleporter,-1,1000));
+
+		int teleporter2=teleporter+2;
+		map[teleporter2]=Terrain.DOOR;
+		placeTrigger(new Teleporter().create(teleporter2,-1,1025));
 
 		CustomTilemap customBottomTile=new CustomBottomTile();
 		customBottomTile.setRect(0,0,width(),height());

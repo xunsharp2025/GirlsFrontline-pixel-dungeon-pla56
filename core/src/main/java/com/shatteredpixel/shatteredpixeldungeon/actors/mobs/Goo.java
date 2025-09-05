@@ -268,7 +268,7 @@ public class Goo extends Mob {
 			Dungeon.level.drop( new GooBlob(), pos + ofs ).sprite.drop( pos );
 		}
 		
-		Badges.validateBossSlain();
+		Badges.validateBossSlain(Badges.Badge.BOSS_SLAIN_1);
 		
 		yell( Messages.get(this, "defeated") );
 	}

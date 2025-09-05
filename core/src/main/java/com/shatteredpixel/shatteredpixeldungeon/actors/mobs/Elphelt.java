@@ -16,7 +16,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicalSleep;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Beam;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
@@ -25,7 +24,6 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BloodParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
-import com.shatteredpixel.shatteredpixeldungeon.items.TomeOfMastery;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.DamageWand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Grim;
@@ -78,12 +76,12 @@ public class Elphelt extends Mob {
 
     @Override
     public int damageRoll() {
-        return Random.NormalIntRange(25, 35);
+        return Random.NormalIntRange(20,45);
     }
 
     @Override
     public int attackSkill( Char target ) {
-        return 30;
+        return 40;
     }
 
     @Override
@@ -141,12 +139,12 @@ public class Elphelt extends Mob {
         BossHealthBar.assignBoss(this);
 
         if (!Dungeon.level.locked) {
-//            WndDialog.ShowChapter(DialogInfo.ID_RABBIT_BOSS);
-//            if (phase < 1) {
-//                phase = 1;
-//            }
-//            spend(TICK);
-//            Dungeon.level.seal();
+            //Game.runOnRenderThread(()->GameScene.show(new WndDialog(new Gager_Plot(),false)));
+            if (phase < 1) {
+                phase = 1;
+            }
+            spend(TICK);
+            Dungeon.level.seal();
         }
     }
 
@@ -349,17 +347,10 @@ public class Elphelt extends Mob {
 
     @Override
     public void die( Object cause ) {
-
-        if (Dungeon.hero.subClass == HeroSubClass.NONE) {
-            Dungeon.level.drop( new TomeOfMastery(), pos ).sprite.drop();
-        }
         Dungeon.level.drop( new Cypros(), pos).sprite.drop();
 
         GameScene.bossSlain();
         super.die( cause );
-
-        Badges.validateBossSlain();
-
 
         //WndDialog.ShowChapter(DialogInfo.ID_RABBIT_BOSS + DialogInfo.COMPLETE);
 
@@ -453,7 +444,7 @@ public class Elphelt extends Mob {
                             if (fch.pos == trajectory.collisionPos) {
                                 Paralysis.prolong(fch, Paralysis.class, 3.0f);
                             }
-                            //Dungeon.level.press(fch.pos, fch, true);
+                            Dungeon.level.occupyCell(fch);
                             if (fch == Dungeon.hero){
                                 Dungeon.observe();
                             }
@@ -566,7 +557,7 @@ public class Elphelt extends Mob {
                             Paralysis.prolong(ch, Paralysis.class, 2f);
                         }
 
-                        //Dungeon.level.press(ch.pos, ch, true);
+                        Dungeon.level.occupyCell(ch);
                         if (ch == Dungeon.hero) {
                             Dungeon.observe();
                         }
@@ -598,7 +589,7 @@ public class Elphelt extends Mob {
                 dstRush = -1;
                 bridlePath.clear();
 
-                yell( Messages.get(this, "bridleexpress") );
+                yell( Messages.get(Elphelt.class, "bridleexpress") );
             }
         }), -1f);
 
@@ -619,7 +610,7 @@ public class Elphelt extends Mob {
             ch.sprite.centerEmitter().start( Speck.factory( Speck.HEART ), 0.2f, 5 );
             //  3턴 지속 매혹 부여
             if (Random.Int(RANGE_MAGNUM) <= traceMagnum.dist) {
-                Buff.affect( ch, Charm.class, magnumDelay() );
+                Buff.affect(ch, Charm.class, magnumDelay()).object=id();
             }
         }
 

@@ -652,23 +652,7 @@ public class Badges {
 		}
 	}
 	
-	public static void validateBossSlain() {
-		Badge badge = null;
-		switch (Dungeon.curDepth()) {
-		case 5:
-			badge = Badge.BOSS_SLAIN_1;
-			break;
-		case 10:
-			badge = Badge.BOSS_SLAIN_2;
-			break;
-		case 15:
-			badge = Badge.BOSS_SLAIN_3;
-			break;
-		case 20:
-			badge = Badge.BOSS_SLAIN_4;
-			break;
-		}
-		
+	public static void validateBossSlain(Badge badge) {
 		if (badge != null) {
 			local.add( badge );
 			displayBadge( badge );

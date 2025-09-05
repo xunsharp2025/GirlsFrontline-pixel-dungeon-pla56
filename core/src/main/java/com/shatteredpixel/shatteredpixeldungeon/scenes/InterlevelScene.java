@@ -115,7 +115,7 @@ public class InterlevelScene extends PixelScene {
 		switch (mode){
 			default:
 				loadingDepth = Dungeon.depth;
-				scrollSpeed = 0;
+				scrollSpeed = 1;
 				break;
 			case CONTINUE:
 				loadingDepth = GamesInProgress.check(GamesInProgress.curSlot).depth;

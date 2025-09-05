@@ -211,7 +211,7 @@ public class Tengu extends Mob {
 		super.die( cause );
 		Badges.KILL_SNAKE();
 		Badges.validateType561Unlock();
-		Badges.validateBossSlain();
+		Badges.validateBossSlain(Badges.Badge.BOSS_SLAIN_2);;
 		
 		LloydsBeacon beacon = Dungeon.hero.belongings.getItem(LloydsBeacon.class);
 		if (beacon != null) {

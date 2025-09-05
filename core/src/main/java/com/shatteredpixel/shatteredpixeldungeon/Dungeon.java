@@ -280,8 +280,8 @@ public class Dungeon {
 			level = new DeepCaveLevel();break;
 		case 25:
 			level = new DeepCaveBossLevel();break;
-		//case 1025:
-		//	level = new RabbitBossLevel();break;
+		case 1025:
+			level = new RabbitBossLevel();break;
 		case 26:case 27:case 28:case 29:
 			level = new HallsLevel();break;
 		case 30:
