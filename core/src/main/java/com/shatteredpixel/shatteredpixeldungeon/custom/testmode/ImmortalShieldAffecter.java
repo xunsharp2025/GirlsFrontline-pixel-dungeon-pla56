@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class ImmortalShieldAffecter extends TestItem {
     {
-        image = ItemSpriteSheet.ROUND_SHIELD;
+        image = ItemSpriteSheet.GREATSHIELD;
         defaultAction = AC_SWITCH;
     }
     private static final String AC_SWITCH = "switch";

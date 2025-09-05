@@ -199,7 +199,6 @@ public class ItemSpriteSheet {
 	                                                                                    //16 free slots
 
 	private static final int WEP_TIER1      =                               xy(1, 7);   //8 slots
-	/** SP1 贴图 */
 	public static final int UMP45         	= WEP_TIER1+0;
 	public static final int DP             	= WEP_TIER1+1;
 	public static final int M9   			= WEP_TIER1+2;
@@ -224,14 +223,7 @@ public class ItemSpriteSheet {
 		assignItemRect(THUNDER,   16, 16);
 	}
 
-	private static final int WEP_TIER2      =                               xy(1, 8);   //8 slots
-	public static final int SHORTSWORD      = WEP_TIER2+10;
-	public static final int HAND_AXE        = WEP_TIER2+11;
-	public static final int SPEAR           = WEP_TIER2+12;
-	public static final int QUARTERSTAFF    = WEP_TIER2+13;
-	public static final int DIRK            = WEP_TIER2+14;
-
-	/** SP2 贴图 */
+	private static final int WEP_TIER2     = xy(1, 8);   //8 slots
 	public static final int M16            = WEP_TIER2+0;
 	public static final int M1911          = WEP_TIER2+1;
 	public static final int M1903          = WEP_TIER2+2;
@@ -253,22 +245,14 @@ public class ItemSpriteSheet {
 		assignItemRect(MAGNUMWEDDING,		12, 12);
 	}
 
-	private static final int WEP_TIER3      =                               xy(9, 8);   //8 slots
-	public static final int SWORD           = WEP_TIER3+10;
-	public static final int MACE            = WEP_TIER3+11;
-	public static final int SCIMITAR        = WEP_TIER3+12;
-	public static final int ROUND_SHIELD    = WEP_TIER3+13;
-	public static final int SAI             = WEP_TIER3+14;
-	public static final int WHIP            = WEP_TIER3+15;
-
-	/** SP3 贴图 */
-	public static final int KS23           = WEP_TIER3+0;
-	public static final int KAR98            = WEP_TIER3+1;
-	public static final int NEGEV        = WEP_TIER3+2;
-	public static final int MOS    = WEP_TIER3+3;
-	public static final int KRISS             = WEP_TIER3+4;
-	public static final int WA            = WEP_TIER3+5;
-	public static final int C96            = WEP_TIER3+6;
+	private static final int WEP_TIER3 = xy(10, 8);   //8 slots
+	public static final int KS23       = WEP_TIER3+0;
+	public static final int KAR98      = WEP_TIER3+1;
+	public static final int NEGEV      = WEP_TIER3+2;
+	public static final int MOS        = WEP_TIER3+3;
+	public static final int KRISS      = WEP_TIER3+4;
+	public static final int WA         = WEP_TIER3+5;
+	public static final int C96        = WEP_TIER3+6;
 
 	static{
 		assignItemRect(KS23,           16, 16);
@@ -281,13 +265,6 @@ public class ItemSpriteSheet {
 	}
 
 	private static final int WEP_TIER4      =                               xy(9, 9);   //8 slots
-	public static final int LONGSWORD       = WEP_TIER4+10;
-	public static final int BATTLE_AXE      = WEP_TIER4+11;
-	public static final int FLAIL           = WEP_TIER4+12;
-	public static final int RUNIC_BLADE     = WEP_TIER4+13;
-	public static final int ASSASSINS_BLADE = WEP_TIER4+14;
-
-	/** SP4 贴图 */
 	public static final int WIN97      		= WEP_TIER4+0;
 	public static final int DRAGUNOV      	= WEP_TIER4+1;
 	public static final int AK47         	= WEP_TIER4+2;
@@ -306,19 +283,14 @@ public class ItemSpriteSheet {
 		assignItemRect(CROSSBOW,        16, 18);
 	}
 
-	/** SP5 贴图 */
 	private static final int WEP_TIER5      =                               xy(1, 9);   //8 slots
-	public static final int GREATSWORD      = WEP_TIER5+10;
-	public static final int WAR_HAMMER      = WEP_TIER5+11;
-	public static final int GAUNTLETS       = WEP_TIER5+15;
-
 	//TODO SP5 贴图需要调整
 	public static final int USAS12      = WEP_TIER5+0;
-	public static final int SASS      = WEP_TIER5+1;
-	public static final int GLAIVE          = WEP_TIER5+2;
-	public static final int GREATAXE        = WEP_TIER5+3;
-	public static final int GREATSHIELD     = WEP_TIER5+4;
-	public static final int LAR              = WEP_TIER5+5;
+	public static final int SASS        = WEP_TIER5+1;
+	public static final int GLAIVE      = WEP_TIER5+2;
+	public static final int GREATAXE    = WEP_TIER5+3;
+	public static final int GREATSHIELD = WEP_TIER5+4;
+	public static final int LAR         = WEP_TIER5+5;
 	static{
 		assignItemRect(USAS12,  16, 16);
 		assignItemRect(SASS,  16, 16);
