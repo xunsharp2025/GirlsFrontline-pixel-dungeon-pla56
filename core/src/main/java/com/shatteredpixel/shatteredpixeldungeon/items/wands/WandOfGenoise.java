@@ -8,7 +8,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.GenoiseWarn;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.GooWarn;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Noel;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -49,7 +48,7 @@ public class WandOfGenoise extends Wand {
     @Override
     public void updateLevel() {
         maxCharges = 1;
-        curCharges = Noel.Quest.completed() ? 2 : 1;
+        curCharges = 1;
     }
 
     @Override

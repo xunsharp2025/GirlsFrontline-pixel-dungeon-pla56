@@ -29,7 +29,6 @@ public class Assets {
 	//need Organize
 	public static final String EMOTION 		= "emotion.png";
 	public static final String PYRO			= "sprites/girlpd/pyro.png";
-	public static final String NOEL			= "noel.png";
 	public static final String P7			= "p7.png";
 	public static final String SVESPID		= "shieldvespid.png";
 	public static final String M4A1			= "m4a1.png";

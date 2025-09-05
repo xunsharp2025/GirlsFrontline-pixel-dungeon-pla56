@@ -306,7 +306,7 @@ public class RabbitBossLevel extends Level {
 	@Override
 	public Group addVisuals() {
 		super.addVisuals();
-		RabbitLevel.addPrisonVisuals(this, visuals);
+		PrisonLevel.addPrisonVisuals(this,visuals);
 		return visuals;
 	}
 
