@@ -128,12 +128,6 @@ public class Elphelt extends Mob {
     public int phase = 0;
 
     @Override
-    public void move( int step ) {
-        Dungeon.level.seal();
-        super.move( step );
-    }
-
-    @Override
     public void notice() {
         super.notice();
         BossHealthBar.assignBoss(this);
@@ -144,7 +138,6 @@ public class Elphelt extends Mob {
                 phase = 1;
             }
             spend(TICK);
-            Dungeon.level.seal();
         }
     }
 

@@ -90,8 +90,7 @@ public class DeepCaveLevel extends RegularLevel {
     protected float[] trapChances() {
         return new float[]{ 8, 8, 8, 8, 8,
                 4, 4, 4, 4,
-                2, 2, 2,
-                1 };
+                2, 2, 2};
     }
 
 

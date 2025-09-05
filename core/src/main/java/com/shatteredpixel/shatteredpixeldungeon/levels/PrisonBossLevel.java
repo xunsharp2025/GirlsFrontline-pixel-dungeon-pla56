@@ -40,6 +40,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.IronKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.HeavyBoomerang;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
+import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Teleporter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.TenguDartTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -284,6 +285,10 @@ public class PrisonBossLevel extends Level {
 			if (h.peek() instanceof IronKey){
 				h.destroy();
 			}
+		}
+
+		if(Dungeon.isChallenged(Challenges.STRONGER_BOSSES)){
+			placeTrigger(new Teleporter().create(13+10*width(),-1,1010));
 		}
 		
 		CustomTilemap vis = new ExitVisual();
@@ -815,7 +820,7 @@ public class PrisonBossLevel extends Level {
 		final int TEX_WIDTH = 384;
 		
 		private static byte[] render = new byte[]{
-				0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
+				0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
 				1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
 				1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
 				1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
@@ -832,6 +837,10 @@ public class PrisonBossLevel extends Level {
 		public Tilemap create() {
 			Tilemap v = super.create();
 			int[] data = mapSimpleImage(0, 0, TEX_WIDTH);
+			if(Dungeon.isChallenged(Challenges.STRONGER_BOSSES)){
+				data[2]+=1;
+			}
+
 			for (int i = 0; i < data.length; i++){
 				if (render[i] == 0) data[i] = -1;
 			}

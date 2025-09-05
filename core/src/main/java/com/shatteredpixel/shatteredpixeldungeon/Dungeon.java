@@ -268,6 +268,8 @@ public class Dungeon {
 			level = new PrisonLevel();break;
 		case 10:
 			level = new PrisonBossLevel();break;
+		case 1010:
+			level = new RabbitBossLevel();break;
 		case 11:case 12:case 13:case 14:
 			level = new CavesLevel();break;
 		case 15:
@@ -280,8 +282,6 @@ public class Dungeon {
 			level = new DeepCaveLevel();break;
 		case 25:
 			level = new DeepCaveBossLevel();break;
-		case 1025:
-			level = new RabbitBossLevel();break;
 		case 26:case 27:case 28:case 29:
 			level = new HallsLevel();break;
 		case 30:
@@ -551,6 +551,9 @@ public class Dungeon {
 
 		quickslot.reset();
 		QuickSlotButton.reset();
+
+		Dungeon.level = null;
+		Dungeon.depth = -1;
 
 		Dungeon.challenges = bundle.getInt( CHALLENGES );
 		Dungeon.mobsToChampion = bundle.getInt( MOBS_TO_CHAMPION );

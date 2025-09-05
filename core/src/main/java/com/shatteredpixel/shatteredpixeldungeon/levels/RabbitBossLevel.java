@@ -256,7 +256,7 @@ public class RabbitBossLevel extends Level {
 		switch (state){
 			//moving to the beginning of the fight
 			case READY:
-
+				seal();
 				elphelt.state = elphelt.SLEEPING;
 				elphelt.pos = exit; //in the middle of the fight room
 
