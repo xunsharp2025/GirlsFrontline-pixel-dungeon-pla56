@@ -38,9 +38,12 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ElpheltSprite;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
+import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.boss.Elphelt_Plot;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BossHealthBar;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.noosa.Game;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
@@ -130,14 +133,14 @@ public class Elphelt extends Mob {
     @Override
     public void notice() {
         super.notice();
-        BossHealthBar.assignBoss(this);
+        if (!BossHealthBar.isAssigned()) {
+            BossHealthBar.assignBoss(this);
 
-        if (!Dungeon.level.locked) {
-            //Game.runOnRenderThread(()->GameScene.show(new WndDialog(new Gager_Plot(),false)));
             if (phase < 1) {
                 phase = 1;
             }
-            spend(TICK);
+
+            Game.runOnRenderThread(()->GameScene.scene.add(new WndDialog(new Elphelt_Plot())));
         }
     }
 
@@ -345,7 +348,7 @@ public class Elphelt extends Mob {
         GameScene.bossSlain();
         super.die( cause );
 
-        //WndDialog.ShowChapter(DialogInfo.ID_RABBIT_BOSS + DialogInfo.COMPLETE);
+        Game.runOnRenderThread(()->GameScene.scene.add(new WndDialog(new Elphelt_Plot.End())));
 
         yell( Messages.get(this, "defeated") );
     }

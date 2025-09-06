@@ -24,12 +24,9 @@ import com.watabou.utils.Callback;
 import java.util.ArrayList;
 
 public class WndDialog extends Window {
-
-    private static final int MARGIN 		= 1;
     private static final int BUTTON_HEIGHT	= 18;
 
-    private static final int MARGIN_X = 5;
-    public static final int MARGIN_Y = 5;
+    private static final float AVATAR_SCALE=2f;
 
     private Image mainAvatar;
     private Image secondAvatar;
@@ -82,26 +79,27 @@ public class WndDialog extends Window {
 
         int textSize = landscape ? 10 : 8;
 
-        int chromeHeight = PixelScene.uiCamera.height / heightUnit - MARGIN_Y;
-        int chromeWidth = PixelScene.uiCamera.width - 2 * MARGIN_X;
+        int chromeHeight = PixelScene.uiCamera.height / heightUnit;
+        int chromeWidth = PixelScene.uiCamera.width;
 
         shadow.am = 0;
 
         chrome.size(chromeWidth, chromeHeight);
-        chrome.x = MARGIN_X;
-        chrome.y = PixelScene.uiCamera.height - GameScene.ToolbarHeight() - chromeHeight;
+        chrome.x = 0;
+        chrome.y = PixelScene.uiCamera.height-chromeHeight;
         add(chrome);
 
-        mainAvatar = Script.Portrait(Script.Character.UMP45);
+        mainAvatar = Script.AvatarUMP45(0);
+        mainAvatar.scale.set(AVATAR_SCALE);
         mainAvatar.x = 10;
-        mainAvatar.y = chrome.y - mainAvatar.height() / 1.32f;
+        mainAvatar.y = chrome.y - mainAvatar.height();
         add(mainAvatar);
 
-        secondAvatar = Script.Portrait(Script.Character.UMP45);
-        secondAvatar.x = PixelScene.uiCamera.width - secondAvatar.width() - MARGIN_X;
+        secondAvatar = Script.AvatarUMP45(0);
+        secondAvatar.x = PixelScene.uiCamera.width - secondAvatar.width();
         add(secondAvatar);
 
-        thirdAvatar = Script.Portrait(Script.Character.UMP45);
+        thirdAvatar = Script.AvatarUMP45(0);
         thirdAvatar.x = secondAvatar.x - 16;
         add(thirdAvatar);
 
@@ -113,15 +111,15 @@ public class WndDialog extends Window {
 
         rightname = PixelScene.renderTextBlock(Script.Name(Script.Character.UMP45), fontSize);
 
-        leftname.setPos(mainAvatar.x + mainAvatar.width(), chrome.y - mainAvatar.height() / 3f);
+        leftname.setPos(mainAvatar.x + mainAvatar.width(), chrome.y-fontSize);
         rightname.setPos(thirdAvatar.x - rightname.width(), thirdAvatar.y + thirdAvatar.height() - rightname.height() - 2);
 
         add(leftname);
         add(rightname);
 
         text = PixelScene.renderTextBlock("", textSize);
-        text.maxWidth(PixelScene.uiCamera.width - 2 * MARGIN_X - textSize);
-        text.setPos(MARGIN_X + textSize / 2f + 5, chrome.y + MARGIN_Y);
+        text.maxWidth(PixelScene.uiCamera.width - textSize);
+        text.setPos(5,chrome.y+5);
         add(text);
 
         area = makeArea();
@@ -224,10 +222,9 @@ public class WndDialog extends Window {
     }
 
     public void setMainAvatar(Image mainAvatar) {
+        mainAvatar.scale.set(AVATAR_SCALE);
         this.mainAvatar.copy(mainAvatar);
         this.mainAvatar.visible = true;
-        float AvatarScaleMultiplier = 1.5f;
-        this.mainAvatar.scale.set(AvatarScaleMultiplier);
     }
 
     public void setMainColor(int alpha) {
@@ -362,7 +359,7 @@ public class WndDialog extends Window {
 
         haveChoice = false;
 
-        int width = PixelScene.uiCamera.width - 2 * MARGIN_X;
+        int width = PixelScene.uiCamera.width;
 
         float pos;
         ArrayList<ChoiceButton> buttons = new ArrayList<ChoiceButton>();
@@ -374,7 +371,7 @@ public class WndDialog extends Window {
         } else {
             int half = existing.length / 2;
             float offset = (PixelScene.uiCamera.height - GameScene.ToolbarHeight() - GameScene.StatusHeight()) / 2;
-            pos = offset - half * BUTTON_HEIGHT - (half - 1) * MARGIN - (existing.length % 2 == 0 ? MARGIN / 2f : BUTTON_HEIGHT / 2f);
+            pos = offset - half * BUTTON_HEIGHT - (half - 1) * 1f - (existing.length % 2 == 0 ? 0.5f : BUTTON_HEIGHT / 2f);
         }
 
         for (int i = 0; i < existing.length; i++) {
@@ -391,10 +388,10 @@ public class WndDialog extends Window {
                 }
             };
             buttons.add(btn);
-            btn.setRect(MARGIN_X, pos, width, BUTTON_HEIGHT);
+            btn.setRect(0, pos, width, BUTTON_HEIGHT);
             btn.layout();
             add(btn);
-            pos += MARGIN + BUTTON_HEIGHT;
+            pos += 1f+BUTTON_HEIGHT;
         }
     }
 

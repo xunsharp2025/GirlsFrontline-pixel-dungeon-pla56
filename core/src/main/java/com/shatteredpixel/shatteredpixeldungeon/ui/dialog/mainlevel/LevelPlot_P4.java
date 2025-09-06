@@ -33,7 +33,7 @@ public class LevelPlot_P4 extends Plot {
             case 4:return Script.AvatarHK416  (1);
             case 5:return Script.AvatarUMP9   (0);
             case 6:return Script.AvatarUMP45  (0);
-            case 7:return Script.NPC_DISTROYER(2);
+            case 7:return Script.BossDestroyer(2);
             case 8:return Script.AvatarUMP45  (2);
             case 9:return Script.AvatarUMP9   (0);
         }

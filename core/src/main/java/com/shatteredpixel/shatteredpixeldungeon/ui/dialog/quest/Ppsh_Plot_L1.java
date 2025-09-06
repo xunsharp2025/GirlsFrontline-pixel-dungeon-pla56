@@ -14,10 +14,10 @@ public class Ppsh_Plot_L1 extends Plot {
     public Image getImage(int process){
         switch(process){
             case 0:return Script.AvatarHK416(0);
-            case 1:return Script.NPC_Ppsh_47(1);
+            case 1:return Script.NpcPpsh47(1);
             case 2:return Script.AvatarUMP9 (0);
-            case 3:return Script.NPC_Ppsh_47(0);
-            case 4:return Script.NPC_Ppsh_47(1);
+            case 3:return Script.NpcPpsh47(0);
+            case 4:return Script.NpcPpsh47(1);
         }
         return null;
     }

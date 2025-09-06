@@ -14,8 +14,8 @@ public class M16A1_Plot_L1 extends Plot {
     public Image getImage(int process){
         switch(process){
             case 0:return Script.AvatarUMP45(1);
-            case 1:return Script.NPC_M16A1  (1);
-            case 2:return Script.NPC_M16A1  (2);
+            case 1:return Script.NpcM16A1  (1);
+            case 2:return Script.NpcM16A1  (2);
             case 3:return Script.AvatarHK416(1);
             case 4:return Script.AvatarUMP45(0);
         }
@@ -54,8 +54,8 @@ public class M16A1_Plot_L1 extends Plot {
         @Override
         public Image getImage(int process){
             switch(process){
-                case 0:return Script.NPC_M16A1(0);
-                case 1:return Script.NPC_M16A1(0);
+                case 0:return Script.NpcM16A1(0);
+                case 1:return Script.NpcM16A1(0);
             }
             return null;
         }

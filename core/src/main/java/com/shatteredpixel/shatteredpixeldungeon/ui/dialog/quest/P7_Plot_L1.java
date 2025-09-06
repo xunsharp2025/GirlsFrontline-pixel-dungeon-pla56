@@ -13,11 +13,11 @@ public class P7_Plot_L1 extends Plot {
     @Override
     public Image getImage(int process){
         switch(process){
-            case 0:return Script.NPC_P7    (1);
+            case 0:return Script.NpcP7    (1);
             case 1:return Script.AvatarUMP9(0);
-            case 2:return Script.NPC_P7    (0);
-            case 3:return Script.NPC_P7    (1);
-            case 4:return Script.NPC_P7    (0);
+            case 2:return Script.NpcP7    (0);
+            case 3:return Script.NpcP7    (1);
+            case 4:return Script.NpcP7    (0);
         }
         return null;
     }
@@ -54,7 +54,7 @@ public class P7_Plot_L1 extends Plot {
         @Override
         public Image getImage(int process){
             switch(process){
-                case 0:return Script.NPC_P7(0);
+                case 0:return Script.NpcP7(0);
             }
             return null;
         }

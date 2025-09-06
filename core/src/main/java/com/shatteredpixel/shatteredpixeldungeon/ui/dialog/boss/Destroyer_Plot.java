@@ -13,7 +13,7 @@ public class Destroyer_Plot extends Plot {
     @Override
     public Image getImage(int process){
         switch(process){
-            case 0:return Script.NPC_DISTROYER(2);
+            case 0:return Script.BossDestroyer(2);
         }
         return null;
     }

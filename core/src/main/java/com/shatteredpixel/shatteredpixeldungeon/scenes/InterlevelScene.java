@@ -45,7 +45,6 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndError;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndStory;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.glwrap.Blending;
 import com.watabou.noosa.Camera;
@@ -81,8 +80,6 @@ public class InterlevelScene extends PixelScene {
 
 	public static int accessPos;
 	public static int accessLevelId;
-	
-	public static boolean noStory = false;
 
 	public static boolean fallIntoPit;
 	
@@ -396,14 +393,9 @@ public class InterlevelScene extends PixelScene {
 	}
 
 	private static void descend() throws IOException {
-
 		if (Dungeon.hero == null) {
 			Mob.clearHeldAllies();
 			Dungeon.init();
-			if (noStory) {
-				Dungeon.chapters.add( WndStory.ID_SEWERS );
-				noStory = false;
-			}
 			GameLog.wipe();
 		} else {
 			Mob.holdAllies( Dungeon.level );

@@ -13,14 +13,14 @@ public class LevelPlot_P5 extends Plot {
     @Override
     public Image getImage(int process){
         switch(process){
-            case 0:return Script.NPC_DISTROYER(1);
-            case 1:return Script.NPC_DREAM    (2);
-            case 2:return Script.NPC_DISTROYER(1);
-            case 3:return Script.NPC_DREAM    (1);
-            case 4:return Script.NPC_DISTROYER(2);
-            case 5:return Script.NPC_DREAM    (1);
-            case 6:return Script.NPC_DREAM    (0);
-            case 7:return Script.NPC_DISTROYER(0);
+            case 0:return Script.BossDestroyer(1);
+            case 1:return Script.BossDreamer  (2);
+            case 2:return Script.BossDestroyer(1);
+            case 3:return Script.BossDreamer  (1);
+            case 4:return Script.BossDestroyer(2);
+            case 5:return Script.BossDreamer  (1);
+            case 6:return Script.BossDreamer  (0);
+            case 7:return Script.BossDestroyer(0);
             case 8:return Script.AvatarG11    (1);
             case 9:return Script.AvatarUMP45  (0);
         }
@@ -31,12 +31,12 @@ public class LevelPlot_P5 extends Plot {
     public String getName(int process){
         switch(process){
             case 0:return Script.Name(Script.Character.DESTROYER);
-            case 1:return Script.Name(Script.Character.DREAM    );
+            case 1:return Script.Name(Script.Character.DREAMER  );
             case 2:return Script.Name(Script.Character.DESTROYER);
-            case 3:return Script.Name(Script.Character.DREAM    );
+            case 3:return Script.Name(Script.Character.DREAMER  );
             case 4:return Script.Name(Script.Character.DESTROYER);
-            case 5:return Script.Name(Script.Character.DREAM    );
-            case 6:return Script.Name(Script.Character.DREAM    );
+            case 5:return Script.Name(Script.Character.DREAMER  );
+            case 6:return Script.Name(Script.Character.DREAMER  );
             case 7:return Script.Name(Script.Character.DESTROYER);
             case 8:return Script.Name(Script.Character.G11      );
             case 9:return Script.Name(Script.Character.UMP45    );

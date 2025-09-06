@@ -8,223 +8,149 @@ import com.watabou.noosa.tweeners.AlphaTweener;
 import com.watabou.utils.SparseArray;
 
 public class Script {
-    //Well if we wants to make plot related(mostly dialogue)clear and able to store enough date(if we still have an chronicle-like campaign?)
-    //Whatever,this at least help save some data needed
-    //More information can be found at WndDialog.java
-    //By Teller 2021/8/20
-
-    //GirlPD is Implement
-    //By JDSALing 2025/7/28
-
     public enum Character{
        NONE,UMP45,HK416,G11,UMP9,STAR_45,EXCU_TIONER,M16A1,
-       UROBOROS,PPSH_47,P7,DESTROYER,DREAM,GAGER
-    }
-
-    public static Image AvatarG11(int index) {
-        Image i;
-        switch (index){
-            default:
-            case 0:
-                i = new Image(Assets.EMOTION,0,0,24,24);
-                break;
-            case 1:
-                i = new Image(Assets.EMOTION,24,0,24,24);
-                break;
-            case 2:
-                i = new Image(Assets.EMOTION,48,0,24,24);
-                break;
-        }
-        return i;
+       UROBOROS,PPSH_47,P7,DESTROYER,DREAMER,GAGER,ELPHELT
     }
 
     public static Image AvatarUMP45(int index) {
-        Image i;
         switch (index){
-            default:
-            case 0:
-                i = new Image(Assets.EMOTION,0,24,24,24);
-                break;
-            case 1:
-                i = new Image(Assets.EMOTION,24,24,24,24);
-                break;
-            case 2:
-                i = new Image(Assets.EMOTION,48,24,24,24);
-                break;
+            case 0: return new Image(Assets.EMOTION,0,24,24,24);
+            case 1: return new Image(Assets.EMOTION,24,24,24,24);
+            case 2: return new Image(Assets.EMOTION,48,24,24,24);
         }
-        return i;
+        return null;
+    }
+
+    public static Image AvatarG11(int index) {
+        switch (index){
+            case 0:return new Image(Assets.EMOTION,0,0,24,24);
+            case 1:return new Image(Assets.EMOTION,24,0,24,24);
+            case 2:return new Image(Assets.EMOTION,48,0,24,24);
+        }
+        return null;
     }
 
     public static Image AvatarUMP9(int index) {
-        Image i;
         switch (index){
-            default:
-            case 0:
-                i = new Image(Assets.EMOTION,0,48,24,24);
-                break;
-            case 1:
-                i = new Image(Assets.EMOTION,24,48,24,24);
-                break;
-            case 2:
-                i = new Image(Assets.EMOTION,48,48,24,24);
-                break;
+            case 0: return new Image(Assets.EMOTION,0,48,24,24);
+            case 1: return new Image(Assets.EMOTION,24,48,24,24);
+            case 2: return new Image(Assets.EMOTION,48,48,24,24);
         }
-        return i;
+        return null;
     }
 
     public static Image AvatarHK416(int index) {
-        Image i;
         switch (index){
-            default:
-            case 0:
-                i = new Image(Assets.EMOTION,0,72,24,24);
-                break;
-            case 1:
-                i = new Image(Assets.EMOTION,24,72,24,24);
-                break;
-            case 2:
-                i = new Image(Assets.EMOTION,48,72,24,24);
-                break;
+            case 0: return new Image(Assets.EMOTION,0,72,24,24);
+            case 1: return new Image(Assets.EMOTION,24,72,24,24);
+            case 2: return new Image(Assets.EMOTION,48,72,24,24);
         }
-        return i;
+        return null;
     }
-
 
     public static Image AvatarSTAR45(int index) {
-        Image i;
         switch (index){
-            default:
-            case 0:
-                i = new Image(Assets.EMOTION,72,0,24,24);
-                break;
-            case 1:
-                i = new Image(Assets.EMOTION,96,0,24,24);
-                break;
-            case 2:
-                i = new Image(Assets.EMOTION,120,0,24,24);
-                break;
+            case 0: return new Image(Assets.EMOTION,72,0,24,24);
+            case 1: return new Image(Assets.EMOTION,96,0,24,24);
+            case 2: return new Image(Assets.EMOTION,120,0,24,24);
         }
-        return i;
+        return null;
     }
 
-    public static Image NPC_M16A1(int index) {
-        Image i;
+    public static Image NpcM16A1(int index) {
         switch (index){
-            default:
-            case 0:
-                i = new Image(Assets.EMOTION,72,24,24,24);
-                break;
-            case 1:
-                i = new Image(Assets.EMOTION,96,24,24,24);
-                break;
-            case 2:
-                i = new Image(Assets.EMOTION,120,24,24,24);
-                break;
+            case 0: return new Image(Assets.EMOTION,72,24,24,24);
+            case 1: return new Image(Assets.EMOTION,96,24,24,24);
+            case 2: return new Image(Assets.EMOTION,120,24,24,24);
         }
-        return i;
+        return null;
     }
 
-    public static Image NPC_Ppsh_47(int index) {
-        Image i;
+    public static Image NpcPpsh47(int index) {
         switch (index){
-            default:
-            case 0:
-                i = new Image(Assets.EMOTION,72,48,24,24);
-                break;
-            case 1:
-                i = new Image(Assets.EMOTION,96,48,24,24);
-                break;
-            case 2:
-                i = new Image(Assets.EMOTION,120,48,24,24);
-                break;
+            case 0: return new Image(Assets.EMOTION,72,48,24,24);
+            case 1: return new Image(Assets.EMOTION,96,48,24,24);
+            case 2: return new Image(Assets.EMOTION,120,48,24,24);
         }
-        return i;
+        return null;
     }
 
-    public static Image NPC_DISTROYER(int index) {
-        Image i;
+    public static Image NpcP7(int index) {
         switch (index){
-            default:
-            case 0:
-                i = new Image(Assets.EMOTION,216,72,24,24);
-                break;
-            case 1:
-                i = new Image(Assets.EMOTION,240,72,24,24);
-                break;
-            case 2:
-                i = new Image(Assets.EMOTION,264,72,24,24);
-                break;
+            case 0: return new Image(Assets.EMOTION,72,72,24,24);
+            case 1: return new Image(Assets.EMOTION,96,72,24,24);
+            case 2: return new Image(Assets.EMOTION,120,72,24,24);
         }
-        return i;
-    }
-
-    public static Image NPC_DREAM(int index) {
-        Image i;
-        switch (index){
-            default:
-            case 0:
-                i = new Image(Assets.EMOTION,216,96,24,24);
-                break;
-            case 1:
-                i = new Image(Assets.EMOTION,240,96,24,24);
-                break;
-            case 2:
-                i = new Image(Assets.EMOTION,264,96,24,24);
-                break;
-        }
-        return i;
-    }
-
-    public static Image NPC_P7(int index) {
-        Image i;
-        switch (index){
-            default:
-            case 0:
-                i = new Image(Assets.EMOTION,72,72,24,24);
-                break;
-            case 1:
-                i = new Image(Assets.EMOTION,96,72,24,24);
-                break;
-            case 2:
-                i = new Image(Assets.EMOTION,120,72,24,24);
-                break;
-        }
-        return i;
+        return null;
     }
 
     public static Image BossExcutioner() {
-        Image i;
-        i = new Image(Assets.EMOTION,216,0,24,24);
-        return i;
+        return new Image(Assets.EMOTION,216,0,24,24);
     }
 
     public static Image BossUroboros() {
-        Image i;
-        i = new Image(Assets.EMOTION,216,24,24,24);
-        return i;
+        return new Image(Assets.EMOTION,216,24,24,24);
     }
 
     public static Image BossGager() {
-        Image i;
-        i = new Image(Assets.EMOTION,216,48,24,24);
-        return i;
+        return new Image(Assets.EMOTION,216,48,24,24);
     }
 
-
-
-    public enum FormalPlot
-    {
-        NOBODY,SEWER,PRISON,CAVES,CITY,HALLS
+    public static Image BossDestroyer(int index) {
+        switch (index){
+            case 0: return new Image(Assets.EMOTION,216,72,24,24);
+            case 1: return new Image(Assets.EMOTION,240,72,24,24);
+            case 2: return new Image(Assets.EMOTION,264,72,24,24);
+        }
+        return null;
     }
 
+    public static Image BossDreamer(int index) {
+        switch (index){
+            case 0: return new Image(Assets.EMOTION,216,96,24,24);
+            case 1: return new Image(Assets.EMOTION,240,96,24,24);
+            case 2: return new Image(Assets.EMOTION,264,96,24,24);
+        }
+        return null;
+    }
 
-    public static final int ID_SEWERS		= 0;
-    public static final int ID_PRISON		= 1;
-    public static final int ID_CAVES		= 2;
-    public static final int ID_CITY     	= 3;
-    public static final int ID_RECAVES		= 4;
+    public static Image BossElphelt(int index) {
+        switch (index){
+            case 0: return new Image(Assets.EMOTION,144,0,24,24);
+            case 1: return new Image(Assets.EMOTION,168,0,24,24);
+            case 2: return new Image(Assets.EMOTION,192,0,24,24);
+        }
+        return null;
+    }
 
-    public static final int ID_HALLS = 5;
+    public static String Name(Character character){
+        String str=null;
+        switch (character) {
+            case UMP45:      str = Messages.get(Script.class,"name_ump45");break;
+            case G11:        str = Messages.get(Script.class,"name_g11");break;
+            case HK416:      str = Messages.get(Script.class,"name_hk416");break;
+            case UMP9:       str = Messages.get(Script.class,"name_ump9");break;
+            case STAR_45:    str = Messages.get(Script.class,"name_star15");break;
+            case EXCU_TIONER:str = Messages.get(Script.class,"name_excutioner");break;
+            case M16A1:      str = Messages.get(Script.class,"name_m16a1");break;
+            case UROBOROS:   str = Messages.get(Script.class,"name_uroboros");break;
+            case PPSH_47:    str = Messages.get(Script.class,"name_ppsh47");break;
+            case P7:         str = Messages.get(Script.class,"name_p7");break;
+            case DESTROYER:  str = Messages.get(Script.class,"name_destroyer");break;
+            case DREAMER:    str = Messages.get(Script.class,"name_dreamer");break;
+            case GAGER:      str = Messages.get(Script.class,"name_gager");break;
+            case ELPHELT:    str = Messages.get(Script.class,"name_elphelt");break;
+        }
+        return str;
+    }
+
+    public static final int ID_SEWERS  = 0;
+    public static final int ID_PRISON  = 1;
+    public static final int ID_CAVES   = 2;
+    public static final int ID_CITY    = 3;
+    public static final int ID_RECAVES = 4;
+    public static final int ID_HALLS   = 5;
 
     private static final SparseArray<String> CHAPTERS = new SparseArray<String>();
 
@@ -238,113 +164,11 @@ public class Script {
     };
 
     public static boolean checkChapter(int chapter) {
-        if(Dungeon.chapters.contains(chapter)) {
+        if (Dungeon.chapters.contains(chapter)) {
             return false;
-        }
-        else {
+        } else {
             Dungeon.chapters.add(chapter);
             return true;
-        }
-    }
-
-    public static String Name(Character character)
-    {
-        String str;
-        switch (character) {
-            default:
-            case UMP45:
-                str = Messages.get(Script.class,"name_ump45");
-                break;
-            case G11:
-                str = Messages.get(Script.class,"name_g11");
-                break;
-            case HK416:
-                str = Messages.get(Script.class,"name_hk416");
-                break;
-            case UMP9:
-                str = Messages.get(Script.class,"name_ump9");
-                break;
-            case STAR_45:
-                str = Messages.get(Script.class,"name_star15");
-                break;
-            case EXCU_TIONER:
-                str = Messages.get(Script.class,"name_excutioner");
-                break;
-            case M16A1:
-                str = Messages.get(Script.class,"name_m16a1");
-                break;
-            case UROBOROS:
-                str = Messages.get(Script.class,"name_uroboros");
-                break;
-            case PPSH_47:
-                str = Messages.get(Script.class,"name_ppsh47");
-                break;
-            case P7:
-                str = Messages.get(Script.class,"name_p7");
-                break;
-            case DESTROYER:
-                str = Messages.get(Script.class,"name_destroyer");
-                break;
-            case DREAM:
-                str = Messages.get(Script.class,"name_dream");
-                break;
-            case GAGER:
-                str = Messages.get(Script.class,"name_gager");
-                break;
-        }
-        //GLog.i(str);
-        return str;
-    }
-
-    public static Image Portrait(Character character)
-    {
-        int row = -1;
-        switch (character) {
-            default:
-            case UMP45:
-                row = 0;
-                break;
-            case G11:
-                row = 1;
-                break;
-            case HK416:
-                row = 2;
-                break;
-            case UMP9:
-                row = 3;
-                break;
-        }
-        Image image = new Image(Assets.Sprites.AVATARS, 0, 48* row,48, 48);
-
-        switch (character)
-        {
-            case NONE:
-                image = new Image(Assets.EMOTION,0,24,24,24);
-
-                AlphaTweener invisible = new AlphaTweener( image, 0.4f, 0.4f );
-                if (image.parent != null){
-                    image.parent.add(invisible);
-                } else
-                    image.alpha( 0.4f );
-
-                image.alpha(0.4f);
-                break;
-            default:break;
-        }
-
-        return image;
-    }
-
-    public static Plot ReturnPlot(FormalPlot plot)
-    {
-        switch (plot)
-        {
-            default:
-            case SEWER:
-            case PRISON:
-            case CAVES:
-            case CITY:
-            case HALLS: return null;
         }
     }
 }

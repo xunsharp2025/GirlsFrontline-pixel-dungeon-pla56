@@ -13,7 +13,7 @@ public class Ppsh_Plot_Misc extends Plot {
     @Override
     public Image getImage(int process){
         switch(process){
-            case 0:return Script.NPC_Ppsh_47(0);
+            case 0:return Script.NpcPpsh47(0);
         }
         return null;
     }
