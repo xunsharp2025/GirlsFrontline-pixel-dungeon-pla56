@@ -19,7 +19,7 @@ public abstract class WindowTrigger extends Trigger{
 	@Override
 	public void activate(Char ch){
 		if(ch==Dungeon.hero){
-			Game.runOnRenderThread(()->GameScene.show(getWindow()));
+			Game.runOnRenderThread(()->GameScene.scene.add(getWindow()));
 		}
 	}
 

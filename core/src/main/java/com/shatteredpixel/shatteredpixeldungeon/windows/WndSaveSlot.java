@@ -15,7 +15,7 @@ import com.watabou.noosa.Image;
 import com.watabou.noosa.particles.Emitter;
 
 public class WndSaveSlot extends Window {
-    private static final float SCALE = 3;
+    private static final float SCALE = 3f;
 
     public WndSaveSlot(int slotId){
         SaveSlot saveSlotButton = new SaveSlot(slotId);
@@ -50,22 +50,22 @@ public class WndSaveSlot extends Window {
 
             Image portrait = new Image(Assets.Interfaces.PORTRAIT1,(order%6)*38,(order/6)*60,38,60);
             portrait.scale.set(19f/38f*SCALE);
-            portrait.x=x+bias+SCALE;
-            portrait.y=y+bias+SCALE;
+            portrait.x=bias+SCALE;
+            portrait.y=bias+SCALE;
             add(portrait);
 
             Image frame    = new Image(Assets.Interfaces.SAVESLOT,0,0,21,52);
             frame.scale.set( SCALE );
-            frame.x=x+bias;
-            frame.y=y+bias;
+            frame.x=bias;
+            frame.y=bias;
             add(frame   );
 
             Image[] challengeMarks = new Image[Challenges.MASKS.length-1];
             for (int i=0; i<challengeMarks.length; ++i) {
-                challengeMarks[i] = new Image(Assets.Interfaces.SAVESLOT, 22, 2, 3, 3);
+                challengeMarks[i] = new Image(Assets.Interfaces.SAVESLOT, 22, 0, 3, 3);
                 challengeMarks[i].scale.set(SCALE);
-                challengeMarks[i].y = y + (38 + 4 *(i / 5)) * SCALE;
-                challengeMarks[i].x = x + (1 + 4 * (i % 5)) * SCALE;
+                challengeMarks[i].y = bias + (38 + 4*(i/5)) * SCALE;
+                challengeMarks[i].x = bias + (1  + 4*(i%5)) * SCALE;
                 challengeMarks[i].visible = ((gameInfo.challenges)&Challenges.MASKS[i]) != 0 ;
                 add(challengeMarks[i]);
             }
@@ -85,7 +85,7 @@ public class WndSaveSlot extends Window {
             depth.setPos(x + 10.5f * SCALE - depth.width() / 2f, y + 47f * SCALE);
             add(depth);
 
-            setRect(0,0,frame.width(),frame.height());
+            setSize(frame.width(),frame.height());
         }
 
         @Override

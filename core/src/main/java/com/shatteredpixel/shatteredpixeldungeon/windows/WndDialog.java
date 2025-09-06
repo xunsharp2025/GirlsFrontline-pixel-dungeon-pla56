@@ -74,12 +74,10 @@ public class WndDialog extends Window {
 
         boolean landscape = SPDSettings.landscape();
 
-        int heightUnit = landscape ? 4 : 5;
         int fontSize = landscape ? 13 : 10;
-
         int textSize = landscape ? 10 : 8;
 
-        int chromeHeight = PixelScene.uiCamera.height / heightUnit;
+        int chromeHeight = PixelScene.uiCamera.height / 5;
         int chromeWidth = PixelScene.uiCamera.width;
 
         shadow.am = 0;
