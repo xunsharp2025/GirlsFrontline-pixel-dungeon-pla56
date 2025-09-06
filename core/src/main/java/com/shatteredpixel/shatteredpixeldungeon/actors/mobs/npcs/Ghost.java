@@ -133,13 +133,13 @@ public class Ghost extends NPC {
 							switch (Quest.type) {
 								case 1:
 								default:
-									GameScene.scene.add(new WndDialog(new STAR15_Plot_L1.End(),false));
+									GameScene.scene.add(new WndDialog(new STAR15_Plot_L1.End()));
 									break;
 								case 2:
-									GameScene.scene.add(new WndDialog(new STAR15_Plot_L2.End(),false));
+									GameScene.scene.add(new WndDialog(new STAR15_Plot_L2.End()));
 									break;
 								case 3:
-									GameScene.scene.add(new WndDialog(new STAR15_Plot_L3.End(),false));
+									GameScene.scene.add(new WndDialog(new STAR15_Plot_L3.End()));
 									break;
 							}
 						}
@@ -188,7 +188,7 @@ public class Ghost extends NPC {
 				Game.runOnRenderThread(new Callback() {
 					@Override
 					public void call() {
-						GameScene.scene.add(new WndDialog(txt_quest,false));
+						GameScene.scene.add(new WndDialog(txt_quest));
 						if (Dungeon.level != null) {
 							Dungeon.level.playLevelMusic();
 						}

@@ -81,22 +81,35 @@ public class Blacksmith extends NPC {
 		}
 		
 		if (!Quest.given) {
-			Game.runOnRenderThread(() -> GameScene.show(new WndDialog(Quest.alternative ? new Ppsh_Plot_L1() : new Ppsh_Plot_L2(), false)));
-			
+			Game.runOnRenderThread(() -> GameScene.show(new WndDialog(
+				(Quest.alternative?new Ppsh_Plot_L1():new Ppsh_Plot_L2()),
+				()->{
+					Quest.given = true;
+					Quest.completed = false;
+					Notes.add( Notes.Landmark.TROLL );
+
+					Pickaxe pick = new Pickaxe();
+					if (pick.doPickUp( Dungeon.hero )) {
+						GLog.i( Messages.get(Dungeon.hero, "you_now_have", pick.name() ));
+					} else {
+						Dungeon.level.drop( pick, Dungeon.hero.pos ).sprite.drop();
+					}
+				}
+			)));
 		} else if (!Quest.completed) {
 			if (Quest.alternative) {
 				
 				Pickaxe pick = Dungeon.hero.belongings.getItem( Pickaxe.class );
 				if (pick == null) {
-					Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc(), false)));
+					Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc())));
 				} else if (!pick.bloodStained) {
-					Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc.Kill(), false)));
+					Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc.Kill())));
 				} else {
 					if (pick.isEquipped( Dungeon.hero )) {
 						pick.doUnequip( Dungeon.hero, false );
 					}
 					pick.detach( Dungeon.hero.belongings.backpack );
-					Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc.L1(), false)));
+					Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc.L1())));
 					
 					Quest.completed = true;
 					Quest.reforged = false;
@@ -107,16 +120,16 @@ public class Blacksmith extends NPC {
 				Pickaxe pick = Dungeon.hero.belongings.getItem( Pickaxe.class );
 				DarkGold gold = Dungeon.hero.belongings.getItem( DarkGold.class );
 				if (pick == null) {
-					Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc(), false)));
+					Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc())));
 				} else if (gold == null || gold.quantity() < 15) {
-					Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc.Gold(), false)));
+					Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc.Gold())));
 				} else {
 					if (pick.isEquipped( Dungeon.hero )) {
 						pick.doUnequip( Dungeon.hero, false );
 					}
 					pick.detach( Dungeon.hero.belongings.backpack );
 					gold.detachAll( Dungeon.hero.belongings.backpack );
-					Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc.L1(), false)));
+					Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc.L1())));
 					
 					Quest.completed = true;
 					Quest.reforged = false;
@@ -134,7 +147,7 @@ public class Blacksmith extends NPC {
 			
 		} else {
 
-			Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc.L2(), false)));
+			Game.runOnRenderThread(() -> GameScene.show(new WndDialog(new Ppsh_Plot_Misc.L2())));
 			
 		}
 

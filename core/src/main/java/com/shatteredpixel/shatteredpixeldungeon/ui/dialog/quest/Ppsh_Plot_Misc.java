@@ -3,62 +3,35 @@ package com.shatteredpixel.shatteredpixeldungeon.ui.dialog.quest;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.utils.diglog.Plot;
 import com.shatteredpixel.shatteredpixeldungeon.utils.diglog.Script;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
+import com.watabou.noosa.Image;
 
 public class Ppsh_Plot_Misc extends Plot {
-    private final static int maxprocess = 1;
-
     {
-        process = 1;
-    }
-
-    protected String getPlotName() {
-        return SEWER_NAME;
+        processCount = 1;
     }
 
     @Override
-    public void reachProcess(WndDialog wndDialog) {
-        diagulewindow = wndDialog;
-
-        while (this.process < needed_process) {
-            this.process();
+    public Image getImage(int process){
+        switch(process){
+            case 0:return Script.NPC_Ppsh_47(0);
         }
+        return null;
     }
 
     @Override
-    public void process() {
-        if (diagulewindow != null) {
-            if (process == 1) {
-                process_to_1();
-            }
-            diagulewindow.update();
-            process++;
+    public String getName(int process){
+        switch(process){
+            case 0:return Script.Name(Script.Character.PPSH_47);
         }
+        return null;
     }
 
     @Override
-    public void initial(WndDialog wndDialog) {
-        diagulewindow = wndDialog;
-        process = 2;
-        process_to_1();
-    }
-
-    @Override
-    public boolean end() {
-        return process > maxprocess;
-    }
-
-    @Override
-    public void skip() {
-        diagulewindow.cancel();
-        WndDialog.settedPlot = null;
-    }
-
-    private void process_to_1() {
-        diagulewindow.hideAll();
-        diagulewindow.setMainAvatar(Script.NPC_Ppsh_47(0));
-        diagulewindow.setLeftName(Script.Name(Script.Character.PPSH_47));
-        diagulewindow.changeText(Messages.get(this,"dialog"));
+    public String getDialog(int process){
+        switch(process){
+            case 0:return Messages.get(this,"dialog");
+        }
+        return null;
     }
 
     public static class Kill extends Ppsh_Plot_Misc { }

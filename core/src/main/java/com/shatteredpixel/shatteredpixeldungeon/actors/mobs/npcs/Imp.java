@@ -110,10 +110,10 @@ public class Imp extends NPC {
 					}
 				});
 			} else {
-				Game.runOnRenderThread(() ->GameScene.show( (new WndDialog(Quest.alternative ? new P7_Plot_L1.End() : new P7_Plot_L2.End(), false) )));
+				Game.runOnRenderThread(() ->GameScene.show( (new WndDialog(Quest.alternative ? new P7_Plot_L1.End() : new P7_Plot_L2.End()) )));
 			}
 		} else {
-			Game.runOnRenderThread(() ->GameScene.show( (new WndDialog(Quest.alternative ? new P7_Plot_L1() : new P7_Plot_L2(), false) )));
+			Game.runOnRenderThread(() ->GameScene.show( (new WndDialog(Quest.alternative ? new P7_Plot_L1() : new P7_Plot_L2()) )));
 			Quest.given = true;
 			Quest.completed = false;
 			Notes.add( Notes.Landmark.IMP );

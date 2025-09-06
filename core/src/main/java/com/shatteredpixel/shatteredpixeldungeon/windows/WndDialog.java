@@ -19,6 +19,7 @@ import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.PointerArea;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Callback;
 
 import java.util.ArrayList;
 
@@ -43,7 +44,7 @@ public class WndDialog extends Window {
 
     private String script;
 
-    public static Plot settedPlot = null;
+    public Plot settedPlot = null;
 
     public PointerArea area = null;
 
@@ -60,12 +61,19 @@ public class WndDialog extends Window {
     private float timeLeft = 0f;
     private int times = 0;
 
-    public WndDialog(Plot plot, Boolean regained) {
+    private Callback onCloseCallBack;
+
+    public WndDialog(Plot plot){
+        this(plot,null);
+    }
+
+    public WndDialog(Plot plot,Callback onCloseCallBack) {
         super(0, 0, Chrome.get(Chrome.Type.DIALOG));
 
         resize(PixelScene.uiCamera.width, PixelScene.uiCamera.height);
 
         settedPlot = plot;
+        this.onCloseCallBack=onCloseCallBack;
 
         boolean landscape = SPDSettings.landscape();
 
@@ -122,15 +130,7 @@ public class WndDialog extends Window {
         skip = makeSkip();
         add(skip);
 
-        if (regained) {
-            settedPlot.reachProcess(this);
-        } else {
-            settedPlot.initial(this);
-        }
-    }
-
-    public void cancel() {
-        super.hide();
+        settedPlot.initial(this);
     }
 
     public PointerArea makeArea() {
@@ -338,29 +338,18 @@ public class WndDialog extends Window {
         changeText(txt);
     }
 
-    public void hideAll() {
+    public void hideAll(){
         hideMainAvatar();
         hideSecondAvatar();
         hideThirdAvatar();
     }
 
-    public void hide() {
-        if (settedPlot != null) {
-            if (settedPlot.end()) {
-                settedPlot = null;
-                super.hide();
-            }
-        }
-    }
+    public void hide(){
+        super.hide();
 
-    public static void storeInBundle(Bundle b) {
-        if (settedPlot != null) {
-            Plot.storeInBundle(b, settedPlot);
+        if(null!=onCloseCallBack){
+            onCloseCallBack.call();
         }
-    }
-
-    public static void restoreFromBundle(Bundle b) {
-        settedPlot = Plot.restorFromBundle(b);
     }
 
     public void haveChoice(Choice... existing) {
@@ -451,6 +440,6 @@ public class WndDialog extends Window {
     }
 
     public void skipText() {
-        settedPlot.skip();
+        hide();
     }
 }

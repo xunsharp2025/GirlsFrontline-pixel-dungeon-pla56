@@ -419,37 +419,37 @@ public class GameScene extends PixelScene {
 				switch (Dungeon.depth) {
 				case 1:
 					if(Script.checkChapter(Script.ID_SEWERS)) {
-						GameScene.scene.add(new WndDialog(new LevelPlot_P1(),false));
+						GameScene.scene.add(new WndDialog(new LevelPlot_P1()));
 					}
 					WndStory.showChapter( WndStory.ID_SEWERS );
 					break;
 				case 6:
 					if(Script.checkChapter(Script.ID_PRISON)) {
-						GameScene.scene.add(new WndDialog(new LevelPlot_P2(),false));
+						GameScene.scene.add(new WndDialog(new LevelPlot_P2()));
 					}
 					WndStory.showChapter( WndStory.ID_PRISON );
 					break;
 				case 11:
 					if(Script.checkChapter(Script.ID_CAVES)) {
-						GameScene.scene.add(new WndDialog(new LevelPlot_P3(),false));
+						GameScene.scene.add(new WndDialog(new LevelPlot_P3()));
 					}
 					WndStory.showChapter( WndStory.ID_CAVES );
 					break;
 				case 16:
 					if(Script.checkChapter(Script.ID_CITY)) {
-						GameScene.scene.add(new WndDialog(new LevelPlot_P4(),false));
+						GameScene.scene.add(new WndDialog(new LevelPlot_P4()));
 					}
 					WndStory.showChapter( WndStory.ID_CITY );
 					break;
 				case 21:
 					if(Script.checkChapter(Script.ID_RECAVES)) {
-						GameScene.scene.add(new WndDialog(new LevelPlot_P5(),false));
+						GameScene.scene.add(new WndDialog(new LevelPlot_P5()));
 					}
 					WndStory.showChapter( WndStory.ID_RECAVES );
 					break;
 				case 26:
 					if(Script.checkChapter(Script.ID_HALLS)) {
-						GameScene.scene.add(new WndDialog(new LevelPlot_P6(),false));
+						GameScene.scene.add(new WndDialog(new LevelPlot_P6()));
 					}
 					WndStory.showChapter( WndStory.ID_HALLS );
 					break;

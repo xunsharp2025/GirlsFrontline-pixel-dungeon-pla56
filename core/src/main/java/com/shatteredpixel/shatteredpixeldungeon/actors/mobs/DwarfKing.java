@@ -429,7 +429,7 @@ public class DwarfKing extends Mob {
 			Game.runOnRenderThread(new Callback() {
 				@Override
 				public void call() {
-					GameScene.scene.add(new WndDialog(new Destroyer_Plot(),false));
+					GameScene.scene.add(new WndDialog(new Destroyer_Plot()));
 				}
 			});
 			for (Char ch : Actor.chars()){
