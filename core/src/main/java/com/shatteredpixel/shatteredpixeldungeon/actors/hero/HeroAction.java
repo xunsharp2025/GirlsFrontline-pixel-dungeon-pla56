@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Trigger;
 
 public class HeroAction {
 	
@@ -48,6 +49,13 @@ public class HeroAction {
 	public static class Buy extends HeroAction {
 		public Buy( int dst ) {
 			this.dst = dst;
+		}
+	}
+
+	public static class InteractTrigger extends HeroAction{
+		public Trigger trigger;
+		public InteractTrigger(Trigger trigger){
+			this.trigger = trigger;
 		}
 	}
 	

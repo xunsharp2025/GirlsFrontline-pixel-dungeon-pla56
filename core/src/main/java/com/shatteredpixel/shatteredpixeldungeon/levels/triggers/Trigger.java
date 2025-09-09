@@ -14,11 +14,28 @@ public abstract class Trigger implements Bundlable {
 	public void storeInBundle( Bundle bundle ) {
 		bundle.put(POS,pos);
 	}
-	
+
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
-		pos = bundle.getInt(POS);
+		pos=bundle.getInt(POS);
 	}
-	
+
+	public boolean canBeTouched(){
+		return true;
+	}
+
+	public boolean canInteract(Char ch){
+		if(pos==ch.pos){
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean interact(Char ch){
+		activate(ch);
+		return true;
+	}
+
 	public abstract void activate(Char ch);
 }

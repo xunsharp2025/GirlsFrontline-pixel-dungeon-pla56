@@ -122,6 +122,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Trigger;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.ShadowCaster;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Earthroot;
@@ -702,34 +703,26 @@ public class Hero extends Char {
 			
 			if (curAction instanceof HeroAction.Move) {
 				actResult = actMove( (HeroAction.Move)curAction );
-				
 			} else if (curAction instanceof HeroAction.Interact) {
 				actResult = actInteract( (HeroAction.Interact)curAction );
-				
 			} else if (curAction instanceof HeroAction.Buy) {
 				actResult = actBuy( (HeroAction.Buy)curAction );
-				
 			}else if (curAction instanceof HeroAction.PickUp) {
 				actResult = actPickUp( (HeroAction.PickUp)curAction );
-				
 			} else if (curAction instanceof HeroAction.OpenChest) {
 				actResult = actOpenChest( (HeroAction.OpenChest)curAction );
-				
 			} else if (curAction instanceof HeroAction.Unlock) {
 				actResult = actUnlock((HeroAction.Unlock) curAction);
-				
+			} else if (curAction instanceof HeroAction.InteractTrigger) {
+				actResult = actTrigger( (HeroAction.InteractTrigger)curAction );
 			} else if (curAction instanceof HeroAction.Descend) {
 				actResult = actDescend( (HeroAction.Descend)curAction );
-				
 			} else if (curAction instanceof HeroAction.Ascend) {
 				actResult = actAscend( (HeroAction.Ascend)curAction );
-				
 			} else if (curAction instanceof HeroAction.Attack) {
 				actResult = actAttack( (HeroAction.Attack)curAction );
-				
 			} else if (curAction instanceof HeroAction.Alchemy) {
 				actResult = actAlchemy( (HeroAction.Alchemy)curAction );
-				
 			} else {
 				actResult = false;
 			}
@@ -1009,6 +1002,21 @@ public class Hero extends Char {
 
 			return true;
 
+		} else {
+			ready();
+			return false;
+		}
+	}
+
+	private boolean actTrigger(HeroAction.InteractTrigger action){
+		Trigger trigger = action.trigger;
+
+		if (trigger.canInteract(this)) {		
+			ready();
+			sprite.turnTo(pos,trigger.pos);
+			return trigger.interact(this);
+		} else if (getCloser(trigger.pos)){
+			return true;
 		} else {
 			ready();
 			return false;
@@ -1446,7 +1454,6 @@ public class Hero extends Char {
 	}
 	
 	public boolean handle( int cell ) {
-		
 		if (cell == -1) {
 			return false;
 		}
@@ -1460,17 +1467,13 @@ public class Hero extends Char {
 		Heap heap = Dungeon.level.heaps.get( cell );
 		
 		if (Dungeon.level.map[cell] == Terrain.ALCHEMY && cell != pos) {
-			
 			curAction = new HeroAction.Alchemy( cell );
-			
 		} else if (fieldOfView[cell] && ch instanceof Mob) {
-
 			if (ch.alignment != Alignment.ENEMY && ch.buff(Amok.class) == null) {
 				curAction = new HeroAction.Interact( ch );
 			} else {
 				curAction = new HeroAction.Attack( ch );
 			}
-
 		} else if (heap != null
 				//moving to an item doesn't auto-pickup when enemies are near...
 				&& (visibleEnemies.size() == 0 || cell == pos ||
@@ -1489,24 +1492,18 @@ public class Hero extends Char {
 			default:
 				curAction = new HeroAction.OpenChest( cell );
 			}
-			
-		} else if (Dungeon.level.map[cell] == Terrain.LOCKED_DOOR || Dungeon.level.map[cell] == Terrain.CRYSTAL_DOOR || Dungeon.level.map[cell] == Terrain.LOCKED_EXIT) {
-			
+		} else if (Dungeon.level.map[cell] == Terrain.LOCKED_DOOR || Dungeon.level.map[cell] == Terrain.CRYSTAL_DOOR || Dungeon.level.map[cell] == Terrain.LOCKED_EXIT) {			
 			curAction = new HeroAction.Unlock( cell );
-			
+		} else if (Dungeon.level.triggers.get(cell)!=null && Dungeon.level.triggers.get(cell).canBeTouched()){
+			curAction = new HeroAction.InteractTrigger(Dungeon.level.triggers.get(cell));
 		} else if ((cell == Dungeon.level.exit || Dungeon.level.map[cell] == Terrain.EXIT || Dungeon.level.map[cell] == Terrain.UNLOCKED_EXIT)
-				&& Dungeon.depth < Constants.MAX_DEPTH) {
-			
+		&& Dungeon.depth < Constants.MAX_DEPTH) {
 			curAction = new HeroAction.Descend( cell );
-			
 		} else if (cell == Dungeon.level.entrance || Dungeon.level.map[cell] == Terrain.ENTRANCE) {
-			
 			curAction = new HeroAction.Ascend( cell );
-			
 		} else  {
-			
 			if (!Dungeon.level.visited[cell] && !Dungeon.level.mapped[cell]
-					&& Dungeon.level.traps.get(cell) != null && Dungeon.level.traps.get(cell).visible) {
+			&& Dungeon.level.traps.get(cell) != null && Dungeon.level.traps.get(cell).visible) {
 				walkingToVisibleTrapInFog = true;
 			} else {
 				walkingToVisibleTrapInFog = false;
@@ -1514,7 +1511,6 @@ public class Hero extends Char {
 			
 			curAction = new HeroAction.Move( cell );
 			lastAction = null;
-			
 		}
 
 		return true;
