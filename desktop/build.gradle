@@ -41,7 +41,7 @@ task alpha(type: JavaExec) {
     }
 }
 
-// 添加此build任务, 用于打包debug版本运行 适合没有开发环境的但想测试素材的其他成员使用
+// 添加此build任务, 用于打包debug版本运行 适合没有开发环境的但想测试游戏的的其他成员使用 目前仅支持windows, linux
 task debugJar(type: Jar) {
     archiveFileName = "${project.name}-debug.jar"
     setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
@@ -53,8 +53,7 @@ task debugJar(type: Jar) {
         attributes 'Main-Class': appMainClass
         attributes 'Specification-Title': appName
         attributes 'Implementation-Title': appPackageName
-        // Net的版本号
-        attributes 'Specification-Version': appVersionName + '}' + appNetVersionName + "-INDEV"
+        attributes 'Specification-Version': appVersionName  + "-debugNoRelease"
         attributes 'Implementation-Version': appVersionCode
     }
 }
