@@ -1,0 +1,44 @@
+name: Build and Upload JAR
+
+# 仅在main分支有push且commit消息包含[TESTJAR]时触发
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    # 增加条件判断：检查commit消息是否包含[TESTJAR]
+    if: contains(github.event.head_commit.message, '[TESTJAR]')
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Make Gradle wrapper executable
+      run: chmod +x ./gradlew
+
+    - name: Build with Gradle
+      run: ./gradlew desktop:alpha
+
+    - name: Locate JAR file
+      id: find-jar
+      run: |
+        JAR_PATH=$(find . -type f -name "*.jar" | grep -i "desktop/build/libs" | head -n 1)
+        echo "JAR_PATH=$JAR_PATH" >> $GITHUB_OUTPUT
+
+    - name: Upload JAR as artifact (retained for 1 day)
+      uses: actions/upload-artifact@v4
+      with:
+        name: desktop-alpha-build
+        path: ${{ steps.find-jar.outputs.JAR_PATH }}
+        retention-days: 1
+        if-no-files-found: error
+    
