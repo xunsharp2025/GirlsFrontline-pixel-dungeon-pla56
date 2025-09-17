@@ -26,7 +26,7 @@ jobs:
       run: chmod +x ./gradlew
 
     - name: Build with Gradle
-      run: ./gradlew desktop:alpha
+      run: ./gradlew desktop:debugJar
 
     - name: Locate JAR file
       id: find-jar

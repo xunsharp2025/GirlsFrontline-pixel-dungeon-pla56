@@ -41,6 +41,24 @@ task alpha(type: JavaExec) {
     }
 }
 
+// 添加此build任务, 用于打包debug版本运行 适合没有开发环境的但想测试素材的其他成员使用
+task debugJar(type: Jar) {
+    archiveFileName = "${project.name}-debug.jar"
+    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+    from sourceSets.main.output
+    dependsOn configurations.runtimeClasspath
+    from { configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) } }
+
+    manifest {
+        attributes 'Main-Class': appMainClass
+        attributes 'Specification-Title': appName
+        attributes 'Implementation-Title': appPackageName
+        // Net的版本号
+        attributes 'Specification-Version': appVersionName + '}' + appNetVersionName + "-INDEV"
+        attributes 'Implementation-Version': appVersionCode
+    }
+}
+
 task release(type: Jar) {
     //FIXME this is now needed as of gradle 7.0, due to our weird sourceSets setup. Should see if there's a better way to do this
     setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
