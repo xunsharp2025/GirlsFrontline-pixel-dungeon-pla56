@@ -26,20 +26,33 @@ import java.util.ArrayList;
 
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
+		add_0_5_4_b1e1_Changes(changeInfos);
     	add_0_5_3_Changes(changeInfos);
 		add_0_5_2_Changes(changeInfos);
 		add_0_5_1_Changes(changeInfos);
 		add_0_5_0_Changes(changeInfos);
     }
+	public static void add_0_5_4_b1e1_Changes( ArrayList<ChangeInfo> changeInfos ){
+		ChangeInfo changes = new ChangeInfo("v0.5.4b1e1", true, "");
+		changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
 
+		/*changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		changes.hardlight( CharSprite.WARNING );
+		changeInfos.add(changes);*/
+
+		changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_ON), "游戏改动",
+				"_-_ 加入第0层"
+		));
+	};
     public static void add_0_5_3_Changes( ArrayList<ChangeInfo> changeInfos ){
 		ChangeInfo changes = new ChangeInfo("v0.5.3", true, "");
 		changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
 
-		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		/*changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
 		changes.hardlight( CharSprite.WARNING );
-		changeInfos.add(changes);
+		changeInfos.add(changes);*/
 
 		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.GUN562, null), "游戏改动",
 			"_-_ 字体渲染：现已可使用系统字体和像素字体。\n"+
@@ -87,9 +100,9 @@ public class v0_5_X_Changes {
 		changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
 
-		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		/*changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
 		changes.hardlight( CharSprite.WARNING );
-		changeInfos.add(changes);
+		changeInfos.add(changes);*/
 
 		changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
 		"_-_ 现在鼠王护甲能正常使用了，561也可以使用鼠王护甲\n"+

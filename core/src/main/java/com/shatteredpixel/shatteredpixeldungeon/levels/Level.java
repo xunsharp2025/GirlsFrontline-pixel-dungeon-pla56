@@ -188,6 +188,7 @@ public abstract class Level implements Bundlable {
 	private static final String BLOBS		= "blobs";
 	private static final String FEELING		= "feeling";
 
+
 	public void create(int levelDepth,int levelId){
 		this.levelDepth=levelDepth;
 		this.levelId   =levelId;

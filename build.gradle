@@ -2,6 +2,8 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
     }
     dependencies {
         classpath 'com.android.tools:r8:8.7.18'
@@ -15,8 +17,8 @@ allprojects {
         appName = '少前地牢'
         appPackageName = 'com.ngfpixel.gfchemistrypixeldungeon'
 
-        appVersionCode = 631
-        appVersionName = '0.5.3'
+        appVersionCode = 632
+        appVersionName = '0.5.4-b1e1'
 
         appJavaCompatibility = JavaVersion.VERSION_1_8
 
@@ -32,6 +34,8 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     }
 }

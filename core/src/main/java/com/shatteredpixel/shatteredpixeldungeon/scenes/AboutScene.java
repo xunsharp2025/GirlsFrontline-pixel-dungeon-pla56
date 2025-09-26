@@ -126,33 +126,23 @@ public class AboutScene extends PixelScene {
 
 		//*** Pro Credits ***
 		CreditsBlock wolf = new CreditsBlock(true, 0x008ac1,
-				"　",
+				"程序编码1",
 				Icons.WOLF.get(),
 				"Xunsharp",
 				null,
 				null);
 		wolf.setSize(colWidth/3f, 0);
-		wolf.setPos(arcnor.left(), purigro.bottom()+10);
+		wolf.setPos(arcnor.left(), doge.bottom()+10);
 		content.add(wolf);
 
 		CreditsBlock catz = new CreditsBlock(true,0xffca18,
-				"程  序  编  码  ",
+				"程序编码2",
 				Icons.CATZS.get(),
 				"Cat-Zs",
 				null,
 				null);
-		catz.setRect(wolf.right(), wolf.top(), colWidth/3f, 0);
+		catz.setRect(charlie.left(), wolf.top(), colWidth/3f, 0);
 		content.add(catz);
-
-		CreditsBlock sea = new CreditsBlock(true,0x25273e,
-		        "　",
-		        Icons.SEA.get(),
-		        "Sea",
-				null,
-		        null);
-		sea.setRect(catz.right(), catz.top(), colWidth/3f, 0);
-		content.add(sea);
-		addLine(sea.top()+38, content);
 
 		//*** Update Credits ***
 		CreditsBlock ling = new CreditsBlock(true, 0xffb0ca,
@@ -162,7 +152,7 @@ public class AboutScene extends PixelScene {
 		        null,
 		        null);
 		ling.setSize(colWidth/3f, 0);
-		ling.setPos(wolf.left(), sea.bottom()+15);
+		ling.setPos(wolf.left(), wolf.bottom()+15);
 		content.add(ling);
 
 		CreditsBlock shower = new CreditsBlock(true,0xb9f0fd,

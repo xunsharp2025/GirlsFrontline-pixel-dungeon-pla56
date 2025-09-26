@@ -9,6 +9,7 @@ public abstract class Trigger implements Bundlable {
 	public int pos;
 
 	private static final String POS	= "pos";
+	protected String text_dis;
 
 	@Override
 	public void storeInBundle( Bundle bundle ) {
