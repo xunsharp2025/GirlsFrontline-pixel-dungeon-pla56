@@ -71,6 +71,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
+import com.shatteredpixel.shatteredpixeldungeon.utils.Gregorian;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
@@ -183,22 +184,25 @@ public class Dungeon {
 		version = Game.versionCode;
 		challenges = SPDSettings.challenges();
 		mobsToChampion = -1;
-
+	
 		seed = DungeonSeed.randomSeed();
-
+	
 		Actor.clear();
 		Actor.resetNextID();
 		
 		Random.pushGenerator( seed );
-
+	
 			Scroll.initLabels();
 			Potion.initColors();
 			Ring.initGems();
-
+	
 			SpecialRoom.initForRun();
 			SecretRoom.initForRun();
-
+	
 		Random.resetGenerators();
+		
+		// 添加农历节日检测
+		Gregorian.LunarCheckDate();
 		
 		Statistics.reset();
 		Notes.reset();

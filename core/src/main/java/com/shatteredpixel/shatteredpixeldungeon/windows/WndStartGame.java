@@ -103,8 +103,6 @@ public class WndStartGame extends Window {
 			protected void onClick() {
 				if (GamesInProgress.selectedClass == null) return;
 				super.onClick();
-				try{Dungeon.saveAll();}
-				catch(IOException e){Game.reportException(e);}
 
 				Dungeon.hero = null;
 				ActionIndicator.action = null;

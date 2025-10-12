@@ -43,9 +43,9 @@ public class Pasty extends Food {
 	private enum Holiday{
 		NONE,
 		EASTER, //TBD
-		HWEEN,//2nd week of october though first day of november
-		XMAS,//3rd week of december through first week of january
-		ZHONG_QIU
+		HWEEN,//2nd week of october though first day of november，公历11月1日
+		XMAS,//3rd week of december through first week of january，公历12月25日
+		ZHONG_QIU//农历八月十五日
 	}
 
 	private static Holiday holiday;

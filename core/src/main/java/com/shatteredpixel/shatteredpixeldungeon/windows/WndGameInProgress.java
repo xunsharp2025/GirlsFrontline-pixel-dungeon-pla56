@@ -129,8 +129,6 @@ public class WndGameInProgress extends Window {
 			@Override
 			protected void onClick() {
 				super.onClick();
-				try{Dungeon.saveAll();}
-				catch(IOException e){Game.reportException(e);}
 				
 				Dungeon.hero = null;
 				ActionIndicator.action = null;

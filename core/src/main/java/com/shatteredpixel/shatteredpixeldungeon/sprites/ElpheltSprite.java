@@ -53,7 +53,7 @@ public class ElpheltSprite extends MobSprite {
         zap.frames( frames, 3, 4, 3 );
 
         die = new Animation( 12, false );
-        die.frames( frames, 14, 14, 15,16 );
+        die.frames( frames, 14, 14, 15, 16 );
 
         play( idle );
     }

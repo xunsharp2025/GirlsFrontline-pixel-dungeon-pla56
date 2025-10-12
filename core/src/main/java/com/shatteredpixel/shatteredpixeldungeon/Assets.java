@@ -40,7 +40,7 @@ public class Assets {
 	public static final String INTRUDER 	= "intruder.png";
 
 	//need Organize
-	public static final String ELPHELT 		= "sprites/boss/Elphelt.png";
+	public static final String ELPHELT 		= "sprites/boss/elphelt.png";
 	public static final String DRAGUN		= "sprites/dragun.png";
 	public static final String DISLOLI		= "sprites/boss/disloli.png";
 	public static final String GARM			= "sprites/garm.png";
