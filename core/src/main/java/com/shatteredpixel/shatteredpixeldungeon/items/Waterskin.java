@@ -39,6 +39,7 @@ public class Waterskin extends Item {
 	private static final int MAX_VOLUME	= 20;
 
 	private static final String AC_DRINK	= "DRINK";
+	private static final String AC_SWITCH_TEXTURE = "SWITCH_TEXTURE"; // 添加切换贴图的动作常量
 
 	private static final float TIME_TO_DRINK = 1f;
 
@@ -53,19 +54,26 @@ public class Waterskin extends Item {
 	}
 
 	private int volume = 0;
+	private boolean usingAlternateTexture = false; // 跟踪当前是否使用替代贴图
 
 	private static final String VOLUME	= "volume";
+	private static final String USING_ALTERNATE_TEXTURE = "usingAlternateTexture"; // 用于存档
 
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
 		bundle.put( VOLUME, volume );
+		bundle.put( Waterskin.USING_ALTERNATE_TEXTURE, usingAlternateTexture ); // 保存贴图状态 - 修复此处
 	}
 
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
 		volume	= bundle.getInt( VOLUME );
+		// 使用正确的方法调用，没有默认值参数
+		usingAlternateTexture = bundle.getBoolean( Waterskin.USING_ALTERNATE_TEXTURE );
+		// 恢复贴图状态时更新图像
+		updateTexture();
 	}
 
 	@Override
@@ -74,6 +82,7 @@ public class Waterskin extends Item {
 		if (volume > 0) {
 			actions.add( AC_DRINK );
 		}
+		actions.add( AC_SWITCH_TEXTURE ); // 添加切换贴图的动作
 		return actions;
 	}
 
@@ -118,6 +127,27 @@ public class Waterskin extends Item {
 				GLog.w( Messages.get(this, "empty") );
 			}
 
+		} else if (action.equals(AC_SWITCH_TEXTURE)) {
+			// 切换贴图，不消耗回合
+			usingAlternateTexture = !usingAlternateTexture;
+			updateTexture();
+			updateQuickslot();
+			
+			// 显示切换提示
+			if (usingAlternateTexture) {
+				GLog.i(Messages.get(this, "switched_to_pouch"));
+			} else {
+				GLog.i(Messages.get(this, "switched_to_skin"));
+			}
+		}
+	}
+
+	// 更新贴图的辅助方法
+	private void updateTexture() {
+		if (usingAlternateTexture) {
+			image = ItemSpriteSheet.WATER_POUCH;
+		} else {
+			image = ItemSpriteSheet.WATERSKIN;
 		}
 	}
 
@@ -134,6 +164,9 @@ public class Waterskin extends Item {
 		if (isFull()){
 			info += "\n\n" + Messages.get(this, "desc_full");
 		}
+
+		// 添加切换贴图的提示
+		info += "\n\n" + Messages.get(this, "desc_switch_texture");
 
 		return info;
 	}

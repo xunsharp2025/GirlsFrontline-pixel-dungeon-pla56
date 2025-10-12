@@ -76,6 +76,8 @@ public class Ntw20 extends SniperRifle {
             // 攻击后自动切换回普通模式
             aimMode = false;
             ((Hero)attacker).sprite.showStatus(CharSprite.NEUTRAL, Messages.get(this, "aim_mode_off"));
+            // 瞄准模式下，直接返回伤害值以无视敌方防御
+            return damage;
         }
         return super.proc(attacker, defender, damage);
     }

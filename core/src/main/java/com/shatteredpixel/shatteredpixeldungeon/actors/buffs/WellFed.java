@@ -34,7 +34,7 @@ public class WellFed extends Buff {
 		announced = true;
 	}
 	
-	int left;
+	public int left;
 	
 	@Override
 	public boolean act() {

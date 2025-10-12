@@ -713,6 +713,10 @@ public class ItemSpriteSheet {
 	public static final int BANDOLIER   = BAGS+4;
 	public static final int HOLSTER     = BAGS+5;
 	public static final int VIAL        = BAGS+6;
+	public static final int WATER_POUCH = BAGS+7;
+	public static final int FOOD_POUCH  = BAGS+8;
+	public static final int CHESTHANGIN = BAGS+9;
+	public static final int TACBACKPACK = BAGS+10;
 	static{
 		assignItemRect(WATERSKIN,   12, 12);
 		assignItemRect(BACKPACK,    16, 16);
@@ -721,6 +725,10 @@ public class ItemSpriteSheet {
 		assignItemRect(BANDOLIER,   15, 16);
 		assignItemRect(HOLSTER,     15, 16);
 		assignItemRect(VIAL,        12, 12);
+		assignItemRect(WATER_POUCH, 16, 14);
+		assignItemRect(FOOD_POUCH,  16, 16);
+		assignItemRect(CHESTHANGIN, 16, 16);
+		assignItemRect(TACBACKPACK, 16, 16);
 	}
 
 	//8 free slots

@@ -30,7 +30,7 @@ import com.watabou.noosa.Image;
 
 public class ActionIndicator extends Tag {
 
-	Image icon;
+    Image icon;
 
 	public static Action action;
 	public static ActionIndicator instance;

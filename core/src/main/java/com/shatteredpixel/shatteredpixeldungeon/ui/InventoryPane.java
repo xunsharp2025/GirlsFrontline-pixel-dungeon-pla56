@@ -80,12 +80,13 @@ public class InventoryPane extends Component {
 
 	private ArrayList<BagButton> bags;
 
-	public static final int WIDTH = 187;
-	public static final int HEIGHT = 82;
-
-	private static final int SLOT_WIDTH = 17;
-	private static final int SLOT_HEIGHT = 24;
-
+	// 修改UI大小和格子尺寸常量
+	public static final int WIDTH = 224;  // 原187，扩大1.2倍
+	public static final int HEIGHT = 98;  // 原82，扩大1.2倍
+	
+	private static final int SLOT_WIDTH = 15;  // 原17，缩小10%
+	private static final int SLOT_HEIGHT = 22;  // 原24，缩小10%
+	
 	private WndBag.ItemSelector selector;
 
 	public static Bag lastBag;
@@ -185,8 +186,9 @@ public class InventoryPane extends Component {
 			add(btn);
 		}
 
+		// 增加背包按钮数量上限到10个
 		bags = new ArrayList<>();
-		for (int i = 0; i < 5; i++){
+		for (int i = 0; i < 10; i++){
 			BagButton btn = new BagButton(null, i+1);
 			bags.add(btn);
 			add(btn);
@@ -216,12 +218,14 @@ public class InventoryPane extends Component {
 		bg.size(width, height);
 		bg2.size(width, height);
 
+		// 装备槽布局
 		float left = x+4;
 		for (InventorySlot i : equipped){
 			i.setRect(left, y+4, SLOT_WIDTH, SLOT_HEIGHT);
 			left = i.right()+1;
 		}
 
+		// 提示文本、金币和能量显示
 		promptTxt.maxWidth((int) (width - (left - x) - bg.marginRight()));
 		if (promptTxt.height() > 10){
 			promptTxt.setPos(left, y + 2 + (12 - promptTxt.height()) / 2);
@@ -243,13 +247,71 @@ public class InventoryPane extends Component {
 		energy.x = energyTxt.x + energyTxt.width() + 1;
 		energy.y = energyTxt.y;
 
-		for (BagButton b : bags){
-			b.setRect(left, y + 14, SLOT_WIDTH, 14);
-			left = b.right()+1;
+		// 计算可见背包按钮的数量
+		int numVisibleBags = 0;
+		for (BagButton b : bags) {
+		    if (b.visible) {
+		        numVisibleBags++;
+		    }
+		}
+		
+		// 背包按钮布局 - 调整回右上方位置，超过12个自动换行
+		float bagStartY = y + 4; // 调整为右上方位置，与装备槽同一行
+		float rightStart = x + width - 4; // 从右侧开始布局
+		float currentLeft = rightStart;
+		
+		// 修改为超过12个自动换行
+		int bagsPerRow = 12; // 每行最多12个背包按钮
+		int currentRow = 0;
+		int rows = (int)Math.ceil((float)numVisibleBags / bagsPerRow);
+		
+		// 计算当前行
+		for (BagButton b : bags) {
+		    if (b.visible) {
+		        currentRow++;
+		    }
+		}
+		
+		currentRow = 0;
+		int currentRowIndex = 0;
+		int visibleCount = 0;
+		
+		// 先计算有多少行可见背包按钮
+		for (BagButton b : bags) {
+		    if (b.visible) {
+		        visibleCount++;
+		    }
+		}
+		rows = (int)Math.ceil((float)visibleCount / bagsPerRow);
+		
+		// 从右到左、从上到下布局背包按钮
+		for (int i = bags.size() - 1; i >= 0; i--) {
+		    BagButton b = bags.get(i);
+		    if (b.visible) {
+		        // 计算当前行和位置
+		        int row = visibleCount - 1 - currentRow >= 0 ? (visibleCount - 1 - currentRow) / bagsPerRow : 0;
+		        int posInRow = (visibleCount - 1 - currentRow) % bagsPerRow;
+		        
+		        // 计算X坐标（从右往左）
+		        float bagX = rightStart - (posInRow + 1) * (SLOT_WIDTH + 2) + 2;
+		        // 计算Y坐标
+		        float bagY = bagStartY + row * 15; // 行高+间距
+		        
+		        b.setRect(bagX, bagY, SLOT_WIDTH, 14);
+		        currentRow++;
+		    }
 		}
 
+		// 背包物品格子布局
 		left = x+4;
 		float top = y+4+SLOT_HEIGHT+1;
+		
+		// 调整背包物品格子位置，确保不会与背包按钮重叠
+		// 根据可见背包按钮的行数调整物品格子的起始Y坐标
+		if (rows > 0) {
+		    top = bagStartY + rows * 15 + 5; // 为背包按钮留出空间，加5像素间距
+		}
+		
 		for (InventorySlot b : bagItems){
 			b.setRect(left, top, SLOT_WIDTH, SLOT_HEIGHT);
 			left = b.right()+1;

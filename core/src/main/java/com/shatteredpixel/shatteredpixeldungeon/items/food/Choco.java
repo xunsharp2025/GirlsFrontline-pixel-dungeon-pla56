@@ -1,7 +1,11 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.food;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Speed;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.WellFed;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.Holidays;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 
 public class Choco extends Food {
     {
@@ -13,7 +17,7 @@ public class Choco extends Food {
     public void reset() {
         super.reset();
         if (Holidays.holiday == Holidays.Holiday.midAutumnFestival) {
-            image = ItemSpriteSheet.SALTYMOONCAKE;
+            image = ItemSpriteSheet.NUTSMOONCAKE;
         } else {
             image = ItemSpriteSheet.CHOCO;
         }
@@ -22,7 +26,7 @@ public class Choco extends Food {
     @Override
     public String name() {
         if (Holidays.holiday == Holidays.Holiday.midAutumnFestival) {
-            return Messages.get(this, "salty_moon_cake");
+            return Messages.get(this, "nutty_moon_cake");
         } else {
             return Messages.get(this, "name");
         }
@@ -31,18 +35,32 @@ public class Choco extends Food {
     @Override
     public String info() {
         if (Holidays.holiday == Holidays.Holiday.midAutumnFestival) {
-            return Messages.get(this, "salty_moon_cake_desc");
+            return Messages.get(this, "nutty_moon_cake_desc");
         } else {
             return Messages.get(this, "desc");
         }
     }
     
     @Override
+    protected void satisfy( Hero hero ) {
+        super.satisfy(hero);
+        
+        if (Holidays.holiday == Holidays.Holiday.midAutumnFestival) {
+            // 为nutsmooncake添加300回合的饱腹效果
+            WellFed wellFed = Buff.affect(hero, WellFed.class);
+            wellFed.left = 300; // 直接设置left属性
+            
+            // 添加速度增益效果
+            Buff.affect(hero, Speed.class, 3.f);
+        }
+    }
+    
+    @Override
     public int value() {
-        if(Holidays.holiday == Holidays.Holiday.midAutumnFestival){
+        if(Holidays.holiday != Holidays.Holiday.NONE){
             return 100*quantity;
         } else {
-            return 50*quantity;
+            return 20*quantity;
         }
     }
     
