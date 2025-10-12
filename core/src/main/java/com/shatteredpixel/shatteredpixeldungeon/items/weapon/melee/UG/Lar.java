@@ -28,39 +28,48 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
 public class Lar extends UniversaleGun {
-
+//做了灰熊相关注释，用于改动武器数值
     {
-        image = ItemSpriteSheet.LAR;
+        image = ItemSpriteSheet.LAR; // 设置武器贴图为LAR
 
-        tier=5;
-        ACC = 1.475f; //47.5% boost to accuracy
-        DLY = 0.5f;
-        RCH = 3;
+        tier=5; // 武器等级为5级
+        ACC = 1.475f; // 命中率提升47.5%
+        DLY = 0.5f; // 攻击间隔为0.5(比普通武器更快)
+        RCH = 3; // 射程为3格
     }
+    
+    // 我加的，重写STRReq方法，让初始力量需求减少1点
+    @Override
+    public int STRReq(int lvl) {
+        // 调用父类方法计算标准力量需求，然后减1
+        return super.STRReq(lvl) - 1;
+    }
+    
     @Override
     public int max(int lvl) {
-        return  2*(tier+1) +    //8 base, down from 10
-                lvl*Math.round(0.4f*(tier+1));   //scaling unchanged
+        return  2*(tier+1) +    //5-12点基础伤害
+                lvl*Math.round(0.5f*(tier+1));   //每升一级增加约3点伤害
     }
 
     @Override
     public int damageRoll(Char owner) {
-        if (owner instanceof Hero) {
+        if (owner instanceof Hero) { // 当持有者是英雄时
             Hero hero = (Hero)owner;
             Char enemy = hero.enemy();
-            if (enemy instanceof Mob && ((Mob) enemy).surprisedBy(hero)) {
+            if (enemy instanceof Mob && ((Mob) enemy).surprisedBy(hero)) { // 当敌人是怪物且被突袭时
                 int diff = max() - min();
+                // 造成75%-100%的最大伤害区间
                 int damage = augment.damageFactor(Random.NormalIntRange(
                         min() + Math.round(diff*0.75f),
                         max()));
-                int exStr = hero.STR() - STRReq();
+                int exStr = hero.STR() - STRReq(); // 额外力量计算
                 if (exStr > 0) {
                     damage += Random.IntRange(0, exStr);
                 }
                 return damage;
             }
         }
-        return super.damageRoll(owner);
+        return super.damageRoll(owner); // 其他情况使用父类伤害计算
     }
 }
 

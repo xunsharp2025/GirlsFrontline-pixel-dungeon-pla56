@@ -31,6 +31,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTerror;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
+import com.nlf.calendar.Lunar;
+import java.util.Date;
+import java.util.List;
 import java.util.Calendar;
 
 public class Pasty extends Food {
@@ -41,33 +44,42 @@ public class Pasty extends Food {
 		NONE,
 		EASTER, //TBD
 		HWEEN,//2nd week of october though first day of november
-		XMAS //3rd week of december through first week of january
+		XMAS,//3rd week of december through first week of january
+		ZHONG_QIU
 	}
 
 	private static Holiday holiday;
 
 	static{
-
 		holiday = Holiday.NONE;
 
 		final Calendar calendar = Calendar.getInstance();
-		switch(calendar.get(Calendar.MONTH)){
-			case Calendar.JANUARY:
-				if (calendar.get(Calendar.WEEK_OF_MONTH) == 1)
-					holiday = Holiday.XMAS;
-				break;
-			case Calendar.OCTOBER:
-				if (calendar.get(Calendar.WEEK_OF_MONTH) >= 2)
-					holiday = Holiday.HWEEN;
-				break;
-			case Calendar.NOVEMBER:
-				if (calendar.get(Calendar.DAY_OF_MONTH) == 1)
-					holiday = Holiday.HWEEN;
-				break;
-			case Calendar.DECEMBER:
-				if (calendar.get(Calendar.WEEK_OF_MONTH) >= 3)
-					holiday = Holiday.XMAS;
-				break;
+
+        List<String> festivals = (new Lunar(new Date())).getFestivals();
+
+        // 判断是否是中秋节
+        if (festivals.contains("中秋节")) {
+        	holiday = Holiday.ZHONG_QIU;
+        }
+
+        if (holiday == Holiday.NONE){
+			switch(calendar.get(Calendar.MONTH)){
+				case Calendar.JANUARY:
+					if (calendar.get(Calendar.WEEK_OF_MONTH) == 1){
+						holiday = Holiday.XMAS;
+					}
+					break;
+				case Calendar.NOVEMBER:
+					if (calendar.get(Calendar.DAY_OF_MONTH) == 1){
+						holiday = Holiday.HWEEN;
+					}
+					break;
+				case Calendar.DECEMBER:
+					if (calendar.get(Calendar.WEEK_OF_MONTH) >= 3){
+						holiday = Holiday.XMAS;
+					}
+					break;
+			}
 		}
 	}
 
@@ -83,7 +95,7 @@ public class Pasty extends Food {
 	public void reset() {
 		super.reset();
 		switch(holiday){
-			case NONE:
+			case NONE:default:
 				image = ItemSpriteSheet.PASTY;
 				break;
 			case HWEEN:
@@ -91,6 +103,9 @@ public class Pasty extends Food {
 				break;
 			case XMAS:
 				image = ItemSpriteSheet.CANDY_CANE;
+				break;
+			case ZHONG_QIU:
+				image = ItemSpriteSheet.SALTYMOONCAKE;
 				break;
 		}
 	}
@@ -100,7 +115,7 @@ public class Pasty extends Food {
 		super.satisfy(hero);
 		
 		switch(holiday){
-			case NONE:
+			case NONE:default:
 				new Flare( 5, 32 ).color( 0xFF0000, true ).show( curUser.sprite, 2f );
 				ScrollOfTerror.terror(null);
 				break;
@@ -119,24 +134,28 @@ public class Pasty extends Food {
 	@Override
 	public String name() {
 		switch(holiday){
-			case NONE: default:
+			case NONE:default:
 				return Messages.get(this, "pasty");
 			case HWEEN:
 				return Messages.get(this, "pie");
 			case XMAS:
 				return Messages.get(this, "cane");
+			case ZHONG_QIU:
+				return Messages.get(this, "salty_moon_cake");
 		}
 	}
 
 	@Override
 	public String info() {
 		switch(holiday){
-			case NONE: default:
+			case NONE:default:
 				return Messages.get(this, "pasty_desc");
 			case HWEEN:
 				return Messages.get(this, "pie_desc");
 			case XMAS:
 				return Messages.get(this, "cane_desc");
+			case ZHONG_QIU:
+				return Messages.get(this, "salty_moon_cake_desc");
 		}
 	}
 	

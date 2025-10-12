@@ -71,7 +71,7 @@ public class InterlevelScene extends PixelScene {
 	private static float fadeTime;
 	
 	public enum Mode {
-		ACCESS,DESCEND, ASCEND, CONTINUE, RESURRECT, RETURN, FALL, RESET, NONE
+		ACCESS,DESCEND, ASCEND, CONTINUE, RESURRECT, RETURN, FALL, NONE
 	}
 	public static Mode mode=Mode.NONE;
 	
@@ -279,9 +279,6 @@ public class InterlevelScene extends PixelScene {
 							case FALL:
 								fall();
 								break;
-							case RESET:
-								reset();
-								break;
 						}
 						
 					} catch (Exception e) {
@@ -468,7 +465,7 @@ public class InterlevelScene extends PixelScene {
 			ArrayList<Item> preservedItems = Dungeon.level.getItemsToPreserveFromSealedResurrect();
 
 			Dungeon.hero.resurrect();
-			level = Dungeon.newLevel(Dungeon.depth);
+			level = Dungeon.newLevel(Dungeon.levelId);
 			Dungeon.hero.pos = level.randomRespawnCell(Dungeon.hero);
 
 			for (Item i : preservedItems){
@@ -501,16 +498,6 @@ public class InterlevelScene extends PixelScene {
 		}
 
 		Dungeon.switchLevel( level, Dungeon.hero.pos );
-	}
-
-	private void reset() throws IOException {
-		
-		Mob.holdAllies( Dungeon.level );
-
-		SpecialRoom.resetPitRoom(Dungeon.depth+1);
-
-		Level level = Dungeon.newLevel(Dungeon.depth);
-		Dungeon.switchLevel( level, level.entrance );
 	}
 	
 	@Override

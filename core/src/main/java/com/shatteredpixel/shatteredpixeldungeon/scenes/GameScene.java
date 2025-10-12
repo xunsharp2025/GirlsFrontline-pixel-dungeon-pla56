@@ -77,7 +77,6 @@ import com.shatteredpixel.shatteredpixeldungeon.tiles.FogOfWar;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.GridTileMap;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.RaisedTerrainTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.TerrainFeaturesTilemap;
-import com.shatteredpixel.shatteredpixeldungeon.tiles.WallBlockingTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.AttackIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Banner;
@@ -154,7 +153,6 @@ public class GameScene extends PixelScene {
 	private TerrainFeaturesTilemap terrainFeatures;
 	private RaisedTerrainTilemap raisedTerrain;
 	private DungeonWallsTilemap walls;
-	private WallBlockingTilemap wallBlocking;
 	private FogOfWar fog;
 	private HeroSprite hero;
 
@@ -249,10 +247,11 @@ public class GameScene extends PixelScene {
 		
 		tiles = new DungeonTerrainTilemap();
 		terrain.add( tiles );
+		//tiles.camera();
+		//terrain.remove(tiles);
 
 		customTiles = new Group();
 		terrain.add(customTiles);
-
 		for( CustomTilemap visual : Dungeon.level.customTiles){
 			addCustomTile(visual);
 		}
@@ -271,7 +270,6 @@ public class GameScene extends PixelScene {
 
 		heaps = new Group();
 		add( heaps );
-		
 		for ( Heap heap : Dungeon.level.heaps.valueList() ) {
 			addHeapSprite( heap );
 		}
@@ -305,13 +303,9 @@ public class GameScene extends PixelScene {
 
 		customWalls = new Group();
 		add(customWalls);
-
 		for( CustomTilemap visual : Dungeon.level.customWalls){
 			addCustomWall(visual);
 		}
-
-		wallBlocking = new WallBlockingTilemap();
-		add (wallBlocking);
 
 		add( emitters );
 		add( effects );
@@ -323,7 +317,6 @@ public class GameScene extends PixelScene {
 			blob.emitter = null;
 			addBlobSprite( blob );
 		}
-
 
 		fog = new FogOfWar( Dungeon.level.width(), Dungeon.level.height() );
 		add( fog );
@@ -531,9 +524,6 @@ public class GameScene extends PixelScene {
 						}
 					}
 				}
-				
-			} else if (InterlevelScene.mode == InterlevelScene.Mode.RESET) {
-				GLog.h(Messages.get(this, "warp"));
 			} else if (InterlevelScene.mode == InterlevelScene.Mode.RESURRECT) {
 				GLog.h(Messages.get(this, "resurrect"), Dungeon.depth);
 			} else {
@@ -878,9 +868,11 @@ public class GameScene extends PixelScene {
 	
 	private void addMobSprite( Mob mob ) {
 		CharSprite sprite = mob.sprite();
-		sprite.visible = Dungeon.level.heroFOV[mob.pos];
-		mobs.add( sprite );
-		sprite.link( mob );
+		if (sprite != null) {
+			sprite.visible = Dungeon.level.heroFOV[mob.pos];
+			mobs.add( sprite );
+			sprite.link( mob );
+		}
 	}
 	
 	private synchronized void prompt( String text ) {
@@ -1169,21 +1161,18 @@ public class GameScene extends PixelScene {
 	public static void updateFog(){
 		if (scene != null) {
 			scene.fog.updateFog();
-			scene.wallBlocking.updateMap();
 		}
 	}
 
 	public static void updateFog(int x, int y, int w, int h){
 		if (scene != null) {
 			scene.fog.updateFogArea(x, y, w, h);
-			scene.wallBlocking.updateArea(x, y, w, h);
 		}
 	}
 	
 	public static void updateFog( int cell, int radius ){
 		if (scene != null) {
 			scene.fog.updateFog( cell, radius );
-			scene.wallBlocking.updateArea( cell, radius );
 		}
 	}
 	

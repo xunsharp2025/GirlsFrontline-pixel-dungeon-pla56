@@ -55,8 +55,8 @@ import java.io.IOException;
 
 public class WndStartGame extends Window {
 
-	private static final int WIDTH    = 117;
-	private static final int HEIGHT   = 150;
+	private static final int WIDTH	= 117;
+	private static final int HEIGHT	= 150;
 
 	public WndStartGame(final int slot){
 		super();
@@ -66,7 +66,17 @@ public class WndStartGame extends Window {
 		title.setPos((WIDTH - title.width())/2f,2);
 		add(title);
 
-		float heroBtnSpacing = (WIDTH - 4*HeroBtn.WIDTH)/20f;
+		// 计算可见角色的数量（排除NONE）
+		int numVisibleClasses = 0;
+		for (HeroClass cl : HeroClass.values()) {
+			if (cl != HeroClass.NONE) {
+				numVisibleClasses++;
+			}
+		}
+
+		// 动态计算角色按钮间距
+		// 间距公式：(总宽度 - 所有按钮总宽度)/(按钮数量 + 1)
+		float heroBtnSpacing = (WIDTH - numVisibleClasses * HeroBtn.WIDTH) / (numVisibleClasses + 1f);
 
 		float curX = heroBtnSpacing;
 		for (HeroClass cl : HeroClass.values()){

@@ -31,16 +31,19 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Regrowth;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.StormCloud;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Doom;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Tengu;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Noel;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.IronKey;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.HeavyBoomerang;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
-import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Teleporter;
+import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Trigger;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.TenguDartTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -49,6 +52,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.ui.TargetHealthIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
@@ -130,7 +134,7 @@ public class PrisonBossLevel extends Level {
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle(bundle);
 		state = bundle.getEnum( STATE, State.class );
-		
+
 		//in some states tengu won't be in the world, in others he will be.
 		if (state == State.START || state == State.FIGHT_PAUSE) {
 			tengu = (Tengu)bundle.get( TENGU );
@@ -274,6 +278,48 @@ public class PrisonBossLevel extends Level {
 			e, e, e, W, W, W, W, W, W, W, W, C, C, W,
 			W, W, W, W, W, W, W, W, W, W, W, C, C, W
 	};
+
+	public static class NoelTrigger extends Trigger{
+		public boolean triggered=false;
+
+		private static final String TRIGGERED="triggered";
+
+		@Override
+		public void storeInBundle( Bundle bundle ) {
+			super.storeInBundle(bundle);
+			bundle.put(TRIGGERED,triggered);
+		}
+
+		@Override
+		public void restoreFromBundle( Bundle bundle ) {
+			super.restoreFromBundle(bundle);
+			triggered=bundle.getBoolean(TRIGGERED);
+		}
+
+		@Override
+		public boolean canBeTouched(){
+			return false;
+		}
+
+		@Override
+		public boolean canBePressed(){
+			return true;
+		}
+
+		@Override
+		public void activate(Char ch){
+			if(Dungeon.hero!=ch || triggered){return;}
+			triggered=true;
+
+			for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])){
+				if (mob instanceof Noel){
+					Buff.append(Dungeon.hero,TalismanOfForesight.CharAwareness.class,5f).charID=mob.id();
+				}
+			}
+			
+			GLog.n(Messages.get(PrisonBossLevel.class,"noel_be_found"));
+		}
+	}
 	
 	private void setMapEnd(){
 		
@@ -288,7 +334,10 @@ public class PrisonBossLevel extends Level {
 		}
 
 		if(Dungeon.isChallenged(Challenges.STRONGER_BOSSES)){
-			placeTrigger(new Teleporter().create(13+10*width(),-1,1010));
+			Noel noel=new Noel();
+			noel.pos=7+18*width();
+			GameScene.add(noel);
+			placeTrigger(new NoelTrigger().create(10+23*width()));
 		}
 		
 		CustomTilemap vis = new ExitVisual();
@@ -333,7 +382,7 @@ public class PrisonBossLevel extends Level {
 		}
 		
 		for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])){
-			if (mob != tengu && (safeArea == null || !safeArea.inside(cellToPoint(mob.pos)))){
+			if (mob != tengu && !(mob instanceof Noel) && (safeArea == null || !safeArea.inside(cellToPoint(mob.pos)))){
 				mob.destroy();
 				if (mob.sprite != null)
 					mob.sprite.killAndErase();
@@ -837,9 +886,6 @@ public class PrisonBossLevel extends Level {
 		public Tilemap create() {
 			Tilemap v = super.create();
 			int[] data = mapSimpleImage(0, 0, TEX_WIDTH);
-			if(Dungeon.isChallenged(Challenges.STRONGER_BOSSES)){
-				data[2]+=1;
-			}
 
 			for (int i = 0; i < data.length; i++){
 				if (render[i] == 0) data[i] = -1;

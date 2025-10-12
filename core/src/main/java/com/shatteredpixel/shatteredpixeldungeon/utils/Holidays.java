@@ -1,4 +1,4 @@
-package com.watabou.utils;
+package com.shatteredpixel.shatteredpixeldungeon.utils;
 
 import java.util.Calendar;
 
@@ -9,10 +9,12 @@ public class Holidays {
         EASTER,             // T BD
         BREAD_INDEPENDENT,  // 6월 4일 빵복절
         HWEEN,              // 2nd week of october though first day of november
+        midAutumnFestival,  // 八月十五中秋节
         XMAS                // 3rd week of december through first week of january
+
     }
 
-    private static Holiday holiday;
+    public static Holiday holiday;
 
     static {
         holiday = Holiday.NONE;

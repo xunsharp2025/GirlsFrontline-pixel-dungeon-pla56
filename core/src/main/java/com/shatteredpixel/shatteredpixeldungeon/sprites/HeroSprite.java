@@ -52,7 +52,7 @@ public class HeroSprite extends CharSprite {
 		super();
 
 		link( Dungeon.hero );
-
+		
 		texture( Dungeon.hero.heroClass.spritesheet() );
 		updateArmor();
 

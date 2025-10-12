@@ -117,6 +117,7 @@ public class WndGameInProgress extends Window {
 		if (info.shld > 0)  statSlot( Messages.get(this, "health"), info.hp + "+" + info.shld + "/" + info.ht );
 		else                statSlot( Messages.get(this, "health"), (info.hp) + "/" + info.ht );
 		statSlot( Messages.get(this, "exp"), info.exp + "/" + Hero.maxExp(info.level) );
+		statSlot( Messages.get(this, "hunger"), String.valueOf(info.hunger) ); // 添加饥饿值显示
 		
 		pos += GAP;
 		statSlot( Messages.get(this, "gold"), info.goldCollected );

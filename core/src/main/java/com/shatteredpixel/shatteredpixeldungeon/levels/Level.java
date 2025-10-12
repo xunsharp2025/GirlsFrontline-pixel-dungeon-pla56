@@ -188,7 +188,6 @@ public abstract class Level implements Bundlable {
 	private static final String BLOBS		= "blobs";
 	private static final String FEELING		= "feeling";
 
-
 	public void create(int levelDepth,int levelId){
 		this.levelDepth=levelDepth;
 		this.levelId   =levelId;
@@ -990,6 +989,9 @@ public abstract class Level implements Bundlable {
 	}
 	
 	public void occupyCell( Char ch ){
+		Trigger trigger=triggers.get(ch.pos);
+		if(null!=trigger && trigger.canBePressed()){trigger.activate(ch);}
+
 		if (!ch.isImmune(Web.class) && Blob.volumeAt(ch.pos, Web.class) > 0){
 			blobs.get(Web.class).clear(ch.pos);
 			Web.affectChar( ch );

@@ -13,6 +13,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Callback;
 import com.watabou.utils.Point;
@@ -22,6 +23,10 @@ import com.watabou.utils.Random;
 import java.util.ArrayList;
 
 public class WandOfReflectDisintegration extends WandOfDisintegration {
+
+    {
+        image = ItemSpriteSheet.WAND_DISINTEGRATION2; // WANDS+15
+    }
 
     public int min(int lvl){
         return 2+lvl;

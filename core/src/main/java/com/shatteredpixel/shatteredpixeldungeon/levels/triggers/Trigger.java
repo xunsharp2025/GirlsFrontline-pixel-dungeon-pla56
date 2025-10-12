@@ -9,7 +9,11 @@ public abstract class Trigger implements Bundlable {
 	public int pos;
 
 	private static final String POS	= "pos";
-	protected String text_dis;
+
+	public Trigger create(int pos){
+		this.pos=pos;
+		return this;
+	}
 
 	@Override
 	public void storeInBundle( Bundle bundle ) {
@@ -23,6 +27,10 @@ public abstract class Trigger implements Bundlable {
 
 	public boolean canBeTouched(){
 		return true;
+	}
+
+	public boolean canBePressed(){
+		return false;
 	}
 
 	public boolean canInteract(Char ch){

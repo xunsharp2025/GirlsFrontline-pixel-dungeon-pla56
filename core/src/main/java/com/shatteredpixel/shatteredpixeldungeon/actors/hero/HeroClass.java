@@ -69,6 +69,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Choco;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfInvisibility;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfMindVision;
@@ -328,7 +329,8 @@ public enum HeroClass {
 			case ROGUE:
 				return Assets.Sprites.ROGUE;
 			case HUNTRESS:
-				return Assets.Sprites.HUNTRESS;
+				return Assets.Sprites.HK416;
+				//return Assets.Sprites.HUNTRESS;
 			case TYPE561:
 				return Assets.Sprites.TYPE561;
 		}

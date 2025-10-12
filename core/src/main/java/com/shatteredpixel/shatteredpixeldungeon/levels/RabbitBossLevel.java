@@ -38,6 +38,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
@@ -339,7 +340,7 @@ public class RabbitBossLevel extends Level {
 					W, e, e, e, e, W, e, e, e, e, W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W, e, e, e, e, W, W,
 					W, W, W, W, W, e, e, e, W, e, e, W, e, e, W, W, W, e, e, e, e, W, W, e, e, e, W, W, W, W, W, W,
 					W, e, e, e, e, e, e, W, e, e, e, e, e, W, e, e, e, W, e, e, W, e, e, W, e, e, e, e, e, e, W, W,
-					W, e, e, e, e, e, W, e, e, e, e, e, e, W, e, E, e, e, e, e, e, e, e, e, W, e, e, e, e, e, W, W,
+					W, e, e, e, e, e, W, e, e, e, e, e, e, W, e, e, e, e, e, e, e, e, e, e, W, e, e, e, e, e, W, W,
 					W, e, W, W, e, e, W, e, e, e, e, W, e, e, W, e, e, e, W, W, e, e, e, e, W, e, e, W, e, e, W, W,
 					W, W, e, e, W, e, W, e, e, e, W, e, e, e, e, e, e, W, e, e, W, e, e, e, W, e, W, e, e, e, W, W,
 					W, e, e, e, W, e, W, e, e, e, W, e, e, e, e, M, e, e, e, e, W, e, e, e, W, e, W, e, e, e, W, W,

@@ -1,4 +1,3 @@
-
 /*
  * Pixel Dungeon
  * Copyright (C) 2012-2015 Oleg Dolya
@@ -41,9 +40,9 @@ public class Assets {
 	public static final String INTRUDER 	= "intruder.png";
 
 	//need Organize
-	public static final String ELPHELT 		= "sprites/elphelt.png";
+	public static final String ELPHELT 		= "sprites/boss/Elphelt.png";
 	public static final String DRAGUN		= "sprites/dragun.png";
-	public static final String DISLOLI		= "sprites/disloli.png";
+	public static final String DISLOLI		= "sprites/boss/disloli.png";
 	public static final String GARM			= "sprites/garm.png";
 	public static final String DREAMER		= "sprites/dreamer.png";
 	public static final String AEGIS		= "sprites/aegis.png";
@@ -75,7 +74,6 @@ public class Assets {
 		public static final String TERRAIN_FEATURES = "environment/terrain_features.png";
 
 		public static final String VISUAL_GRID  = "environment/visual_grid.png";
-		public static final String WALL_BLOCKING= "environment/wall_blocking.png";
 
 		public static final String TILES_ZERO_LEVEL="environment/tiles_zero_level.png";
 		public static final String TILES_SEWERS    ="environment/tiles_sewers.png";
@@ -94,7 +92,6 @@ public class Assets {
 
 		public static final String WEAK_FLOOR       = "environment/custom_tiles/weak_floor.png";
 		public static final String ZERO_LEVEL       = "environment/custom_tiles/zero_level.png";
-		public static final String ZERO_LEVEL2       = "environment/custom_tiles/zero_level2.png";
 		public static final String SEWER_BOSS       = "environment/custom_tiles/sewer_boss.png";
 		public static final String PRISON_QUEST     = "environment/custom_tiles/prison_quests.png";
 		public static final String PRISON_EXIT      = "environment/custom_tiles/prison_exit.png";
@@ -292,12 +289,15 @@ public class Assets {
 		public static final String WARRIOR  = "sprites/warrior.png";
 		public static final String MAGE     = "sprites/mage.png";
 		public static final String ROGUE    = "sprites/rogue.png";
-		public static final String HUNTRESS = "sprites/huntress.png";
+		public static final String HUNTRESS = "sprites/sun.png";
 		public static final String TYPE561  = "sprites/type56.png";
+		public static final String GSH18    = "sprites/gsh18.png";
+		public static final String HK416    = "sprites/hk416.png";
 		public static final String AVATARS  = "sprites/avatars.png";
 		public static final String PET      = "sprites/pet.png";
 		public static final String AMULET   = "sprites/amulet.png";
 
+		public static final String NOEL       = "sprites/noel.png";
 		public static final String RAT        = "sprites/rat.png";
 		public static final String FETID_RAT  = "sprites/fetid_rat.png";
 		public static final String BRUTE      = "sprites/brute.png";

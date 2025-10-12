@@ -381,8 +381,12 @@ public class PathFinder {
 			}
 		}
 	}
-	
-	@SuppressWarnings("serial")
+
+	public static int direction(int pos, Integer target) {
+		return 0;
+	}
+
+    @SuppressWarnings("serial")
 	public static class Path extends LinkedList<Integer> {
 	}
 }

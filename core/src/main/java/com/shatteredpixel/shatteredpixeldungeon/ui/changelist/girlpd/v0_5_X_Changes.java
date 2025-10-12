@@ -26,33 +26,58 @@ import java.util.ArrayList;
 
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
-		add_0_5_4_b1e1_Changes(changeInfos);
+    	add_0_5_4_Changes(changeInfos);
     	add_0_5_3_Changes(changeInfos);
 		add_0_5_2_Changes(changeInfos);
 		add_0_5_1_Changes(changeInfos);
 		add_0_5_0_Changes(changeInfos);
     }
-	public static void add_0_5_4_b1e1_Changes( ArrayList<ChangeInfo> changeInfos ){
-		ChangeInfo changes = new ChangeInfo("v0.5.4b1e1", true, "");
+    
+    public static void add_0_5_4_Changes( ArrayList<ChangeInfo> changeInfos ){
+        ChangeInfo changes = new ChangeInfo("v0.5.4", true, "");
+        changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
 		changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
 
-		/*changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
-		changes.hardlight( CharSprite.WARNING );
-		changeInfos.add(changes);*/
-
-		changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_ON), "游戏改动",
-				"_-_ 加入第0层"
+		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.GSH18,null), "新增游戏内容",
+			"_-_ 在测试模式加入了_地块编辑器_，虽然有些繁琐，但玩家可以自定义地形了。\n"+
+			"_-_ 将_【少女前线X罪恶装备/苍翼默示录】_相关联动内容作为彩蛋加入游戏，玩家在开启深入敌腹挑战后进行闯关即可体验！\n"+
+			"_-_ 增加了角色饱食度指示UI，现在角色的饱食度数值可视化了。\n"+
+			"_-_ FNC带着格里芬的补给来到了地牢！与其对话将能获取一些有趣的补给！\n"+
+			"_-_ 新增了一份节日彩蛋！\n"+
+			"_-_ 全新武器_GSh-18_加入。\n"+
+			"_-_ 为_灵刀·樱吹雪_添加了新技能，使其不再只是一把‘刀’\n"
 		));
-	};
+
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		changes.hardlight( CharSprite.WARNING );
+		changeInfos.add(changes);
+        
+        Image imageTemp = new Image(Assets.Sprites.TROLL, 0 ,0 ,12 ,21);
+        imageTemp.scale.x=0.8f;
+        imageTemp.scale.y=0.8f;
+        changes.addButton(new ChangeButton(imageTemp, "优化游戏体验",
+			"_-_ 修复了部分情况下新建游戏会闪退的BUG。\n"+
+			"_-_ 优化了_泛黄的袖珍本_，增强了其与其它遗物的相关性。\n"+
+			"_-_ 修复了第6大区_远处的井_贴图错误的BUG。\n"+
+			"_-_ 因为一些特殊目的，删除了_塌方陷阱_。\n"+
+			"_-_ 强化了_Type 56-2_武器榴弹的伤害。\n"+
+			"_-_ 修正了大量文本错误，对部分文本进行了优化。\n"
+        ));
+    }    
+
+
     public static void add_0_5_3_Changes( ArrayList<ChangeInfo> changeInfos ){
 		ChangeInfo changes = new ChangeInfo("v0.5.3", true, "");
 		changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
 
-		/*changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
 		changes.hardlight( CharSprite.WARNING );
-		changeInfos.add(changes);*/
+		changeInfos.add(changes);
 
 		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.GUN562, null), "游戏改动",
 			"_-_ 字体渲染：现已可使用系统字体和像素字体。\n"+
@@ -100,13 +125,13 @@ public class v0_5_X_Changes {
 		changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
 
-		/*changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
 		changes.hardlight( CharSprite.WARNING );
-		changeInfos.add(changes);*/
+		changeInfos.add(changes);
 
 		changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
 		"_-_ 现在鼠王护甲能正常使用了，561也可以使用鼠王护甲\n"+
-				"_-_ 修改了Ppsh-47的贴图\n"+
+				"_-_ 修改了Ppsh-41的贴图\n"+
 				"_-_ 更改了侦查中枢的显示偏移，现在视觉上不会阻挡其他怪物了\n"+
 				"_-_ 修复了G11 虹卫，镜像 攻击崩溃的bug\n"+
 				"_-_ 修复了骷髅文本错误问题\n"+

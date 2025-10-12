@@ -259,8 +259,6 @@ public class Dungeon {
 		Level level;
 		switch(id){
 		case 0:
-			//test
-			//level = new RabbitBossLevel();break;
 			level = new ZeroLevel();break;
 		case 1:case 2:case 3:case 4:
 			level = new SewerLevel();break;

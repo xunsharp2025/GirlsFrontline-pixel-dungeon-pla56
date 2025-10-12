@@ -281,6 +281,12 @@ public class Hero extends Char {
 		bundle.put( LEVEL, lvl );
 		bundle.put( EXPERIENCE, exp );
 		
+		// 保存饥饿值
+		Hunger hunger = buff(Hunger.class);
+		if (hunger != null) {
+			bundle.put("hunger", (int)hunger.hunger());
+		}
+		
 		bundle.put( HTBOOST, HTBoost );
 
 		belongings.storeInBundle( bundle );
@@ -315,6 +321,12 @@ public class Hero extends Char {
 		info.hp = bundle.getInt( Char.TAG_HP );
 		info.ht = bundle.getInt( Char.TAG_HT );
 		info.shld = bundle.getInt( Char.TAG_SHLD );
+		// 尝试从bundle中读取饥饿值，如果不存在则默认为0
+		if (bundle.contains("hunger")) {
+			info.hunger = bundle.getInt("hunger");
+		} else {
+			info.hunger = 0;
+		}
 		info.heroClass = bundle.getEnum( CLASS, HeroClass.class );
 		info.subClass = bundle.getEnum( SUBCLASS, HeroSubClass.class );
 		Belongings.preview( info, bundle );

@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -122,7 +123,7 @@ public class WndHero extends WndTabbed {
 	}
 
 	private class StatsTab extends Group {
-		
+	
 		private static final int GAP = 6;
 		
 		private float pos;
@@ -130,9 +131,9 @@ public class WndHero extends WndTabbed {
 		public StatsTab() {
 			initialize();
 		}
-
+	
 		public void initialize(){
-
+	
 			for (Gizmo g : members){
 				if (g != null) g.destroy();
 			}
@@ -185,6 +186,12 @@ public class WndHero extends WndTabbed {
 			statSlot( Messages.get(this, "gold"), Statistics.goldCollected );
 			statSlot( Messages.get(this, "depth"), Statistics.deepestFloor );
 
+			// 添加饱食度显示
+			Hunger hunger = Dungeon.hero.buff(Hunger.class);
+			if (hunger != null) {
+			    statSlot( Messages.get(this, "hunger"), String.format("%.0f/%.0f", hunger.hunger(), Hunger.STARVING) );
+			}
+			
 			pos += GAP;
 		}
 
