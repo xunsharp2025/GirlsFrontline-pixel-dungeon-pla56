@@ -6,6 +6,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bless;  // 移动到这里
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
@@ -27,13 +28,13 @@ import java.util.ArrayList;
 
 public class RedBook extends Artifact{
     public static final String AC_CAST="CAST";
-    public static final int[] LEVEL_TO_CHARGE ={3,4,5,7,9,10};
-    public static final int[] COUNT_TO_UPGRADE={1,1,2,2,2,99};
+    public static final int[] LEVEL_TO_CHARGE ={3,4,5,7,9,10,12,12,12,12};
+    public static final int[] COUNT_TO_UPGRADE={1,2,3,4,5,6,7,8,9,10};
 
     {
         image = ItemSpriteSheet.REDBOOK;
 
-        levelCap = 5;
+        levelCap = 10;
         charge = LEVEL_TO_CHARGE[level()];
         chargeCap = LEVEL_TO_CHARGE[level()];
 
@@ -66,25 +67,43 @@ public class RedBook extends Artifact{
             }
 
             Char target=Char.findChar(cell);
-            if (target==null || !(target instanceof Mob || target instanceof Hero)){
-                return;
-            }
-
             int killed=0;
-            if(target.alignment==Char.Alignment.ALLY){
-                if(charge<5){
+            
+            // 如果选择的是自己的位置（修复条件判断）
+            if (cell == curUser.pos) {
+                // 消耗3点充能对自己使用（与对敌人相同）
+                if (charge >= 3) {
+                    charge -= 3;
+                    // 调用deadBomb方法，实现伤害和恐惧效果
+                    killed=deadBomb(3, curUser);
+                    // 添加祝福buff
+                    Buff.prolong(curUser, Bless.class, Bless.DURATION);
+                    // 确保消息能显示（如果没有定义，先使用临时消息）
+                    GLog.p(Messages.get(RedBook.class, "blessed"));
+                } else {
                     return;
                 }
-
-                charge-=5;
-                killed=deadBomb(level()==levelCap?3:2,target);
-            }else if(charge>=3){
-                charge-=3;
-                killed=deadBomb(0,target);
-            }else{
+            }
+            // 处理其他目标
+            else if (target!=null) {
+                if(target.alignment==Char.Alignment.ALLY){
+                    if(charge<5){
+                        return;
+                    }
+    
+                    charge-=5;
+                    killed=deadBomb(level()==levelCap?3:2,target);
+                }else if(charge>=3){
+                    charge-=3;
+                    killed=deadBomb(0,target);
+                }else{
+                    return;
+                }
+            } else {
                 return;
             }
 
+            // 统一的升级和后续处理
             if(level()<levelCap && killed>=COUNT_TO_UPGRADE[level()]){
                 upgrade();
             }
