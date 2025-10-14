@@ -52,8 +52,8 @@ public class Ntw20 extends SniperRifle {
             aimMode = true;
             // 显示消息
             hero.sprite.showStatus(CharSprite.POSITIVE, Messages.get(this, "aim_mode_on"));
-            // 消耗10个回合
-            hero.spendAndNext(10f);
+            // 消耗4个回合
+            hero.spendAndNext(4f);
         } else {
             super.execute(hero, action);
         }
@@ -98,10 +98,9 @@ public class Ntw20 extends SniperRifle {
     public int damageRoll(Char owner) {
         if (aimMode && owner instanceof Hero) {
             // 获取基础伤害范围
-            int min = min();
             int max = max();
             // 计算85%-120%的伤害范围
-            int minLocked = Math.round(min * 0.85f);
+            int minLocked = Math.round(max * 0.85f);
             int maxLocked = Math.round(max * 1.2f);
             // 在锁定范围内随机取值
             return damageRollWithRange(owner, minLocked, maxLocked);

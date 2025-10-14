@@ -115,6 +115,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLivingEarth;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.AK47;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.M99;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
@@ -244,6 +245,12 @@ public class Hero extends Char {
 		if (buff != null){
 			strBonus += buff.boost();
 		}
+		
+		Hunger hunger = buff(Hunger.class);
+		if (hunger != null && hunger.isStarving() && heroClass == HeroClass.TYPE561 && STR >= 13){
+			strBonus -= 1;
+		}
+
 
 		if (hasTalent(Talent.STRONGMAN)){
 			strBonus += (int)Math.floor(STR * (0.03f + 0.05f*pointsInTalent(Talent.STRONGMAN)));
@@ -597,8 +604,8 @@ public class Hero extends Char {
 	public boolean canSurpriseAttack(){
 		if (belongings.weapon() == null || !(belongings.weapon() instanceof Weapon))    return true;
 		if (STR() < ((Weapon)belongings.weapon()).STRReq())                             return false;
-		if (belongings.weapon() instanceof AK47)                                       return false;
-
+		if (belongings.weapon() instanceof AK47 || belongings.weapon() instanceof M99)   return false;
+		//ak47和m99都无法偷袭了
 		return true;
 	}
 

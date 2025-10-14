@@ -64,6 +64,9 @@ public class ChaliceOfBlood extends Artifact {
 		if (action.equals(AC_PRICK)){
 
 			int damage = 3*(level()*level());
+			
+			// 显示升级所需的血量
+			GLog.i(Messages.get(this, "upgrade_hint", damage));
 
 			if (damage > hero.HP*0.75) {
 

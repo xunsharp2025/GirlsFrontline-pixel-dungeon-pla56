@@ -6,7 +6,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bless;  // 移动到这里
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bless;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
@@ -28,13 +28,14 @@ import java.util.ArrayList;
 
 public class RedBook extends Artifact{
     public static final String AC_CAST="CAST";
-    public static final int[] LEVEL_TO_CHARGE ={3,4,5,7,9,10,12,12,12,12};
-    public static final int[] COUNT_TO_UPGRADE={1,2,3,4,5,6,7,8,9,10};
+    public static final String AC_FLIP_PAGE="FLIP_PAGE"; // 新添加的翻阅动作
+    public static final int[] LEVEL_TO_CHARGE ={3,4,5,7,9,10};
+    public static final int[] COUNT_TO_UPGRADE={1,1,2,2,2,-1};
 
     {
         image = ItemSpriteSheet.REDBOOK;
 
-        levelCap = 10;
+        levelCap = 5;
         charge = LEVEL_TO_CHARGE[level()];
         chargeCap = LEVEL_TO_CHARGE[level()];
 
@@ -46,8 +47,10 @@ public class RedBook extends Artifact{
     @Override
     public ArrayList<String> actions(Hero hero) {
         ArrayList<String> actions = super.actions( hero );
-        if (isEquipped(hero) && !cursed)
+        if (isEquipped(hero) && !cursed) {
             actions.add(AC_CAST);
+            actions.add(AC_FLIP_PAGE); // 添加翻阅动作到可用动作列表
+        }
         return actions;
     }
 
@@ -56,6 +59,19 @@ public class RedBook extends Artifact{
         super.execute(hero, action);
         if (action.equals(AC_CAST)&& isEquipped(hero)&&!cursed) {
             GameScene.selectCell(targeter);
+        } else if (action.equals(AC_FLIP_PAGE) && isEquipped(hero) && !cursed) {
+            // 处理翻阅动作
+            if (charge < 1) {
+                GLog.w(Messages.get(RedBook.class, "not_enough_charge_flip"));
+                return;
+            }
+            
+            charge -= 1;
+            Buff.affect(curUser, Bless.class, 5f); // 添加5回合祝福效果
+            GLog.i(Messages.get(RedBook.class, "flip_success"));
+            
+            updateQuickslot();
+            // 不消耗回合
         }
     }
 
@@ -67,43 +83,37 @@ public class RedBook extends Artifact{
             }
 
             Char target=Char.findChar(cell);
-            int killed=0;
-            
-            // 如果选择的是自己的位置（修复条件判断）
-            if (cell == curUser.pos) {
-                // 消耗3点充能对自己使用（与对敌人相同）
-                if (charge >= 3) {
-                    charge -= 3;
-                    // 调用deadBomb方法，实现伤害和恐惧效果
-                    killed=deadBomb(3, curUser);
-                    // 添加祝福buff
-                    Buff.prolong(curUser, Bless.class, Bless.DURATION);
-                    // 确保消息能显示（如果没有定义，先使用临时消息）
-                    GLog.p(Messages.get(RedBook.class, "blessed"));
-                } else {
-                    return;
-                }
-            }
-            // 处理其他目标
-            else if (target!=null) {
-                if(target.alignment==Char.Alignment.ALLY){
-                    if(charge<5){
-                        return;
-                    }
-    
-                    charge-=5;
-                    killed=deadBomb(level()==levelCap?3:2,target);
-                }else if(charge>=3){
-                    charge-=3;
-                    killed=deadBomb(0,target);
-                }else{
-                    return;
-                }
-            } else {
+            if (target==null || !(target instanceof Mob || target instanceof Hero)){
                 return;
             }
 
-            // 统一的升级和后续处理
+            int killed=0;
+            if(target.alignment==Char.Alignment.ALLY){
+                if(charge<5){
+                    GLog.w(Messages.get(RedBook.class, "not_enough_charge_ally"));
+                    return;
+                }
+
+                charge-=5;
+                killed=deadBomb(level()==levelCap?3:2,target);
+                
+                // 如果目标是自己，则添加祝福效果
+                if(target == curUser){
+                    Buff.affect(curUser, Bless.class, 10f);
+                }
+            }else if(charge>=3){
+                charge-=3;
+                killed=deadBomb(0,target);
+            }else{
+                GLog.w(Messages.get(RedBook.class, "not_enough_charge_enemy"));
+                return;
+            }
+
+            // 成功使用之后，下次升级提示
+            if(level() < levelCap && COUNT_TO_UPGRADE[level()] != -1){
+                GLog.i(Messages.get(RedBook.class, "next_upgrade_hint", COUNT_TO_UPGRADE[level()]));
+            }
+
             if(level()<levelCap && killed>=COUNT_TO_UPGRADE[level()]){
                 upgrade();
             }

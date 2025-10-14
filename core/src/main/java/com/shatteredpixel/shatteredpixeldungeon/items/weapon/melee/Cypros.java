@@ -100,24 +100,7 @@ public class Cypros extends MeleeWeapon {
         wand.curCharges = wand.maxCharges;
     }
 
-    public static void switchMode(Cypros cypros) {
-        Cypros.Mode newMode;
-        switch (cypros.getMode()) {
-            case TRAVAILLER:
-                newMode = Mode.MAGNUM;
-                break;
-            case MAGNUM:
-                newMode = Mode.CONFIRE;
-                break;
-            case CONFIRE: default:
-                newMode = Mode.TRAVAILLER;
-                break;
-        }
-
-        cypros.setMode(newMode);
-    }
-
-    public void setMode(Mode newMode) {
+    public void setMode(Mode newMode,boolean doShow) {
         if (newMode == mode) {
             return;
         }
@@ -156,9 +139,9 @@ public class Cypros extends MeleeWeapon {
                 timeChange += 0.5f;
                 break;
         }
-        updateQuickslot();
 
-        if (curUser != null) {
+        updateQuickslot();
+        if (doShow && curUser != null) {
             curUser.spend(timeChange);
             curUser.busy();
             curUser.sprite.operate( curUser.pos );
@@ -294,7 +277,7 @@ public class Cypros extends MeleeWeapon {
                             newMode = Mode.MAGNUM;
                             break;
                     }
-                    setMode(newMode);
+                    setMode(newMode,true);
                 }
             };
             GameScene.show(wndOptions);
@@ -427,7 +410,7 @@ public class Cypros extends MeleeWeapon {
                 newMode = Mode.MAGNUM;
                 break;
         }
-        setMode(newMode);
+        setMode(newMode,false);
     }
 
     private final Emitter.Factory StaffParticleFactory = new Emitter.Factory() {

@@ -256,8 +256,8 @@ public class InventoryPane extends Component {
 		}
 		
 		// 背包按钮布局 - 调整回右上方位置，超过12个自动换行
-		float bagStartY = y + 4; // 调整为右上方位置，与装备槽同一行
-		float rightStart = x + width - 4; // 从右侧开始布局
+		float bagStartY = y + 10.6f; // 从y+4改为y+10.6
+		float rightStart = x + width - 4;
 		float currentLeft = rightStart;
 		
 		// 修改为超过12个自动换行
@@ -302,9 +302,9 @@ public class InventoryPane extends Component {
 		    }
 		}
 
-		// 背包物品格子布局
+		// 背包物品格子布局 - 向下移动6.6像素
 		left = x+4;
-		float top = y+4+SLOT_HEIGHT+1;
+		float top = y+10.6f+SLOT_HEIGHT+1; // 从y+4改为y+10.6
 		
 		// 调整背包物品格子位置，确保不会与背包按钮重叠
 		// 根据可见背包按钮的行数调整物品格子的起始Y坐标
