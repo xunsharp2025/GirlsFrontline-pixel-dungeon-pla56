@@ -203,7 +203,7 @@ public class GameScene extends PixelScene {
 	public void create() {
 		
 		if (Dungeon.hero == null || Dungeon.level == null){
-			GirlsFrontlinePixelDungeon.switchScene(ZeroLevelScene.class);
+			GirlsFrontlinePixelDungeon.switchScene(TitleScene.class);
 			return;
 		}
 

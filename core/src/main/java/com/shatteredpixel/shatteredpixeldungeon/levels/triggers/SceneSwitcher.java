@@ -8,6 +8,7 @@ import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Reflection;
+import java.io.IOException;
 
 public class SceneSwitcher extends Trigger{
 	private Class<?extends Scene> scene;
@@ -35,6 +36,8 @@ public class SceneSwitcher extends Trigger{
 	@Override
 	public void activate(Char ch){
 		if(ch==Dungeon.hero){
+			try{Dungeon.saveAll();
+			}catch(IOException e){Game.reportException(e);}
 			Game.switchScene(scene);
 		}
 	}

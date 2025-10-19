@@ -123,7 +123,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.Kar98;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.M16;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.M99;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.Sass;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.AN94;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Cypros;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun561;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun562;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.HB.Kriss;
@@ -375,8 +377,9 @@ public class Generator {
 					M1a1.class,
 					G36.class,
 					NagantRevolver.class,
+					Cypros.class
 			};
-			WEP_T2.probs = new float[]{ 5, 4, 5, 4, 4, 4 };
+			WEP_T2.probs = new float[]{ 5, 4, 5, 4, 4, 4 ,0 };
 			
 			WEP_T3.classes = new Class<?>[]{
 					Ks23.class,
@@ -397,9 +400,10 @@ public class Generator {
 					AWP.class,
 					AK47.class,
 					GUA91.class,
-					Gepard.class
+					Gepard.class,
+					AN94.class
 			};
-			WEP_T4.probs = new float[]{ 6, 5, 5, 5, 4, 6 };
+			WEP_T4.probs = new float[]{ 6, 5, 5, 5, 4, 6 ,2 };
 			
 			WEP_T5.classes = new Class<?>[]{
 					Sass.class,

@@ -344,7 +344,7 @@ public class InterlevelScene extends PixelScene {
 				add( new WndError( errorMsg ) {
 					public void onBackPressed() {
 						super.onBackPressed();
-						Game.switchScene( ZeroLevelScene.class );
+						Game.switchScene( TitleScene.class );
 					}
 				} );
 				thread = null;

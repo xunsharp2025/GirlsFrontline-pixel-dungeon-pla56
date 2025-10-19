@@ -27,6 +27,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.KindOfWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CapeOfThorns;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.MasterThievesArmband;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.AegisSprite;
@@ -107,5 +109,22 @@ public class Aegis extends Mob {
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
         hitsToDisarm = bundle.getInt(DISARMHITS);
+    }
+
+    @Override
+    public void rollToDropLoot() {
+        // 保留原有的治疗药水掉落逻辑
+        super.rollToDropLoot();
+        
+        // 添加 CapeOfThorns 的掉落逻辑，掉落率为 25%
+        if (Dungeon.hero.lvl <= maxLvl + 2) {
+            MasterThievesArmband.StolenTracker stolen = buff(MasterThievesArmband.StolenTracker.class);
+            if (stolen == null || !stolen.itemWasStolen()) {
+                if (Random.Float() < 0.25f) { // 25% 掉落率
+                    CapeOfThorns cape = new CapeOfThorns();
+                    Dungeon.level.drop(cape, pos).sprite.drop();
+                }
+            }
+        }
     }
 }

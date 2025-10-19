@@ -4,7 +4,7 @@ package com.shatteredpixel.shatteredpixeldungeon.update;
 import com.badlogic.gdx.Net;
 import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.ZeroLevelScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene;
 import com.watabou.noosa.Game;
 import com.watabou.utils.DeviceCompat;
 
@@ -46,7 +46,7 @@ public class GDUpdateServerice extends UpdateService {
 						update.desc = UpdateChecker.config.get("changeLog").asText();
 
 						if(DeviceCompat.isDesktop()){
-							update.desc += "\n\n"+Messages.get(ZeroLevelScene.class,"you_ues_pc");
+							update.desc += "\n\n"+Messages.get(TitleScene.class,"you_ues_pc");
 						}
 
 						update.URL1 = UpdateChecker.config.get("DownloadLink1").asText();

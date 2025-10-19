@@ -1,3 +1,4 @@
+/*
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
@@ -100,3 +101,4 @@ public class WndSaveSlot extends Window {
         }
     }
 }
+*/

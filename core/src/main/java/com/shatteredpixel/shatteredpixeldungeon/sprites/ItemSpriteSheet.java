@@ -272,6 +272,7 @@ public class ItemSpriteSheet {
 	public static final int GUA91 			= WEP_TIER4+4;
 	public static final int AWP             = WEP_TIER4+5;
 	public static final int CROSSBOW        = WEP_TIER4+6;
+	public static final int AN94            = WEP_TIER4+7;
 
 	static{
 		assignItemRect(WIN97,       15, 15);
@@ -281,6 +282,7 @@ public class ItemSpriteSheet {
 		assignItemRect(GUA91, 14, 15);
 		assignItemRect(AWP,               16, 18);
 		assignItemRect(CROSSBOW,        16, 18);
+		assignItemRect(AN94,        16, 18);
 	}
 
 	private static final int WEP_TIER5      =                               xy(1, 9);   //8 slots

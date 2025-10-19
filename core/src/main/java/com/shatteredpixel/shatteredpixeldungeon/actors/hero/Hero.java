@@ -1029,14 +1029,13 @@ public class Hero extends Char {
 
 	private boolean actTrigger(HeroAction.InteractTrigger action){
 		Trigger trigger = action.trigger;
-
-		if (trigger.canInteract(this)) {		
+		if (trigger.canInteract(this)){
 			ready();
 			sprite.turnTo(pos,trigger.pos);
 			return trigger.interact(this);
-		} else if (getCloser(trigger.pos)){
+		}else if(getCloser(trigger.pos)){
 			return true;
-		} else {
+		}else{
 			ready();
 			return false;
 		}

@@ -108,7 +108,7 @@ public class WelcomeScene extends PixelScene {
 				} else {
 					updateVersion(previousVersion);
 				}
-				GirlsFrontlinePixelDungeon.switchScene(ZeroLevelScene.class);
+				GirlsFrontlinePixelDungeon.switchScene(TitleScene.class);
 			}
 		};
 		float buttonY = Math.min(topRegion + (PixelScene.landscape() ? 60 : 120), h - 24);

@@ -2,6 +2,7 @@ package com.shatteredpixel.shatteredpixeldungeon.custom.testmode;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -64,14 +65,23 @@ public class MapEditor extends TestItem {
 
             @Override
             public String prompt() {
-            	return "choose a place";
+            	return Messages.get(MapEditor.class, "prompt");
             }
         });
     }
 
     private void setTerrain(){
     	Game.runOnRenderThread(()->GameScene.show(
-    		new WndTextNumberInput("title","desc",Integer.toString(terrain),5, false,"yes","no",false){
+    		new WndTextNumberInput(
+    			Messages.get(MapEditor.class, "set_terrain_title"),
+    			Messages.get(MapEditor.class, "set_terrain_desc"),
+    			Integer.toString(terrain),
+    			5, 
+    			false,
+    			Messages.get(MapEditor.class, "yes"),
+    			Messages.get(MapEditor.class, "no"),
+    			false
+    		){
 		        @Override
 		        public void onSelect(boolean check, String text){
 		            if (check && text.matches("\\d+")){

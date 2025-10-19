@@ -6,7 +6,7 @@ import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.ChangesScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.ZeroLevelScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
@@ -49,7 +49,7 @@ public class GDChangesButton extends StyledButton {
 
 		if (!updateShown && Updates.updateAvailable()) {
 			updateShown = true;
-			text(Messages.get(ZeroLevelScene.class, "update"));
+			text(Messages.get(TitleScene.class, "update"));
 		} else if(downloadFailure) {
 			text(Messages.get(GDChangesButton.class, "updatefailed"));
 		} else if(updateProgressValue<100f && downloadStart){
@@ -263,19 +263,6 @@ public class GDChangesButton extends StyledButton {
 			};
 			btn4.setRect(0, pos, width/2f, BUTTON_HEIGHT);
 			add(btn4);
-
-			RedButton btn5 = new RedButton(Messages.get(GDChangesButton.class,"join2")) {
-				@Override
-				protected void onClick() {
-					if(Objects.equals(update.URL3, "null")){
-						GirlsFrontlinePixelDungeon.platform.openURI( "https://qm.qq.com/q/i3ZenvhANa" );
-					} else {
-						GirlsFrontlinePixelDungeon.platform.openURI( update.URL4 );
-					}
-				}
-			};
-			btn5.setRect(btn4.right(), pos, width/2f, BUTTON_HEIGHT);
-			add(btn5);
 
 
 			pos += BUTTON_HEIGHT + MARGIN;

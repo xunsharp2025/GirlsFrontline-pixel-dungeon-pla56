@@ -28,7 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.RankingsScene;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.ZeroLevelScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene;
 import com.shatteredpixel.shatteredpixeldungeon.services.updates.Updates;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
@@ -94,7 +94,7 @@ public class WndGame extends Window {
 				protected void onClick() {
 					try{Dungeon.saveAll();
 					}catch(IOException e){Game.reportException(e);}
-					Game.switchScene(ZeroLevelScene.class);
+					Game.switchScene(TitleScene.class);
 				}
 			} );
 			curBtn.icon(Icons.get(Icons.DISPLAY));
