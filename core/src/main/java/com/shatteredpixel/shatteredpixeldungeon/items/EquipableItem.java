@@ -26,7 +26,10 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.journal.Guidebook;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -116,9 +119,25 @@ public abstract class EquipableItem extends Item {
 
 	public boolean doUnequip( Hero hero, boolean collect, boolean single ) {
 
+		// 检查是否被诅咒且没有魔法免疫buff
 		if (cursed && hero.buff(MagicImmune.class) == null) {
-			GLog.w(Messages.get(EquipableItem.class, "unequip_cursed"));
-			return false;
+			// 检查GSH18_DOCTOR_INTUITION天赋
+			boolean hasDoctorIntuition = hero.hasTalent(Talent.GSH18_DOCTOR_INTUITION);
+			if (hasDoctorIntuition) {
+				int talentLevel = hero.pointsInTalent(Talent.GSH18_DOCTOR_INTUITION);
+				// +1级允许取下被诅咒的防具
+				// +2级允许取下被诅咒的武器
+				if ((talentLevel >= 1 && this instanceof Armor) || 
+					(talentLevel >= 2 && this instanceof Weapon)) {
+					// 允许取下，不显示警告
+				} else {
+					GLog.w(Messages.get(EquipableItem.class, "unequip_cursed"));
+					return false;
+				}
+			} else {
+				GLog.w(Messages.get(EquipableItem.class, "unequip_cursed"));
+				return false;
+			}
 		}
 
 		if (single) {

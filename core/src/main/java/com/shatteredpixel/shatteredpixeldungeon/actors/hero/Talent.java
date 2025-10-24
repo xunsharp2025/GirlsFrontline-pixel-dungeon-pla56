@@ -49,6 +49,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.LeafParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.StarShield;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
@@ -58,6 +59,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
+import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun561;
@@ -163,7 +165,15 @@ public enum Talent {
 	//pulseTrooper T3
 	SIMPLE_RELOAD(139, 3), MORE_POWER(140, 3), ENDURE_EMP(141, 3),
 	//modernReborner T3
-	NEWLIFE(142, 3), MORE_ACCURATE(143, 3), ENHANCE_GRENADE(144, 3);
+	NEWLIFE(142, 3), MORE_ACCURATE(143, 3), ENHANCE_GRENADE(144, 3),
+	
+	//GSH18 T1 
+	GSH18_MEAL_TREATMENT(160), GSH18_DOCTOR_INTUITION(161), GSH18_CLOSE_COMBAT(162), GSH18_STAR_SHIELD(163),
+	//GSH18 T2
+	GSH18_ENERGIZING_MEAL(164), GSH18_CHAIN_SHOCK(165), GSH18_LOGISTICS_SUPPORT(166), GSH18_COMIC_HEART(167), GSH18_MEDICAL_COMPATIBILITY(168),
+	//GSH18 T3
+	GSH18_ENHANCED_GRENADE(169), GSH18_FAST_DRAW(170), GSH18_LIGHTWEIGHT(171);
+	
 
 	public static class ImprovisedProjectileCooldown extends FlavourBuff{
 		public int icon() { return BuffIndicator.TIME; }
@@ -192,6 +202,38 @@ public enum Talent {
 		public String toString() { return Messages.get(this, "name"); }
 		public String desc() { return Messages.get(this, "desc", dispTurns(visualcooldown())); }
 	};
+
+	public static class GSH18MealTreatmentTracker extends FlavourBuff{
+		public int icon() { return BuffIndicator.HEALING; }
+		public void tintIcon(Image icon) { icon.hardlight(0.8f, 0.6f, 0.2f); }
+		public String toString() { return Messages.get(this, "name"); }
+		public String desc() { return Messages.get(this, "desc"); }
+	};
+
+	public static class GSH18EnergizingMealTracker extends FlavourBuff{
+		{// 设置为不会随时间自然消失，只在攻击后被移除
+			revivePersists = true;	}
+		public int icon() { return BuffIndicator.WELL_FED; }
+		public void tintIcon(Image icon) { icon.hardlight(0.8f, 0.6f, 0.2f); }
+		public String toString() { return Messages.get(this, "name"); }
+		public String desc() { return Messages.get(this, "desc"); }
+	}
+	
+	// GSH18护盾恢复追踪器
+	public static class StarShieldTracker extends CounterBuff{
+	{
+		revivePersists = true;
+	}
+	
+	// 回合结束时重置计数器，实现每回合限制
+	@Override
+	public boolean act() {
+		// 每回合开始时重置计数器
+		countDown(count());
+		spend(TICK); // 等待下一回合
+		return true;
+	}
+	}
 	public static class SpiritBladesTracker extends FlavourBuff{};
 
 	int icon;
@@ -333,9 +375,38 @@ public enum Talent {
 			ScrollOfRecharging.chargeParticle( hero );
 		}
 		if(hero.hasTalent(INVIGORATING_MEAL)){
-			//effectively 1/2 turns of haste
-			Buff.prolong( hero, Haste.class, 0.67f+hero.pointsInTalent(INVIGORATING_MEAL));
+		//effectively 1/2 turns of haste
+		Buff.prolong( hero, Haste.class, 0.67f+hero.pointsInTalent(INVIGORATING_MEAL));
+	}
+	
+	// GSH18天赋：疗养一餐
+	if(hero.hasTalent(GSH18_MEAL_TREATMENT)){
+		// +1:进食恢复2点生命
+		if(hero.pointsInTalent(GSH18_MEAL_TREATMENT) >= 1){
+			hero.HP = Math.min(hero.HP + 2, hero.HT);
+			if (hero.sprite != null) {
+				Emitter e = hero.sprite.emitter();
+				if (e != null) e.burst(Speck.factory(Speck.HEALING), 2);
+			}
 		}
+		// +2:进食获得2点星之护盾值
+		if(hero.pointsInTalent(GSH18_MEAL_TREATMENT) >= 2){
+			StarShield starShield = hero.buff(StarShield.class);
+			if (starShield == null) {
+				// 如果角色还没有星之护盾buff，创建一个新的
+				starShield = Buff.affect(hero, StarShield.class);
+			}
+			starShield.incShield(2);
+			if (hero.sprite != null) {
+				hero.sprite.centerEmitter().burst(MagicMissile.WardParticle.FACTORY, 2);
+			}
+		}
+		// GSH18天赋：元气一餐
+		if(hero.hasTalent(GSH18_ENERGIZING_MEAL)){
+			// 进食后添加buff，用于跟踪下次攻击必定命中和增加攻击范围
+			Buff.affect(hero, GSH18EnergizingMealTracker.class, 1f);
+		}
+	}
 	}
 
 	public static class WarriorFoodImmunity extends FlavourBuff{
@@ -371,6 +442,21 @@ public enum Talent {
 			if (shield != null){
 				int shieldToGive = Math.round(shield.maxShield() * 0.33f*(1+hero.pointsInTalent(RESTORED_WILLPOWER)));
 				shield.supercharge(shieldToGive);
+			}
+		}
+		// GSH18天赋：医护兼容
+		if (hero.hasTalent(GSH18_MEDICAL_COMPATIBILITY)){
+			StarShield starShield = hero.buff(StarShield.class);
+			if (starShield == null) {
+				starShield = Buff.affect(hero, StarShield.class);
+			}
+			// 计算应回复的护盾层数：治疗药水恢复量的20%/50%
+			float healAmount = 0.8f * hero.HT + 14; // 基础治疗量
+			float shieldPercent = 0.2f * hero.pointsInTalent(GSH18_MEDICAL_COMPATIBILITY);
+			int shieldToAdd = Math.round(healAmount * shieldPercent);
+			starShield.incShield(shieldToAdd);
+			if (hero.sprite != null) {
+				hero.sprite.centerEmitter().burst(MagicMissile.WardParticle.FACTORY, 2);
 			}
 		}
 		if (hero.hasTalent(RESTORED_NATURE)){
@@ -541,6 +627,38 @@ public enum Talent {
 
 	public static class SuckerPunchTracker extends Buff{};
 	public static class FollowupStrikeTracker extends Buff{};
+	
+	// GSH18天赋：双星守护
+	public static void onAttackHit( Hero hero, Char enemy ){
+		if(hero.hasTalent(GSH18_STAR_SHIELD)){
+			StarShieldTracker tracker = Buff.affect(hero, StarShieldTracker.class);
+			int shieldPerHit = hero.pointsInTalent(GSH18_STAR_SHIELD); // +1回1点，+2回2点
+			
+			// 检查角色是否为GSH18
+			boolean isGSH18 = hero.heroClass == HeroClass.GSH18; // 假设GUARD代表GSH18，需要根据实际代码调整
+			
+			// 如果是GSH18，正常上限；否则，上限减半
+			int maxPerTurn;
+			if (isGSH18) {
+				maxPerTurn = 5 * hero.pointsInTalent(GSH18_STAR_SHIELD); // +1每回合最多5点，+2每回合最多10点
+			} else {
+				maxPerTurn = (5 * hero.pointsInTalent(GSH18_STAR_SHIELD)) / 2; // 非GSH18角色上限减半
+			}
+			
+			if(tracker.count() < maxPerTurn){
+			StarShield shield = hero.buff(StarShield.class);
+			if (shield == null) {
+				// 如果角色还没有护盾buff，创建一个新的
+				shield = Buff.affect(hero, StarShield.class);
+			}
+			shield.incShield(shieldPerHit);
+			tracker.countUp(shieldPerHit);
+			if (hero.sprite != null) {
+				hero.sprite.centerEmitter().burst(MagicMissile.WardParticle.FACTORY, 2);
+			}
+			}
+		}
+	}
 
 	public static final int MAX_TALENT_TIERS = 4;
 
@@ -576,6 +694,9 @@ public enum Talent {
 			case TYPE561:
 				Collections.addAll(tierTalents, NICE_FOOD , OLD_SOLDIER, FAST_RELOAD, BETTER_FOOD);
 				break;
+			case GSH18:
+				Collections.addAll(tierTalents, GSH18_MEAL_TREATMENT, GSH18_DOCTOR_INTUITION, GSH18_CLOSE_COMBAT, GSH18_STAR_SHIELD);
+				break;
 		}
 		for (Talent talent : tierTalents){
 			if (replacements.containsKey(talent)){
@@ -602,6 +723,10 @@ public enum Talent {
 			case TYPE561:
 				Collections.addAll(tierTalents, BARGAIN_SKILLS, TRAP_EXPERT, HOW_DARE_YOU, JIEFANGCI, NIGHT_EXPERT);
 				break;
+			case GSH18:
+				Collections.addAll(tierTalents, GSH18_ENERGIZING_MEAL, GSH18_CHAIN_SHOCK, GSH18_LOGISTICS_SUPPORT, GSH18_COMIC_HEART, GSH18_MEDICAL_COMPATIBILITY
+				);
+				break;
 		}
 		for (Talent talent : tierTalents){
 			if (replacements.containsKey(talent)){
@@ -627,6 +752,9 @@ public enum Talent {
 				break;
 			case TYPE561:
 				Collections.addAll(tierTalents, SEARCH_ARMY, ELITE_ARMY);
+				break;
+			case GSH18:
+				Collections.addAll(tierTalents, GSH18_MEAL_TREATMENT, GSH18_DOCTOR_INTUITION, GSH18_CLOSE_COMBAT, GSH18_STAR_SHIELD);
 				break;
 		}
 		for (Talent talent : tierTalents){

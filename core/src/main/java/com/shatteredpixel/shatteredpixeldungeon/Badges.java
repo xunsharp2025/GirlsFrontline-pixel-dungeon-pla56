@@ -53,14 +53,16 @@ public class Badges {
 		MASTERY_ROGUE,
 		MASTERY_HUNTRESS,
 		MASTERY_TYPE561,
+		MASTERY_GSH18,
 		FOUND_RATMOGRIFY,
 
 		//bronze
+		UNLOCK_WARRIOR              ( 0 ),
 		UNLOCK_MAGE                 ( 1 ),
 		UNLOCK_ROGUE                ( 2 ),
 		UNLOCK_HUNTRESS             ( 3 ),
 		UNLOCK_TYPE561              ( 20 ),
-
+		UNLOCK_GSH18       	 	    ( 21 ),
         //silver
 		MONSTERS_SLAIN_1            ( 4 ),
 		MONSTERS_SLAIN_2            ( 5 ),
@@ -106,6 +108,7 @@ public class Badges {
 		BOSS_SLAIN_1_ROGUE,
 		BOSS_SLAIN_1_HUNTRESS,
 		BOSS_SLAIN_1_TYPE561,
+		BOSS_SLAIN_1_GSH18,
 		BOSS_SLAIN_1_ALL_CLASSES    ( 53, true ),
 		GAMES_PLAYED_2              ( 54, true ),
 
@@ -161,9 +164,11 @@ public class Badges {
 		VICTORY_ROGUE,
 		VICTORY_HUNTRESS,
 		VICTORY_TYPE561,
+		VICTORY_GSH18,
 		VICTORY_ALL_CLASSES         ( 98, true ),
 		GAMES_PLAYED_4              ( 99, true ),
 		CHAMPION_1                  ( 100 ),
+		KILL_ELPHELT				(  101),
 		//diamond
 		GAMES_PLAYED_5              ( 112, true ),
 		CHAMPION_2                  ( 113 ),
@@ -434,6 +439,15 @@ public class Badges {
 	public static void validateFoodEaten() {
 		Badge badge = null;
 		
+		// 检查一局内吃3个食物解锁type561角色
+		if (!isUnlocked(Badge.UNLOCK_TYPE561) && Statistics.foodEaten >= 3) {
+			validateType561Unlock();
+		}
+		
+		if (!isUnlocked(Badge.UNLOCK_WARRIOR) && Statistics.foodEaten >= 1) {
+			displayBadge(Badge.UNLOCK_WARRIOR);
+		}
+		
 		if (!local.contains( Badge.FOOD_EATEN_1 ) && Statistics.foodEaten >= 10) {
 			badge = Badge.FOOD_EATEN_1;
 			local.add( badge );
@@ -657,6 +671,11 @@ public class Badges {
 			local.add( badge );
 			displayBadge( badge );
 			
+			// 击败20层BOSS时解锁GSH18角色
+			if (badge == Badge.BOSS_SLAIN_2 && !isUnlocked(Badge.UNLOCK_GSH18)) {
+				displayBadge(Badge.UNLOCK_GSH18);
+			}
+			
 			if (badge == Badge.BOSS_SLAIN_1) {
 				switch (Dungeon.hero.heroClass) {
 				case WARRIOR:
@@ -674,6 +693,9 @@ public class Badges {
 				case TYPE561:
 					badge = Badge.BOSS_SLAIN_1_TYPE561;
 					break;
+				case GSH18:
+					badge = Badge.BOSS_SLAIN_1_GSH18;
+					break;
 				}
 				local.add( badge );
 				addGlobal(badge);
@@ -682,7 +704,9 @@ public class Badges {
 					isUnlocked( Badge.BOSS_SLAIN_1_MAGE ) &&
 					isUnlocked( Badge.BOSS_SLAIN_1_ROGUE ) &&
 					isUnlocked( Badge.BOSS_SLAIN_1_HUNTRESS) &&
-					isUnlocked( Badge.BOSS_SLAIN_1_TYPE561)) {
+					isUnlocked( Badge.BOSS_SLAIN_1_TYPE561) &&
+					isUnlocked( Badge.BOSS_SLAIN_1_GSH18)
+				) {
 					
 					badge = Badge.BOSS_SLAIN_1_ALL_CLASSES;
 					if (!isUnlocked( badge )) {
@@ -758,6 +782,9 @@ public class Badges {
 			break;
 		case TYPE561:
 			badge = Badge.MASTERY_TYPE561;
+			break;
+		case GSH18:
+			badge = Badge.MASTERY_GSH18;
 			break;
 		}
 		
@@ -880,6 +907,10 @@ public class Badges {
 	
 	public static void validateHappyEnd() {
 		displayBadge( Badge.HAPPY_END );
+	}
+	
+	public static void validateElpheltKilled() {
+		displayBadge( Badge.KILL_ELPHELT );
 	}
 
 	public static void validateChampion( int challenges ) {

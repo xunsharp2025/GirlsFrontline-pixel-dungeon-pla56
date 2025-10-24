@@ -52,6 +52,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Momentum;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Regeneration;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SnipersMark;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.StarShield;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.NaturesPower;
@@ -221,8 +222,22 @@ public class Hero extends Char {
 	
 	public void updateHT( boolean boostHP ){
 		int curHT = HT;
+		int baseHT;
 		
-		HT = 20 + 5*(lvl-1) + HTBoost;
+		// GSH18角色：初始血量为默认的80%，10级后升级获得的生命值为默认的50%
+		if (heroClass == HeroClass.GSH18) {
+			if (lvl <= 10) {
+				baseHT = 20 + 5*(lvl-1);
+				HT = Math.round(baseHT * 0.8f);
+			} else {
+				baseHT = 20 + 5*9 + 5*(lvl-10)/2; // 10级及以下每级5点，11级及以上每级2.5点（向下取整为2点）
+				HT = Math.round(baseHT * 0.8f);
+			}
+		} else {
+			HT = 20 + 5*(lvl-1);
+		}
+		
+		HT += HTBoost;
 		float multiplier = RingOfMight.HTMultiplier(this);
 		HT = Math.round(multiplier * HT);
 		
@@ -474,6 +489,20 @@ public class Hero extends Char {
 			case 3:accuracy*=2f;break;
 		}
 		
+		// GSH18天赋：短线作战
+		if (hasTalent(Talent.GSH18_CLOSE_COMBAT) && Dungeon.level.adjacent(pos, target.pos)) {
+			switch(pointsInTalent(Talent.GSH18_CLOSE_COMBAT)){
+				case 1:accuracy*=1.2f;break; // +1级：攻击距离为1的敌人时，命中率增加20%
+				case 2:accuracy*=1.45f;break;  // +2级：攻击距离为1的敌人时，命中率增加45%
+			}
+		}
+		
+		// GSH18天赋：元气一餐 +1级效果
+		if (hasTalent(Talent.GSH18_ENERGIZING_MEAL) && pointsInTalent(Talent.GSH18_ENERGIZING_MEAL) >= 1 && buff(Talent.GSH18EnergizingMealTracker.class) != null) {
+			// 下次攻击必定命中，设置一个非常高的accuracy值，变成测试枪了（）
+			accuracy *= 1000f;
+		}
+		
 		if (wep instanceof MissileWeapon){
 			if (Dungeon.level.adjacent( pos, target.pos )) {
 				accuracy *= (0.5f + 0.2f*pointsInTalent(Talent.POINT_BLANK));
@@ -597,6 +626,11 @@ public class Hero extends Char {
 			speed *= (2f + 0.25f*pointsInTalent(Talent.GROWING_POWER));
 		}
 		
+		// 后勤保证天赋效果：拥有星之护盾时增加移动速度
+		if (hasTalent(Talent.GSH18_LOGISTICS_SUPPORT) && buff(StarShield.class) != null && buff(StarShield.class).shielding() > 0) {
+			speed *= (1f + 0.1f * pointsInTalent(Talent.GSH18_LOGISTICS_SUPPORT));
+		}
+		
 		return speed;
 		
 	}
@@ -617,6 +651,14 @@ public class Hero extends Char {
 		//can always attack adjacent enemies
 		if (Dungeon.level.adjacent(pos, enemy.pos)) {
 			return true;
+		}
+
+		// GSH18天赋：元气一餐 +2级效果 - 攻击范围增加1格
+		if (hasTalent(Talent.GSH18_ENERGIZING_MEAL) && pointsInTalent(Talent.GSH18_ENERGIZING_MEAL) >= 2 && buff(Talent.GSH18EnergizingMealTracker.class) != null) {
+			// 检查是否在2格范围内
+			if (Dungeon.level.distance(pos, enemy.pos) <= 2 && Dungeon.level.heroFOV[enemy.pos]) {
+				return true;
+			}
 		}
 
 		KindOfWeapon wep = Dungeon.hero.belongings.weapon();
@@ -1185,6 +1227,11 @@ public class Hero extends Char {
 		}
 
 		damage = Talent.onAttackProc( this, enemy, damage );
+		
+		// GSH18天赋：元气一餐 - 攻击后移除追踪buff
+		if (buff(Talent.GSH18EnergizingMealTracker.class) != null) {
+			buff(Talent.GSH18EnergizingMealTracker.class).detach();
+		}
 		
 		switch (subClass) {
 		case SNIPER:
@@ -1867,6 +1914,11 @@ public class Hero extends Char {
 
 		if (hit && subClass == HeroSubClass.GLADIATOR){
 			Buff.affect( this, Combo.class ).hit( enemy );
+		}
+		
+		// GSH18天赋：元气一餐 - 攻击后移除buff
+		if (buff(Talent.GSH18EnergizingMealTracker.class) != null) {
+			buff(Talent.GSH18EnergizingMealTracker.class).detach();
 		}
 
 		curAction = null;

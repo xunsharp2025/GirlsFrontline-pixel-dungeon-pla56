@@ -102,7 +102,10 @@ public class BuffIndicator extends Component {
 	public static final int ANKH        = 52;
 	public static final int NOINV       = 53;
 	public static final int EMPULSE     = 54;
-
+	//public static final int ENRAGED     = 54;
+	public static final int STAR_SHIELD = 55;
+	public static final int SPEEDY      = 56;
+	public static final int FOOD        = 57;
 	public static final int SIZE_SMALL  = 7;
 	public static final int SIZE_LARGE  = 16;
 	

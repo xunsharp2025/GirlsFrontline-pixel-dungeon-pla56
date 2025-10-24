@@ -52,6 +52,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Projec
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Shocking;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Unstable;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Vampiric;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
@@ -207,7 +208,27 @@ abstract public class Weapon extends KindOfWeapon {
 
 	@Override
 	public int reachFactor(Char owner) {
-		return hasEnchant(Projecting.class, owner) ? RCH+1 : RCH;
+		int reach = hasEnchant(Projecting.class, owner) ? RCH+1 : RCH;
+		
+		// GSH18天赋：漫画之心 - 根据武器等级增加攻击距离
+		if (owner instanceof Hero) {
+			Hero hero = (Hero) owner;
+			if (hero.hasTalent(Talent.GSH18_COMIC_HEART) && this instanceof MeleeWeapon) {
+				int tier = ((MeleeWeapon) this).tier;
+				int talentLevel = hero.pointsInTalent(Talent.GSH18_COMIC_HEART);
+				
+				// +1级：使用1阶武器时攻击距离+1
+				if (talentLevel >= 1 && tier == 1) {
+					reach += 1;
+				}
+				// +2级：使用2阶武器时攻击距离+1
+				if (talentLevel >= 2 && tier == 2) {
+					reach += 1;
+				}
+			}
+		}
+		
+		return reach;
 	}
 
 	public int STRReq(){

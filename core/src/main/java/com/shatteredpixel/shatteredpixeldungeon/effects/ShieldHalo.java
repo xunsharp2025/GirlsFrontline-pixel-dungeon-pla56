@@ -34,9 +34,14 @@ public class ShieldHalo extends Halo {
 	private float phase;
 	
 	public ShieldHalo( CharSprite sprite ) {
-		
+		this(sprite, false); // 默认使用普通颜色
+	}
+	
+	public ShieldHalo( CharSprite sprite, boolean isStarShield ) {
 		//rectangular sprite to circular radius. Pythagorean theorem
-		super( (float)Math.sqrt(Math.pow(sprite.width()/2f, 2) + Math.pow(sprite.height()/2f, 2)), 0xBBAACC, 1f );
+		// 如果是星之护盾，使用粉色；否则使用普通颜色
+		super( (float)Math.sqrt(Math.pow(sprite.width()/2f, 2) + Math.pow(sprite.height()/2f, 2)), 
+			     isStarShield ? 0xFF99CC : 0xBBAACC, 1f );
 		
 		am = -0.33f;
 		aa = +0.33f;

@@ -78,7 +78,8 @@ public class Elphelt extends Mob {
 
 		properties.add(Property.BOSS);
 	}
-
+	
+	
 	@Override
 	public int damageRoll() {
 		return Random.NormalIntRange(20,45);
@@ -346,7 +347,7 @@ public class Elphelt extends Mob {
 	@Override
 	public void die( Object cause ) {
 		Dungeon.level.drop( new Cypros().identify(), pos).sprite.drop();
-
+		Badges.validateElpheltKilled();
 		GameScene.bossSlain();
 		super.die( cause );
 

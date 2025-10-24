@@ -58,6 +58,11 @@ public class ElixirOfAquaticRejuvenation extends Elixir {
 		//prices of ingredients
 		return quantity * (30 + 30);
 	}
+
+	@Override
+	public int energyVal() {
+		return 12 * quantity;
+	}
 	
 	public static class AquaHealing extends Buff {
 		

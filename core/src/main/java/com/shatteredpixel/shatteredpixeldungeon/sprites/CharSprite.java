@@ -33,6 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.ShieldHalo;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Splash;
 import com.shatteredpixel.shatteredpixeldungeon.effects.TorchHalo;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.StarShield;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SnowParticle;
@@ -402,7 +403,9 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 				healing.pour(Speck.factory(Speck.HEALING), 0.5f);
 				break;
 			case SHIELDED:
-				GameScene.effect( shield = new ShieldHalo( this ));
+				// 检测角色是否有StarShield buff
+				boolean hasStarShield = ch != null && ch.buff(StarShield.class) != null;
+				GameScene.effect( shield = new ShieldHalo( this, hasStarShield ));
 				break;
 			case HEARTS:
 				hearts = emitter();
