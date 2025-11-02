@@ -196,9 +196,10 @@ public abstract class Level implements Bundlable {
 		if (!(Dungeon.bossLevel())) {
 
 			if (Dungeon.isChallenged(Challenges.NO_FOOD)){
-				addItemToSpawn( new SmallRation() );
+				//addItemToSpawn( new SmallRation() );  // 在NO_FOOD挑战模式下添加小份口粮
+				addItemToSpawn(Generator.random(Generator.Category.FOOD));  // 在NO_FOOD挑战模式下生成正常食物
 			} else {
-				addItemToSpawn(Generator.random(Generator.Category.FOOD));
+				addItemToSpawn(Generator.random(Generator.Category.FOOD));  // 正常模式下随机生成食物
 			}
 
 			if (Dungeon.isChallenged(Challenges.DARKNESS)){

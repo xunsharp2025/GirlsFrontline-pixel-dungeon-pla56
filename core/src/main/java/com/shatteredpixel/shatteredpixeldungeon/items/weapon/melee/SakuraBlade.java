@@ -55,9 +55,9 @@ public class SakuraBlade extends MeleeWeapon {
     private static final int BASE_COOLDOWN_TURNS = 100; // 基础冷却时间100回合   
     private int cooldownLeft = 0; // 当前剩余冷却时间
     private static final String COOLDOWN_LEFT = "cooldownLeft";
-    private static final int MAX_UPGRADES_FROM_SKILL = 5; // 最多通过技能获得5次升级
-    private int upgradesFromSkill = 0; // 记录已通过技能获得的升级次数
-    private static final String UPGRADES_FROM_SKILL = "upgradesFromSkill"; // 用于保存/加载
+    private static final int MAX_BUFFED_LEVELS = 5; // 最多获得5级buff等级
+    private int skillBuffedLevels = 0; // 记录通过技能获得的buff等级
+    private static final String SKILL_BUFFED_LEVELS = "skillBuffedLevels"; // 用于保存/加载
     
     {
         image = ItemSpriteSheet.GREATAXE;
@@ -71,15 +71,21 @@ public class SakuraBlade extends MeleeWeapon {
     public void storeInBundle(Bundle bundle) {
         super.storeInBundle(bundle);
         bundle.put(COOLDOWN_LEFT, cooldownLeft);
-        bundle.put(UPGRADES_FROM_SKILL, upgradesFromSkill); // 保存升级次数
+        bundle.put(SKILL_BUFFED_LEVELS, skillBuffedLevels); // 保存buff等级
     }
     
-    // 修改恢复方法，添加升级次数恢复
+    // 修改恢复方法，添加buff等级恢复
     @Override
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
         cooldownLeft = bundle.getInt(COOLDOWN_LEFT);
-        upgradesFromSkill = bundle.getInt(UPGRADES_FROM_SKILL); // 恢复升级次数
+        skillBuffedLevels = bundle.getInt(SKILL_BUFFED_LEVELS); // 恢复buff等级
+    }
+    
+    // 重写buffedLvl方法，返回基础等级加上技能获得的buff等级
+    @Override
+    public int buffedLvl() {
+        return super.buffedLvl() + skillBuffedLevels;
     }
 
     @Override
@@ -170,22 +176,26 @@ public class SakuraBlade extends MeleeWeapon {
                         // 攻击敌人
                         Char enemy = Actor.findChar(cell);
                         if (enemy != null && enemy.alignment != Char.Alignment.ALLY) {
-                            // 计算50%的武器伤害
-                            int damage = Math.round(blade.damageRoll(hero) * 0.35f);
+                            // 计算35%的武器伤害，并乘以武器当前等级
+                            int damage = Math.round(blade.damageRoll(hero) * 0.35f * (1 + blade.level()));
                             enemy.damage(damage, blade);
                             
-                            //如果敌人被技能击杀，有10%几率升级武器
-                            // 修改技能触发升级的逻辑，添加升级次数限制
-                            if (!enemy.isAlive()) {
-                                if (Random.Float() < 0.1f && upgradesFromSkill < MAX_UPGRADES_FROM_SKILL) { 
-                                    blade.upgrade();
-                                    upgradesFromSkill++; // 增加技能升级计数
-                                    GLog.p(Messages.get(blade, "level_up"));
-                                    // 添加升级特效
-                                    hero.sprite.emitter().burst(EnergyParticle.FACTORY, 10);
-                                    
-                                    // 如果达到最大升级次数，显示提示信息
-                                    if (upgradesFromSkill >= MAX_UPGRADES_FROM_SKILL) {
+                            //如果敌人被技能击杀，根据当前已获得buff等级有不同概率增加buff等级
+                                // 阶梯概率：50%, 40%, 30%, 20%, 10%，随着buff等级增加而递减
+                                if (!enemy.isAlive() && skillBuffedLevels < MAX_BUFFED_LEVELS) {
+                                    // 根据当前buff等级计算增加概率
+                                    float upgradeChance = 0.6f - (skillBuffedLevels + 1) * 0.1f; // 50%, 40%, 30%, 20%, 10%
+                                     
+                                    if (Random.Float() < upgradeChance) { 
+                                        skillBuffedLevels++; // 增加技能获得的buff等级
+                                        // 更新快捷栏显示
+                                        updateQuickslot();
+                                        GLog.p(Messages.get(blade, "level_up"));
+                                        // 添加升级特效
+                                        hero.sprite.emitter().burst(EnergyParticle.FACTORY, 10);
+                                     
+                                    // 如果达到最大buff等级，显示提示信息
+                                    if (skillBuffedLevels >= MAX_BUFFED_LEVELS) {
                                         GLog.i(Messages.get(blade, "max_upgrades_reached"));
                                     }
                                 }

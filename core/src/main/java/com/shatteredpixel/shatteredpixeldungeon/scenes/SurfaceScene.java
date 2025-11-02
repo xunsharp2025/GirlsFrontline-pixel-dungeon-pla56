@@ -404,7 +404,12 @@ public class SurfaceScene extends PixelScene {
 		
 		public Avatar( HeroClass cl ) {
 			super( Assets.Sprites.AVATARS );
-			frame( new TextureFilm( texture, WIDTH, HEIGHT ).get( cl.ordinal() ) );
+			//frame( new TextureFilm( texture, WIDTH, HEIGHT ).get( cl.ordinal() ) );
+			//每行改成4个，不然没法排序，因为namsek还加了别人
+			int row = cl.ordinal() / 4;
+			int col = cl.ordinal() % 4;
+			int frameIndex = row * 4 + col;
+			frame( new TextureFilm( texture, WIDTH, HEIGHT ).get( frameIndex ) );
 		}
 	}
 	

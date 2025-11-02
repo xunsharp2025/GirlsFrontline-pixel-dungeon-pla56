@@ -671,7 +671,7 @@ public class Badges {
 			local.add( badge );
 			displayBadge( badge );
 			
-			// 击败20层BOSS时解锁GSH18角色
+			// 击败10层BOSS时解锁GSH18角色
 			if (badge == Badge.BOSS_SLAIN_2 && !isUnlocked(Badge.UNLOCK_GSH18)) {
 				displayBadge(Badge.UNLOCK_GSH18);
 			}

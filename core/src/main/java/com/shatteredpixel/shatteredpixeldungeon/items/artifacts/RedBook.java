@@ -152,7 +152,7 @@ public class RedBook extends Artifact{
                 if      (mob.properties().contains(Mob.Property.MINIBOSS)){
                     damage=mob.HT/2+1;
                 }else if(mob.properties().contains(Mob.Property.BOSS)){
-                    damage=mob.HP/2;
+                    damage=Math.round(mob.HP * 0.35f);
                 }
                 mob.damage(damage,this);
 

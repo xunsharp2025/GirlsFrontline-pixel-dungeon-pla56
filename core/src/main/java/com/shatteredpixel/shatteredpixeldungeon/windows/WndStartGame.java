@@ -317,7 +317,11 @@ public class WndStartGame extends Window {
 				cl = GamesInProgress.selectedClass;
 				if (cl != null) {
 					// subtract 1 for NONE class
-					avatar.frame((cl.ordinal()) * 24, 0, 24, 32);
+					//avatar.frame((cl.ordinal()) * 24, 0, 24, 32);
+					// 每行显示4个角色，多出来的换行
+					int row = cl.ordinal() / 4;
+					int col = cl.ordinal() % 4;
+					avatar.frame(col * 24, row * 32, 24, 32);
 
 					name.text(Messages.capitalize(cl.title()));
 

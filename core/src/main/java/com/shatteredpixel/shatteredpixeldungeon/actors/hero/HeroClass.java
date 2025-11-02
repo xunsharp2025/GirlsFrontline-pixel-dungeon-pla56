@@ -102,7 +102,7 @@ public enum HeroClass {
 	ROGUE( HeroSubClass.ASSASSIN, HeroSubClass.FREERUNNER ),
 	HUNTRESS( HeroSubClass.SNIPER, HeroSubClass.WARDEN ),
 	TYPE561(HeroSubClass.PULSETROOPER, HeroSubClass.MODERN_REBORNER),
-	GSH18(HeroSubClass.BERSERKER, HeroSubClass.GLADIATOR), // 暂时使用战士的子职业
+	GSH18(HeroSubClass.THE_HEART_OF_SIRIUS, HeroSubClass.MOBILE_MEDICALTABLE),
 	NONE(  HeroSubClass.NONE );
 	private HeroSubClass[] subClasses;
 

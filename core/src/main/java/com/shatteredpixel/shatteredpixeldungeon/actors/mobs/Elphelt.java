@@ -284,6 +284,9 @@ public class Elphelt extends Mob {
 
 	@Override
 	public void damage(int dmg, Object src) {
+		if (dmg < 0){
+			dmg = 0;
+		}
 
 		if (this.buff(Frost.class) != null){
 			Buff.detach( this, Frost.class );
@@ -322,6 +325,7 @@ public class Elphelt extends Mob {
 		// die
 		if (newHP <= 0 && HP <= HT/2) {
 			((RabbitBossLevel)Dungeon.level).progress();
+			phase = 3;// see isAlive
 			return;
 		}
 
@@ -331,6 +335,8 @@ public class Elphelt extends Mob {
 			sprite.idle();
 			((RabbitBossLevel)Dungeon.level).progress();
 			phase = 2;
+
+			BossHealthBar.bleed(true);
 		}
 
 		LockedFloor lock = Dungeon.hero.buff(LockedFloor.class);
@@ -390,6 +396,10 @@ public class Elphelt extends Mob {
 		}
 	}
 
+	@Override
+	public boolean isAlive() {
+		return phase < 3;//special death rules, see RabbitBossLevel.progress()
+	}
 
 	public void Blast() {
 		//throws other chars around the center.
@@ -654,8 +664,6 @@ public class Elphelt extends Mob {
 		NumOfGenoise = Genoises.size();
 		bundle.put( NUMGENOISE, NumOfGenoise );
 
-		bundle.put( PHASE, phase );
-
 		Iterator<Genoise> it = Genoises.iterator();
 
 		for (int i=0; i<NumOfGenoise; ++i) {
@@ -688,8 +696,6 @@ public class Elphelt extends Mob {
 
 		NumOfGenoise = bundle.getInt( NUMGENOISE );
 
-		phase = bundle.getInt( PHASE );
-
 		for (int i=0; i< NumOfGenoise; ++i) {
 			Genoise g = new Genoise( bundle.getInt(GENOISEPOS + String.valueOf(i) ) );
 			addDelayed( g , bundle.getFloat( GENOISETIME + String.valueOf(i) ) );
@@ -708,6 +714,9 @@ public class Elphelt extends Mob {
 				bridlePath.add(c);
 			}
 		}
+
+		if (phase > 0) BossHealthBar.assignBoss(this);
+		if (phase > 1) BossHealthBar.bleed(true);
 	}
 
 	{

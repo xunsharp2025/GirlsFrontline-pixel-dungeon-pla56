@@ -44,12 +44,13 @@ public class WndSaveSlot extends Window {
                 case ROGUE   :order = 3;break;
                 case HUNTRESS:order = 4;break;
                 case TYPE561 :order = 5;break;
+                case GSH18   :order = 6;break;
                 default      :order = 0;break;
             }
 
             float bias=0.5f;//do not delete this,otherwise you will be angry.
 
-            Image portrait = new Image(Assets.Interfaces.PORTRAIT1,(order%6)*38,(order/6)*60,38,60);
+            Image portrait = new Image(Assets.Interfaces.PORTRAIT1,(order%7)*38,(order/7)*60,38,60);
             portrait.scale.set(19f/38f*SCALE);
             portrait.x=bias+SCALE;
             portrait.y=bias+SCALE;

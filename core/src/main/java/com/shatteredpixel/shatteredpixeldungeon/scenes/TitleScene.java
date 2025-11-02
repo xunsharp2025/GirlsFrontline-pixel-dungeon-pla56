@@ -40,6 +40,7 @@ import java.util.ArrayList;
 
 //temporary
 import static com.shatteredpixel.shatteredpixeldungeon.Chrome.Type.GREY_BUTTON;
+import static com.shatteredpixel.shatteredpixeldungeon.Chrome.Type.GREY_BUTTON_TR;
 import static com.shatteredpixel.shatteredpixeldungeon.Chrome.Type.TOAST_TR;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
@@ -119,14 +120,17 @@ public class TitleScene extends PixelScene {
 		signs.y = title.y;
 		add( signs );
 
-		final Chrome.Type WINDOW = GREY_BUTTON;
-
-		StyledButton btnZeroLevel = new StyledButton(GREY_BUTTON,"返回地表"){
-			@Override
-			protected void onClick() {
-				enterMainGame();
-			}
-		};
+		StyledButton btnZeroLevel=null;
+		if (Badges.isUnlocked(Badges.Badge.HAPPY_END) || DeviceCompat.isDebug()){
+			btnZeroLevel = new StyledButton(GREY_BUTTON,"返回地表"){
+				@Override
+				protected void onClick() {
+					enterMainGame();
+				}
+			};
+		}else{
+			btnZeroLevel = new StyledButton(GREY_BUTTON_TR,"返回地表(未解锁)");
+		}
 		btnZeroLevel.icon(Icons.get(Icons.ENTER));
 		add(btnZeroLevel);
 
@@ -161,7 +165,7 @@ public class TitleScene extends PixelScene {
 		btnBadges.icon(Icons.get(Icons.BADGES));
 		add(btnBadges);
 
-		StyledButton btnSettings = new SettingsButton(WINDOW,"设置");
+		StyledButton btnSettings = new SettingsButton(GREY_BUTTON,"设置");
 		add(btnSettings);
 
 		StyledButton btnAbout = new StyledButton(GREY_BUTTON,"关于"){
@@ -402,19 +406,22 @@ public class TitleScene extends PixelScene {
 					case TYPE561:
 						order = 5;
 						break;
+					case GSH18:
+						order = 6;
+						break;
 					default:
 						order = 0;
 						break;
 				}
 
-				portrait = new Image(Assets.Interfaces.PORTRAIT1, (order % 6) * 38, (order / 6) * 60, 38, 60);
+				portrait = new Image(Assets.Interfaces.PORTRAIT1, (order % 7) * 38, (order / 7) * 60, 38, 60);
 				frame = new Image(Assets.Interfaces.SAVESLOT, 0, 0, 21, 52);
 
 				setRect(0, 0, frame.width * SCALE, frame.height * SCALE);
 
 
 			}
-
+			private Image testModeMark;
 			@Override
 			protected void createChildren() {
 				super.createChildren();
@@ -422,7 +429,8 @@ public class TitleScene extends PixelScene {
 				challengeMarks = new Image[Challenges.MASKS.length];
 				depthEmmiters = new Emitter[6];
 
-
+				// 创建test_mode专用挑战标记
+				testModeMark = new Image(Assets.Interfaces.SAVESLOT, 22, 4, 3, 3);
 
 				for (int i=0; i<10; ++i) {
 					challengeMarks[i] = new Image(Assets.Interfaces.SAVESLOT, 22, 0, 3, 3);
@@ -488,6 +496,7 @@ public class TitleScene extends PixelScene {
 
 				score.setPos(x + 10.5f * SCALE - score.width() / 2f, y + 47f * SCALE);
 
+				// 添加普通挑战标记
 				for (int i = 0; i < 10; ++i) {
 					add(challengeMarks[i]);
 
@@ -498,6 +507,15 @@ public class TitleScene extends PixelScene {
 
 					challengeMarks[i].visible = false;
 				}
+
+				// 添加并设置test_mode挑战标记
+				add(testModeMark);
+				testModeMark.scale.set(SCALE);
+				// 定位在第一个挑战标记的位置上
+				testModeMark.y = y + (38 + 4 * (0 / 5)) * SCALE;
+				testModeMark.x = x + (1 + 4 * (0 % 5)) * SCALE;
+				// 检查是否开启test_mode，只有开启时才显示
+				testModeMark.visible = (Info.challenges & Challenges.TEST_MODE) != 0;
 
 				for (int i = 0; i < Challenges.MASKS.length; ++i) {
 					if(!(Challenges.NAME_IDS[i].equals("test_mode"))){

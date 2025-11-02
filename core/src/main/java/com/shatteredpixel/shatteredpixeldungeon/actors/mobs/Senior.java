@@ -33,8 +33,8 @@ public class Senior extends Monk {
 
 	{
 		spriteClass = SeniorSprite.class;
-
-		loot = Dungeon.isChallenged(NO_FOOD) ? new Maccol() : new Pasty();
+		//loot = Dungeon.isChallenged(NO_FOOD) ? new Maccol() : new Pasty();
+		loot = new Pasty(); // 直接使用Pasty
 		lootChance = 1f;
 	}
 	

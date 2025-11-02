@@ -25,11 +25,9 @@ import com.watabou.noosa.Image;
 
 import java.util.ArrayList;
 
-//求你们别乱加我的更新文本了，求求了！！！
-//055更新：完善了灵刀机制-技能击败敌人10%概率升级，最高升5级，cd100回合。你写完删了这里就行
-
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
+    	add_0_5_5_Changes(changeInfos);
     	add_0_5_4_5_Changes(changeInfos);
     	add_0_5_4_3_Changes(changeInfos);
     	add_0_5_4_1_Changes(changeInfos);
@@ -39,7 +37,99 @@ public class v0_5_X_Changes {
 		add_0_5_0_Changes(changeInfos);
     }
 
-     public static void add_0_5_4_5_Changes( ArrayList<ChangeInfo> changeInfos ){
+    public static void add_0_5_5_Changes( ArrayList<ChangeInfo> changeInfos ){
+        ChangeInfo changes = new ChangeInfo("v0.5.5", true, "");
+        changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "buffs"), false, null);
+		changes.hardlight( CharSprite.POSITIVE );
+		changeInfos.add(changes);
+
+        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.EXOTIC_CRIMSON , null), "魔药改动",
+        	"_-_ 将所有魔药可转换为的炼金能量提高为12点\n"+
+        	"_-_ 现在分解不需要的魔药能获得更高的炼金能量收益"
+        ));
+
+        
+    changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		changes.hardlight( CharSprite.WARNING );
+		changeInfos.add(changes);
+
+		Image imageTemp = new Image(Assets.Sprites.TROLL, 0 ,0 ,12 ,21);
+        imageTemp.scale.x=0.8f;
+        imageTemp.scale.y=0.8f;
+        changes.addButton(new ChangeButton(imageTemp, "游戏优化", 
+            "_-_ 对部分文本进行了修改和优化，使符合实际情况。\n"+
+			"_-_ 对少量物品贴图进行了优化。\n"+
+			"_-_ 我们正在努力的修正其它已知的BUG以保障玩家的良好游戏体验。\n"
+        ));  
+
+        Image ep = new Image(Assets.ELPHELT, 0 ,0 ,15 ,24);
+        ep.scale.x=0.8f;
+        ep.scale.y=0.8f;
+        changes.addButton(new ChangeButton(ep,"BUG修复",
+        	"_-_ 修复了一系列和_艾尔菲尔特_有关的BUG\n\n"+
+
+        	"_-_ 在与艾尔菲尔特的战斗中退出游戏，而后返回游戏将不会再崩溃了（但依然请不要在战斗中多次退出重进）\n"+
+        	"_-_ 在特殊条件下，使用刺客斩杀艾尔菲尔特将不会再导致卡关了\n"+
+        	"_-_ 一些情况下BOSS血条无端消失的问题得到了修复"
+        ));
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.GREATAXE,null), "灵刀·樱吹雪",
+			"_-_ _灵刀·樱吹雪_技能改动，使用技能斩杀敌人将有50%-10%的阶梯概率获得1级特殊升级，最多升级5次。\n"+
+			"_-_ 每次使用技能后，斩杀升级将进入100回合冷却，无论是否实现了斩杀。"
+		));
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.MEAT_PIE,null), "挑战：饥饿游戏",
+			"_-_ 挑战_饥饿游戏_优化，降低了不必要的游戏难度\n\n"+
+			"_-_ 移除了挑战中所有食物生成减半的特性，仅保留食物回复饱食度降低为原来的33%\n"+
+			"_-_ 玩家将不需要再面对_饥饿游戏_挑战中理论饱食度获取率降低了正常的87%的极端饥荒环境。"
+		));
+
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
+		changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+    Image gsh18 = new Image(HeroSprite.avatar(HeroClass.GSH18, 4));
+		gsh18.scale.set(0.8f);
+        changes.addButton( new ChangeButton(gsh18, "新角色：GSH18",
+        	"_-_ 新角色_GSH18_的加入\n\n"+
+            "_-_ GSH18虽然较为脆弱，但拥有多样化的获取护盾的能力，且在拥有护盾时会获得额外能力。\n"+
+            "_-_ 该角色尚不完善，仅供测试体验。"
+        ));
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.AN94, null), "AN-94",
+			"_-_ 加入了新武器_AN-94_，这把4阶武器拥有较远的攻击距离\n" +
+			"_-_ 这把武器自然刷新权重较低，且正在进行平衡性完善。"
+		));
+
+		changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_ON), "0层：前进营地",
+			"_-_ 将_前进营地_加入了游戏（虽然现在还只是毛坯）\n\n" +
+			"_-_ 未来在前进营地中可以进行局外养成，以及未来更多样化的游戏体验。\n" +
+			"_-_ 达成_完美结局_成就后，同步解锁0层的准入权限。"
+		));
+
+		changes.addButton( new ChangeButton(BadgeBanner.image(Badges.Badge.KILL_ELPHELT.image), "成就徽章",
+			"_-_ 击败_艾尔菲尔特_，获得成就勋章，记录您的荣耀！"
+		));
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.ARTIFACT_CAPE, null), "核心装甲",
+			"_-_ 重新加回了_核心装甲_，击败_圣盾_将有25%的概率掉落。\n\n旧版译名：_曼蒂装甲_(原破碎_荆棘披风_)" 
+		));
+
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "nerfs"), false, null);
+		changes.hardlight( CharSprite.NEGATIVE );
+		changeInfos.add(changes);
+
+        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.REDBOOK, null), "语录书",
+            "_-_ 考虑到语录书过高的伤害足以蒸发BOSS为56-1式带来了_过高的强度_，对语录书进行了_削弱_\n"+
+            "_-_ 现在语录书对BOSS造成的直接伤害有所降低。"
+        ));
+
+    }
+
+    public static void add_0_5_4_5_Changes( ArrayList<ChangeInfo> changeInfos ){
         ChangeInfo changes = new ChangeInfo("v0.5.4.5", true, "");
         changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
@@ -49,7 +139,7 @@ public class v0_5_X_Changes {
 		changeInfos.add(changes);
 
 		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.ARTIFACT_ROSE3, null), "某人的刺刀",
-			"_-_ 当AR15被召唤出期间，刺刀通过收集心智碎片获得了升级，AR15将获得生命值回复。"
+			"_-_ 当_AR15_被召唤出期间，刺刀通过收集心智碎片获得了升级，AR15将获得生命值回复。"
 		 ));
 
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
@@ -57,7 +147,7 @@ public class v0_5_X_Changes {
 		changeInfos.add(changes);
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.MAGNUMWEDDING, null), "BUG修复",
-        	 "_-_ 修复了艾尔菲尔特系列武器导致游戏崩溃的一系列问题。\n"
+        	 "_-_ 修复了_艾尔菲尔特_系列武器导致游戏崩溃的一系列问题。\n"
         	));
     }
 
@@ -71,13 +161,13 @@ public class v0_5_X_Changes {
 		changeInfos.add(changes);
 
 		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.LAR, null), "灰熊MK-V",
-			"_-_ 灰熊MK-V减少了1点使用所需的基础力量要求。\n" +
+			"_-_ _灰熊MK-V_减少了1点使用所需的基础力量要求。\n" +
 			"_-_ 略微提高了升级提供了伤害提升。"
 		));
         
         changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.NTW20, null), "NTW-20",
-            "_-_ 为NTW-20增加了武器技能，在瞄准模式下将可以更快的进行强力攻击\n"+
-            "_-_ 瞄准模式下，攻击的伤害区间为武器最高伤害的85%-120%，且精准度提升"
+            "_-_ 为_NTW-20_增加了武器技能，在_瞄准模式_下将可以更快的进行强力攻击\n"+
+            "_-_ _瞄准模式_下，攻击的伤害区间为武器最高伤害的85%-120%，且精准度提升"
         ));
 
         changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.REDBOOK, null), "袖珍本",
@@ -100,7 +190,7 @@ public class v0_5_X_Changes {
 
         changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.ARTIFACT_CHALICE1, null), "增压器",
             "_-_ 对增压器进行下次充能需要多少能量供给增加了实时文本提示\n"+
-            "_-_ 现在不熟悉的游戏机制的玩家将不会因为贪增压器而Game Over了（大概）"
+            "_-_ 现在不熟悉的游戏机制的玩家将不会因为贪增压器而_Game Over_了（大概）"
         ));
         
     changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
@@ -108,11 +198,11 @@ public class v0_5_X_Changes {
 		changeInfos.add(changes);
 
         changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.FOOD_POUCH, null), "野餐篮",
-            "_-_ 增加了野餐篮，用来专门存放食物类物品，同时优化pc端背包按钮显示\n"
+            "_-_ 增加了_野餐篮_，用来专门存放食物类物品，同时优化pc端背包按钮显示\n"
         ));
 
         changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.ARTIFACT_BEACON, null), "空降妖精",
-            "_-_ 重新加回了空降妖精，击败行裁者后将有12.5%的概率掉落"
+            "_-_ 重新加回了_空降妖精_，击败侩子手后将有_12.5%_的概率掉落"
         ));    
 
     changes = new ChangeInfo(Messages.get(ChangesScene.class, "nerfs"), false, null);
@@ -122,7 +212,7 @@ public class v0_5_X_Changes {
     Image gun561 = new Image(HeroSprite.avatar(HeroClass.TYPE561, 5));
 		gun561.scale.set(0.75f);
         changes.addButton( new ChangeButton(gun561, "56-1式",
-            "_-_ 56-1式重新获得了在饥肠辘辘状态下力量-1的特性\n"+
+            "_-_ _56-1式_重新获得了在饥肠辘辘状态下_力量-1_的特性\n"+
             "_-_ 该特性仅在角色力量大于12时生效"
         ));
         changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.GLAIVE, null), "M99",
@@ -139,9 +229,15 @@ public class v0_5_X_Changes {
 		changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
 
+		Image ep = new Image(Assets.ELPHELT, 0 ,0 ,15 ,24);
+        ep.scale.x=0.8f;
+        ep.scale.y=0.8f;
+        changes.addButton(new ChangeButton(ep,"BUG修复",
+        	"_-_ 将_【少女前线X罪恶装备/苍翼默示录】_相关联动内容作为彩蛋加入游戏，玩家在开启_深入敌腹_挑战后进行闯关即可体验！\n"
+        ));
+
 		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.GSH18,null), "新增游戏内容",
 			"_-_ 在测试模式加入了_地块编辑器_，虽然有些繁琐，但玩家可以自定义地形了。\n"+
-			"_-_ 将_【少女前线X罪恶装备/苍翼默示录】_相关联动内容作为彩蛋加入游戏，玩家在开启深入敌腹挑战后进行闯关即可体验！\n"+
 			"_-_ 增加了角色饱食度指示UI，现在角色的饱食度数值可视化了。\n"+
 			"_-_ FNC带着格里芬的补给来到了地牢！与其对话将能获取一些有趣的补给！\n"+
 			"_-_ 新增了一份节日彩蛋！\n"+
@@ -171,8 +267,8 @@ public class v0_5_X_Changes {
 		Image tp = new Image(new TyphoonSprite.TyphoonSpriteRe());
 		tp.scale.set(PixelScene.align(0.30f));
 		changes.addButton( new ChangeButton(tp, "提丰",
-			"_-_ 将提丰的生成率改回了在全局28-29层中有1%刷新率，而不是之前的替换28-29楼层初始怪组%。\n"+
-			"_-_ 提丰现在在地牢中出现的频率会更高了。"
+			"_-_ 将_提丰_的生成率改回了在全局28-29层中有1%刷新率，而不是之前的1%概率替换28-29楼层初始怪组。\n"+
+			"_-_ 所以_提丰_现在在地牢中出现的频率会更高了。"
         ));
     }    
 

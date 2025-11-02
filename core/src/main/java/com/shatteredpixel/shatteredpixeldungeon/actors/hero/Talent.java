@@ -67,6 +67,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun562;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
+import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
@@ -172,7 +173,7 @@ public enum Talent {
 	//GSH18 T2
 	GSH18_ENERGIZING_MEAL(164), GSH18_CHAIN_SHOCK(165), GSH18_LOGISTICS_SUPPORT(166), GSH18_COMIC_HEART(167), GSH18_MEDICAL_COMPATIBILITY(168),
 	//GSH18 T3
-	GSH18_ENHANCED_GRENADE(169), GSH18_FAST_DRAW(170), GSH18_LIGHTWEIGHT(171);
+	GSH18_INTELLIGENCE_AWARENESS(169, 3), GSH18_AGILE_MOVEMENT(170, 3);//GSH18_LIGHTWEIGHT(171);
 	
 
 	public static class ImprovisedProjectileCooldown extends FlavourBuff{
@@ -401,11 +402,11 @@ public enum Talent {
 				hero.sprite.centerEmitter().burst(MagicMissile.WardParticle.FACTORY, 2);
 			}
 		}
-		// GSH18天赋：元气一餐
-		if(hero.hasTalent(GSH18_ENERGIZING_MEAL)){
-			// 进食后添加buff，用于跟踪下次攻击必定命中和增加攻击范围
-			Buff.affect(hero, GSH18EnergizingMealTracker.class, 1f);
-		}
+	}
+	// GSH18天赋：元气一餐
+	if(hero.hasTalent(GSH18_ENERGIZING_MEAL)){
+		// 进食后添加buff，用于跟踪下次攻击必定命中和增加攻击范围
+		Buff.affect(hero, GSH18EnergizingMealTracker.class, 1f);
 	}
 	}
 
@@ -622,6 +623,47 @@ public enum Talent {
 			}
 		}
 
+		// GSH18 T2天赋：锁链冲击
+		if(hero.hasTalent(GSH18_CHAIN_SHOCK) && enemy.isAlive()){
+			int points = hero.pointsInTalent(GSH18_CHAIN_SHOCK);
+			float damageMultiplier = points == 1 ? 0.1f : 0.2f; // +1为10%，+2为20%
+			int splashDamage = Math.round(dmg * damageMultiplier);
+
+			// 获取目标周围3x3范围的所有格子
+			for (int i : PathFinder.NEIGHBOURS9) {
+				int cell = enemy.pos + i;
+				if (Dungeon.level.insideMap(cell) && cell != enemy.pos) { // 排除目标自身
+					Char ch = Actor.findChar(cell);
+					if (ch != null && ch.alignment != Char.Alignment.ALLY && ch.isAlive()) {
+						// 对范围内非友方单位造成伤害
+						ch.damage(splashDamage, hero);
+						ch.sprite.flash();
+
+						// +2级时，有20%概率对临近单位造成1格击退
+						if (points >= 2 && Dungeon.level.adjacent(enemy.pos, cell)) {
+							// 20%概率触发击退
+							if (Random.Float() < 0.2f) {
+								int pushDir = ch.pos - enemy.pos;
+								Ballistica path = new Ballistica(ch.pos, ch.pos + pushDir, Ballistica.STOP_SOLID | Ballistica.STOP_TARGET);
+								
+								// 如果路径有效且长度足够
+								if (path.path.size() > 1) {
+									int newPos = path.path.get(1);
+									// 检查目标位置是否可行走且没有其他角色
+									if (Dungeon.level.passable[newPos] && Actor.findChar(newPos) == null) {
+										// 执行击退
+										ch.pos = newPos;
+										ch.sprite.move(ch.pos - pushDir, ch.pos);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+
 		return dmg;
 	}
 
@@ -635,7 +677,7 @@ public enum Talent {
 			int shieldPerHit = hero.pointsInTalent(GSH18_STAR_SHIELD); // +1回1点，+2回2点
 			
 			// 检查角色是否为GSH18
-			boolean isGSH18 = hero.heroClass == HeroClass.GSH18; // 假设GUARD代表GSH18，需要根据实际代码调整
+			boolean isGSH18 = hero.heroClass == HeroClass.GSH18; // GSH18角色
 			
 			// 如果是GSH18，正常上限；否则，上限减半
 			int maxPerTurn;
@@ -754,7 +796,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, SEARCH_ARMY, ELITE_ARMY);
 				break;
 			case GSH18:
-				Collections.addAll(tierTalents, GSH18_MEAL_TREATMENT, GSH18_DOCTOR_INTUITION, GSH18_CLOSE_COMBAT, GSH18_STAR_SHIELD);
+				Collections.addAll(tierTalents,GSH18_INTELLIGENCE_AWARENESS,GSH18_AGILE_MOVEMENT);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -813,6 +855,12 @@ public enum Talent {
 				break;
 			case MODERN_REBORNER:
 				Collections.addAll(tierTalents, NEWLIFE, MORE_ACCURATE, ENHANCE_GRENADE);
+				break;
+			case THE_HEART_OF_SIRIUS:
+				Collections.addAll(tierTalents, GSH18_INTELLIGENCE_AWARENESS);
+				break;
+			case MOBILE_MEDICALTABLE:
+				Collections.addAll(tierTalents, GSH18_AGILE_MOVEMENT);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -889,5 +937,4 @@ public enum Talent {
 			}
 		}
 	}
-
 }

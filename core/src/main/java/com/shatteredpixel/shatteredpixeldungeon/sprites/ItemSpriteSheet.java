@@ -41,7 +41,7 @@ public class ItemSpriteSheet {
 		int y = (item / WIDTH) * SIZE;
 		film.add( item, x, y, x+width, y+height);
 	}
-
+	//第一行
 	private static final int PLACEHOLDERS   =                               xy(1, 1);   //16 slots
 	//SOMETHING is the default item sprite at position 0. May show up ingame if there are bugs.
 	public static final int SOMETHING       = PLACEHOLDERS+0;
@@ -78,7 +78,7 @@ public class ItemSpriteSheet {
 		assignItemRect(ELIXIR_HOLDER,   12, 14);
 		assignItemRect(SPELL_HOLDER,    8,  16);
 	}
-
+	//钻石行
 	private static final int UNCOLLECTIBLE  =                               xy(1, 2);   //16 slots
 	public static final int GOLD            = UNCOLLECTIBLE+0;
 	public static final int ENERGY          = UNCOLLECTIBLE+1;
@@ -108,7 +108,7 @@ public class ItemSpriteSheet {
 		assignItemRect(TENGU_BOMB,      10, 10);
 		assignItemRect(TENGU_SHOCKER,   10, 10);
 	}
-
+	//骨头行
 	private static final int CONTAINERS     =                               xy(1, 3);   //16 slots
 	public static final int BONES           = CONTAINERS+0;
 	public static final int REMAINS         = CONTAINERS+1;
@@ -128,7 +128,8 @@ public class ItemSpriteSheet {
 		assignItemRect(CRYSTAL_CHEST,   16, 14);
 		assignItemRect(EBONY_CHEST,     16, 14);
 	}
-
+		
+	//快修行
 	private static final int MISC_CONSUMABLE =                              xy(1, 4);   //16 slots
 	public static final int ANKH            = MISC_CONSUMABLE +0;
 	public static final int STYLUS          = MISC_CONSUMABLE +1;
@@ -159,7 +160,7 @@ public class ItemSpriteSheet {
 
 		assignItemRect(SKELETON_KEY,    8,  14);
 
-		assignItemRect(MASK,            13,  16);
+		assignItemRect(MASK,            11,  14);
 		assignItemRect(CROWN,           14,  15);
 		assignItemRect(AMULET,          16, 16);
 		assignItemRect(MASTERY,         13, 16);
@@ -196,8 +197,10 @@ public class ItemSpriteSheet {
 	}
 
 	
-	                                                                                    //16 free slots
-
+	//16 free slots
+		
+	//武器行
+	//t1
 	private static final int WEP_TIER1      =                               xy(1, 7);   //8 slots
 	public static final int UMP45         	= WEP_TIER1+0;
 	public static final int DP             	= WEP_TIER1+1;
@@ -222,7 +225,7 @@ public class ItemSpriteSheet {
 		assignItemRect(SRS, 	  16, 16);
 		assignItemRect(THUNDER,   16, 16);
 	}
-
+	//t2
 	private static final int WEP_TIER2     = xy(1, 8);   //8 slots
 	public static final int M16            = WEP_TIER2+0;
 	public static final int M1911          = WEP_TIER2+1;
@@ -244,7 +247,7 @@ public class ItemSpriteSheet {
 		assignItemRect(CONFIRE,				14, 16);
 		assignItemRect(MAGNUMWEDDING,		12, 12);
 	}
-
+	//t3
 	private static final int WEP_TIER3 = xy(10, 8);   //8 slots
 	public static final int KS23       = WEP_TIER3+0;
 	public static final int KAR98      = WEP_TIER3+1;
@@ -256,14 +259,14 @@ public class ItemSpriteSheet {
 
 	static{
 		assignItemRect(KS23,           16, 16);
-		assignItemRect(KAR98,            15, 15);
-		assignItemRect(NEGEV,        16, 16);
-		assignItemRect(MOS,    15, 14);
-		assignItemRect(KRISS,             16, 16);
-		assignItemRect(WA,            14, 14);
+		assignItemRect(KAR98,          15, 15);
+		assignItemRect(NEGEV,          16, 16);
+		assignItemRect(MOS,   		   15, 14);
+		assignItemRect(KRISS,          16, 16);
+		assignItemRect(WA,             14, 14);
 		assignItemRect(C96,            8, 12);
 	}
-
+	//t4
 	private static final int WEP_TIER4      =                               xy(9, 9);   //8 slots
 	public static final int WIN97      		= WEP_TIER4+0;
 	public static final int DRAGUNOV      	= WEP_TIER4+1;
@@ -275,14 +278,14 @@ public class ItemSpriteSheet {
 	public static final int AN94            = WEP_TIER4+7;
 
 	static{
-		assignItemRect(WIN97,       15, 15);
-		assignItemRect(DRAGUNOV,      16, 16);
-		assignItemRect(AK47,           14, 14);
-		assignItemRect(HK416,     14, 14);
-		assignItemRect(GUA91, 14, 15);
-		assignItemRect(AWP,               16, 18);
-		assignItemRect(CROSSBOW,        16, 18);
-		assignItemRect(AN94,        16, 18);
+		assignItemRect(WIN97,       	15, 15);
+		assignItemRect(DRAGUNOV,     	16, 16);
+		assignItemRect(AK47,            14, 14);
+		assignItemRect(HK416,  			14, 14);
+		assignItemRect(GUA91, 			14, 15);
+		assignItemRect(AWP,             16, 18);
+		assignItemRect(CROSSBOW,        16, 17);
+		assignItemRect(AN94,         	16, 18);
 	}
 
 	private static final int WEP_TIER5      =                               xy(1, 9);   //8 slots
@@ -294,12 +297,12 @@ public class ItemSpriteSheet {
 	public static final int GREATSHIELD = WEP_TIER5+4;
 	public static final int LAR         = WEP_TIER5+5;
 	static{
-		assignItemRect(USAS12,  16, 16);
-		assignItemRect(SASS,  16, 16);
-		assignItemRect(GLAIVE,      16, 16);
-		assignItemRect(GREATAXE,    12, 16);
-		assignItemRect(GREATSHIELD, 12, 16);
-		assignItemRect(LAR,            11, 15);
+		assignItemRect(USAS12, 	 		 16, 16);
+		assignItemRect(SASS,  			 16, 16);
+		assignItemRect(GLAIVE,     		 16, 16);
+		assignItemRect(GREATAXE,   		 12, 16);
+		assignItemRect(GREATSHIELD, 	 12, 16);
+		assignItemRect(LAR,           	 11, 15);
 	}
 
 	/** SP6 贴图 */
@@ -312,17 +315,17 @@ public class ItemSpriteSheet {
 	public static final int MOSINNAGANT			= WEP_TIER6+6;
 	public static final int cz75axe			= WEP_TIER6+7;
 	static{
-		assignItemRect(GROZA,     16, 17);
-		assignItemRect(MG42,     16, 17);
-		assignItemRect(SAIGA,     16, 17);
-		assignItemRect(NAGANT,     16, 17);
-		assignItemRect(NTW20,     19, 19);
-			assignItemRect(MOSINNAGANT,     16, 17);
-			assignItemRect(cz75axe,     14, 14);
+		assignItemRect(GROZA,    		 16, 17);
+		assignItemRect(MG42,     	 	 16, 17);
+		assignItemRect(SAIGA,     		 16, 17);
+		assignItemRect(NAGANT, 			 16, 17);
+		assignItemRect(NTW20,      		 19, 19);
+		assignItemRect(MOSINNAGANT,      16, 17);
+		assignItemRect(cz75axe,    		 14, 14);
 	}
 
 
-	
+	//弹弓投武行
 	public static final int TIPPED_DARTS    =                               xy(1, 11);  //16 slots
 	public static final int ADRENALINE_DART = TIPPED_DARTS+1 ;
 	public static final int BLINDING_DART   = TIPPED_DARTS+2 ;
@@ -341,7 +344,7 @@ public class ItemSpriteSheet {
 			assignItemRect(i, 15, 15);
 	}
 	
-	//这是护甲行别找不到对应的贴图，所以这里先注释掉
+	//护甲行
 	private static final int ARMOR          =                               xy(1, 12);  //16 slots
 	public static final int ARMOR_CLOTH     = ARMOR+0;
 	public static final int ARMOR_LEATHER   = ARMOR+1;
@@ -366,9 +369,10 @@ public class ItemSpriteSheet {
 		assignItemRect(ARMOR_TYPE561,   16, 16);
 	}
 
-	                                                                                    //16 free slots
-
-	private static final int WANDS              =                           xy(1, 14);  //16 slots
+	     //16 free slots
+		
+	//魔杖\子弹行
+	private static final int WANDS              = xy(1, 14);  //16 slots
 	public static final int WAND_MAGIC_MISSILE  = WANDS+0;
 	public static final int WAND_FIREBOLT       = WANDS+1;
 	public static final int WAND_FROST          = WANDS+2;
@@ -391,7 +395,8 @@ public class ItemSpriteSheet {
 		for (int i = WANDS; i < WANDS+16; i++)
 			assignItemRect(i, 14, 14);
 	}
-
+		
+	//戒指行
 	private static final int RINGS          =                               xy(1, 15);  //16 slots
 	public static final int RING_GARNET     = RINGS+0;
 	public static final int RING_RUBY       = RINGS+1;
@@ -409,7 +414,8 @@ public class ItemSpriteSheet {
 		for (int i = RINGS; i < RINGS+16; i++)
 			assignItemRect(i, 15, 10);
 	}
-
+		
+	//神器行
 	private static final int ARTIFACTS          =                            xy(1, 16);  //32 slots
 	public static final int ARTIFACT_CLOAK      = ARTIFACTS+0;
 	public static final int ARTIFACT_ARMBAND    = ARTIFACTS+1;
@@ -470,7 +476,8 @@ public class ItemSpriteSheet {
 	}
 
 	                                                                                    //16 free slots
-
+		
+	//卷轴行
 	private static final int SCROLLS        =                               xy(1, 19);  //16 slots
 	public static final int SCROLL_KAUNAN   = SCROLLS+0;
 	public static final int SCROLL_SOWILO   = SCROLLS+1;
@@ -490,10 +497,11 @@ public class ItemSpriteSheet {
 	static {
 		for (int i = SCROLLS; i < SCROLLS+16; i++)
 			assignItemRect(i, 15, 14);
-		assignItemRect(SCROLL_CATALYST, 12, 11);
-		assignItemRect(ARCANE_RESIN   , 12, 11);
+			assignItemRect(SCROLL_CATALYST, 12, 11);
+			assignItemRect(ARCANE_RESIN   , 12, 11);
 	}
-	
+		
+	//大卷轴行
 	private static final int EXOTIC_SCROLLS =                               xy(1, 20);  //16 slots
 	public static final int EXOTIC_KAUNAN   = EXOTIC_SCROLLS+0;
 	public static final int EXOTIC_SOWILO   = EXOTIC_SCROLLS+1;
@@ -511,7 +519,8 @@ public class ItemSpriteSheet {
 		for (int i = EXOTIC_SCROLLS; i < EXOTIC_SCROLLS+16; i++)
 			assignItemRect(i, 15, 14);
 	}
-	
+		
+	//符石行
 	private static final int STONES             =                           xy(1, 21);  //16 slots
 	public static final int STONE_AGGRESSION    = STONES+0;
 	public static final int STONE_AUGMENTATION  = STONES+1;
@@ -529,7 +538,8 @@ public class ItemSpriteSheet {
 		for (int i = STONES; i < STONES+16; i++)
 			assignItemRect(i, 14, 12);
 	}
-
+		
+	//药水行
 	private static final int POTIONS        =                               xy(1, 22);  //16 slots
 	public static final int POTION_CRIMSON  = POTIONS+0;
 	public static final int POTION_AMBER    = POTIONS+1;
@@ -548,10 +558,11 @@ public class ItemSpriteSheet {
 	static {
 		for (int i = POTIONS; i < POTIONS+16; i++)
 			assignItemRect(i, 12, 14);
-		assignItemRect(POTION_CATALYST, 6, 15);
-		assignItemRect(LIQUID_METAL,    8, 15);
+			assignItemRect(POTION_CATALYST, 6, 15);
+			assignItemRect(LIQUID_METAL,    8, 15);
 	}
-	
+		
+	//魔药行
 	private static final int EXOTIC_POTIONS =                               xy(1, 23);  //16 slots
 	public static final int EXOTIC_CRIMSON  = EXOTIC_POTIONS+0;
 	public static final int EXOTIC_AMBER    = EXOTIC_POTIONS+1;
@@ -569,7 +580,7 @@ public class ItemSpriteSheet {
 		for (int i = EXOTIC_POTIONS; i < EXOTIC_POTIONS+16; i++)
 			assignItemRect(i, 12, 13);
 	}
-
+	//种子行
 	private static final int SEEDS              =                           xy(1, 24);  //16 slots
 	public static final int SEED_ROTBERRY       = SEEDS+0;
 	public static final int SEED_FIREBLOOM      = SEEDS+1;
@@ -587,7 +598,8 @@ public class ItemSpriteSheet {
 		for (int i = SEEDS; i < SEEDS+16; i++)
 			assignItemRect(i, 10, 10);
 	}
-	
+		
+	//药剂行
 	private static final int BREWS          =                               xy(1, 25);  //8 slots
 	public static final int BREW_INFERNAL   = BREWS+0;
 	public static final int BREW_BLIZZARD   = BREWS+1;
@@ -606,7 +618,8 @@ public class ItemSpriteSheet {
 		for (int i = BREWS; i < BREWS+16; i++)
 			assignItemRect(i, 12, 14);
 	}
-	
+		
+	//法术行
 	private static final int SPELLS         = xy(1, 27);  //16 slots
 	public static final int MAGIC_PORTER    = SPELLS+0;
 	public static final int PHASE_SHIFT     = SPELLS+1;
@@ -640,7 +653,7 @@ public class ItemSpriteSheet {
 		assignItemRect(ALCHEMIZE,       10, 15);
 		assignItemRect(RECYCLE,         10, 15);
 	}
-	
+	//食物行
 	private static final int FOOD         = xy(1, 28);  //16 slots
 	public static final int MEAT          = FOOD+0;
 	public static final int STEAK         = FOOD+1;
@@ -675,16 +688,16 @@ public class ItemSpriteSheet {
 		assignItemRect(MEAT_PIE,     16,11);
 		assignItemRect(BLANDFRUIT,    9,12);
 		assignItemRect(BLAND_CHUNKS, 14, 6);
-		assignItemRect(BERRY,         9,11);
-		assignItemRect(MACCOL,        7,10);
+		assignItemRect(BERRY,         11,11);
+		assignItemRect(MACCOL,        8,14);
 		assignItemRect(CINNAMONROLL,  8, 8);
 		assignItemRect(SUGARZONGZI , 16,14);
 		assignItemRect(SALTYZONGZI , 16,15);
-		assignItemRect(CHOCO,        16,15);
-		assignItemRect(NUTSMOONCAKE, 14,13);
-		assignItemRect(SALTYMOONCAKE,16,15);
+		assignItemRect(CHOCO,        13,12);
+		assignItemRect(NUTSMOONCAKE, 15,14);
+		assignItemRect(SALTYMOONCAKE,16,14);
 	}
-
+	//任务行
 	private static final int QUEST  =                                       xy(1, 29);  //32 slots
 	public static final int SKULL   = QUEST+0;
 	public static final int DUST    = QUEST+1;
@@ -706,7 +719,7 @@ public class ItemSpriteSheet {
 		assignItemRect(BLOB,    10,  9);
 		assignItemRect(SHARD,    8, 10);
 	}
-
+	//背包行
 	private static final int BAGS       =                                   xy(1, 31);  //16 slots
 	public static final int WATERSKIN   = BAGS+0;
 	public static final int BACKPACK    = BAGS+1;
@@ -734,7 +747,8 @@ public class ItemSpriteSheet {
 	}
 
 	//8 free slots
-
+	
+	//武器行
 	private static final int MISSILE_WEP    =                               xy(1, 33);  //16 slots. 3 per tier + boomerang
 	public static final int SPIRIT_BOW      = MISSILE_WEP+0;
 
@@ -781,20 +795,21 @@ public class ItemSpriteSheet {
 		assignItemRect(THROWING_HAMMER, 12, 12);
 		assignItemRect(FORCE_CUBE,      11, 12);
 	}
-	//这是新添加的武器行，别找不到对应的贴图，所以这里先注释一下
+	//这是新添加的武器行，从561开始
 	private static final int GUN561_NUKE      =xy(1, 38);
 	public static final  int GUN561           =GUN561_NUKE+2;
 	public static final  int GUN562    	      =GUN561_NUKE+3;
 	public static final  int GUN562ACCESSORIES=GUN561_NUKE+4;
-	public static final  int GSH18           =GUN561_NUKE+5;
-	public static final  int GUN64           =GUN561_NUKE+7;
+	public static final  int GSH18            =GUN561_NUKE+5;
+	public static final  int GUN64            =GUN561_NUKE+7;
 	static {
 		assignItemRect(GUN561,            14, 16);
 		assignItemRect(GUN562,            16, 15);
 		assignItemRect(GUN562ACCESSORIES, 16, 15);
 		assignItemRect(GSH18,             16, 16);
 		assignItemRect(GUN64,             12, 16);
-	}                                                               //16 free slots
+	}                                                               
+	//16 free slots
 
 	//for smaller 8x8 icons that often accompany an item sprite
 	public static class Icons {
@@ -814,7 +829,7 @@ public class ItemSpriteSheet {
 			int y = (item / WIDTH) * SIZE;
 			film.add( item, x, y, x+width, y+height);
 		}
-
+		//戒指行，这些是戒指的引用图标
 		private static final int RINGS          =                            xy(1, 1);  //16 slots
 		public static final int RING_ACCURACY   = RINGS+0;
 		public static final int RING_ELEMENTS   = RINGS+1;
@@ -843,7 +858,8 @@ public class ItemSpriteSheet {
 		}
 
 		                                                                                //16 free slots
-
+		
+		//卷轴行
 		private static final int SCROLLS        =                            xy(1, 3);  //16 slots
 		public static final int SCROLL_UPGRADE  = SCROLLS+0;
 		public static final int SCROLL_IDENTIFY = SCROLLS+1;
@@ -871,7 +887,8 @@ public class ItemSpriteSheet {
 			assignIconRect( SCROLL_TERROR,      5, 7 );
 			assignIconRect( SCROLL_TRANSMUTE,   7, 7 );
 		}
-
+		
+		//大卷轴行
 		private static final int EXOTIC_SCROLLS =                            xy(1, 4);  //16 slots
 		public static final int SCROLL_ENCHANT  = EXOTIC_SCROLLS+0;
 		public static final int SCROLL_DIVINATE = EXOTIC_SCROLLS+1;
@@ -901,7 +918,8 @@ public class ItemSpriteSheet {
 		}
 
 		                                                                                //16 free slots
-
+		
+		//药水行
 		private static final int POTIONS        =                            xy(1, 6);  //16 slots
 		public static final int POTION_STRENGTH = POTIONS+0;
 		public static final int POTION_HEALING  = POTIONS+1;
@@ -930,6 +948,7 @@ public class ItemSpriteSheet {
 			assignIconRect( POTION_EXP,         7, 7 );
 		}
 
+		//魔药行
 		private static final int EXOTIC_POTIONS =                            xy(1, 7);  //16 slots
 		public static final int POTION_MASTERY  = EXOTIC_POTIONS+0;
 		public static final int POTION_SHIELDING= EXOTIC_POTIONS+1;

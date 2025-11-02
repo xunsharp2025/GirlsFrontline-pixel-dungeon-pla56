@@ -77,16 +77,32 @@ public class StarShield extends ShieldBuff {
     public boolean act() {
         turnsPassed++;
         
-        // 每2回合减少1点护盾值
-        if (turnsPassed >= 2) {
-            if (shielding() > 0) {
-                decShield(1);
-            }
-            turnsPassed = 0;
-        }
+        int shieldingValue = shielding();
         
-        if (shielding() <= 0) {
+        // 根据护盾值范围设置不同的衰减频率
+        if (shieldingValue <= 0) {
             detach();
+        } else if (shieldingValue > 5000) {
+            // 超过5000护盾时，每1回合减少1点
+            decShield(1);
+        } else if (shieldingValue >= 30) {
+            // 30-5000护盾每2回合减少1点
+            if (turnsPassed >= 2) {
+                decShield(1);
+                turnsPassed = 0;
+            }
+        } else if (shieldingValue >= 10) {
+            // 10-30区间每3回合减少1点
+            if (turnsPassed >= 3) {
+                decShield(1);
+                turnsPassed = 0;
+            }
+        } else if (shieldingValue < 10) {
+            // 10护盾以下时，每5回合衰减1点
+            if (turnsPassed >= 5) {
+                decShield(1);
+                turnsPassed = 0;
+            }
         }
         
         spend(TICK);

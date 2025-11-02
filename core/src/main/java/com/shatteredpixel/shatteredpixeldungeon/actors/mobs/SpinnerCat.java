@@ -6,6 +6,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.ConfusionGas;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfMetamorphosis;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SpinnerCatSprite;
@@ -43,12 +44,17 @@ public class SpinnerCat extends Spinner {
 
 		super.die(cause);
 		MysteryMeat mysteryMeat = new MysteryMeat();
-		mysteryMeat.quantity(Random.Int(1,2));
+		mysteryMeat.quantity(Random.Int(1,3));
 		Dungeon.level.drop(mysteryMeat, pos).sprite.drop();
 
-		if(Random.Int(20)==1){
+		if(Random.Int(10)==1){
 			ScrollOfTransmutation scrollOfTransmutation = new ScrollOfTransmutation();
-			 Dungeon.level.drop(scrollOfTransmutation, pos).sprite.drop();
+			Dungeon.level.drop(scrollOfTransmutation, pos).sprite.drop();
+		}
+		
+		if(Random.Int(20)==1){
+			ScrollOfMetamorphosis scrollOfMetamorphosis = new ScrollOfMetamorphosis();
+			Dungeon.level.drop(scrollOfMetamorphosis, pos).sprite.drop();
 		}
 	}
 

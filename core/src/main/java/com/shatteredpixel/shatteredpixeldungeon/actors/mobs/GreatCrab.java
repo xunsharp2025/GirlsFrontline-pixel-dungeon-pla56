@@ -25,6 +25,8 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CapeOfThorns;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.MasterThievesArmband;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -108,5 +110,22 @@ public class GreatCrab extends Crab {
 		super.die( cause );
 
 		Ghost.Quest.process();
+	}
+
+	@Override
+	public void rollToDropLoot() {
+		// 保留原有的神秘肉掉落逻辑
+		super.rollToDropLoot();
+		
+		// 添加 CapeOfThorns 的掉落逻辑，掉落率为 25%
+		if (Dungeon.hero.lvl <= maxLvl + 2) {
+			MasterThievesArmband.StolenTracker stolen = buff(MasterThievesArmband.StolenTracker.class);
+			if (stolen == null || !stolen.itemWasStolen()) {
+				if (Random.Float() < 0.25f) { // 25% 掉落率
+					CapeOfThorns cape = new CapeOfThorns();
+					Dungeon.level.drop(cape, pos).sprite.drop();
+				}
+			}
+		}
 	}
 }

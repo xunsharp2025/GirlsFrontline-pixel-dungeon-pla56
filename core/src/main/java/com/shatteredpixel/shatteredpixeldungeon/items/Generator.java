@@ -403,7 +403,7 @@ public class Generator {
 					Gepard.class,
 					AN94.class
 			};
-			WEP_T4.probs = new float[]{ 6, 5, 5, 5, 4, 6 ,2 };
+			WEP_T4.probs = new float[]{ 6, 5, 5, 5, 4, 6 ,3 };
 			
 			WEP_T5.classes = new Class<?>[]{
 					Sass.class,
@@ -477,7 +477,7 @@ public class Generator {
 					Pasty.class,
 					MysteryMeat.class,
 					Maccol.class};
-			FOOD.probs = new float[]{ 4, 0, Dungeon.isChallenged(NO_FOOD) ? 0 : 1, 0,  Dungeon.isChallenged(NO_FOOD) ? 1 : 0 };
+			FOOD.probs = new float[]{ 4, 0, 1, 0, 0 };
 			
 			RING.classes = new Class<?>[]{
 					RingOfAccuracy.class,
