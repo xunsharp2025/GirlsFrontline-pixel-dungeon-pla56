@@ -324,7 +324,20 @@ public class Elphelt extends Mob {
 
 		// die
 		if (newHP <= 0 && HP <= HT/2) {
-			((RabbitBossLevel)Dungeon.level).progress();
+			//let full attack action complete first
+			Actor.add(new Actor() {
+				{
+					actPriority = VFX_PRIO;
+				}
+				
+				@Override
+				protected boolean act() {
+					Actor.remove(this);
+					((RabbitBossLevel)Dungeon.level).progress();
+					return true;
+				}
+			});
+			
 			phase = 3;// see isAlive
 			return;
 		}

@@ -93,11 +93,13 @@ public class Cypros extends MeleeWeapon {
 
     public Cypros(){
         Wand wand = new WandOfGenoise();
-        wand.identify();
+
         wand.cursed = false;
-        this.wand = wand;
         wand.maxCharges = 1;
         wand.curCharges = wand.maxCharges;
+        wand.identify(false);
+        
+        this.wand = wand;
     }
 
     public void setMode(Mode newMode,boolean doShow) {

@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Elphelt;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.HeavyBoomerang;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GrippingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
@@ -45,10 +46,15 @@ import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
+import com.watabou.utils.Rect;
 
 import java.util.ArrayList;
 
 public class RabbitBossLevel extends Level {
+	private static int WIDTH=32;
+	private static int HEIGHT=32;
+	private static int CENTER_POS=15+15*32;
+	private static final Rect CENTER_CELLS = new Rect(14,14,17,17);
 
 	{
 		color1 = 0x6a723d;
@@ -64,9 +70,6 @@ public class RabbitBossLevel extends Level {
 	
 	private State state;
 	private Elphelt elphelt=null;
-
-	//keep track of that need to be removed as the level is changed. We dump 'em back into the level at the end.
-	private ArrayList<Item> storedItems = new ArrayList<>();
 	
 	@Override
 	public String tilesTex() {
@@ -79,13 +82,11 @@ public class RabbitBossLevel extends Level {
 	}
 	
 	private static final String STATE	        = "state";
-	private static final String STORED_ITEMS    = "storeditems";
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle(bundle);
 		bundle.put( STATE, state );
-		bundle.put( STORED_ITEMS, storedItems);
 	}
 	
 	@Override
@@ -101,16 +102,12 @@ public class RabbitBossLevel extends Level {
 				}
 			}
 		}
-
-		for (Bundlable item : bundle.getCollection(STORED_ITEMS)){
-			storedItems.add( (Item)item );
-		}
 	}
 	
 	@Override
 	protected boolean build() {
 		
-		setSize(32, 32);
+		setSize(WIDTH,HEIGHT);
 		
 		map = MAP_START.clone();
 
@@ -118,8 +115,8 @@ public class RabbitBossLevel extends Level {
 		cleanWalls();
 
 		state = State.READY;
-		entrance = 15+12*32;
-		exit = 15+17*32;
+		entrance = 15+12*WIDTH;
+		exit = 15+17*WIDTH;
 
 		resetTraps();
 
@@ -225,7 +222,9 @@ public class RabbitBossLevel extends Level {
 		Dungeon.observe();
 	}
 
-	private void clearEntities(Room safeArea){
+	private ArrayList<Item> clearEntities(Rect safeArea){
+		ArrayList<Item> storedItems = new ArrayList<>();
+
 		for (Heap heap : heaps.values()){
 			if (safeArea == null || !safeArea.inside(cellToPoint(heap.pos))){
 				for (Item item : heap.items)
@@ -233,11 +232,10 @@ public class RabbitBossLevel extends Level {
 				heap.destroy();
 			}
 		}
-		for (Mob mob : Dungeon.level.mobs.toArray(new Mob[Dungeon.level.mobs.size()])){
-			if (mob != elphelt && (safeArea == null || !safeArea.inside(cellToPoint(mob.pos)))){
-				mob.destroy();
-				if (mob.sprite != null)
-					mob.sprite.killAndErase();
+		for (HeavyBoomerang.CircleBack b : Dungeon.hero.buffs(HeavyBoomerang.CircleBack.class)){
+			if (b.activeDepth() == Dungeon.depth
+					&& (safeArea == null || !safeArea.inside(cellToPoint(b.returnPos())))){
+				storedItems.add(b.cancel());
 			}
 		}
 		for (Plant plant : plants.values()){
@@ -245,6 +243,12 @@ public class RabbitBossLevel extends Level {
 				plants.remove(plant.pos);
 			}
 		}
+
+		return storedItems;
+	}
+
+	public int randomCenterCellsPos(){
+		return CENTER_POS+Random.IntRange(-1,1)+WIDTH*Random.IntRange(-1,1);
 	}
 
 	public void progress(){
@@ -278,7 +282,12 @@ public class RabbitBossLevel extends Level {
 				Sample.INSTANCE.play(Assets.Sounds.BLAST);
 
 				changeMap(MAP_END);
-				clearEntities(null);
+
+				ArrayList<Item> storedItems = clearEntities(CENTER_CELLS);
+
+				for (Item item : storedItems) {
+					drop(item, randomCenterCellsPos());
+				}
 
 				GameScene.updateMap(entrance);
 				GameScene.updateMap(exit);
@@ -288,7 +297,7 @@ public class RabbitBossLevel extends Level {
 				Dungeon.hero.sprite.interruptMotion();
 				Dungeon.hero.sprite.place(Dungeon.hero.pos);
 
-				elphelt.pos = 15+15*32;	// center of map
+				elphelt.pos = CENTER_POS;
 				elphelt.die(Dungeon.hero);
 				
 				state = State.WON;

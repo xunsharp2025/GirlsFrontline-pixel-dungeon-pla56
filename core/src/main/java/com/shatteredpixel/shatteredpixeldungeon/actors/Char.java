@@ -314,9 +314,6 @@ public abstract class Char extends Actor {
 			
 			int dr = enemy.drRoll();
 
-			Barkskin bark = enemy.buff(Barkskin.class);
-			if (bark != null)   dr += Random.NormalIntRange( 0 , bark.level() );
-
 			Blocking.BlockBuff block = enemy.buff(Blocking.BlockBuff.class);
 			if (block != null)  dr += block.blockingRoll();
 			
@@ -327,6 +324,9 @@ public abstract class Char extends Actor {
 						&& !Dungeon.level.adjacent(h.pos, enemy.pos)){
 					dr = 0;
 				}
+			}else{
+				Barkskin bark = enemy.buff(Barkskin.class);
+				if (bark != null)   dr += Random.NormalIntRange( 0 , bark.level() );
 			}
 			
 			int dmg;

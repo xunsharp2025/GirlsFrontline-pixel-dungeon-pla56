@@ -639,8 +639,8 @@ public enum Talent {
 						ch.damage(splashDamage, hero);
 						ch.sprite.flash();
 
-						// +2级时，有20%概率对临近单位造成1格击退
-						if (points >= 2 && Dungeon.level.adjacent(enemy.pos, cell)) {
+						// +2级时，有20%概率对临近可移动单位造成1格击退
+						if (points >= 2 && Dungeon.level.adjacent(enemy.pos, cell) && !ch.properties().contains(Char.Property.IMMOVABLE)) {
 							// 20%概率触发击退
 							if (Random.Float() < 0.2f) {
 								int pushDir = ch.pos - enemy.pos;

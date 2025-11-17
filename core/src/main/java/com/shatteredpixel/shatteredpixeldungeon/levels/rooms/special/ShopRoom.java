@@ -46,6 +46,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SugarZongzi;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Maccol;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
@@ -214,15 +215,26 @@ public class ShopRoom extends SpecialRoom {
 				itemsToSpawn.add(new SaltyZongzi());
 				itemsToSpawn.add(new SaltyZongzi());
 				itemsToSpawn.add(new SaltyZongzi());
-			}else{
+			}else if(Dungeon.hero.pointsInTalent(Talent.BARGAIN_SKILLS) == 1){
 				itemsToSpawn.add(new SugarZongzi());
 				itemsToSpawn.add(new SugarZongzi());
-				itemsToSpawn.add(new SmallRation());
-				itemsToSpawn.add(new SmallRation());
 			}
-		}else{
-			itemsToSpawn.add(new SmallRation());
-			itemsToSpawn.add(new SmallRation());
+		}
+		if(Dungeon.hero.pointsInTalent(Talent.BARGAIN_SKILLS)<2){
+			switch(Random.Int(4)){
+				case 0: case 1:
+					itemsToSpawn.add(new Maccol());
+					itemsToSpawn.add(new Maccol());
+					break;
+				case 2:
+					itemsToSpawn.add(new SmallRation());
+					itemsToSpawn.add(new Maccol());
+					break;
+				case 3:
+					itemsToSpawn.add(new SmallRation());
+					itemsToSpawn.add(new SmallRation());
+					break;
+			}
 		}
 		
 		switch (Random.Int(4)){
@@ -254,7 +266,7 @@ public class ShopRoom extends SpecialRoom {
 				case 16:
 					bags = (int)Math.ceil(( 5-hourglass.sandBags) * 0.50f ); break;
 				case 20: case 21:
-					bags = (int)Math.ceil(( 5-hourglass.sandBags) * 0.80f ); break;
+					bags = (int)Math.ceil(( 5-hourglass.sandBags) * 1f ); break;
 			}
 
 			for(int i = 1; i <= bags; i++){

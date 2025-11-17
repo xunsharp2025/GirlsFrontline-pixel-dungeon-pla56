@@ -579,6 +579,9 @@ public class Hero extends Char {
 			if (wepDr > 0) dr += wepDr;
 		}
 
+		Barkskin bark = buff(Barkskin.class);
+		if (bark!=null) dr+= Random.NormalIntRange(0,bark.level());
+
 		if (buff(HoldFast.class) != null){
 			dr += Random.NormalIntRange(0, 2*pointsInTalent(Talent.HOLD_FAST));
 		}

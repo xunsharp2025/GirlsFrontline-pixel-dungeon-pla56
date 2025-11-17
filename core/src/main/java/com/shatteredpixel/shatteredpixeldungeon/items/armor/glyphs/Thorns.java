@@ -34,17 +34,19 @@ public class Thorns extends Armor.Glyph {
 
 	@Override
 	public int proc(Armor armor, Char attacker, Char defender, int damage) {
+	    
+		if (attacker.alignment !=defender.alignment){
 
 		int level = Math.max(0, armor.buffedLvl());
 
-		// lvl 0 - 16.7%
-		// lvl 1 - 23.1%
-		// lvl 2 - 28.5%
-		if ( Random.Int( level + 12) >= 10) {
+			// lvl 0 - 16.7%
+			// lvl 1 - 23.1%
+			// lvl 2 - 28.5%
+			if ( Random.Int( level + 12) >= 10) {
 
 			Buff.affect( attacker, Bleeding.class).set( 4 + level );
 
-		}
+		}}
 
 		return damage;
 	}

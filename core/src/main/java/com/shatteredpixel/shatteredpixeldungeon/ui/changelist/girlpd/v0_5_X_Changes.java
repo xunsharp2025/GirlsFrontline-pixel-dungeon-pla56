@@ -3,6 +3,7 @@ package com.shatteredpixel.shatteredpixeldungeon.ui.changelist.girlpd;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.NaturesPower.naturesPowerTracker;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Goo;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BadgeBanner;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
+    	add_0_5_5_2_Changes(changeInfos);
+    	add_0_5_5_1_Changes(changeInfos);
     	add_0_5_5_Changes(changeInfos);
     	add_0_5_4_5_Changes(changeInfos);
     	add_0_5_4_3_Changes(changeInfos);
@@ -36,6 +39,102 @@ public class v0_5_X_Changes {
 		add_0_5_1_Changes(changeInfos);
 		add_0_5_0_Changes(changeInfos);
     }
+    public static void add_0_5_5_2_Changes( ArrayList<ChangeInfo> changeInfos ){
+        ChangeInfo changes = new ChangeInfo("v0.5.5.2", true, "");
+        changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "buffs"), false, null);
+		changes.hardlight( CharSprite.POSITIVE );
+		changeInfos.add(changes);
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.GREATAXE,null), "灵刀·樱吹雪",
+			"_-_ _灵刀·樱吹雪_居合击杀后获得的升级冷却不会再被全面净化合剂净化而停止计数了。\n"
+		));
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.WILD_ENERGY,null), "返回结晶",
+        "_-_ _返回结晶_的传送功能不再因为周围存在敌人而被_禁用_。\n"+
+        "_-_ 取而代之的代价是传送需要_多消耗一个回合_。\n"
+        ));
+
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY,null), "水晶房间",
+        "_-_ 需要三把钥匙才能完全开启的_水晶房间_内的奖励进行了优化\n"+
+        "_-_ 房间内的_少量钻石_奖励改为了_随机数量_的钻石奖励\n"+
+        "_-_ 房间内的随机_符石/种子_奖励改为了_随机药水_奖励\n"+
+        "_-_ 房间内的随机_药水/磁盘_奖励改为了_随机磁盘_奖励\n"+
+        "_-_ 房间内的随机_武器/外骨骼_奖励改为了_稀有药水/磁盘/符石_奖励"
+        ));
+
+        Image ep = new Image(Assets.Sprites.RED_SENTRY, 0 ,0 ,27 ,27);
+        ep.scale.x=0.8f;
+        ep.scale.y=0.8f;
+        changes.addButton(new ChangeButton(ep,"指南针",
+        	"_-_ _指南针_现在不会对心智不完整的人形发动攻击了。\n"+
+        	"_-_ 这意味着现在如果意外死亡在_哨卫房间_里，玩家不会因为无法取回_遗物_而变为死局了。"
+        ));
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		changes.hardlight( CharSprite.WARNING );
+		changeInfos.add(changes);
+
+        Image ac = new Image(Assets.Sprites.CRAB, 0 ,0 ,15 ,18);
+        ac.scale.x=0.8f;
+        ac.scale.y=0.8f;
+        changes.addButton(new ChangeButton(ac,"索敌精英",
+        	"_-_ 优化了_索敌精英_类敌人的索敌逻辑，当周围被阻拦时，索敌精英将不再可以攻击玩家。\n"+
+        	"_-_ 这意味着现在不会在被围困时被_索敌精英_类敌人直接攻击到了。"
+        ));
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.MACCOL,null), "大麦味可乐",
+        "_-_ _大麦味可乐_重新回到了游戏！\n"+
+        "_-_ 现在商店中的_压缩饼干_将有概率变为_大麦味可乐_！"
+        ));
+
+        changes.addButton( new ChangeButton(Icons.get(Icons.WARNING), "_在线更新系统重置_",
+        	"_-_ 旧版在线更新系统因为一些原因_不再被支持_，新的在线更新系统已经重新加入游戏！\n"+
+        	"_-_ 新版在线更新系统需要以本版本为基础，因此本版本必须_手动下载_安装包并且进行更新。\n"
+        ));
+
+		Image imageTemp = new Image(Assets.Sprites.TROLL, 0 ,0 ,12 ,21);
+        imageTemp.scale.x=0.8f;
+        imageTemp.scale.y=0.8f;
+        changes.addButton(new ChangeButton(imageTemp, "BUG修复", 
+            "_-_ 现在艾尔菲尔特被击败后，将不会清理掉地面的_掉落物_了。\n"+
+            "_-_ _ND-B子弹配件_击败艾尔菲尔特将不再会导致闪退\n"+
+            "_-_ 艾尔菲尔特被击败后，玩家的_盟友_将不再会被清除\n"+
+			"_-_ 已修复鹰眼的充能秘术天赋1/2/3级均提供4回合神器充能的BUG\n"+ "_-_ 已修复虹卫和增压器不受益于树肤buff的问题\n\n"+
+			"_-_ 已修复荆棘和反斥对盟友造成伤害的BUG\n"
+        ));  
+        
+        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.GLAIVE, null), "M99",
+            "_-_ M99的攻击削为_1.5_回合，但攻击范围_+1_；\n"
+        ));
+	}
+	
+	public static void add_0_5_5_1_Changes( ArrayList<ChangeInfo> changeInfos ){
+        ChangeInfo changes = new ChangeInfo("v0.5.5.1", true, "");
+        changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		changes.hardlight( CharSprite.WARNING );
+		changeInfos.add(changes);
+
+		changes.addButton( new ChangeButton(Icons.get(Icons.WARNING), "紧急修复",
+			"_-_ 紧急修复了未能实现的更新内容\n\n" +
+			"_-_ _圣盾_现在将可以正常掉落_核心装甲_了！\n"+
+			"_-_ 正式取消了挑战_饥饿游戏_中食物减半的特性。\n"+
+			"_-_ 地图贴图优化：下水道和监狱层的贴图现在更加清晰了！\n"+
+			"_-_ 文本优化：优化部分文本，后续会继续优化。\n"
+		));
+
+		Image tp = new Image(new SpinnerCatSprite());
+		tp.scale.set(PixelScene.align(0.80f));
+		changes.addButton( new ChangeButton(tp, "圆头耄蛛",
+			"_-_ 为稀有敌人_耄耋_增加了稀有掉落物，以符合其_稀有_的特性。"
+		));
+	}
 
     public static void add_0_5_5_Changes( ArrayList<ChangeInfo> changeInfos ){
         ChangeInfo changes = new ChangeInfo("v0.5.5", true, "");
@@ -96,7 +195,7 @@ public class v0_5_X_Changes {
         changes.addButton( new ChangeButton(gsh18, "新角色：GSH18",
         	"_-_ 新角色_GSH18_的加入\n\n"+
             "_-_ GSH18虽然较为脆弱，但拥有多样化的获取护盾的能力，且在拥有护盾时会获得额外能力。\n"+
-            "_-_ 该角色尚不完善，仅供测试体验。"
+            "_-_ 该角色_尚不完善_，仅供_测试体验_。"
         ));
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.AN94, null), "AN-94",

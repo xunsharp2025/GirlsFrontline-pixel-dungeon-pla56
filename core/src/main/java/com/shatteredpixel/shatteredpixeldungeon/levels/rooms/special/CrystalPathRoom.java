@@ -27,6 +27,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.CrystalKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.IronKey;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfEnchantment;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
@@ -126,25 +129,27 @@ public class CrystalPathRoom extends SpecialRoom {
 			Item item;
 			switch (i){
 				case 0: default:
-					item = new Gold(Random.NormalIntRange(5, 12));
+					item = new Gold().random();
 					break;
 				case 1:
 					item = Generator.random(Random.oneOf(
-							Generator.Category.SEED,
-							Generator.Category.STONE)
+							Generator.Category.POTION)
 					);
 					break;
 				case 2:
 					item = Generator.random(Random.oneOf(
-							Generator.Category.POTION,
 							Generator.Category.SCROLL)
 					);
 					break;
 				case 3:
-					item = Generator.random(Random.oneOf(
-							Generator.Category.WEAPON,
-							Generator.Category.ARMOR)
-					);
+					int roll = Random.Int(3);
+					if (roll == 0) {
+						item = new StoneOfEnchantment();
+					} else if (roll == 1) {
+						item = new PotionOfExperience();
+					} else {
+						item = new ScrollOfTransmutation();
+					}
 					break;
 			}
 			level.drop(item, pos);

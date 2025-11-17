@@ -261,7 +261,7 @@ public class GDChangesButton extends StyledButton {
 					}
 				}
 			};
-			btn4.setRect(0, pos, width/2f, BUTTON_HEIGHT);
+			btn4.setRect(0, pos, width, BUTTON_HEIGHT);
 			add(btn4);
 
 

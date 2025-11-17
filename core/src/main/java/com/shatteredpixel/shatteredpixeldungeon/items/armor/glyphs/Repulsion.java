@@ -34,6 +34,8 @@ public class Repulsion extends Armor.Glyph {
 	
 	@Override
 	public int proc( Armor armor, Char attacker, Char defender, int damage) {
+	    
+		if (attacker.alignment !=defender.alignment){
 		// lvl 0 - 20%
 		// lvl 1 - 33%
 		// lvl 2 - 43%
@@ -43,7 +45,7 @@ public class Repulsion extends Armor.Glyph {
 			int oppositeHero = attacker.pos + (attacker.pos - defender.pos);
 			Ballistica trajectory = new Ballistica(attacker.pos, oppositeHero, Ballistica.MAGIC_BOLT);
 			WandOfBlastWave.throwChar(attacker, trajectory, 2, true);
-		}
+		}}
 		
 		return damage;
 	}

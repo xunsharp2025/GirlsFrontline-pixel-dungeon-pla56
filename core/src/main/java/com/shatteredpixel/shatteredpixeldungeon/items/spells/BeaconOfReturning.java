@@ -111,13 +111,24 @@ public class BeaconOfReturning extends Spell {
 			return;
 		}
 		
+		// 检查是否有敌人，如果有则消耗两个回合
+		boolean hasEnemy = false;
 		for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
 			Char ch = Actor.findChar(hero.pos + PathFinder.NEIGHBOURS8[i]);
 			if (ch != null && ch.alignment == Char.Alignment.ENEMY) {
-				GLog.w( Messages.get(this, "creatures") );
-				return;
+								// if (hasEnemy) {
+								// GLog.w( Messages.get(this, "creatures") );
+								//  return;
+				hasEnemy = true;
+				break;
 			}
 		}
+		
+		// 设置消耗时间（有敌人时为2回合）
+		float delay = hasEnemy ? 2f : 1f;
+		hero.spend(delay);
+		hero.busy();
+		
 		
 		if (returnDepth == Dungeon.depth) {
 			if (!Dungeon.level.passable[returnPos] && !Dungeon.level.avoid[returnPos]){

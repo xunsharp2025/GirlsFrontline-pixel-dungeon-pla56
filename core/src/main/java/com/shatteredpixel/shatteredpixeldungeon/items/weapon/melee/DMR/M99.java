@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR;
 
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
 public class M99 extends DesignatedMarksmanRifle {
@@ -30,7 +32,19 @@ public class M99 extends DesignatedMarksmanRifle {
 
 		tier = 5;
 		ACC = 2f;	// 60% additional accuracy
+		DLY = 1.5f;	// 攻击延迟设置为1.5f
+		RCH = 3;
 	}
+
+	@Override
+    public boolean canReach(Char owner, int target) {
+        // 15级及以上时无视墙体，只检查距离；15级以下使用默认的可达性检查
+        //if (level() >= 15) {
+          //  return Dungeon.level.distance(owner.pos, target) <= reachFactor(owner);
+        //} else {
+            return super.canReach(owner, target);
+        }
+    //}
 
 	@Override
 	public int max(int lvl) {

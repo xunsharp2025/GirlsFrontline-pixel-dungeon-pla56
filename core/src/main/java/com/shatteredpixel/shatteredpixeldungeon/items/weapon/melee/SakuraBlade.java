@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AllyBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
@@ -240,7 +241,7 @@ public class SakuraBlade extends MeleeWeapon {
     }
     
     // 修改现有Cooldown类为CooldownTracker，负责冷却时间递减
-    public static class CooldownTracker extends Buff {
+    public static class CooldownTracker extends AllyBuff {
         {
             type = buffType.NEGATIVE;
         }

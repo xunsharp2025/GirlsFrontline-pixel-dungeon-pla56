@@ -158,8 +158,25 @@ public abstract class ChampionEnemy extends Buff {
 		}
 
 		@Override
-		public boolean canAttackWithExtraReach( Char enemy ) {
-			return target.fieldOfView[enemy.pos]; //if it can see it, it can attack it.
+		public boolean canAttackWithExtraReach(Char enemy) {
+			// 首先检查目标与敌人之间的距离是否在4格以内
+			if (Dungeon.level.distance(target.pos, enemy.pos) > 4) {
+				return false;
+			}
+			
+			// 创建一个通行地图，将除了自身之外的其他角色都视为障碍物
+			boolean[] passable = BArray.not(Dungeon.level.solid, null);
+			for (Char ch : Actor.chars()) {
+				if (ch != target) {
+					passable[ch.pos] = false;
+				}
+			}
+			
+			// 使用PathFinder构建从敌人位置出发的距离图
+			PathFinder.buildDistanceMap(enemy.pos, passable, 4);
+			
+			// 最终判断是否存在可行的攻击路径
+			return PathFinder.distance[target.pos] <= 4;
 		}
 	}
 
