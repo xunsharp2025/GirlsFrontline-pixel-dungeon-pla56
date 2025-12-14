@@ -30,6 +30,8 @@ public class SaigaPlate extends BulletProof {
 		image = ItemSpriteSheet.GREATSHIELD;
 
 		tier = 5;
+        DEF = 10;
+        DEFUPGRADE = 3;
 	}
 
 	@Override
@@ -38,8 +40,4 @@ public class SaigaPlate extends BulletProof {
 				lvl*(tier-2);                   //+3 per level, down from +6
 	}
 
-	@Override
-	public int defenseFactor( Char owner ) {
-		return 10 + 3 * level();    //10 extra defence, plus 3 per level;
-	}
 }

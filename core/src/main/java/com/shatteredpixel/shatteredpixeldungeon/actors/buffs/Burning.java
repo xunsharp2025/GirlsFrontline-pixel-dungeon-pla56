@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Thief;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.Brimstone;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.ChargrilledMeat;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.FrozenCarpaccio;
@@ -126,7 +127,7 @@ public class Burning extends Buff implements Hero.Doom {
 					}
 				}
 				
-			} else {
+			}else {
 				target.damage( damage, this );
 			}
 
@@ -170,7 +171,28 @@ public class Burning extends Buff implements Hero.Doom {
 	}
 	
 	public void reignite( Char ch, float duration ) {
-		left = duration;
+        if (ch.isImmune(Burning.class)&&ch instanceof Hero ) {
+            Hero hero = (Hero) ch;
+            if(hero.belongings.armor != null &&hero.belongings.armor.hasGlyph(Brimstone.class, hero)) {
+                float BrimstoneShieldInc = 0;
+                int level = Math.max(0, hero.belongings.armor.buffedLvl());
+
+                boolean luck = Random.Int(level + 40) >= 36;
+                boolean thorns = Random.Int(level + 12) >= 10;
+                if (thorns) {
+                    BrimstoneShieldInc += (float) level / 2 + (float) Dungeon.curDepth() / 5;
+                }
+                Barrier barrier = Buff.affect(ch, Barrier.class);
+                while (BrimstoneShieldInc >= 1) {
+                    BrimstoneShieldInc--;
+                    barrier.incShield(1);
+                }
+            }
+        }
+
+        if (this.left < duration) {
+            this.left = duration;
+        }
 	}
 	
 	@Override

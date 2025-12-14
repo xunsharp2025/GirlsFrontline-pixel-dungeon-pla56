@@ -30,6 +30,7 @@ public class M1a1 extends SubMachineGun {
 		image = ItemSpriteSheet.M1A1;
 
 		tier = 2;
+        DEF = 3;
 	}
 
 	@Override
@@ -38,8 +39,4 @@ public class M1a1 extends SubMachineGun {
 				lvl*(tier+1);   //scaling unchanged
 	}
 
-	@Override
-	public int defenseFactor( Char owner ) {
-		return 3;	//3 extra defence
-	}
 }

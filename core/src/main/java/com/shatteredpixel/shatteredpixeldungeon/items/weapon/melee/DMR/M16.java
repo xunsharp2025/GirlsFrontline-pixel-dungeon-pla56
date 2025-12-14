@@ -30,6 +30,8 @@ public class M16 extends DesignatedMarksmanRifle {
 		image = ItemSpriteSheet.M16;
 
 		tier = 2;
+        DEF = 3;
+        DEFUPGRADE = 1;
 	}
 
 	@Override
@@ -38,8 +40,4 @@ public class M16 extends DesignatedMarksmanRifle {
 				lvl*Math.round(0.8f*(tier+1));   //+2 per level, down from +4
 	}
 
-	@Override
-	public int defenseFactor( Char owner ) {
-		return 3 + level();
-	}
 }

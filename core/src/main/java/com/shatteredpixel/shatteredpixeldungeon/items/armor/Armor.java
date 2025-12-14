@@ -104,7 +104,7 @@ public class Armor extends EquipableItem {
 	public boolean curseInfusionBonus = false;
 	public boolean masteryPotionBonus = false;
 	
-	private BrokenSeal seal;
+	protected BrokenSeal seal;
 	
 	public int tier;
 	
@@ -181,11 +181,11 @@ public class Armor extends EquipableItem {
 				degrade();
 			}
 			if (detaching.getGlyph() != null){
-				if (hero.hasTalent(Talent.RUNIC_TRANSFERENCE)
+				if (hero.lvl>=6&&hero.hasTalentA(Talent.RUNIC_TRANSFERENCE)
 						&& (Arrays.asList(Glyph.common).contains(detaching.getGlyph().getClass())
 							|| Arrays.asList(Glyph.uncommon).contains(detaching.getGlyph().getClass()))){
 					inscribe(null);
-				} else if (hero.pointsInTalent(Talent.RUNIC_TRANSFERENCE) == 2){
+				} else if (hero.pointsInTalent(Talent.RUNIC_TRANSFERENCE) >= 1){
 					inscribe(null);
 				} else {
 					detaching.setGlyph(null);
@@ -615,10 +615,10 @@ public class Armor extends EquipableItem {
 	
 	public static abstract class Glyph implements Bundlable {
 		
-		private static final Class<?>[] common = new Class<?>[]{
+		public static final Class<?>[] common = new Class<?>[]{
 				Obfuscation.class, Swiftness.class, Viscosity.class, Potential.class };
 		
-		private static final Class<?>[] uncommon = new Class<?>[]{
+		public static final Class<?>[] uncommon = new Class<?>[]{
 				Brimstone.class, Stone.class, Entanglement.class,
 				Repulsion.class, Camouflage.class, Flow.class };
 		

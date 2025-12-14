@@ -32,10 +32,8 @@ public class SAIGA extends SubMachineGun {
         tier=6;
         DLY = 0.5f;
         ACC = 1.27f; //27% boost to accuracy
+        DEF = 5;
+        DEFUPGRADE = 2;
     }
 
-    @Override
-    public int defenseFactor( Char owner ) {
-        return 5+2*level();     //5 extra defence, plus 2 per level;
-    }
 }

@@ -39,38 +39,50 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndTradeItem;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Callback;
+import com.watabou.utils.PathFinder;
+import com.watabou.utils.Random;
 
 public class Shopkeeper extends NPC {
 
-	{
-		spriteClass = ShopkeeperSprite.class;
+    private int turnsSinceHarmed;
 
+    {
+		spriteClass = ShopkeeperSprite.class;
+        turnsSinceHarmed = -1;
 		properties.add(Property.IMMOVABLE);
 	}
-	
-	@Override
-	protected boolean act() {
 
-		if (Dungeon.level.heroFOV[pos]){
-			Notes.add(Notes.Landmark.SHOP);
-		}
-		
-		sprite.turnTo( pos, Dungeon.hero.pos );
-		spend( TICK );
-		return super.act();
-	}
-	
-	@Override
-	public void damage( int dmg, Object src ) {
-		flee();
-	}
-	
-	@Override
-	public void add( Buff buff ) {
-		flee();
-	}
-	
-	public void flee() {
+
+    protected boolean act() {
+        if (this.turnsSinceHarmed >= 0) {
+            ++this.turnsSinceHarmed;
+        }
+        this.sprite.turnTo(this.pos, Dungeon.hero.pos);
+        this.spend(1.0F);
+        return super.act();
+    }
+
+    public void damage(int dmg, Object src) {
+        this.processHarm();
+    }
+
+    public void add(Buff buff) {
+        if (buff.type == Buff.buffType.NEGATIVE) {
+            this.processHarm();
+        }else{
+            super.add(buff);
+        }
+    }
+    public void processHarm() {
+            if (this.turnsSinceHarmed < 1) {
+                this.turnsSinceHarmed = 0;
+                this.yell(Messages.get(this, "warn"));
+            }else {
+                this.flee();
+            }
+    }
+
+    public void flee() {
 		destroy();
 
 		Notes.remove(Notes.Landmark.SHOP);
@@ -108,8 +120,13 @@ public class Shopkeeper extends NPC {
 		&& item instanceof Food){
 			rate-=0.2f*Dungeon.hero.pointsInTalent(Talent.BARGAIN_SKILLS);
 		}
+        int pay = Math.max(item.value()*2,(int)(item.value()*rate*(Dungeon.curDepth()+4f)));
 
-		return Math.max(item.value()*2,(int)(item.value()*rate*(Dungeon.curDepth()+4f)));
+        if(item.selled){
+            return item.value()*10;
+        }
+
+		return pay;
 	}
 	
 	public static WndBag sell() {

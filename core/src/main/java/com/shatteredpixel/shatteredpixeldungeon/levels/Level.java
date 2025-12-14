@@ -139,6 +139,7 @@ public abstract class Level implements Bundlable {
 	public boolean[] avoid;
 	public boolean[] water;
 	public boolean[] pit;
+    public boolean[] breakable;
 
 	public boolean[] openSpace;
 	
@@ -195,12 +196,14 @@ public abstract class Level implements Bundlable {
 		
 		if (!(Dungeon.bossLevel())) {
 
-			if (Dungeon.isChallenged(Challenges.NO_FOOD)){
-				//addItemToSpawn( new SmallRation() );  // 在NO_FOOD挑战模式下添加小份口粮
-				addItemToSpawn(Generator.random(Generator.Category.FOOD));  // 在NO_FOOD挑战模式下生成正常食物
-			} else {
-				addItemToSpawn(Generator.random(Generator.Category.FOOD));  // 正常模式下随机生成食物
-			}
+//			if (Dungeon.isChallenged(Challenges.NO_FOOD)){
+//				//addItemToSpawn( new SmallRation() );  // 在NO_FOOD挑战模式下添加小份口粮
+//				addItemToSpawn(Generator.random(Generator.Category.FOOD));  // 在NO_FOOD挑战模式下生成正常食物
+//			} else {
+//				addItemToSpawn(Generator.random(Generator.Category.FOOD));  // 正常模式下随机生成食物
+//			}
+//饥荒挑战下的食物生成差分，现在无用，所以注释掉
+            addItemToSpawn(Generator.random(Generator.Category.FOOD));
 
 			if (Dungeon.isChallenged(Challenges.DARKNESS)){
 				addItemToSpawn( new Torch() );
@@ -307,6 +310,7 @@ public abstract class Level implements Bundlable {
 		avoid		= new boolean[length];
 		water		= new boolean[length];
 		pit			= new boolean[length];
+        breakable	= new boolean[length];
 
 		openSpace   = new boolean[length];
 		
@@ -586,6 +590,7 @@ public abstract class Level implements Bundlable {
 
 		@Override
 		protected boolean act() {
+            //此处是循环刷怪
 
 			if (Dungeon.level.mobCount() < Dungeon.level.mobLimit()) {
 
@@ -615,10 +620,14 @@ public abstract class Level implements Bundlable {
 	}
 
 	public boolean spawnMob(int disLimit){
+        //此处是循环刷怪所用到的生成怪物
 		PathFinder.buildDistanceMap(Dungeon.hero.pos, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
 
 		Mob mob = Dungeon.level.createMob();
-		mob.state = mob.WANDERING;
+        if(mob.state!=mob.PASSIVE){
+            mob.state = mob.WANDERING;
+            //从默认警戒/进攻改为，当初始行动逻辑不为中立/被动时，再赋予警戒/进攻
+        }
 		mob.pos = Dungeon.level.randomRespawnCell( mob );
 		if (Dungeon.hero.isAlive() && mob.pos != -1 && PathFinder.distance[mob.pos] >= disLimit) {
 			GameScene.add( mob );
@@ -694,6 +703,7 @@ public abstract class Level implements Bundlable {
 			avoid[i]		= (flags & Terrain.AVOID) != 0;
 			water[i]		= (flags & Terrain.LIQUID) != 0;
 			pit[i]			= (flags & Terrain.PIT) != 0;
+            breakable[i]	= (flags & Terrain.BREAKABLE) != 0;
 		}
 
 		for (Blob b : blobs.values()){
@@ -738,7 +748,7 @@ public abstract class Level implements Bundlable {
 		//if raw tile type is flammable or empty
 		int terr = map[pos];
 		if (terr == Terrain.EMPTY || terr == Terrain.EMPTY_DECO
-				|| (Terrain.flags[map[pos]] & Terrain.FLAMABLE) != 0) {
+				|| (Terrain.flags[map[pos]] & Terrain.FLAMABLE) != 0 ) {
 			set(pos, Terrain.EMBERS);
 		}
 		Blob web = blobs.get(Web.class);
@@ -805,6 +815,7 @@ public abstract class Level implements Bundlable {
 		level.avoid[cell]			= (flags & Terrain.AVOID) != 0;
 		level.pit[cell]			    = (flags & Terrain.PIT) != 0;
 		level.water[cell]			= terrain == Terrain.WATER;
+        level.breakable[cell]		= (flags & Terrain.BREAKABLE) != 0;
 
 		for (int i : PathFinder.NEIGHBOURS9){
 			i = cell + i;

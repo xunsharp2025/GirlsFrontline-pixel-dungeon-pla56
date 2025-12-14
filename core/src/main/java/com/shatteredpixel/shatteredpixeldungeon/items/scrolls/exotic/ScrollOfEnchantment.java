@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
+
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
@@ -54,15 +56,20 @@ public class ScrollOfEnchantment extends ExoticScroll {
 	}
 
 	protected static boolean identifiedByUse = false;
+    @Override
+    public boolean isCost(){
+        return true;
+    }
 	
 	@Override
 	public void doRead() {
-		if (!isKnown()) {
-			identify();
-			identifiedByUse = true;
-		} else {
-			identifiedByUse = false;
-		}
+        if (!isKnown()) {
+            identify();
+            curItem = detach( hero.belongings.backpack );
+            identifiedByUse = true;
+        } else {
+            identifiedByUse = false;
+        }
 		GameScene.selectItem( itemSelector );
 	}
 
@@ -111,9 +118,13 @@ public class ScrollOfEnchantment extends ExoticScroll {
 
 		@Override
 		public void onSelect(final Item item) {
+            if(item != null){
+                if (!ScrollOfEnchantment.identifiedByUse && ScrollOfEnchantment.curItem instanceof ScrollOfEnchantment) {
+                    ScrollOfEnchantment.curItem.detach(ScrollOfEnchantment.curUser.belongings.backpack);
+                }
+            }
 			
 			if (item instanceof Weapon){
-				
 				final Weapon.Enchantment enchants[] = new Weapon.Enchantment[3];
 				
 				Class<? extends Weapon.Enchantment> existing = ((Weapon) item).enchantment != null ? ((Weapon) item).enchantment.getClass() : null;
@@ -164,7 +175,6 @@ public class ScrollOfEnchantment extends ExoticScroll {
 				});
 			
 			} else if (item instanceof Armor) {
-				
 				final Armor.Glyph glyphs[] = new Armor.Glyph[3];
 				
 				Class<? extends Armor.Glyph> existing = ((Armor) item).glyph != null ? ((Armor) item).glyph.getClass() : null;
@@ -214,9 +224,7 @@ public class ScrollOfEnchantment extends ExoticScroll {
 					}
 				});
 			} else {
-				if (!identifiedByUse){
-					curItem.collect();
-				} else {
+				if (identifiedByUse){
 					((ScrollOfEnchantment)curItem).confirmCancelation();
 				}
 			}

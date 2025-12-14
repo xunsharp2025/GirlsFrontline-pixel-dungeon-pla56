@@ -34,6 +34,8 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
+import com.watabou.utils.PathFinder;
+import com.watabou.utils.Random;
 
 public class WndTradeItem extends WndInfoItem {
 
@@ -180,11 +182,17 @@ public class WndTradeItem extends WndInfoItem {
 	public static void sell( Item item ) {
 		
 		Hero hero = Dungeon.hero;
-		
+
 		if (item.isEquipped( hero ) && !((EquipableItem)item).doUnequip( hero, false )) {
 			return;
 		}
 		item.detachAll( hero.belongings.backpack );
+
+        int ofs = PathFinder.NEIGHBOURS9[Random.Int(9)];
+        if (!item.selled&&!Dungeon.level.solid[hero.pos + ofs]&&Dungeon.level.heaps.get( hero.pos + ofs ) == null && Dungeon.level.passable[hero.pos + ofs]) {
+            Dungeon.level.drop(item, hero.pos + ofs).type = Heap.Type.FOR_SALE;
+            item.selled = true;
+        }
 
 		//selling items in the sell interface doesn't spend time
 		hero.spend(-hero.cooldown());
@@ -202,6 +210,11 @@ public class WndTradeItem extends WndInfoItem {
 			
 			item = item.detach( hero.belongings.backpack );
 
+            int ofs = PathFinder.NEIGHBOURS9[Random.Int(9)];
+            if (!item.selled&&!Dungeon.level.solid[hero.pos + ofs]&&Dungeon.level.heaps.get( hero.pos + ofs ) == null && Dungeon.level.passable[hero.pos + ofs]) {
+                Dungeon.level.drop(item, hero.pos + ofs).type = Heap.Type.FOR_SALE;
+                item.selled = true;
+            }
 			//selling items in the sell interface doesn't spend time
 			hero.spend(-hero.cooldown());
 
@@ -216,7 +229,7 @@ public class WndTradeItem extends WndInfoItem {
 		
 		int price = Shopkeeper.sellPrice( item );
 		Dungeon.gold -= price;
-		
+		item.selled = false;
 		if (!item.doPickUp( Dungeon.hero )) {
 			Dungeon.level.drop( item, heap.pos ).sprite.drop();
 		}

@@ -28,6 +28,8 @@ import java.util.ArrayList;
 
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
+    	add_0_5_5_4_Changes(changeInfos);
+    	add_0_5_5_3_Changes(changeInfos);
     	add_0_5_5_2_Changes(changeInfos);
     	add_0_5_5_1_Changes(changeInfos);
     	add_0_5_5_Changes(changeInfos);
@@ -39,6 +41,145 @@ public class v0_5_X_Changes {
 		add_0_5_1_Changes(changeInfos);
 		add_0_5_0_Changes(changeInfos);
     }
+
+    public static void add_0_5_5_4_Changes( ArrayList<ChangeInfo> changeInfos ){
+        ChangeInfo changes = new ChangeInfo("v0.5.5.4", true, "");
+        changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "buffs"), false, null);
+		changes.hardlight( CharSprite.POSITIVE );
+		changeInfos.add(changes);
+
+       changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.ARMOR_SCALE, null), "狱火附魔",
+		"_-_ _狱火附魔_强化了其能力，使其回归到过往版本的强度\n" +
+		"_-_ _狱火附魔_除了完全免疫火焰的能力外，处于燃烧状态还将概率获得_护盾_。"
+		));
+
+        Image kr = new Image(Assets.Sprites.KEEPER, 0 ,0 ,26 ,19);
+        kr.scale.x=0.8f;
+        kr.scale.y=0.8f;
+        changes.addButton(new ChangeButton(kr, "商店", 
+            "_-_ 格琳娜商店与P7商店现在可以以_10倍售价_买回_卖出的物品_，玩家卖出的商品将会出现在_玩家周围的空地上_并作为特殊的商店货物存在。\n"+
+			"_-_ 格琳娜与P7在_首次遭遇_不利情况时将会进行警告，_警告后_才会因为各种不利情况而_撤离_。\n"+ 
+			"_-_ 以_信用卡_进行_盗窃失败_依然会导致商人直接撤离！"
+        ));  
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.PICKAXE, null), "测试模式",
+		"_-_ 测试模式道具_流形护盾_实现了其计划中应有的效果。\n" +
+		"_-_ 启动_流形护盾_后，玩家将进入_无敌_状态，直至关闭。\n\n"+"_-_ 测试模式加入道具_玩家等级调整器_、_装备等级调整器_、_装备遗忘器_。"
+		));
+
+		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.TELE_GRAB, null), "念力晶柱",
+		"_-_ _念力晶柱_取回掉落地面的物品的能力获得了强化。\n" +
+		"_-_ 现在_念力晶柱_将可以取回一格内_尽可能多_的全部物品，直到玩家_无法拿取_。"
+		));
+
+		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CLEANSING_DART, null), ".50口径子弹",
+		"_-_ _净化子弹_新增对敌使用效果为清除目标_正面效果_，并_消除对玩家仇恨_。\n" +
+		"_-_ _激素子弹_新增对敌使用效果为_令目标残废_。"
+		));
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.SEAL, null), "破碎的外骨骼配件",
+		"_-_ UMP45角色2层天赋_刻印转移_效果改动，现在破碎的外骨骼配件_在角色6级后_就可以携带_普通或稀有护甲刻印_。\n" +
+		"_-_ _刻印转移_+1效果改动，破碎的外骨骼配件可以携带_全稀有度的护甲刻印_。\n"+
+		"_-_ _刻印转移_+2效果改动，破碎的外骨骼配件可以从带刻印的护甲上_吸取刻印并保留和转移_。"
+		));
+
+		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CROWN, null), "外骨骼升级组件",
+		"_-_ 现在被外骨骼升级组件_升级的护甲_不再具有唯一性。\n" +
+		"_-_ _升级的护甲_可以_卸下升级组件_并将组件安装到另一件护甲，但会_破坏原有的护甲_。"
+		));
+
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		changes.hardlight( CharSprite.WARNING );
+		changeInfos.add(changes);
+
+		Image imageTemp = new Image(Assets.Sprites.TROLL, 0 ,0 ,12 ,21);
+        imageTemp.scale.x=0.8f;
+        imageTemp.scale.y=0.8f;
+        changes.addButton(new ChangeButton(imageTemp, "游戏优化", 
+            "_-_ 现在玩家可以在_排行榜界面_查看已完成游戏的_种子码_了，但该版本前完成游戏的种子码将默认为9个A。\n"+
+			"_-_ 修订了数处文本错误。\n"+ 
+			"_-_ 将_梦想家_与_末日魔犬_的贴图加入游戏。\n"+
+			"_-_ 将_传送器_的贴图优化。\n"+
+			"_-_ 优化了部分地图的_渲染模式_，避免了_贴图重叠_的情况发生。\n"+
+			"_-_ 差分了_西蒙诺夫_与_带护甲的西蒙诺夫_的贴图与介绍文本，防止玩家无法正确估算其战斗力。\n"+
+			"_-_ 为离开兔子层增加了_提示文本_，防止有人在此_遗漏重要物品_。"
+        ));
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
+		changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+		Image gy = new Image(Assets.GOLYATPLUS, 0 ,0 ,22 ,23);
+        gy.scale.x=0.8f;
+        gy.scale.y=0.8f;
+        changes.addButton(new ChangeButton(gy, "歌利亚Plus", 
+        "_-_ 增加新敌人_歌利亚Plus_作为普通_歌利亚_的精英版本。\n" +
+		"_-_ _歌利亚Plus_移动速度较慢但_自爆威力极高_，请_不要近距离击杀！_\n"+
+		"_-_ _歌利亚Plus_将掉落_断腿的歌利亚_,可以破坏墙体和地面，且能_直接破坏任何容器_并获取内部物资。"
+		));
+
+		Image gp = new Image(Assets.Sprites.GNOLLSWAP, 0 ,0 ,16 ,21);
+        gp.scale.x=0.8f;
+        gp.scale.y=0.8f;
+        changes.addButton(new ChangeButton(gp, "切割者", 
+        "_-_ 增加新敌人_切割者_作为_巡游者_的精英版本。（从代码原理上来说是这样的）\n" +
+		"_-_ _切割者_攻击距离较远且初始处于中立，其_携带了大量的物资_，在受到威胁后，切割者将_转变为敌对状态！_"
+		));
+
+	}
+
+    public static void add_0_5_5_3_Changes( ArrayList<ChangeInfo> changeInfos ){
+        ChangeInfo changes = new ChangeInfo("v0.5.5.3", true, "");
+        changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "buffs"), false, null);
+		changes.hardlight( CharSprite.POSITIVE );
+		changeInfos.add(changes);
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.UMP45, null), "HK UMP45",
+		"_-_ 武器_UMP45_实验性的加入了_烟雾弹_技能\n" +
+		"_-_ _烟雾弹_可以短暂阻挡敌人的视野，但需要较长的_冷却时间_。"
+		));
+
+		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.C96, null), "毛瑟C96",
+		"_-_ 武器_毛瑟C96_的_照明弹_技能回归，并且变为主动技能\n" +
+		"_-_ _照明弹_能够为自身提供短暂的照明，以在黑暗环境中拥有更大范围的视野。"
+		));
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.STONE_DISARM, null), "晰除符石",
+		"_-_ 将_拆除符石_替换为了_晰除符石_，由_疫苗磁盘_拆解而来。\n" +
+		"_-_ _晰除符石_保留丢出_拆除范围陷阱_的能力，并增加了可使用以_鉴定物品_是否带有_病毒_的能力。"
+		));
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
+		changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+		changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_ON), "地图种子编辑器",
+			"_-_ 新增了_地图种子编辑器_，使用编辑器可以锚定特定地形的地图进行游戏了！\n"+
+			"_-_ 解锁方式与_挑战_的解锁方式相同，完成15层的冒险即可解锁\n"+
+			"_-_ 地图种子编辑器解锁后，位于_开始游戏_按钮的左侧"
+		));
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		changes.hardlight( CharSprite.WARNING );
+		changeInfos.add(changes);
+
+		Image imageTemp = new Image(Assets.Sprites.TROLL, 0 ,0 ,12 ,21);
+        imageTemp.scale.x=0.8f;
+        imageTemp.scale.y=0.8f;
+        changes.addButton(new ChangeButton(imageTemp, "BUG修复", 
+            "_-_ 修复了_人权组织成员_贴图错位的问题。\n"+
+			"_-_ 鹰眼的_充能秘术_天赋1/2/3级将不再提供4回合遗物充能。\n"+ 
+			"_-_ _虹色傀儡_和_增压器_将受益于_树肤_效果。\n"+
+			"_-_ _荆棘_和_反斥_附魔不再会对盟友造成伤害了。\n"
+        ));  
+    }
+
     public static void add_0_5_5_2_Changes( ArrayList<ChangeInfo> changeInfos ){
         ChangeInfo changes = new ChangeInfo("v0.5.5.2", true, "");
         changes.hardlight( Window.TITLE_COLOR );
@@ -47,10 +188,6 @@ public class v0_5_X_Changes {
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "buffs"), false, null);
 		changes.hardlight( CharSprite.POSITIVE );
 		changeInfos.add(changes);
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.GREATAXE,null), "灵刀·樱吹雪",
-			"_-_ _灵刀·樱吹雪_居合击杀后获得的升级冷却不会再被全面净化合剂净化而停止计数了。\n"
-		));
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.WILD_ENERGY,null), "返回结晶",
         "_-_ _返回结晶_的传送功能不再因为周围存在敌人而被_禁用_。\n"+
@@ -79,11 +216,9 @@ public class v0_5_X_Changes {
 		changeInfos.add(changes);
 
         Image ac = new Image(Assets.Sprites.CRAB, 0 ,0 ,15 ,18);
-        ac.scale.x=0.8f;
-        ac.scale.y=0.8f;
         changes.addButton(new ChangeButton(ac,"索敌精英",
-        	"_-_ 优化了_索敌精英_类敌人的索敌逻辑，当周围被阻拦时，索敌精英将不再可以攻击玩家。\n"+
-        	"_-_ 这意味着现在不会在被围困时被_索敌精英_类敌人直接攻击到了。"
+        	"_-_ 优化了_索敌精英_类敌人的索敌逻辑，索敌精英将不能越过单位直接攻击玩家。\n"+
+        	"_-_ 这意味着现在不会在被围困时被_索敌精英_类敌人从远处直接攻击到了。"
         ));
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.MACCOL,null), "大麦味可乐",
@@ -91,7 +226,11 @@ public class v0_5_X_Changes {
         "_-_ 现在商店中的_压缩饼干_将有概率变为_大麦味可乐_！"
         ));
 
-        changes.addButton( new ChangeButton(Icons.get(Icons.WARNING), "_在线更新系统重置_",
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.GREATAXE,null), "灵刀·樱吹雪",
+			"_-_ _灵刀·樱吹雪_使用居合击杀后获得的升级冷却不会再因为全面净化合剂而停止计数了。\n"
+		));
+
+        changes.addButton( new ChangeButton(Icons.get(Icons.WARNING), "在线更新系统重置",
         	"_-_ 旧版在线更新系统因为一些原因_不再被支持_，新的在线更新系统已经重新加入游戏！\n"+
         	"_-_ 新版在线更新系统需要以本版本为基础，因此本版本必须_手动下载_安装包并且进行更新。\n"
         ));
@@ -101,14 +240,12 @@ public class v0_5_X_Changes {
         imageTemp.scale.y=0.8f;
         changes.addButton(new ChangeButton(imageTemp, "BUG修复", 
             "_-_ 现在艾尔菲尔特被击败后，将不会清理掉地面的_掉落物_了。\n"+
-            "_-_ _ND-B子弹配件_击败艾尔菲尔特将不再会导致闪退\n"+
-            "_-_ 艾尔菲尔特被击败后，玩家的_盟友_将不再会被清除\n"+
-			"_-_ 已修复鹰眼的充能秘术天赋1/2/3级均提供4回合神器充能的BUG\n"+ "_-_ 已修复虹卫和增压器不受益于树肤buff的问题\n\n"+
-			"_-_ 已修复荆棘和反斥对盟友造成伤害的BUG\n"
+            "_-_ _ND-B子弹配件_击败艾尔菲尔特将不再会导致闪退。\n"+
+            "_-_ 艾尔菲尔特被击败后，玩家的_盟友_将不再会被清除。\n"
         ));  
         
         changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.GLAIVE, null), "M99",
-            "_-_ M99的攻击削为_1.5_回合，但攻击范围_+1_；\n"
+            "_-_ M99的攻击速度略微降低，但射程略微增加。\n"
         ));
 	}
 	

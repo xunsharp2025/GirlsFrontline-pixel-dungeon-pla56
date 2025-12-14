@@ -33,6 +33,7 @@ public class SR3 extends UniversaleGun {
         image = ItemSpriteSheet.SR3;
 
         tier = 1;
+        DEF = 3;
     }
 
     @Override
@@ -60,10 +61,6 @@ public class SR3 extends UniversaleGun {
             }
         }
         return super.damageRoll(owner);
-    }
-    @Override
-    public int defenseFactor( Char owner ) {
-        return 3;	//3 extra defence
     }
 
 }

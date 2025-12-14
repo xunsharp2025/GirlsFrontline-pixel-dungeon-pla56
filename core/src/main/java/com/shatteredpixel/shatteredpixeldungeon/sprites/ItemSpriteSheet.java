@@ -180,6 +180,7 @@ public class ItemSpriteSheet {
 	public static final int NOISEMAKER      = BOMBS+9;
 	public static final int ARCANE_BOMB     = BOMBS+10;
 	public static final int SHRAPNEL_BOMB   = BOMBS+11;
+    public static final int GOLYAT_BOMB     = BOMBS+12;
 	
 	static{
 		assignItemRect(BOMB,            10, 13);
@@ -194,6 +195,7 @@ public class ItemSpriteSheet {
 		assignItemRect(NOISEMAKER,      10, 13);
 		assignItemRect(ARCANE_BOMB,     10, 13);
 		assignItemRect(SHRAPNEL_BOMB,   10, 13);
+        assignItemRect(GOLYAT_BOMB,     14, 13);
 	}
 
 	
@@ -339,8 +341,9 @@ public class ItemSpriteSheet {
 	public static final int POISON_DART     = TIPPED_DARTS+10;
 	public static final int ROT_DART        = TIPPED_DARTS+11;
 	public static final int SHOCKING_DART   = TIPPED_DARTS+12;
+	public static final int SMOKEUmp45   = TIPPED_DARTS+13;
 	static {
-		for (int i = TIPPED_DARTS; i < TIPPED_DARTS+13; i++)
+		for (int i = TIPPED_DARTS; i < TIPPED_DARTS+14; i++)
 			assignItemRect(i, 15, 15);
 	}
 	
@@ -478,7 +481,7 @@ public class ItemSpriteSheet {
 	                                                                                    //16 free slots
 		
 	//卷轴行
-	private static final int SCROLLS        =                               xy(1, 19);  //16 slots
+	public static final int SCROLLS        =                               xy(1, 19);  //16 slots
 	public static final int SCROLL_KAUNAN   = SCROLLS+0;
 	public static final int SCROLL_SOWILO   = SCROLLS+1;
 	public static final int SCROLL_LAGUZ    = SCROLLS+2;
@@ -515,6 +518,7 @@ public class ItemSpriteSheet {
 	public static final int EXOTIC_BERKANAN = EXOTIC_SCROLLS+9;
 	public static final int EXOTIC_ODAL     = EXOTIC_SCROLLS+10;
 	public static final int EXOTIC_TIWAZ    = EXOTIC_SCROLLS+11;
+    public static final int EXTRACTUPGRADE  = EXOTIC_SCROLLS+12;
 	static {
 		for (int i = EXOTIC_SCROLLS; i < EXOTIC_SCROLLS+16; i++)
 			assignItemRect(i, 15, 14);

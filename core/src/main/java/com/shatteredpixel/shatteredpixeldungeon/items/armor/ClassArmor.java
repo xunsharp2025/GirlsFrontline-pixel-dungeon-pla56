@@ -21,17 +21,26 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.armor;
 
+import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndChooseAbility;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 
 import java.text.DecimalFormat;
@@ -40,8 +49,12 @@ import java.util.ArrayList;
 abstract public class ClassArmor extends Armor {
 
 	private static final String AC_ABILITY = "ABILITY";
-	
-	{
+    private static final String AC_TRANSFER = "TRANSFER";
+    private static final String ARMOR_TIER	= "armortier";
+    private static final String CHARGE	    = "charge";
+
+
+    {
 		levelKnown = true;
 		cursedKnown = true;
 		defaultAction = AC_ABILITY;
@@ -109,18 +122,23 @@ abstract public class ClassArmor extends Armor {
 		classArmor.tier = armor.tier;
 		classArmor.augment = armor.augment;
 		classArmor.inscribe( armor.glyph );
+        if (armor.seal != null) {
+            classArmor.seal = armor.seal;
+        }
 		classArmor.cursed = armor.cursed;
 		classArmor.curseInfusionBonus = armor.curseInfusionBonus;
 		classArmor.masteryPotionBonus = armor.masteryPotionBonus;
-		classArmor.identify();
+        if (armor.levelKnown && armor.cursedKnown) {
+            classArmor.identify();
+        } else {
+            classArmor.levelKnown = armor.levelKnown;
+            classArmor.cursedKnown = true;
+        }
 
 		classArmor.charge = 50;
 		
 		return classArmor;
 	}
-
-	private static final String ARMOR_TIER	= "armortier";
-	private static final String CHARGE	    = "charge";
 
 	@Override
 	public void storeInBundle( Bundle bundle ) {
@@ -142,6 +160,8 @@ abstract public class ClassArmor extends Armor {
 		if (isEquipped( hero )) {
 			actions.add( AC_ABILITY );
 		}
+
+        actions.add(AC_TRANSFER);
 		return actions;
 	}
 
@@ -180,7 +200,69 @@ abstract public class ClassArmor extends Armor {
 				hero.armorAbility.use(this, hero);
 			}
 			
-		}
+		}else if (action.equals(AC_TRANSFER)) {
+            GameScene.show(new WndOptions(new ItemSprite(ItemSpriteSheet.CROWN), Messages.get(ClassArmor.class, "transfer_title", new Object[0]), Messages.get(ClassArmor.class, "transfer_desc", new Object[0]), new String[]{Messages.get(ClassArmor.class, "transfer_prompt", new Object[0]), Messages.get(ClassArmor.class, "transfer_cancel", new Object[0])}) {
+                protected void onSelect(int index) {
+                    if (index == 0) {
+                        GameScene.selectItem(new WndBag.ItemSelector() {
+                            public String textPrompt() {
+                                return Messages.get(ClassArmor.class, "transfer_prompt", new Object[0]);
+                            }
+
+                            public boolean itemSelectable(Item item) {
+                                return (item instanceof Armor)&&(item != ClassArmor.this);
+                            }
+
+                            public void onSelect(Item item) {
+                                if (item != null && item != ClassArmor.this) {
+                                    Armor armor = (Armor)item;
+                                    armor.detach(hero.belongings.backpack);
+                                    if (hero.belongings.armor == armor) {
+                                        hero.belongings.armor = null;
+                                        if (hero.sprite instanceof HeroSprite) {
+                                            ((HeroSprite)hero.sprite).updateArmor();
+                                        }
+                                    }
+
+                                    ClassArmor.this.level(armor.trueLevel());
+                                    ClassArmor.this.tier = armor.tier;
+                                    ClassArmor.this.augment = armor.augment;
+                                    ClassArmor.this.cursed = armor.cursed;
+                                    ClassArmor.this.curseInfusionBonus = armor.curseInfusionBonus;
+                                    ClassArmor.this.masteryPotionBonus = armor.masteryPotionBonus;
+                                    if (armor.checkSeal() != null) {
+                                        ClassArmor.this.inscribe(armor.glyph);
+                                        ClassArmor.this.seal = armor.checkSeal();
+                                    } else if (ClassArmor.this.checkSeal() != null) {
+                                        if (ClassArmor.this.seal.level() > 0) {
+                                            int newLevel = ClassArmor.this.trueLevel() + 1;
+                                            ClassArmor.this.level(newLevel);
+                                            Badges.validateItemLevelAquired(ClassArmor.this);
+                                        }
+
+                                        if (armor.glyph != null || !ClassArmor.this.seal.canTransferGlyph()) {
+                                            ClassArmor.this.inscribe(armor.glyph);
+                                            ClassArmor.this.seal.setGlyph((Armor.Glyph)null);
+                                        }
+                                    } else {
+                                        ClassArmor.this.inscribe(armor.glyph);
+                                    }
+
+                                    ClassArmor.this.identify();
+                                    GLog.p(Messages.get(ClassArmor.class, "transfer_complete", new Object[0]), new Object[0]);
+                                    hero.sprite.operate(hero.pos);
+                                    hero.sprite.emitter().burst(Speck.factory(104), 12);
+                                    Sample.INSTANCE.play("sounds/evoke.mp3");
+                                    hero.spend(1.0F);
+                                    hero.busy();
+                                }
+                            }
+                        });
+                    }
+
+                }
+            });
+        }
 	}
 
 	@Override

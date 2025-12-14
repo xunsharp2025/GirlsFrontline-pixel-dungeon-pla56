@@ -42,6 +42,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Sh
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.AttributeViewer;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.BackpackCleaner;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.CustomWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.ImmortalShieldAffecter;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.LevelTeleporter;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.MobPlacer;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.TestBag;
@@ -52,6 +53,9 @@ import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.MapEditor;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.LazyTest;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestArmor;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestArtifact;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestExperience;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestIdentify;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestLevelSetting;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestMelee;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestMissile;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestPotion;
@@ -129,9 +133,9 @@ public enum HeroClass {
 		Waterskin waterskin = new Waterskin();
 		waterskin.collect();
 
-		if (DeviceCompat.isDebug()){
-			new MapEditor().collect();
-		}
+//		if (DeviceCompat.isDebug()){
+//			new MapEditor().collect();
+//		}
 
 		if (DeviceCompat.isDebug() || Dungeon.isChallenged(Challenges.TEST_MODE)){
 			CustomWeapon customWeapon = new CustomWeapon();
@@ -139,21 +143,27 @@ public enum HeroClass {
 			customWeapon.identify().collect();
 			
 			new TestBag().collect();
-
+            new TestLevelSetting().collect();
+            new TestIdentify().collect();
+            new TestExperience().collect();
+            
+            new ImmortalShieldAffecter().collect();
+            
 			new TrapPlacer().collect();
-
+			
 			new MobPlacer().collect();
-
+			
 			new Cannon().identify().collect();
-
+			
 			new TimeReverser().collect();
-
+			
 			new BackpackCleaner().collect();
-
+			
 			new LevelTeleporter().collect();
-
+			
 			new LazyTest().collect();
-
+            new MapEditor().collect();
+            
 			new TestArmor().collect();
 			new TestArtifact().collect();
 			new TestMelee().collect();
@@ -161,18 +171,18 @@ public enum HeroClass {
 			new TestRing().collect();
 			new TestPotion().collect();
 			new AttributeViewer().collect();
-
+			
 			new ScrollHolder().collect();
 			Dungeon.LimitedDrops.SCROLL_HOLDER.drop();
-
+			
 			new PotionBandolier().collect();
 			Dungeon.LimitedDrops.POTION_BANDOLIER.drop();
-
+			
 			new MagicalHolster().collect();
 			Dungeon.LimitedDrops.MAGICAL_HOLSTER.drop();
-
+			
 			waterskin.fill();
-
+			
 			new WandOfReflectDisintegration().identify().collect();
 		}
 
@@ -196,13 +206,14 @@ public enum HeroClass {
 				break;
 
 			case TYPE561:
-			initType561( hero );
-			break;
-		case GSH18:
-			initGSH18( hero );
-			break;
+				initType561( hero );
+				break;
 
-	}
+			case GSH18:
+				initGSH18( hero );
+				break;
+
+			}
 
 		for (int s = 0; s < QuickSlot.SIZE; s++){
 			if (Dungeon.quickslot.getItem(s) == null){
@@ -228,9 +239,9 @@ public enum HeroClass {
 			case HUNTRESS:
 				return Badges.Badge.MASTERY_HUNTRESS;
 			case TYPE561:
-			return Badges.Badge.MASTERY_TYPE561;
-		case GSH18:
-			return Badges.Badge.MASTERY_GSH18;
+				return Badges.Badge.MASTERY_TYPE561;
+			case GSH18:
+				return Badges.Badge.MASTERY_GSH18;
 	}
 		return null;
 	}
@@ -279,11 +290,11 @@ public enum HeroClass {
 
 	private static void initHuntress( Hero hero ) {
 		(hero.belongings.weapon = new M9()).identify();
-
+		
 		SpiritBow bow = new SpiritBow();
 		bow.identify().collect();
 		Dungeon.quickslot.setSlot(0, bow);
-
+		
 		new PotionOfMindVision().identify();
 		new ScrollOfLullaby().identify();
 	}
@@ -337,9 +348,9 @@ public enum HeroClass {
 			case HUNTRESS:
 				return new ArmorAbility[]{new SpectralBlades(), new NaturesPower(), new SpiritHawk()};
 			case TYPE561:
-			return new ArmorAbility[]{};
-		case GSH18:
-			return new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()}; // 使用战士的技能
+				return new ArmorAbility[]{};
+			case GSH18:
+				return new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()}; // 使用战士的技能
 	}
 	}
 
@@ -355,9 +366,9 @@ public enum HeroClass {
 				return Assets.Sprites.HK416;
 				//return Assets.Sprites.HUNTRESS;
 			case TYPE561:
-			return Assets.Sprites.TYPE561;
-		case GSH18:
-			return Assets.Sprites.GSH18; // 使用正确的GSH18精灵
+				return Assets.Sprites.TYPE561;
+			case GSH18:
+				return Assets.Sprites.GSH18; // 使用正确的GSH18精灵
 		}
 	}
 
@@ -445,9 +456,9 @@ public enum HeroClass {
 			case HUNTRESS:
 				return Badges.isUnlocked(Badges.Badge.UNLOCK_HUNTRESS);
 			case TYPE561:
-			return Badges.isUnlocked(Badges.Badge.UNLOCK_TYPE561);
-		case GSH18:
-			return Badges.isUnlocked(Badges.Badge.UNLOCK_GSH18);
+				return Badges.isUnlocked(Badges.Badge.UNLOCK_TYPE561);
+			case GSH18:
+				return Badges.isUnlocked(Badges.Badge.UNLOCK_GSH18);
 	}
 	}
 	
@@ -462,9 +473,9 @@ public enum HeroClass {
 			case HUNTRESS:
 				return Messages.get(HeroClass.class, "huntress_unlock");
 			case TYPE561:
-			return Messages.get(HeroClass.class, "type561_unlock");
-		case GSH18:
-			return Messages.get(HeroClass.class, "gsh18_unlock");
+				return Messages.get(HeroClass.class, "type561_unlock");
+			case GSH18:
+				return Messages.get(HeroClass.class, "gsh18_unlock");
 	}
 	}
 }

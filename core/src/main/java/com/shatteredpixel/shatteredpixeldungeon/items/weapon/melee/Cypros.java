@@ -119,7 +119,8 @@ public class Cypros extends MeleeWeapon {
                 image = ItemSpriteSheet.TRAVAILLER;
                 RCH = 1;
                 DLY = 1f;
-                ACC = 0.9f;
+                DEF = 5;
+                DEFUPGRADE = 2;
                 timeChange = 2f;
                 ACC = 1.1f;
                 timeChange += 3.0f;
@@ -135,7 +136,6 @@ public class Cypros extends MeleeWeapon {
                 image = ItemSpriteSheet.MAGNUMWEDDING;
                 RCH = 1;
                 DLY = 1f;
-                ACC = 1.25f;
                 timeChange = 1f;
                 ACC = 1.25f;
                 timeChange += 0.5f;
@@ -228,15 +228,6 @@ public class Cypros extends MeleeWeapon {
         }
     }
 
-    @Override
-    public int defenseFactor( Char owner ) {
-        switch (mode) {
-            case CONFIRE: case MAGNUM: default:
-                return 0;
-            case TRAVAILLER:
-                return 5+Math.round(1.66f*level());     //5 extra defence, plus 2 per level;
-        }
-    }
 
     @Override
     public ArrayList<String> actions(Hero hero) {

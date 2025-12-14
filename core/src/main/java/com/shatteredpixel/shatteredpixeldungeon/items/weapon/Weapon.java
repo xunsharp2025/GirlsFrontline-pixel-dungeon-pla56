@@ -69,6 +69,8 @@ abstract public class Weapon extends KindOfWeapon {
 	public float    ACC = 1f;	// Accuracy modifier
 	public float	DLY	= 1f;	// Speed modifier
 	public int      RCH = 1;    // Reach modifier (only applies to melee hits)
+    public int DEF = 0;
+    public int DEFUPGRADE = 0;
 
 	public enum Augment {
 		SPEED   (0.7f, 0.6667f),
@@ -230,6 +232,10 @@ abstract public class Weapon extends KindOfWeapon {
 		
 		return reach;
 	}
+
+    public int defenseFactor( Char owner ) {
+        return DEF+DEFUPGRADE*buffedLvl();
+    }
 
 	public int STRReq(){
 		int req = STRReq(level());

@@ -44,12 +44,24 @@ public class ScrollOfSirensSong extends ExoticScroll {
 	{
 		icon = ItemSpriteSheet.Icons.SCROLL_SIREN;
 	}
-	
+
+    boolean identifiedByUse = false;
+    @Override
+    public boolean isCost(){
+        return true;
+    }
 	@Override
-	public void doRead() {
-		if (!anonymous) curItem.collect(); //we detach it later
-		GameScene.selectCell(targeter);
-	}
+    public void doRead() {
+        if (!this.isKnown()) {
+            this.identify();
+            curItem = this.detach(curUser.belongings.backpack);
+            identifiedByUse = true;
+        } else {
+            identifiedByUse = false;
+        }
+
+        GameScene.selectCell(this.targeter);
+    }
 
 	private CellSelector.Listener targeter = new CellSelector.Listener() {
 
@@ -72,9 +84,6 @@ public class ScrollOfSirensSong extends ExoticScroll {
 				return;
 
 			} else {
-
-				detach(curUser.belongings.backpack);
-
 				curUser.sprite.centerEmitter().start( Speck.factory( Speck.HEART ), 0.2f, 5 );
 				Sample.INSTANCE.play( Assets.Sounds.CHARMS );
 				Sample.INSTANCE.playDelayed( Assets.Sounds.LULLABY, 0.1f );
@@ -99,6 +108,10 @@ public class ScrollOfSirensSong extends ExoticScroll {
 					GLog.w(Messages.get(ScrollOfSirensSong.class, "no_target"));
 				}
 
+                if (!identifiedByUse) {
+                    ScrollOfSirensSong.curItem.detach(ScrollOfSirensSong.curUser.belongings.backpack);
+                }
+                identifiedByUse = false;
 				identify();
 
 				readAnimation();

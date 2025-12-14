@@ -18,6 +18,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Firebomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Flashbang;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.FrostBomb;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.GolyatBomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.HolyBomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Noisemaker;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.RegrowthBomb;
@@ -402,7 +403,8 @@ public class TestPotion extends TestGenerator {
             case 7: return RegrowthBomb.class;
             case 8: return ShockBomb.class;
             case 9: return ShrapnelBomb.class;
-            case 10: default: return WoollyBomb.class;
+            case 10: return GolyatBomb.class;
+            case 11: default: return WoollyBomb.class;
         }
     }
 

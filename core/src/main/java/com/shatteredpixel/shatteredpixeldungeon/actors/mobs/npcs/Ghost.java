@@ -21,7 +21,10 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
+//import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.ExtractSummoned;
+
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -37,6 +40,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.armor.LeatherArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.MailArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.PlateArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ScaleArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ExtractUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
@@ -64,8 +68,17 @@ public class Ghost extends NPC {
 		spriteClass = GhostSprite.class;
 		
 		flying = true;
-		
 		state = WANDERING;
+//        if(!ExtractSummoned){
+//            loot = new ExtractUpgrade();
+//        }
+        //提取升级是否加入掉落物
+//        if(!(Challenges.activeChallenges() > 0)){
+//            lootChance = 1f;
+//        }else {
+//            lootChance = 0;
+//        }
+        //有无挑时NPC物品生成概率差分
 	}
 
 	@Override

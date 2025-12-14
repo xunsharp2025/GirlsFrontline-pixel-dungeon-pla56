@@ -34,6 +34,7 @@ public class Kriss extends MeleeWeapon {
 		image = ItemSpriteSheet.KRISS;
 
 		tier = 3;
+        DEF = 3;
 	}
 
 	@Override
@@ -49,8 +50,5 @@ public class Kriss extends MeleeWeapon {
 		return  Math.round(3f*(tier+1)) +     //10 base, down from 20
 				lvl*Math.round(0.5f*(tier+2));  //+2 per level, down from +4
 	}
-	@Override
-	public int defenseFactor( Char owner ) {
-		return 3;	//3 extra defence
-	}
+
 }

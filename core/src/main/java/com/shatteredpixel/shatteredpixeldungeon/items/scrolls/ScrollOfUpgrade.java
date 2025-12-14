@@ -69,6 +69,7 @@ public class ScrollOfUpgrade extends InventoryScroll {
 			boolean hadGoodEnchant = w.hasGoodEnchant();
 
 			w.upgrade();
+            w.UpgradeUSED++;
 
 			if (w.cursedKnown && hadCursedEnchant && !w.hasCurseEnchant()){
 				removeCurse( Dungeon.hero );
@@ -86,6 +87,7 @@ public class ScrollOfUpgrade extends InventoryScroll {
 			boolean hadGoodGlyph = a.hasGoodGlyph();
 
 			a.upgrade();
+            a.UpgradeUSED++;
 
 			if (a.cursedKnown && hadCursedGlyph && !a.hasCurseGlyph()){
 				removeCurse( Dungeon.hero );
@@ -100,6 +102,7 @@ public class ScrollOfUpgrade extends InventoryScroll {
 			boolean wasCursed = item.cursed;
 
 			item.upgrade();
+            item.UpgradeUSED++;
 
 			if (item.cursedKnown && wasCursed && !item.cursed){
 				removeCurse( Dungeon.hero );
@@ -107,6 +110,7 @@ public class ScrollOfUpgrade extends InventoryScroll {
 
 		} else {
 			item.upgrade();
+            item.UpgradeUSED++;
 		}
 
 		Talent.onUpgradeScrollUsed( Dungeon.hero );

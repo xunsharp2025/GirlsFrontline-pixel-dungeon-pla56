@@ -41,6 +41,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.StatusPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.TalentButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.TalentsPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
 import com.watabou.noosa.Gizmo;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.Image;
@@ -185,6 +186,7 @@ public class WndHero extends WndTabbed {
 
 			statSlot( Messages.get(this, "gold"), Statistics.goldCollected );
 			statSlot( Messages.get(this, "depth"), Statistics.deepestFloor );
+			statSlot( Messages.get(this, "seed"), DungeonSeed.convertToCode(Dungeon.seed));
 
 			// 添加饱食度显示
 			Hunger hunger = Dungeon.hero.buff(Hunger.class);

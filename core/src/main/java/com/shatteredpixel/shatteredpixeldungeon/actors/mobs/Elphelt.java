@@ -17,7 +17,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicalSleep;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Beam;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
@@ -28,7 +27,6 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.DamageWand;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfDisintegration;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Grim;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Vampiric;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Cypros;
@@ -45,7 +43,6 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
 import com.shatteredpixel.shatteredpixeldungeon.ui.dialog.boss.Elphelt_Plot;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BossHealthBar;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndDialog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundle;
@@ -110,10 +107,8 @@ public class Elphelt extends Mob {
 	private Ballistica traceRush;
 
 	public final Ballistica getTraceGenoise()   { return traceGenoise; }
-	public final Ballistica getTraceMagnum()    { return traceMagnum; }
-	public final Ballistica getTraceRush()      { return traceRush; }
 
-	public boolean onGenoise = false;
+    public boolean onGenoise = false;
 	private int maxGenoiseStack = 5;
 	private int curGenoiseStack = maxGenoiseStack;
 	public int genoiseDst = -1;
@@ -203,12 +198,24 @@ public class Elphelt extends Mob {
 					traceRush = new Ballistica( pos, target,Ballistica.MAGIC_BOLT);
 					//canRush = findChar(traceRush.collisionPos) != null;
 					canRush = traceRush.dist >= 1;
-					traceMagnum = null;
-					return canRush;
+                    if(canRush){
+                        //能Rush的时候，注魂幅值null
+                        traceMagnum = null;
+                        return canRush;
+                    }else{
+                        //Rush的cd结束却不能Rush，说明Rush的距离小于1，即贴脸了
+                        //而玩家与大兔子贴脸的时候，大兔子会优先触发以4格的力度击退
+                        //在这种情况下依旧贴脸了，那么根据choco修大兔子贴脸踢人进墙的代码，大兔子会优先移动以远离玩家
+                        //由以上三点得出，仍进入了这里的就是在无敌点
+                        traceMagnum = new Ballistica(pos, enemy.pos, Ballistica.BigRabbitOnly);
+                        boolean see = fieldOfView[enemy.pos];
+                        return ( see && (Dungeon.level.distance(pos, enemy.pos) <= RANGE_MAGNUM) );
+                    }
 				} else {
-					traceMagnum = new Ballistica(pos, enemy.pos, Ballistica.PROJECTILE);
-					return ( timerRush < 2 && findChar(traceMagnum.collisionPos) == enemy && (Dungeon.level.distance(pos, enemy.pos) <= RANGE_MAGNUM) );
-				}
+                    traceMagnum = new Ballistica(pos, enemy.pos, Ballistica.PROJECTILE);
+                    boolean see = fieldOfView[enemy.pos];
+                    return ( timerRush < 2 && see && (Dungeon.level.distance(pos, enemy.pos) <= RANGE_MAGNUM) );
+                }
 		}
 
 	}

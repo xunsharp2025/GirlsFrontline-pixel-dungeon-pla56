@@ -29,6 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ExtractUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
@@ -41,6 +42,7 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class BrokenSeal extends Item {
 
@@ -65,9 +67,25 @@ public class BrokenSeal extends Item {
 		return glyph;
 	}
 
+    public boolean canTransferGlyph() {
+        if(Dungeon.hero.hasTalent(Talent.RUNIC_TRANSFERENCE)){
+            if (this.glyph == null) {
+                return false;
+            } else if (Dungeon.hero.pointsInTalent(Talent.RUNIC_TRANSFERENCE) >= 1) {
+                return true;
+            } else {
+                return Dungeon.hero.pointsInTalent(Talent.RUNIC_TRANSFERENCE) == 0 && (Arrays.asList(Armor.Glyph.common).contains(this.glyph.getClass()) || Arrays.asList(Armor.Glyph.uncommon).contains(this.glyph.getClass()));
+            }
+        }
+        return false;
+    }
+
 	public void setGlyph( Armor.Glyph glyph ){
 		this.glyph = glyph;
 	}
+    public static boolean ExtractABLE(){
+        return Dungeon.hero.pointsInTalent(Talent.RUNIC_TRANSFERENCE) == 2;
+    }
 
 	public int maxShield( int armTier, int armLvl ){
 		return armTier + armLvl + Dungeon.hero.pointsInTalent(Talent.IRON_WILL);
@@ -124,6 +142,7 @@ public class BrokenSeal extends Item {
 		@Override
 		public void onSelect( Item item ) {
 			BrokenSeal seal = (BrokenSeal) curItem;
+            boolean ExtractABLE = ExtractABLE();
 			if (item != null && item instanceof Armor) {
 				Armor armor = (Armor)item;
 				if (!armor.levelKnown){
@@ -142,7 +161,11 @@ public class BrokenSeal extends Item {
 							seal.getGlyph().name()){
 						@Override
 						protected void onSelect(int index) {
-							if (index == 0) seal.setGlyph(null);
+                            if(!ExtractABLE){
+                                if (index == 0) seal.setGlyph(null);
+                            }else{
+                                seal.setGlyph(armor.glyph);
+                            }
 							//if index is 1, then the glyph transfer happens in affixSeal
 
 							GLog.p(Messages.get(BrokenSeal.class, "affix"));
@@ -153,7 +176,15 @@ public class BrokenSeal extends Item {
 						}
 					});
 
-				} else {
+				}else if (armor.glyph != null && seal.getGlyph() == null){
+                    seal.setGlyph(armor.glyph);
+                    GLog.p(Messages.get(BrokenSeal.class, "affix"));
+                    Dungeon.hero.sprite.operate(Dungeon.hero.pos);
+                    Sample.INSTANCE.play(Assets.Sounds.UNLOCK);
+                    armor.affixSeal(seal);
+                    seal.detach(Dungeon.hero.belongings.backpack);
+                }
+                else {
 					GLog.p(Messages.get(BrokenSeal.class, "affix"));
 					Dungeon.hero.sprite.operate(Dungeon.hero.pos);
 					Sample.INSTANCE.play(Assets.Sounds.UNLOCK);

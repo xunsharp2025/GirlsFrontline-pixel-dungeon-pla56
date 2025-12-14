@@ -2,59 +2,61 @@ package com.shatteredpixel.shatteredpixeldungeon.custom.testmode;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff.buffType;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
-
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite.State;
 import java.util.ArrayList;
 
 public class ImmortalShieldAffecter extends TestItem {
-    {
-        image = ItemSpriteSheet.GREATSHIELD;
-        defaultAction = AC_SWITCH;
-    }
     private static final String AC_SWITCH = "switch";
 
-    @Override
-    public ArrayList<String> actions(Hero hero ) {
+    public ImmortalShieldAffecter() {
+        this.image = ItemSpriteSheet.GREATSHIELD;
+        this.defaultAction = "switch";
+    }
+
+    public ArrayList<String> actions(Hero hero) {
         ArrayList<String> actions = super.actions(hero);
-        actions.add(AC_SWITCH);
+        actions.add("switch");
         return actions;
     }
 
-    @Override
-    public void execute(Hero hero, String action ) {
+    public void execute(Hero hero, String action) {
         super.execute(hero, action);
-        if(action.equals(AC_SWITCH)){
-            if(isImmortal(hero)){
+        if (action.equals("switch")) {
+            if (this.isImmortal(hero)) {
                 Buff.detach(hero, ImmortalShield.class);
-            }else{
+            } else {
                 Buff.affect(hero, ImmortalShield.class);
             }
         }
+
     }
 
-    private boolean isImmortal(Char target){
-        return target.buff(ImmortalShield.class)!=null;
+    private boolean isImmortal(Char target) {
+        return target.buff(ImmortalShield.class) != null;
     }
 
-    public static class ImmortalShield extends Buff{
-        {
-            type = buffType.NEUTRAL;
-            announced = false;
-            revivePersists = true;
+    public static class ImmortalShield extends Buff {
+        public ImmortalShield() {
+            this.type = buffType.NEUTRAL;
+            this.announced = false;
+            this.revivePersists = true;
         }
 
-        @Override
-        public boolean act(){
-            spend(TICK);
+        public boolean act() {
+            this.spend(1.0F);
             return true;
         }
 
-        @Override
         public void fx(boolean on) {
-            if (on) target.sprite.add(CharSprite.State.SHIELDED);
-            else target.sprite.remove(CharSprite.State.SHIELDED);
+            if (on) {
+                this.target.sprite.add(State.SHIELDED);
+            } else {
+                this.target.sprite.remove(State.SHIELDED);
+            }
+
         }
     }
 }

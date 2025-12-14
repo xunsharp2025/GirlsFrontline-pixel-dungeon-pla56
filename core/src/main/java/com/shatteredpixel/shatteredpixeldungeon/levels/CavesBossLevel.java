@@ -139,9 +139,9 @@ public class CavesBossLevel extends Level {
 
 		//fill in special floor, statues, and exits
 		Painter.fill(this, 15, 2, 3, 3, Terrain.EMPTY_SP);
-		Painter.fill(this, 15, 5, 3, 1, Terrain.STATUE);
-		Painter.fill(this, 15, 7, 3, 1, Terrain.STATUE);
-		Painter.fill(this, 15, 9, 3, 1, Terrain.STATUE);
+		Painter.fill(this, 15, 5, 3, 1, Terrain.SIGN);
+		Painter.fill(this, 15, 7, 3, 1, Terrain.SIGN);
+		Painter.fill(this, 15, 9, 3, 1, Terrain.SIGN);
 		Painter.fill(this, 16, 5, 1, 6, Terrain.EMPTY_SP);
 		Painter.fill(this, 15, 0, 3, 3, Terrain.EXIT);
 
@@ -375,7 +375,7 @@ public class CavesBossLevel extends Level {
 				return Messages.get(CavesLevel.class, "high_grass_name");
 			case Terrain.WATER:
 				return Messages.get(CavesLevel.class, "water_name");
-			case Terrain.STATUE:
+			case Terrain.SIGN:
 				//city statues are used
 				return Messages.get(CityLevel.class, "statue_name");
 			default:
@@ -400,7 +400,7 @@ public class CavesBossLevel extends Level {
 			case Terrain.BOOKSHELF:
 				return Messages.get(CavesLevel.class, "bookshelf_desc");
 			//city statues are used
-			case Terrain.STATUE:
+			case Terrain.SIGN:
 				return Messages.get(CityLevel.class, "statue_desc");
 			default:
 				return super.tileDesc( tile );

@@ -238,6 +238,13 @@ public class Heap implements Bundlable {
 			
 		}
 	}
+    public void  explodeLOCK(){
+        if (type == Type.LOCKED_CHEST || type == Type.CRYSTAL_CHEST) {
+            type = Type.HEAP;
+            sprite.link();
+            sprite.drop();
+        }
+    }
 
 	//Note: should not be called to initiate an explosion, but rather by an explosion that is happening.
 	public void explode() {

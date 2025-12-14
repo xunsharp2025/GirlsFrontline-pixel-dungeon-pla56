@@ -40,6 +40,7 @@ public class GSH18 extends LongRange {
 
 		tier = 1; // 设置为1级武器
 		RCH = 2; // 默认射程2格
+        defaultAction = AC_SWITCH_MODE;
 	}
 
 	@Override

@@ -168,6 +168,7 @@ public class Dungeon {
 
 	public static int gold;
 	public static int energy;
+    //public static boolean ExtractSummoned;提取升级是否生成的计数
 	
 	public static HashSet<Integer> chapters;
 
@@ -178,14 +179,22 @@ public class Dungeon {
 	public static int levelId;
 
 	public static long seed;
-	
-	public static void init() {
+
+	public static void init(String seedCode){
+		init(seedCode,SPDSettings.challenges());
+	}
+
+	public static void init(String seedCode,int paramChallenges) {
 
 		version = Game.versionCode;
-		challenges = SPDSettings.challenges();
+		challenges = paramChallenges;
 		mobsToChampion = -1;
-	
-		seed = DungeonSeed.randomSeed();
+
+		if (SPDSettings.SEED_CODE_RANDOM==seedCode){
+			seed = DungeonSeed.randomSeed();
+		} else{
+			seed = DungeonSeed.convertFromText(seedCode);
+		}
 	
 		Actor.clear();
 		Actor.resetNextID();
@@ -213,6 +222,7 @@ public class Dungeon {
 		depth = 0;
 		gold = 0;
 		energy = 0;
+        //ExtractSummoned = false;初始化计数为未生成
 
 		droppedItems = new SparseArray<>();
 		portedItems = new SparseArray<>();
@@ -443,6 +453,7 @@ public class Dungeon {
 	private static final String DEPTH		    = "depth";
 	private static final String GOLD		    = "gold";
 	private static final String ENERGY		    = "energy";
+    //private static final String Summoned		    = "ExtractSummoned";
 	private static final String DROPPED         = "dropped%d";
 	private static final String PORTED          = "ported%d";
 	private static final String LEVEL		    = "level";
@@ -466,6 +477,7 @@ public class Dungeon {
 
 			bundle.put( GOLD, gold );
 			bundle.put( ENERGY, energy );
+            //bundle.put( Summoned, ExtractSummoned );保存计数
 
 			for (int d : droppedItems.keyArray()) {
 				bundle.put(Messages.format(DROPPED, d), droppedItems.get(d));
@@ -613,6 +625,7 @@ public class Dungeon {
 
 		gold = bundle.getInt( GOLD );
 		energy = bundle.getInt( ENERGY );
+        //ExtractSummoned = bundle.getBoolean( Summoned );读取计数
 
 		Statistics.restoreFromBundle( bundle );
 		Generator.restoreFromBundle( bundle );

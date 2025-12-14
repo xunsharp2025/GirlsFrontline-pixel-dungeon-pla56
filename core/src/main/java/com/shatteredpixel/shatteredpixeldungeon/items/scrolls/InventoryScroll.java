@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.scrolls;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
+
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
@@ -34,12 +36,17 @@ import com.watabou.noosa.audio.Sample;
 public abstract class InventoryScroll extends Scroll {
 
 	protected static boolean identifiedByUse = false;
+    @Override
+    public boolean isCost(){
+        return true;
+    }
 
 	@Override
 	public void doRead() {
 		
 		if (!isKnown()) {
 			identify();
+            curItem = detach( hero.belongings.backpack );
 			identifiedByUse = true;
 		} else {
 			identifiedByUse = false;
@@ -112,16 +119,12 @@ public abstract class InventoryScroll extends Scroll {
 				
 				((InventoryScroll)curItem).onItemSelected( item );
 				((InventoryScroll)curItem).readAnimation();
-				
+                curItem = detach( hero.belongings.backpack );
 				Sample.INSTANCE.play( Assets.Sounds.READ );
 				
 			} else if (identifiedByUse && !((Scroll)curItem).anonymous) {
 				
 				((InventoryScroll)curItem).confirmCancelation();
-				
-			} else if (!((Scroll)curItem).anonymous) {
-				
-				curItem.collect( curUser.belongings.backpack );
 				
 			}
 		}

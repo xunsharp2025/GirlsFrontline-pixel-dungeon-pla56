@@ -30,6 +30,8 @@ public class Mos extends BulletProof {
 		image = ItemSpriteSheet.MOS;
 
 		tier = 3;
+        DEF = 5;
+        DEFUPGRADE = 2;
 	}
 
 	@Override
@@ -38,8 +40,4 @@ public class Mos extends BulletProof {
 				lvl*(tier-1);   //+2 per level, down from +4
 	}
 
-	@Override
-	public int defenseFactor( Char owner ) {
-		return 5 + 2 * level();     //5 extra defence, plus 2 per level;
-	}
 }

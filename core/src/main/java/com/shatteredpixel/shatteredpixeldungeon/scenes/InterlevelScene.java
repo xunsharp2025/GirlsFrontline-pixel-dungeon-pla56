@@ -75,6 +75,8 @@ public class InterlevelScene extends PixelScene {
 	}
 	public static Mode mode=Mode.NONE;
 	
+	public static String seedCode=null;
+
 	public static int returnDepth;
 	public static int returnPos;
 
@@ -368,11 +370,11 @@ public class InterlevelScene extends PixelScene {
 
 	public static void start(){
 		Mob.clearHeldAllies();
-		Dungeon.init();
+		Dungeon.init("ANEWWORLD",0);
 		GameLog.wipe();
 		Dungeon.depth=Statistics.deepestFloor=-1;
 		Level level = Dungeon.newLevel(0);
-		Dungeon.switchLevel( level, level.entrance );
+		Dungeon.switchLevel(level,level.entrance);
 	}
 
 	private void access(){
@@ -392,7 +394,7 @@ public class InterlevelScene extends PixelScene {
 	private static void descend() throws IOException {
 		if (Dungeon.hero == null) {
 			Mob.clearHeldAllies();
-			Dungeon.init();
+			Dungeon.init(seedCode);
 			GameLog.wipe();
 		} else {
 			Mob.holdAllies( Dungeon.level );

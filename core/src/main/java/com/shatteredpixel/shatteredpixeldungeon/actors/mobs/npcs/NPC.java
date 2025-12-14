@@ -21,7 +21,16 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
+//import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.ExtractSummoned;
+
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ExtractUpgrade;
+import com.watabou.utils.PathFinder;
+import com.watabou.utils.Random;
+
+import java.util.Objects;
 
 public abstract class NPC extends Mob {
 
@@ -32,6 +41,26 @@ public abstract class NPC extends Mob {
 		alignment = Alignment.NEUTRAL;
 		state = PASSIVE;
 	}
+
+/*    public float lootChance(){
+        return this.lootChance;
+    }
+
+    public void rollToDropLoot(){
+        if (Random.Float() < lootChance()) {
+            Item loot = createLoot();
+            if (loot != null) {
+                int ofs = PathFinder.NEIGHBOURS9[Random.Int(9)];
+                if (!Dungeon.level.pit[this.pos + ofs] &&!Dungeon.level.solid[this.pos + ofs] && Dungeon.level.passable[this.pos + ofs]) {
+                    Dungeon.level.drop(loot, pos).sprite.drop();
+                }
+            }
+//            if(Objects.equals(loot, new ExtractUpgrade())){
+//                ExtractSummoned = true;
+//            }
+            //提取升级是否已生成的计数变更
+        }
+    }*///离场NPC完成任务时的掉落物
 
 	@Override
 	public void beckon( int cell ) {

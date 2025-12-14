@@ -72,23 +72,6 @@ public class WndGameInProgress extends Window {
 		title.setRect( 0, 0, WIDTH, 0 );
 		add(title);
 		
-		//manually produces debug information about a run, mainly useful for levelgen errors
-		Button debug = new Button(){
-			@Override
-			protected boolean onLongClick() {
-				try {
-					Bundle bundle = FileUtils.bundleFromFile(GamesInProgress.gameFile(slot));
-					GirlsFrontlinePixelDungeon.scene().addToFront(new WndMessage("_Debug Info:_\n\n" +
-							"Version: " + Game.version + " (" + Game.versionCode + ")\n" +
-							"Seed: " + bundle.getLong("seed") + "\n" +
-							"Challenge Mask: " + info.challenges));
-				} catch (IOException ignored) { }
-				return true;
-			}
-		};
-		debug.setRect(0, 0, title.imIcon.width(), title.imIcon.height);
-		add(debug);
-		
 		if (info.challenges > 0) GAP -= 2;
 		
 		pos = title.bottom() + GAP;

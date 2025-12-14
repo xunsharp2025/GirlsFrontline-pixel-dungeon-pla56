@@ -48,7 +48,9 @@ import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.DreamerSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.FistSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.GarmSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
@@ -185,7 +187,7 @@ public abstract class YogFist extends Mob {
 	public static class BurningFist extends YogFist {
 
 		{
-			spriteClass = FistSprite.Burning.class;
+			spriteClass = DreamerSprite.class;
 
 			properties.add(Property.FIERY);
 		}
@@ -413,7 +415,7 @@ public abstract class YogFist extends Mob {
 	public static class RustedFist extends YogFist {
 
 		{
-			spriteClass = FistSprite.Rusted.class;
+			spriteClass = GarmSprite.class;
 
 			properties.add(Property.LARGE);
 			properties.add(Property.INORGANIC);

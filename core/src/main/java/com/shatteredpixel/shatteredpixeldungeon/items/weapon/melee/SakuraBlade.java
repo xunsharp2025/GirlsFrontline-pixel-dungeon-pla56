@@ -115,11 +115,12 @@ public class SakuraBlade extends MeleeWeapon {
         
         if (action.equals(AC_IAIDO)) {
             // 检查武器是否在英雄手中
+            // 检查武器是否在英雄手中
             if (this != hero.belongings.weapon) {
                 GLog.w(Messages.get(this, "must_hold"));
             // 检查英雄力量是否达到武器要求
             } else if (hero.STR() < STRReq()) {
-                GLog.w(Messages.get(Weapon.class, "too_heavy"));
+                GLog.w(Messages.get(Weapon.class, "too_heav"));
             } else if (cooldownLeft > 0) {
                 GLog.w(Messages.get(this, "cooldown", cooldownLeft));
             } else {

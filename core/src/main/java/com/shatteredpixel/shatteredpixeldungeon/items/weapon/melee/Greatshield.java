@@ -31,6 +31,8 @@ public class Greatshield extends MeleeWeapon {
 		image = ItemSpriteSheet.GREATSHIELD;
 
 		tier = 5;
+        DEF = 6;
+        DEFUPGRADE = 3;
 	}
 
 	@Override
@@ -39,16 +41,4 @@ public class Greatshield extends MeleeWeapon {
 				lvl*(tier-2);                   //+3 per level, down from +6
 	}
 
-	@Override
-	public int defenseFactor( Char owner ) {
-		return 6+3*buffedLvl();    //6 extra defence, plus 3 per level;
-	}
-	
-	public String statsInfo(){
-		if (isIdentified()){
-			return Messages.get(this, "stats_desc", 6+3*buffedLvl());
-		} else {
-			return Messages.get(this, "typical_stats_desc", 6);
-		}
-	}
 }

@@ -39,17 +39,19 @@ public class Ballistica {
 	public Integer dist = 0;
 
 	//parameters to specify the colliding cell
-	public static final int STOP_TARGET = 1;    //ballistica will stop at the target cell
-	public static final int STOP_CHARS = 2;     //ballistica will stop on first char hit
-	public static final int STOP_SOLID = 4;     //ballistica will stop on solid terrain
-	public static final int IGNORE_SOFT_SOLID = 8; //ballistica will ignore soft solid terrain, such as doors and webs
-
+	public static final int STOP_TARGET = 1;    //弹道将会停在最终目标点
+	public static final int STOP_CHARS = 2;     //弹道将会被最近目标阻挡
+	public static final int STOP_SOLID = 4;     //弹道将会被固体阻挡
+	public static final int IGNORE_SOFT_SOLID = 8; //弹道将忽略软质固体，如门、蜘蛛网
+    //参考对象：火杖
 	public static final int PROJECTILE =  	STOP_TARGET	| STOP_CHARS	| STOP_SOLID;
-
+    //参考对象：冲击波
 	public static final int MAGIC_BOLT =    STOP_CHARS  | STOP_SOLID;
-
+    //参考对象：魔弹
 	public static final int WONT_STOP =     0;
-
+    //参考对象：解离
+    public static final int BigRabbitOnly = STOP_TARGET	| STOP_CHARS;
+    //仅供大兔子使用的弹道，会被最近目标或最终目标阻挡，而不再被固体阻挡【避免二阶段无敌点】
 
 	public Ballistica( int from, int to, int params ){
 		sourcePos = from;

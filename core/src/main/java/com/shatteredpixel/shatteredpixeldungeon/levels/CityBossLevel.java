@@ -72,6 +72,11 @@ public class CityBossLevel extends Level {
 	public static final int throne;
 	private static final int[] pedestals = new int[4];
 
+	private static final Rect regionHells;
+	private static final Rect regionThrone;
+	private static final Rect regionLeftStatues;
+	private static final Rect regionRightStatues;
+
 	static {
 		Point c = arena.center();
 		throne = c.x + (c.y) * WIDTH;
@@ -79,9 +84,18 @@ public class CityBossLevel extends Level {
 		pedestals[1] = c.x+3 + (c.y-3) * WIDTH;
 		pedestals[2] = c.x+3 + (c.y+3) * WIDTH;
 		pedestals[3] = c.x-3 + (c.y+3) * WIDTH;
+
+		regionHells=end;
+		regionThrone=new Rect(c.x-1,c.y-1,c.x+2,c.y+2);
+		regionLeftStatues=new Rect(0,c.y,c.x,HEIGHT);
+		regionRightStatues=new Rect(c.x+1,c.y,WIDTH,HEIGHT);
 	}
 
 	private ImpShopRoom impShop;
+
+	public static boolean posInRegion(int pos,Rect region){
+		return region.inside(new Point(pos%WIDTH,pos/WIDTH));
+	}
 
 	@Override
 	public void playLevelMusic() {
@@ -137,9 +151,12 @@ public class CityBossLevel extends Level {
 
 		Point c = entry.center();
 
-		Painter.fill(this, c.x-1, c.y-2, 3, 1, Terrain.STATUE);
-		Painter.fill(this, c.x-1, c.y, 3, 1, Terrain.STATUE);
-		Painter.fill(this, c.x-1, c.y+2, 3, 1, Terrain.STATUE);
+		map[(c.x-1)+(c.y-2)*WIDTH]=Terrain.STATUE;
+		map[(c.x-1)+(c.y  )*WIDTH]=Terrain.STATUE;
+		map[(c.x-1)+(c.y+2)*WIDTH]=Terrain.STATUE;
+		map[(c.x+1)+(c.y-2)*WIDTH]=Terrain.SIGN;
+		map[(c.x+1)+(c.y  )*WIDTH]=Terrain.SIGN;
+		map[(c.x+1)+(c.y+2)*WIDTH]=Terrain.SIGN;
 		Painter.fill(this, c.x, entry.top+1, 1, 6, Terrain.EMPTY_SP);
 
 		Painter.set(this, c.x, entry.top, Terrain.DOOR);
@@ -156,8 +173,8 @@ public class CityBossLevel extends Level {
 		c = arena.center();
 		Painter.set(this, c.x-3, c.y, Terrain.STATUE);
 		Painter.set(this, c.x-4, c.y, Terrain.STATUE);
-		Painter.set(this, c.x+3, c.y, Terrain.STATUE);
-		Painter.set(this, c.x+4, c.y, Terrain.STATUE);
+		Painter.set(this, c.x+3, c.y, Terrain.SIGN);
+		Painter.set(this, c.x+4, c.y, Terrain.SIGN);
 
 		Painter.set(this, pedestals[0], Terrain.PEDESTAL);
 		Painter.set(this, pedestals[1], Terrain.PEDESTAL);
@@ -176,8 +193,8 @@ public class CityBossLevel extends Level {
 		impShop.set(end.left+3, end.top+12, end.left+11, end.top+20);
 		Painter.set(this, impShop.center(), Terrain.PEDESTAL);
 
-		Painter.set(this, impShop.left+2, impShop.top, Terrain.STATUE);
-		Painter.set(this, impShop.left+6, impShop.top, Terrain.STATUE);
+		Painter.set(this, impShop.left+2, impShop.top, Terrain.SIGN);
+		Painter.set(this, impShop.left+6, impShop.top, Terrain.SIGN);
 
 		Painter.fill(this, end.left+5, end.bottom+1, 5, 1, Terrain.EMPTY);
 		Painter.fill(this, end.left+6, end.bottom+2, 3, 1, Terrain.EMPTY);
@@ -369,7 +386,6 @@ public class CityBossLevel extends Level {
 			case Terrain.EMPTY_SP:
 				return Messages.get(CityLevel.class, "sp_desc");
 			case Terrain.STATUE:
-			case Terrain.STATUE_SP:
 				return Messages.get(CityLevel.class, "statue_desc");
 			case Terrain.BOOKSHELF:
 				return Messages.get(CityLevel.class, "bookshelf_desc");
@@ -426,7 +442,7 @@ public class CityBossLevel extends Level {
 					data[i] = 12*8 + 5;
 
 				//skull piles
-				} else if (map[i] == Terrain.STATUE) {
+				} else if (map[i] == Terrain.SIGN) {
 					data[i] = 15*8 + 5;
 
 				//ground tiles
@@ -477,11 +493,6 @@ public class CityBossLevel extends Level {
 				//pedestal spawners
 				if (map[i] == Terrain.PEDESTAL){
 					data[i] = 13*8 + 4;
-
-				//statues that should face left instead of right
-				} else if (map[i] == Terrain.STATUE && i%tileW > 7) {
-					data[i] = 15 * 8 + 4;
-
 				//carpet tiles
 				} else if (map[i] == Terrain.EMPTY_SP) {
 					//top row of DK's throne
@@ -490,13 +501,13 @@ public class CityBossLevel extends Level {
 						data[++i] = 13 * 8 + 2;
 						data[++i] = 13 * 8 + 3;
 
-						//mid row of DK's throne
-					}else if (map[i + 1] == Terrain.SIGN) {
+					//mid row of DK's throne
+					}else if (map[i + 1] == Terrain.SIGN && posInRegion(i+1,regionThrone)) {
 						data[i] = 14 * 8 + 1;
 						data[++i] = 14 * 8 + 2;
 						data[++i] = 14 * 8 + 3;
 
-						//bottom row of DK's throne
+					//bottom row of DK's throne
 					} else if (map[i+1] == Terrain.EMPTY_SP && map[i-tileW] == Terrain.EMPTY_SP){
 						data[i] = 15*8 + 1;
 						data[++i] = 15*8 + 2;
@@ -511,7 +522,12 @@ public class CityBossLevel extends Level {
 						data[i] = 14*8 + 0;
 					}
 
-					//otherwise no tile here
+				} else if (map[i] == Terrain.SIGN){
+					if(posInRegion(i,regionRightStatues)){
+						data[i] = 15 * 8 + 4;
+					}
+					
+				//otherwise no tile here
 				} else {
 					data[i] = -1;
 				}
@@ -527,14 +543,18 @@ public class CityBossLevel extends Level {
 
 			//demon halls tiles
 			if (cell < Dungeon.level.width*22){
-				if (Dungeon.level.map[cell] == Terrain.STATUE){
+				if (Dungeon.level.map[cell] == Terrain.SIGN){
 					return Messages.get(DeepCaveLevel.class, "statue_name");
 				}
 
 				//DK arena tiles
 			} else {
 				if (Dungeon.level.map[cell] == Terrain.SIGN){
-					return Messages.get(CityBossLevel.class, "throne_name");
+					if(posInRegion(cell,regionRightStatues)){
+						return Messages.get(CityBossLevel.class, "statue_name");
+					}else{
+						return Messages.get(CityBossLevel.class, "throne_name");
+					}
 				} else if (Dungeon.level.map[cell] == Terrain.PEDESTAL){
 					return Messages.get(CityBossLevel.class, "summoning_name");
 				}
@@ -551,7 +571,7 @@ public class CityBossLevel extends Level {
 			if (cell < Dungeon.level.width*22){
 				if (Dungeon.level.map[cell] == Terrain.EXIT){
 					return Messages.get(HallsLevel.class, "exit_desc");
-				} else if (Dungeon.level.map[cell] == Terrain.STATUE){
+				} else if (Dungeon.level.map[cell] == Terrain.SIGN){
 					return Messages.get(DeepCaveLevel.class, "statue_desc");
 				} else if (Dungeon.level.map[cell] == Terrain.EMPTY_DECO){
 					return "";
@@ -560,7 +580,11 @@ public class CityBossLevel extends Level {
 			//DK arena tiles
 			} else {
 				if (Dungeon.level.map[cell] == Terrain.SIGN){
-					return Messages.get(CityBossLevel.class, "throne_desc");
+					if(posInRegion(cell,regionRightStatues)){
+						return Messages.get(CityLevel.class, "statue_desc");
+					}else{
+						return Messages.get(CityBossLevel.class, "throne_desc");
+					}
 				} else if (Dungeon.level.map[cell] == Terrain.PEDESTAL){
 					return Messages.get(CityBossLevel.class, "summoning_desc");
 				}
@@ -602,7 +626,7 @@ public class CityBossLevel extends Level {
 					data[++i] = 13 * 8 + 7;
 
 				//skull tops
-				} else if (map[i+tileW] == Terrain.STATUE) {
+				} else if (map[i+tileW] == Terrain.SIGN) {
 					data[i] = 14*8 + 5;
 
 				//otherwise no tile here
@@ -632,11 +656,12 @@ public class CityBossLevel extends Level {
 			//lower part. Statues and DK's throne
 			for (int i = tileW*21; i < tileW * tileH; i++){
 
-				//Statues that need to face left instead of right
-				if (map[i] == Terrain.STATUE && i%tileW > 7){
-					data[i-tileW] = 14*8 + 4;
-				} else if (map[i] == Terrain.SIGN){
-					data[i-tileW] = 13*8 + 5;
+				if (map[i] == Terrain.SIGN){
+					if(posInRegion(i,regionRightStatues)){
+						data[i-tileW] = 14*8 + 4;
+					}else{
+						data[i-tileW] = 13*8 + 5;
+					}
 				}
 
 				//always no tile here (as the above statements are modifying previous tiles)

@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
+
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
@@ -52,6 +54,10 @@ public class ScrollOfMetamorphosis extends ExoticScroll {
 	{
 		icon = ItemSpriteSheet.Icons.SCROLL_METAMORPH;
 	}
+    @Override
+    public boolean isCost(){
+        return true;
+    }
 
 	protected static boolean identifiedByUse = false;
 	
@@ -59,6 +65,7 @@ public class ScrollOfMetamorphosis extends ExoticScroll {
 	public void doRead() {
 		if (!isKnown()) {
 			identify();
+            curItem = detach( hero.belongings.backpack );
 			identifiedByUse = true;
 		} else {
 			identifiedByUse = false;
@@ -153,7 +160,6 @@ public class ScrollOfMetamorphosis extends ExoticScroll {
 				((ScrollOfMetamorphosis)curItem).confirmCancelation(this);
 			} else {
 				super.onBackPressed();
-				curItem.collect();
 			}
 		}
 
@@ -209,6 +215,12 @@ public class ScrollOfMetamorphosis extends ExoticScroll {
 		public WndMetamorphReplace(Talent replacing, int tier){
 			super();
 
+            if (!ScrollOfMetamorphosis.identifiedByUse && ScrollOfMetamorphosis.curItem instanceof ScrollOfMetamorphosis) {
+                ScrollOfMetamorphosis.curItem.detach(ScrollOfMetamorphosis.curUser.belongings.backpack);
+            }
+
+            ScrollOfMetamorphosis.identifiedByUse = false;
+
 			INSTANCE = this;
 
 			this.replacing = replacing;
@@ -247,6 +259,7 @@ public class ScrollOfMetamorphosis extends ExoticScroll {
 		}
 
 		private void setup(Talent replacing, int tier, LinkedHashMap<Talent, Integer> replaceOptions){
+
 			float top = 0;
 
 			IconTitle title = new IconTitle( curItem );

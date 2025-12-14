@@ -33,6 +33,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bestiary;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.CausticSlime;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.DM201;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Elemental;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GnollSWAP;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GolyatPlus;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Piranha;
@@ -60,10 +62,10 @@ public class DistortionTrap extends Trap{
 
 	private static final ArrayList<Class<?extends Mob>> RARE = new ArrayList<>(Arrays.asList(
 			Albino.class, CausticSlime.class,
-			Bandit.class,
+			Bandit.class, GolyatPlus.class,
 			ArmoredBrute.class, DM201.class,
 			Elemental.ChaosElemental.class, Senior.class,
-			Acidic.class));
+			Acidic.class, GnollSWAP.class));
 
 	@Override
 	public void activate() {
@@ -142,7 +144,10 @@ public class DistortionTrap extends Trap{
 			}
 
 			mob.maxLvl = Hero.MAX_LEVEL;
-			mob.state = mob.WANDERING;
+            if(mob.state!=mob.PASSIVE){
+                mob.state = mob.WANDERING;
+                //从默认警戒/进攻改为，当初始行动逻辑不为中立/被动时，再赋予警戒/进攻
+            }
 			mob.pos = point;
 			GameScene.add(mob, DELAY);
 			mobs.add(mob);

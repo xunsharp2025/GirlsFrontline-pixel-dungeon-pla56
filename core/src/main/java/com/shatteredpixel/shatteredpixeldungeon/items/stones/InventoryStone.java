@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.stones;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
+
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -52,7 +54,6 @@ public abstract class InventoryStone extends Runestone {
 	public void execute(Hero hero, String action) {
 		super.execute(hero, action);
 		if (action.equals(AC_USE)){
-			curItem = detach( hero.belongings.backpack );
 			activate(curUser.pos);
 		}
 	}
@@ -112,9 +113,8 @@ public abstract class InventoryStone extends Runestone {
 			if (item != null) {
 				
 				((InventoryStone)curItem).onItemSelected( item );
-				
-			} else{
-				curItem.collect( curUser.belongings.backpack );
+
+                curItem = detach( hero.belongings.backpack );
 			}
 		}
 	};

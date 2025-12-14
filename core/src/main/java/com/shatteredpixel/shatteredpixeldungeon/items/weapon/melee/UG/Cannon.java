@@ -40,6 +40,7 @@ public class Cannon extends UniversaleGun {
         RCH = 70;    //lots of extra reach
         ACC = 20f;
         DLY = 0.1f;
+        DEF = 30;
     }
 
     @Override
@@ -76,9 +77,4 @@ public class Cannon extends UniversaleGun {
         owner.HP += Math.min(damage, owner.HT-owner.HP);
         return damage;
     }
-    @Override
-    public int defenseFactor( Char owner ) {
-        return 30;	//3 extra defence
-    }
-
 }

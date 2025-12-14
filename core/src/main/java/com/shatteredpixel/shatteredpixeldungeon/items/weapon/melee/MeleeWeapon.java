@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
+
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -69,14 +71,14 @@ public class MeleeWeapon extends Weapon {
 
 		if (levelKnown) {
 			info += "\n\n" + Messages.get(MeleeWeapon.class, "stats_known", tier, augment.damageFactor(min()), augment.damageFactor(max()), STRReq());
-			if (STRReq() > Dungeon.hero.STR()) {
+			if (STRReq() > hero.STR()) {
 				info += " " + Messages.get(Weapon.class, "too_heavy");
-			} else if (Dungeon.hero.STR() > STRReq()){
-				info += " " + Messages.get(Weapon.class, "excess_str", Dungeon.hero.STR() - STRReq());
+			} else if (hero.STR() > STRReq()){
+				info += " " + Messages.get(Weapon.class, "excess_str", hero.STR() - STRReq());
 			}
 		} else {
 			info += "\n\n" + Messages.get(MeleeWeapon.class, "stats_unknown", tier, min(0), max(0), STRReq(0));
-			if (STRReq(0) > Dungeon.hero.STR()) {
+			if (STRReq(0) > hero.STR()) {
 				info += " " + Messages.get(MeleeWeapon.class, "probably_too_heavy");
 			}
 		}
@@ -99,7 +101,7 @@ public class MeleeWeapon extends Weapon {
 			info += " " + Messages.get(enchantment, "desc");
 		}
 
-		if (cursed && isEquipped( Dungeon.hero )) {
+		if (cursed && isEquipped( hero )) {
 			info += "\n\n" + Messages.get(Weapon.class, "cursed_worn");
 		} else if (cursedKnown && cursed) {
 			info += "\n\n" + Messages.get(Weapon.class, "cursed");
@@ -111,6 +113,17 @@ public class MeleeWeapon extends Weapon {
 	}
 	
 	public String statsInfo(){
+        if(DEF>0||DEFUPGRADE>0){
+            int REM =0;
+            if(hero.STR() < this.STRReq()){
+                REM -= 2*(this.STRReq() - hero.STR());
+            }
+            if (isIdentified()){
+                return Messages.get(this, "stats_desc",  Math.max(0,DEF + DEFUPGRADE * buffedLvl() + REM));
+            } else{
+                return Messages.get(this, "typical_stats_desc", DEF );
+            }
+        }
 		return Messages.get(this, "stats_desc");
 	}
 	

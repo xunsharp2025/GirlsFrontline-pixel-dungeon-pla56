@@ -585,13 +585,26 @@ public class Generator {
 		}
 	}
 
-	//overrides any deck systems and always uses default probs
+    public static Item randomUsingDefaults() {
+        return randomUsingDefaults((Category)Random.chances(categoryProbs));
+    }
+
+    //overrides any deck systems and always uses default probs
 	public static Item randomUsingDefaults( Category cat ){
-		if (cat.defaultProbs == null) {
+//		if (cat.defaultProbs == null) {
+//			return random(cat); //currently covers weapons/armor/missiles
+//		} else {
+//			return ((Item) Reflection.newInstance(cat.classes[Random.chances(cat.defaultProbs)])).random();
+//		}
+        if (cat == Generator.Category.WEAPON) {
+            return randomWeapon();
+        } else if (cat == Generator.Category.MISSILE) {
+            return randomMissile();
+        } else if (cat.defaultProbs == null) {
 			return random(cat); //currently covers weapons/armor/missiles
 		} else {
-			return ((Item) Reflection.newInstance(cat.classes[Random.chances(cat.defaultProbs)])).random();
-		}
+            return ((Item) Reflection.newInstance(cat.classes[Random.chances(cat.defaultProbs)])).random();
+        }
 	}
 	
 	public static Item random( Class<? extends Item> cl ) {
@@ -682,6 +695,14 @@ public class Generator {
 		}
 		return false;
 	}
+    public static void Artifactremove(Class<?extends Artifact> artifact) {
+        Category cat = Category.ARTIFACT;
+        for (int i = 0; i < cat.classes.length; i++){
+            if (cat.classes[i].equals(artifact) && cat.probs[i] > 0) {
+                cat.probs[i] = 0;
+            }
+        }
+    }
 
 	private static final String FIRST_DECK = "first_deck";
 	private static final String GENERAL_PROBS = "general_probs";

@@ -698,6 +698,10 @@ public abstract class Mob extends Char {
 			if (EXP % 2 == 1) EXP += Random.Int(2);
 			EXP /= 2;
 		}
+//        if(alignment == Alignment.NEUTRAL){
+//            rollToDropLoot();
+//        }
+        //使离场NPC进行掉落判断
 
 		if (alignment == Alignment.ENEMY){
 			rollToDropLoot();

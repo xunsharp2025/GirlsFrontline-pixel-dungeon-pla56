@@ -31,9 +31,10 @@ public class M99 extends DesignatedMarksmanRifle {
 		image = ItemSpriteSheet.GLAIVE;
 
 		tier = 5;
-		ACC = 2f;	// 60% additional accuracy
+		//去除命中加成
+		//ACC = 2f;	// 60% additional accuracy
 		DLY = 1.5f;	// 攻击延迟设置为1.5f
-		RCH = 3;
+		RCH = 2;// 攻击距离改为2格
 	}
 
 	@Override

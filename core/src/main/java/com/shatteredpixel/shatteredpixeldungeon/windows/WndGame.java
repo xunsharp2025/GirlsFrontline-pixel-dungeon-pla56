@@ -80,7 +80,7 @@ public class WndGame extends Window {
 			addButton( curBtn = new RedButton( Messages.get(this, "rankings") ) {
 				@Override
 				protected void onClick() {
-					InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
+					InterlevelScene.mode = InterlevelScene.Mode.DESCEND;//what fuck is this, why? isnt this useless?
 					Game.switchScene( RankingsScene.class );
 				}
 			} );

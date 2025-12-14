@@ -96,7 +96,6 @@ public class MobPlacer extends TestItem{
                         if (canPlaceMob(cell)) {
                             try {
                                 Mob m = Reflection.newInstance(getMobClass());
-                                m.state = m.HUNTING;
                                 if(m instanceof Mimic){
                                     m.HP = m.HT = (1 + ((Mimic) m).level) * 6;
                                     m.defenseSkill = 2 + ((Mimic) m).level/2;

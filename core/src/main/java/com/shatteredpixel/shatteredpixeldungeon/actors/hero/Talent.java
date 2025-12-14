@@ -213,7 +213,9 @@ public enum Talent {
 
 	public static class GSH18EnergizingMealTracker extends FlavourBuff{
 		{// 设置为不会随时间自然消失，只在攻击后被移除
-			revivePersists = true;	}
+			revivePersists = true;
+            //这个是爆了保修后是否保留buff
+        }
 		public int icon() { return BuffIndicator.WELL_FED; }
 		public void tintIcon(Image icon) { icon.hardlight(0.8f, 0.6f, 0.2f); }
 		public String toString() { return Messages.get(this, "name"); }
@@ -406,7 +408,9 @@ public enum Talent {
 	// GSH18天赋：元气一餐
 	if(hero.hasTalent(GSH18_ENERGIZING_MEAL)){
 		// 进食后添加buff，用于跟踪下次攻击必定命中和增加攻击范围
-		Buff.affect(hero, GSH18EnergizingMealTracker.class, 1f);
+		if(hero.buff(Talent.GSH18EnergizingMealTracker.class) == null){
+            Buff.affect(hero, GSH18EnergizingMealTracker.class, 6666666f);
+        }
 	}
 	}
 

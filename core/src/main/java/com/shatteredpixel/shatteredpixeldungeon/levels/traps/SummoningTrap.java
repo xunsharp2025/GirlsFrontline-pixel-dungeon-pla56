@@ -78,7 +78,10 @@ public class SummoningTrap extends Trap {
 				mob = Dungeon.level.createMob();
 			}
 			if (mob != null) {
-				mob.state = mob.WANDERING;
+                if(mob.state!=mob.PASSIVE){
+                    mob.state = mob.WANDERING;
+                    //从默认警戒/进攻改为，当初始行动逻辑不为中立/被动时，再赋予警戒/进攻
+                }
 				mob.pos = point;
 				GameScene.add(mob, DELAY);
 				mobs.add(mob);

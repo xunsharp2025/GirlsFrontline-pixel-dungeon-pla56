@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost;
@@ -86,18 +87,18 @@ public class WndSadGhost extends Window {
 		message.setPos(0, titlebar.bottom() + GAP);
 		add( message );
 
-		RewardButton btnWeapon = new RewardButton( Ghost.Quest.weapon );
+		RewardButton btnWeapon = new RewardButton( Ghost.Quest.weapon/*, Ghost.Quest.armor */);
 		btnWeapon.setRect( (WIDTH - BTN_GAP) / 2 - BTN_SIZE, message.top() + message.height() + BTN_GAP, BTN_SIZE, BTN_SIZE );
 		add( btnWeapon );
 
-		RewardButton btnArmor = new RewardButton( Ghost.Quest.armor );
+		RewardButton btnArmor = new RewardButton( Ghost.Quest.armor/*, Ghost.Quest.weapon */);
 		btnArmor.setRect( btnWeapon.right() + BTN_GAP, btnWeapon.top(), BTN_SIZE, BTN_SIZE );
 		add(btnArmor);
 
 		resize(WIDTH, (int) btnArmor.bottom() + BTN_GAP);
 	}
 	
-	private void selectReward( Item reward ) {
+	private void selectReward( Item reward /*,Item rewardb*/) {
 		
 		hide();
 		
@@ -108,6 +109,15 @@ public class WndSadGhost extends Window {
 		} else if (reward instanceof Armor && Ghost.Quest.glyph != null){
 			((Armor) reward).inscribe(Ghost.Quest.glyph);
 		}
+        /*if (!(Challenges.activeChallenges() > 0)) {
+            int level = rewardb.level();
+            while (level > 0) {
+                rewardb.degrade();
+                level--;
+            }
+            rewardb.identify(false);
+            Dungeon.level.drop(rewardb, ghost.pos).sprite.drop();
+        }*/
 		
 		reward.identify(false);
 		if (reward.doPickUp( Dungeon.hero )) {
@@ -127,7 +137,7 @@ public class WndSadGhost extends Window {
 		protected NinePatch bg;
 		protected ItemSlot slot;
 
-		public RewardButton( Item item ){
+		public RewardButton( Item item/*, Item iteamb*/ ){
 			bg = Chrome.get( Chrome.Type.RED_BUTTON);
 			add( bg );
 
@@ -143,7 +153,7 @@ public class WndSadGhost extends Window {
 				}
 				@Override
 				protected void onClick() {
-					GameScene.show(new RewardWindow(item));
+					GameScene.show(new RewardWindow(item/*, iteamb*/));
 				}
 			};
 			add(slot);
@@ -163,7 +173,7 @@ public class WndSadGhost extends Window {
 
 	private class RewardWindow extends WndInfoItem {
 
-		public RewardWindow( Item item ) {
+		public RewardWindow( Item item/*, Item iteamb */) {
 			super(item);
 
 			RedButton btnConfirm = new RedButton(Messages.get(WndSadGhost.class, "confirm")){
@@ -171,7 +181,7 @@ public class WndSadGhost extends Window {
 				protected void onClick() {
 					RewardWindow.this.hide();
 
-					WndSadGhost.this.selectReward( item );
+					WndSadGhost.this.selectReward( item /*, iteamb */);
 				}
 			};
 			btnConfirm.setRect(0, height+2, width/2-1, 16);

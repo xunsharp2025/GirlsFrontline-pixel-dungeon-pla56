@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
@@ -41,7 +42,7 @@ public class Golem extends Mob {
 	{
 		spriteClass = GolemSprite.class;
 		
-		HP = HT = 120;
+		HP = HT = 150;
 		defenseSkill = 15;
 		
 		EXP = 12;
@@ -56,6 +57,10 @@ public class Golem extends Mob {
 		WANDERING = new Wandering();
 		HUNTING = new Hunting();
 	}
+    @Override
+    public void damage( int dmg, Object src ) {
+        super.damage(Math.min(dmg, 50), src);
+    }
 
 	@Override
 	public int damageRoll() {
@@ -66,7 +71,7 @@ public class Golem extends Mob {
 	public int attackSkill( Char target ) {
 		return 28;
 	}
-	
+
 	@Override
 	public int drRoll() {
 		return Random.NormalIntRange(0, 12);

@@ -181,9 +181,19 @@ public class SPDSettings extends GameSettings {
 	public static final String KEY_LAST_CLASS	= "last_class";
 	public static final String KEY_CHALLENGES	= "challenges";
 	public static final String KEY_INTRO		= "intro";
+	public static final String KEY_SEED_CODE	= "seed_code";
+	public static final String SEED_CODE_RANDOM	= "";
 
 	public static final String KEY_SUPPORT_NAGGED= "support_nagged";
 	
+	public static void seedCode(String value) {
+		put(KEY_SEED_CODE,value);
+	}
+	
+	public static String seedCode() {
+		return getString(KEY_SEED_CODE,SEED_CODE_RANDOM);
+	}
+
 	public static void intro( boolean value ) {
 		put( KEY_INTRO, value );
 	}

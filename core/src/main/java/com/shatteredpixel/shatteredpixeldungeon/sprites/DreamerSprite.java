@@ -23,11 +23,13 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Callback;
 
-public class DreamerSprite extends MobSprite {
+public class DreamerSprite extends FistSprite {
 	
 	public DreamerSprite() {
 		super();
@@ -44,8 +46,11 @@ public class DreamerSprite extends MobSprite {
 		
 		attack = new Animation( 8, false );
 		attack.frames( frames, 0, 3, 4, 0 );
-		
-		die = new Animation( 8, false );
+
+        zap = new Animation( 8, false );
+        zap.frames( frames, 0, 3, 4, 0 );
+
+        die = new Animation( 8, false );
 		die.frames( frames, 0, 3, 5, 6, 7 );
 		
 		play( idle );
@@ -57,6 +62,8 @@ public class DreamerSprite extends MobSprite {
 	public void attack( int cell ) {
 		posToShoot = cell;
 		super.attack( cell );
+
+        jump(ch.pos, ch.pos, null, 0, 0.34f );
 	}
 	
 	@Override
@@ -81,4 +88,22 @@ public class DreamerSprite extends MobSprite {
 			super.onComplete( anim );
 		}
 	}
+
+    @Override
+    protected int texOffset() {
+        return 0;
+    }
+
+    @Override
+    protected Emitter createEmitter() {
+        Emitter emitter = emitter();
+        emitter.pour( FlameParticle.FACTORY, 0.06f );
+        return emitter;
+    }
+
+    @Override
+    public int blood() {
+        return 0xFFFFDD34;
+    }
+
 }

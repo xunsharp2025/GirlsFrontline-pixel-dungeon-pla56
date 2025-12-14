@@ -22,16 +22,17 @@
 package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.CorrosionParticle;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.TextureFilm;
+import com.watabou.noosa.particles.Emitter;
 
-public class GarmSprite extends MobSprite {
-	
-	private static final float FALL_SPEED	= 64;
-	
+public class GarmSprite extends FistSprite {
+//    private static final float SLAM_TIME	= 0.33f;
+
 	public GarmSprite() {
 		super();
-		
+
 		texture( Assets.GARM );
 		
 		TextureFilm frames = new TextureFilm( texture, 36, 27 );
@@ -41,11 +42,15 @@ public class GarmSprite extends MobSprite {
 		
 		run = new Animation( 12, true );
 		run.frames( frames, 1, 2, 3, 4 );
-		
+
 		attack = new Animation( 5, false );
 		attack.frames( frames, 2, 2, 4, 4 );
-		
-		die = new Animation( 8, false );
+
+        zap = new Animation( 8, false );
+        zap.frames( frames, 0, 3, 4, 0 );
+
+
+        die = new Animation( 8, false );
 		die.frames( frames, 5, 6, 7 );
 		
 		play( idle );
@@ -54,9 +59,8 @@ public class GarmSprite extends MobSprite {
 	@Override
 	public void attack( int cell ) {
 		super.attack( cell );
-		
-		speed.set( 0, -FALL_SPEED );
-		acc.set( 0, FALL_SPEED * 4 );
+
+        jump(ch.pos, ch.pos, null, 14, 0.8f );
 	}
 	
 	@Override
@@ -70,4 +74,22 @@ public class GarmSprite extends MobSprite {
 			Camera.main.shake( 1, 0.2f );
 		}
 	}
+
+    @Override
+    protected int texOffset() {
+        return 0;
+    }
+
+    @Override
+    protected Emitter createEmitter() {
+        Emitter emitter = emitter();
+        emitter.pour(CorrosionParticle.MISSILE, 0.06f );
+        return emitter;
+    }
+
+    @Override
+    public int blood() {
+        return 0xFF7F7F7F;
+    }
+
 }

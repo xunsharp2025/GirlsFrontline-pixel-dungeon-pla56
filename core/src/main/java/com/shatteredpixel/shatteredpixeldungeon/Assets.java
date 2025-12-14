@@ -350,6 +350,7 @@ public class Assets {
 		public static final String NECRO      = "sprites/necromancer.png";
 		public static final String GHOUL      = "sprites/girlpd/undead.png";
 		public static final String RIPPER     = "sprites/ripper.png";
+        public static final String GNOLLSWAP = "sprites/GnollSWAP.png";
 		public static final String SPAWNER    = "sprites/spawner.png";
 		public static final String DM100      = "sprites/dm100.png";
 		public static final String PYLON      = "sprites/pylon.png";
@@ -365,6 +366,7 @@ public class Assets {
 		public static final String JAEGER_LOCK    = "sprites/girlpd/jager_lock.png";
 
 		public static final String SKS  = "sprites/girlpd/sks.png";
+        public static final String SKS_ARM  = "sprites/girlpd/sks_arm.png";
 		public static final String MANTI  = "sprites/girlpd/manti.png";
 
 		public static final String STRIKER			= "sprites/girlpd/striker.png";

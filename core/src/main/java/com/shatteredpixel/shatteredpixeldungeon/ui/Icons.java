@@ -124,6 +124,7 @@ public enum Icons {
 	WOLF,
 	CATZS,
 	SEA,
+	ONWARD,
 
 	LING,
 	SHOWER,
@@ -421,6 +422,9 @@ public enum Icons {
 				break;
 			case SEA:
 				icon.frame( icon.texture.uvRectBySize( 64, 129, 14, 14 ) );
+				break;
+			case ONWARD:
+				icon.frame( icon.texture.uvRectBySize( 80, 129, 14, 14 ) );
 				break;
 
 			case LING:

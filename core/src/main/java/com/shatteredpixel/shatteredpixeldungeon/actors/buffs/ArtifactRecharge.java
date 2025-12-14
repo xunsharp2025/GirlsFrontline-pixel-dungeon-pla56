@@ -58,7 +58,7 @@ public class ArtifactRecharge extends Buff {
 		}
 
 		left--;
-		if (left <= 0){
+		if (left < 0 ){
 			detach();
 		} else {
 			spend(TICK);

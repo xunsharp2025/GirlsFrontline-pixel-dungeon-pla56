@@ -47,7 +47,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicalSight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Momentum;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Regeneration;
@@ -57,6 +56,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.NaturesPower;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Endure;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Elphelt;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Monk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Snake;
@@ -116,11 +116,11 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLivingEarth;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.AK47;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.M99;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.levels.RabbitBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
@@ -134,6 +134,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.SurfaceScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ElpheltSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.AttackIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
@@ -142,6 +143,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.StatusPane;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndHero;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndMessage;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndTradeItem;
 import com.watabou.noosa.Camera;
@@ -358,15 +360,27 @@ public class Hero extends Char {
 		return pointsInTalent(talent) > 0;
 	}
 
-	public int pointsInTalent( Talent talent ){
-		for (LinkedHashMap<Talent, Integer> tier : talents){
-			for (Talent f : tier.keySet()){
-				if (f == talent) return tier.get(f);
-			}
-		}
-		return 0;
-	}
+    public int pointsInTalent( Talent talent ){
+        for (LinkedHashMap<Talent, Integer> tier : talents){
+            for (Talent f : tier.keySet()){
+                if (f == talent) return tier.get(f);
+            }
+        }
+        return 0;
+    }
 
+    public boolean hasTalentA( Talent talent ){
+        return pointsInTalentA(talent) >= 0;
+    }
+
+    public int pointsInTalentA( Talent talent ){
+        for (LinkedHashMap<Talent, Integer> tier : talents){
+            for (Talent f : tier.keySet()){
+                if (f == talent) return tier.get(f);
+            }
+        }
+        return -1;
+    }
 	public void upgradeTalent( Talent talent ){
 		for (LinkedHashMap<Talent, Integer> tier : talents){
 			for (Talent f : tier.keySet()){
@@ -500,6 +514,7 @@ public class Hero extends Char {
 		// GSH18天赋：元气一餐 +1级效果
 		if (hasTalent(Talent.GSH18_ENERGIZING_MEAL) && pointsInTalent(Talent.GSH18_ENERGIZING_MEAL) >= 1 && buff(Talent.GSH18EnergizingMealTracker.class) != null) {
 			// 下次攻击必定命中，设置一个非常高的accuracy值，变成测试枪了（）
+            accuracy += 1000f;
 			accuracy *= 1000f;
 		}
 		
@@ -641,8 +656,8 @@ public class Hero extends Char {
 	public boolean canSurpriseAttack(){
 		if (belongings.weapon() == null || !(belongings.weapon() instanceof Weapon))    return true;
 		if (STR() < ((Weapon)belongings.weapon()).STRReq())                             return false;
-		if (belongings.weapon() instanceof AK47 || belongings.weapon() instanceof M99)   return false;
-		//ak47和m99都无法偷袭了
+		if (belongings.weapon() instanceof AK47 )   return false;
+		//ak47无法偷袭了
 		return true;
 	}
 
@@ -1096,18 +1111,46 @@ public class Hero extends Char {
 		//there can be multiple exit tiles, so descend on any of them
 		//TODO this is slightly brittle, it assumes there are no disjointed sets of exit tiles
 		} else if ((Dungeon.level.map[pos] == Terrain.EXIT || Dungeon.level.map[pos] == Terrain.UNLOCKED_EXIT)) {
-			
-			curAction = null;
+            if (Dungeon.level instanceof RabbitBossLevel){
+                Game.runOnRenderThread(new Callback() {
+                    @Override
+                    public void call() {
+                        GameScene.show(
+                                new WndOptions(new ElpheltSprite(),
+                                        Messages.titleCase(Messages.get(Elphelt.class, "name", new Object[0])),
+                                        Messages.get(Elphelt.class, "pick_warn"),
+                                        Messages.get(Elphelt.class, "yes"),
+                                        Messages.get(Elphelt.class, "no")) {
+                                    @Override
+                                    protected void onSelect(int index) {
+                                        if (index == 0){
+                                            curAction = null;
 
-			TimekeepersHourglass.timeFreeze timeFreeze = buff(TimekeepersHourglass.timeFreeze.class);
-			if (timeFreeze != null) timeFreeze.disarmPressedTraps();
-			Swiftthistle.TimeBubble timeBubble = buff(Swiftthistle.TimeBubble.class);
-			if (timeBubble != null) timeBubble.disarmPressedTraps();
-			
-			InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
-			Game.switchScene( InterlevelScene.class );
+                                            TimekeepersHourglass.timeFreeze timeFreeze = buff(TimekeepersHourglass.timeFreeze.class);
+                                            if (timeFreeze != null) timeFreeze.disarmPressedTraps();
+                                            Swiftthistle.TimeBubble timeBubble = buff(Swiftthistle.TimeBubble.class);
+                                            if (timeBubble != null) timeBubble.disarmPressedTraps();
+                                            InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
+                                            Game.switchScene( InterlevelScene.class );
+                                        }
+                                    }
+                                }
+                                );
+                    }
+                });
+                ready();
+            } else {
+                curAction = null;
 
-			return false;
+                TimekeepersHourglass.timeFreeze timeFreeze = buff(TimekeepersHourglass.timeFreeze.class);
+                if (timeFreeze != null) timeFreeze.disarmPressedTraps();
+                Swiftthistle.TimeBubble timeBubble = buff(Swiftthistle.TimeBubble.class);
+                if (timeBubble != null) timeBubble.disarmPressedTraps();
+
+                InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
+                Game.switchScene(InterlevelScene.class);
+            }
+            return false;
 
 		} else if (getCloser( stairs )) {
 
@@ -1148,7 +1191,39 @@ public class Hero extends Char {
 					Game.switchScene( SurfaceScene.class );
 				}
 				
-			} else {
+			}
+			  else if (Dungeon.level instanceof RabbitBossLevel){
+                Game.runOnRenderThread(new Callback() {
+                    @Override
+                    public void call() {
+                        GameScene.show(
+                                new WndOptions(new ElpheltSprite(),
+                                        Messages.titleCase(Messages.get(Elphelt.class, "name", new Object[0])),
+                                        Messages.get(Elphelt.class, "pick_warn"),
+                                        Messages.get(Elphelt.class, "yes"),
+                                        Messages.get(Elphelt.class, "no")) {
+                                    @Override
+                                    protected void onSelect(int index) {
+                                        if (index == 0) {
+
+                                            curAction = null;
+
+                                            TimekeepersHourglass.timeFreeze timeFreeze = buff(TimekeepersHourglass.timeFreeze.class);
+                                            if (timeFreeze != null) timeFreeze.disarmPressedTraps();
+                                            Swiftthistle.TimeBubble timeBubble = buff(Swiftthistle.TimeBubble.class);
+                                            if (timeBubble != null) timeBubble.disarmPressedTraps();
+
+                                            InterlevelScene.mode = InterlevelScene.Mode.ASCEND;
+                                            Game.switchScene(InterlevelScene.class);
+                                        }
+                                    }
+                                }
+                        );
+                    }
+                });
+                ready();
+            }
+              else {
 				
 				curAction = null;
 
@@ -1230,11 +1305,6 @@ public class Hero extends Char {
 		}
 
 		damage = Talent.onAttackProc( this, enemy, damage );
-		
-		// GSH18天赋：元气一餐 - 攻击后移除追踪buff
-		if (buff(Talent.GSH18EnergizingMealTracker.class) != null) {
-			buff(Talent.GSH18EnergizingMealTracker.class).detach();
-		}
 		
 		switch (subClass) {
 		case SNIPER:
@@ -1920,7 +1990,7 @@ public class Hero extends Char {
 		}
 		
 		// GSH18天赋：元气一餐 - 攻击后移除buff
-		if (buff(Talent.GSH18EnergizingMealTracker.class) != null) {
+		if (hit&&(buff(Talent.GSH18EnergizingMealTracker.class) != null)) {
 			buff(Talent.GSH18EnergizingMealTracker.class).detach();
 		}
 

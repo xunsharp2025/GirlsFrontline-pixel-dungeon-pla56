@@ -68,13 +68,14 @@ public enum Rankings {
 		
 		Record rec = new Record();
 		
-		rec.cause = cause;
-		rec.win		= win;
-		rec.heroClass	= Dungeon.hero.heroClass;
-		rec.armorTier	= Dungeon.hero.tier();
-		rec.herolevel	= Dungeon.hero.lvl;
-		rec.depth		= Dungeon.curDepth();
-		rec.score	= score( win );
+		rec.cause     = cause;
+		rec.win       = win;
+		rec.heroClass = Dungeon.hero.heroClass;
+		rec.armorTier = Dungeon.hero.tier();
+		rec.herolevel = Dungeon.hero.lvl;
+		rec.seed      = Dungeon.seed;
+		rec.depth     = Dungeon.curDepth();
+		rec.score     = score( win );
 		
 		INSTANCE.saveGameData(rec);
 
@@ -175,7 +176,8 @@ public enum Rankings {
 		Bundle data = rec.gameData;
 
 		Actor.clear();
-		Dungeon.hero = null;
+		Dungeon.hero  = null;
+		Dungeon.seed  = rec.seed;
 		Dungeon.level = null;
 		Generator.fullReset();
 		Notes.reset();
@@ -259,6 +261,7 @@ public enum Rankings {
 		private static final String CLASS	= "class";
 		private static final String TIER	= "tier";
 		private static final String LEVEL	= "level";
+		private static final String SEED	= "seed";
 		private static final String DEPTH	= "depth";
 		private static final String DATA	= "gameData";
 		private static final String ID      = "gameID";
@@ -268,6 +271,7 @@ public enum Rankings {
 		public HeroClass heroClass;
 		public int armorTier;
 		public int herolevel;
+		public long seed;
 		public int depth;
 		
 		public Bundle gameData;
@@ -308,6 +312,7 @@ public enum Rankings {
 			
 			if (gameID == null) gameID = UUID.randomUUID().toString();
 
+			seed=bundle.getLong(SEED);
 			depth = bundle.getInt( DEPTH );
 			herolevel = bundle.getInt( LEVEL );
 
@@ -324,6 +329,7 @@ public enum Rankings {
 			bundle.put( CLASS, heroClass );
 			bundle.put( TIER, armorTier );
 			bundle.put( LEVEL, herolevel );
+			bundle.put( SEED, seed );
 			bundle.put( DEPTH, depth );
 			
 			if (gameData != null) bundle.put( DATA, gameData );
