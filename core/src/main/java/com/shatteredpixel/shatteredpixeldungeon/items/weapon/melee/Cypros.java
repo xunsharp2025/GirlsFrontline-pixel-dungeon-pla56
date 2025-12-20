@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
+
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -34,7 +36,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfGenoise;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.RabbitWeaponGenoise;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -54,6 +56,7 @@ public class Cypros extends MeleeWeapon {
 
         defaultAction = AC_ZAP;
         usesTargeting = true;
+        updataDEFGAIN();
 
         unique = true;
         bones = false;
@@ -71,13 +74,20 @@ public class Cypros extends MeleeWeapon {
 
     private Wand wand;
 
+    public Item identifyA(){
+        updataDEFGAIN();
+        return identify();
+    }
+
+
     public enum Mode {
         TRAVAILLER,/*shotgun*/
         CONFIRE,/*rifle*/
         MAGNUM;/*pistol*/
+        static int DEFGAIN;
 
         public String desc(){
-            return Messages.get(this, name());
+            return Messages.get(this, name(),DEFGAIN);
         }
         public String title(){
             return Messages.get(this,name()+".title");
@@ -92,7 +102,7 @@ public class Cypros extends MeleeWeapon {
     private static final float STAFF_SCALE_FACTOR = 0.75f;
 
     public Cypros(){
-        Wand wand = new WandOfGenoise();
+        Wand wand = new RabbitWeaponGenoise();
 
         wand.cursed = false;
         wand.maxCharges = 1;
@@ -104,6 +114,7 @@ public class Cypros extends MeleeWeapon {
 
     public void setMode(Mode newMode,boolean doShow) {
         if (newMode == mode) {
+            updataDEFGAIN();
             return;
         }
 
@@ -122,6 +133,7 @@ public class Cypros extends MeleeWeapon {
                 DEF = 5;
                 DEFUPGRADE = 2;
                 timeChange = 2f;
+                updataDEFGAIN();
                 ACC = 1.1f;
                 timeChange += 3.0f;
                 break;
@@ -129,7 +141,9 @@ public class Cypros extends MeleeWeapon {
                 image = ItemSpriteSheet.CONFIRE;
                 RCH = 3;
                 DLY = 3f;
+                updataDEFGAIN();
                 ACC = 1.5f;
+                Mode.DEFGAIN=0;
                 timeChange += 1f;
                 break;
             case MAGNUM:
@@ -137,7 +151,9 @@ public class Cypros extends MeleeWeapon {
                 RCH = 1;
                 DLY = 1f;
                 timeChange = 1f;
+                updataDEFGAIN();
                 ACC = 1.25f;
+                Mode.DEFGAIN=0;
                 timeChange += 0.5f;
                 break;
         }
@@ -304,11 +320,17 @@ public class Cypros extends MeleeWeapon {
             wand.gainCharge(amt);
         }
     }
+    public void updataDEFGAIN(){
+        int DEF = 5;
+        int DEFUPGRADE = 2;
+        int baseDEF=DEF+DEFUPGRADE*buffedLvl();
+        int REM=-2*Math.max(0,STRReq()-hero.STR);
+        Mode.DEFGAIN=Math.max(0,baseDEF+REM);
+    }
 
     @Override
     public Item upgrade(boolean enchant) {
         super.upgrade( enchant );
-
         if (wand != null) {
             wand.upgrade();
             wand.gainCharge(0.5f);
@@ -326,23 +348,24 @@ public class Cypros extends MeleeWeapon {
     @Override
     public String info() {
 
-        String info = desc();
+        String info = super.info();
 
         if (levelKnown) {
             info += "\n\n" + Messages.get(MeleeWeapon.class, "stats_known", tier, augment.damageFactor(min()), augment.damageFactor(max()), STRReq());
-            if (STRReq() > Dungeon.hero.STR()) {
+            if (STRReq() > hero.STR()) {
                 info += " " + Messages.get(Weapon.class, "too_heavy");
-            } else if (Dungeon.hero.STR() > STRReq()){
-                info += " " + Messages.get(Weapon.class, "excess_str", Dungeon.hero.STR() - STRReq());
+            } else if (hero.STR() > STRReq()){
+                info += " " + Messages.get(Weapon.class, "excess_str", hero.STR() - STRReq());
             }
         } else {
             info += "\n\n" + Messages.get(MeleeWeapon.class, "stats_unknown", tier, min(0), max(0), STRReq(0));
-            if (STRReq(0) > Dungeon.hero.STR()) {
+            if (STRReq(0) > hero.STR()) {
                 info += " " + Messages.get(MeleeWeapon.class, "probably_too_heavy");
             }
         }
 
         String stats_desc = Messages.get(this, "stats_desc");
+
         if (!stats_desc.equals("")) info+= "\n\n" + stats_desc;
 
         switch (augment) {
@@ -363,7 +386,7 @@ public class Cypros extends MeleeWeapon {
             info += " " + Messages.get(enchantment, "desc");
         }
 
-        if (cursed && isEquipped( Dungeon.hero )) {
+        if (cursed && isEquipped( hero )) {
             info += "\n\n" + Messages.get(Weapon.class, "cursed_worn");
         } else if (cursedKnown && cursed) {
             info += "\n\n" + Messages.get(Weapon.class, "cursed");

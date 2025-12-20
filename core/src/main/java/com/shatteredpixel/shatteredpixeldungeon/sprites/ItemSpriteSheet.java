@@ -97,7 +97,7 @@ public class ItemSpriteSheet {
 		assignItemRect(GOLD,        15, 13);
 		assignItemRect(ENERGY,      16, 16);
 
-		assignItemRect(DEWDROP,     10, 10);
+		assignItemRect(DEWDROP,     9, 9);
 		assignItemRect(PETAL,       8,  8);
 		assignItemRect(SANDBAG,     10, 10);
 		assignItemRect(SPIRIT_ARROW,11, 11);
@@ -674,6 +674,8 @@ public class ItemSpriteSheet {
 	public static final int BERRY 		  = FOOD+12;
 	public static final int MACCOL        = FOOD+13;
 	public static final int CINNAMONROLL  = FOOD+14;
+    public static final int XMASGIFT   = FOOD+25;
+    public static final int FULLCAKE   = FOOD+26;
 	public static final int SUGARZONGZI   = FOOD+27;
 	public static final int SALTYZONGZI   = FOOD+28;
 	public static final int CHOCO         = FOOD+29;
@@ -686,8 +688,8 @@ public class ItemSpriteSheet {
 		assignItemRect(CARPACCIO,    15,11);
 		assignItemRect(BLANDFRUIT,    9,12);
 		assignItemRect(RATION,       16,13);
-		assignItemRect(PASTY,        16,11);
-		assignItemRect(PUMPKIN_PIE,  16,12);
+		assignItemRect(PASTY,        16,13);
+		assignItemRect(PUMPKIN_PIE,  16,13);
 		assignItemRect(CANDY_CANE,   13,16);
 		assignItemRect(MEAT_PIE,     16,11);
 		assignItemRect(BLANDFRUIT,    9,12);
@@ -695,6 +697,8 @@ public class ItemSpriteSheet {
 		assignItemRect(BERRY,         11,11);
 		assignItemRect(MACCOL,        8,14);
 		assignItemRect(CINNAMONROLL,  8, 8);
+        assignItemRect(XMASGIFT , 13,14);
+        assignItemRect(FULLCAKE , 16,15);
 		assignItemRect(SUGARZONGZI , 16,14);
 		assignItemRect(SALTYZONGZI , 16,15);
 		assignItemRect(CHOCO,        13,12);

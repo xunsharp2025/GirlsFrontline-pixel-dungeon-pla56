@@ -367,9 +367,11 @@ public abstract class Mob extends Char {
 				|| (buff instanceof Dread && buff(Terror.class) == null)) {
 			if (enemySeen) {
 				sprite.showStatus(CharSprite.NEGATIVE, Messages.get(this, "rage"));
-				state = HUNTING;
-			} else {
-				state = WANDERING;
+                if(enemy.getClass() != RatXMAS.class)
+                    state = HUNTING;
+            } else {
+                if (enemy.getClass() != RatXMAS.class)
+                    state = WANDERING;
 			}
 		}
 	}
@@ -858,6 +860,11 @@ public abstract class Mob extends Char {
 		GLog.newLine();
 		GLog.n( "%s: \"%s\" ", Messages.titleCase(name()), str );
 	}
+
+    public void yellgood( String str ) {
+        GLog.newLine();
+        GLog.p( "%s: \"%s\" ", Messages.titleCase(name()), str );
+    }
 
 	//returns true when a mob sees the hero, and is currently targeting them.
 	public boolean focusingHero() {

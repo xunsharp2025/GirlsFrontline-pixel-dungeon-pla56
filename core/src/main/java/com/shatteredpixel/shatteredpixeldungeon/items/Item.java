@@ -21,9 +21,13 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
+import static com.watabou.utils.Reflection.newInstance;
+
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
@@ -33,8 +37,17 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.AlchemicalCatalyst;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.Brew;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.Elixir;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ExoticScroll;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.Alchemize;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
+import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
@@ -42,18 +55,22 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MissileSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
+import com.shatteredpixel.shatteredpixeldungeon.ui.WndTextInput;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndStartGame;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
-import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 
 public class Item implements Bundlable {
+    public static ArrayList<Class> itemA = Dungeon.itemAOfSave;
+    public static ArrayList<String> NOTEA = Dungeon.NOTEAOfSave;
 
 	protected static final String TXT_TO_STRING_LVL		= "%s %+d";
 	protected static final String TXT_TO_STRING_X		= "%s x%d";
@@ -79,6 +96,9 @@ public class Item implements Bundlable {
 	public boolean dropsDownHeap = false;
 	
 	private int level = 0;
+    public String noted = "";
+    public boolean canNote = true;
+    public boolean canShowNote = true;
 
 	public boolean levelKnown = false;
 	
@@ -200,13 +220,77 @@ public class Item implements Bundlable {
 			
 		}
 	}
-	
-	protected void onThrow( int cell ) {
+    public void notedSet(String text) {
+        if(this instanceof Scroll||(this instanceof Potion&&!(this instanceof Brew)&&!(this instanceof Elixir)&&!(this instanceof AlchemicalCatalyst))){
+            Item changItem = ScrollOfTransmutation.changeItem(this);
+            NoteItem(this,text);
+            NoteItem(changItem,text);
+        }else if(this.stackable){
+            NoteItem(this,text);
+        }else {
+            this.noted=text;
+        }
+    }
+    private void NoteItem(Item item,String text){
+        if(itemA.contains(item.getClass())){
+            int j=0;
+            for(Class i:itemA){
+                if(item.getClass()==i){
+                    break;
+                }else {
+                    j++;
+                }
+            }
+            NOTEA.set(j,text);
+            Dungeon.NOTEAOfSave.set(j,text);
+        }else {
+            itemA.add(item.getClass());
+            Dungeon.itemAOfSave.add(item.getClass());
+            NOTEA.add(text);
+            Dungeon.NOTEAOfSave.add(text);
+        }
+        item.noted = text;
+    }
+    public static String ClassNoteToItem(Item item){
+        String note;
+        if (itemA.contains(item.getClass())) {
+            int j = 0;
+            for (Class i : itemA) {
+                if (item.getClass() == i) {
+                    break;
+                } else {
+                    j++;
+                }
+            }
+            note = NOTEA.get(j);
+        } else {
+            note = item.noted;
+        }
+        return note;
+    }
+    public String NoteGet(Item item){
+        String note=ClassNoteToItem(item);
+        String info = "";
+        if(note!=null&& !note.isEmpty()){
+            if(item.stackable){
+                info =Messages.get(Item.class, "classnote",note)+"\n\n";
+            }else {
+                info =Messages.get(Item.class, "itemnote",note)+"\n\n";
+            }
+        }
+        if(!item.canShowNote){
+            info = "";
+        }
+        return info;
+    }
+
+
+    protected void onThrow( int cell ) {
 		Heap heap = Dungeon.level.drop( this, cell );
 		if (!heap.isEmpty()) {
 			heap.sprite.drop( cell );
 		}
-	}
+    }
 	
 	//takes two items and merges them (if possible)
 	public Item merge( Item other ){
@@ -246,9 +330,9 @@ public class Item implements Bundlable {
 				if (isSimilar( item )) {
 					item.merge( this );
 					item.updateQuickslot();
-					if (Dungeon.hero != null && Dungeon.hero.isAlive()) {
+					if (hero != null && hero.isAlive()) {
 						Badges.validateItemLevelAquired( this );
-						Talent.onItemCollected(Dungeon.hero, item);
+						Talent.onItemCollected(hero, item);
 						if (isIdentified()) Catalog.setSeen(getClass());
 					}
 					return true;
@@ -256,9 +340,9 @@ public class Item implements Bundlable {
 			}
 		}
 
-		if (Dungeon.hero != null && Dungeon.hero.isAlive()) {
+		if (hero != null && hero.isAlive()) {
 			Badges.validateItemLevelAquired( this );
-			Talent.onItemCollected( Dungeon.hero, this );
+			Talent.onItemCollected( hero, this );
 			if (isIdentified()) Catalog.setSeen(getClass());
 		}
 
@@ -271,7 +355,7 @@ public class Item implements Bundlable {
 	}
 	
 	public boolean collect() {
-		return collect( Dungeon.hero.belongings.backpack );
+		return collect( hero.belongings.backpack );
 	}
 	
 	//returns a new item if the split was sucessful and there are now 2 items, otherwise null
@@ -280,7 +364,7 @@ public class Item implements Bundlable {
 			return null;
 		} else {
 			//pssh, who needs copy constructors?
-			Item split = Reflection.newInstance(getClass());
+			Item split = newInstance(getClass());
 			
 			if (split == null){
 				return null;
@@ -315,6 +399,7 @@ public class Item implements Bundlable {
 			
 			
 			Item detached = split(1);
+            detached.noted=this.noted;
 			updateQuickslot();
 			if (detached != null) detached.onDetach( );
 			return detached;
@@ -363,7 +448,7 @@ public class Item implements Bundlable {
 	//returns the level of the item, after it may have been modified by temporary boosts/reductions
 	//note that not all item properties should care about buffs/debuffs! (e.g. str requirement)
 	public int buffedLvl(){
-		if (Dungeon.hero.buff( Degrade.class ) != null) {
+		if (hero.buff( Degrade.class ) != null) {
 			return Degrade.reduceLevel(level());
 		} else {
 			return level();
@@ -438,9 +523,9 @@ public class Item implements Bundlable {
 
 	public Item identify( boolean byHero ) {
 
-		if (byHero && Dungeon.hero != null && Dungeon.hero.isAlive()){
+		if (byHero && hero != null && hero.isAlive()){
 			Catalog.setSeen(getClass());
-			if (!isIdentified()) Talent.onItemIdentified(Dungeon.hero, this);
+			if (!isIdentified()) Talent.onItemIdentified(hero, this);
 		}
 
 		levelKnown = true;
@@ -469,7 +554,9 @@ public class Item implements Bundlable {
 	public Emitter emitter() { return null; }
 	
 	public String info() {
-		return desc();
+        String info = NoteGet(this);
+        info+=desc();
+		return info;
 	}
 	
 	public String desc() {
@@ -496,7 +583,7 @@ public class Item implements Bundlable {
 	}
 	
 	public Item virtual(){
-		Item item = Reflection.newInstance(getClass());
+		Item item = newInstance(getClass());
 		if (item == null) return null;
 		
 		item.quantity = 0;
@@ -524,6 +611,10 @@ public class Item implements Bundlable {
 	private static final String QUICKSLOT		= "quickslotpos";
 	private static final String KEPT_LOST       = "kept_lost";
     private static final String UPGRADEUSED       = "UpgradeUSED";
+    private static final String NOTESAVEA       = "NOTESAVEA";
+    private static final String NOTESAVEB       = "NOTESAVEB";
+    private static String NOTED			= "noted";
+
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
@@ -537,6 +628,8 @@ public class Item implements Bundlable {
 			bundle.put( QUICKSLOT, Dungeon.quickslot.getSlot(this) );
 		}
 		bundle.put( KEPT_LOST, keptThoughLostInvent );
+
+        bundle.put(NOTED,noted);
 	}
 	
 	@Override
@@ -555,13 +648,15 @@ public class Item implements Bundlable {
 		cursed	= bundle.getBoolean( CURSED );
 
 		//only want to populate slot on first load.
-		if (Dungeon.hero == null) {
+		if (hero == null) {
 			if (bundle.contains(QUICKSLOT)) {
 				Dungeon.quickslot.setSlot(bundle.getInt(QUICKSLOT), this);
 			}
 		}
 
 		keptThoughLostInvent = bundle.getBoolean( KEPT_LOST );
+
+        noted = bundle.getString(NOTED);
 	}
 
 	public int targetingPos( Hero user, int dst ){

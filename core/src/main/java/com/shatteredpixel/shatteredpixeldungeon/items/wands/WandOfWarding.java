@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
+import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile.WardParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -124,7 +125,7 @@ public class WandOfWarding extends Wand {
 				} else {
 					((Ward) ch).wandHeal( buffedLvl() );
 				}
-				ch.sprite.emitter().burst(MagicMissile.WardParticle.UP, ((Ward) ch).tier);
+				ch.sprite.emitter().burst(WardParticle.UP, ((Ward) ch).tier);
 			} else {
 				GLog.w( Messages.get(this, "bad_location"));
 				Dungeon.level.pressCell(target);
@@ -136,7 +137,7 @@ public class WandOfWarding extends Wand {
 			ward.wandLevel = buffedLvl();
 			GameScene.add(ward, 1f);
 			Dungeon.level.occupyCell(ward);
-			ward.sprite.emitter().burst(MagicMissile.WardParticle.UP, ward.tier);
+			ward.sprite.emitter().burst(WardParticle.UP, ward.tier);
 			Dungeon.level.pressCell(target);
 
 		}
@@ -144,8 +145,20 @@ public class WandOfWarding extends Wand {
 
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
+        int level = Math.max(0, staff.buffedLvl());
+        float procChance = ((float)level + 1.0F) / ((float)level + 5.0F) * procChanceMultiplier(attacker);
+        if (Random.Float() < procChance) {
+            float powerMulti = Math.max(1.0F, procChance);
 
-	}
+            for(Char ch : Actor.chars()) {
+                if (ch instanceof Ward) {
+                    ((Ward)ch).wandHeal(staff.buffedLvl(), powerMulti);
+                    ch.sprite.emitter().burst(WardParticle.UP, ((Ward)ch).tier);
+                }
+            }
+        }
+
+    }
 
 	@Override
 	public void fx(Ballistica bolt, Callback callback) {

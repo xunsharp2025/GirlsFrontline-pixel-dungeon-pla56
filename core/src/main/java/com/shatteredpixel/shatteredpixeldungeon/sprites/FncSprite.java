@@ -24,13 +24,14 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.Ratmogrify;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.RatKing;
 import com.watabou.noosa.TextureFilm;
 
 import java.util.Calendar;
 
 public class FncSprite extends MobSprite {
 
-    public boolean festive;
+    public boolean XMAS;
 
     public FncSprite() {
         super();
@@ -41,13 +42,31 @@ public class FncSprite extends MobSprite {
     public void resetAnims(){
         final Calendar calendar = Calendar.getInstance();
         //once a year the rat king feels a bit festive!
-        festive = (calendar.get(Calendar.MONTH) == 11 && calendar.get(Calendar.WEEK_OF_MONTH) > 2);
+        XMAS = Dungeon.isXMAS()||Dungeon.lockXMAS;
+        int id = 0;
+        if(Dungeon.hero != null){
+            RatKing.LastTracker trackerA = Dungeon.hero.buff(RatKing.LastTracker.class);
+            boolean Last = (trackerA != null) ;
 
-        int c = festive ? 8 : 0;
-        if (Dungeon.hero != null && Dungeon.hero.armorAbility instanceof Ratmogrify){
-            c = 8;
-            if (parent != null) aura(0xFFFF00);
+            if(Last){
+                if(trackerA.count()>=2){
+                    id = 2;
+                }else if(trackerA.count()>0) {
+                    id = 1;
+                    if(XMAS)
+                        id = 3;
+                    if (parent != null)
+                        aura(0xFFFF00);
+                }
+            }
         }
+
+        if(Dungeon.depth==0&&XMAS){
+            id = 2;
+        }
+
+
+        int c =id*8;
 
         texture( Assets.FNC );
 

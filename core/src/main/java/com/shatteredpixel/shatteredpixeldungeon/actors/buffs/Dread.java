@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RatXMAS;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.watabou.noosa.Image;
@@ -61,12 +62,16 @@ public class Dread extends Buff {
 
 		if (!Dungeon.level.heroFOV[target.pos]
 				&& Dungeon.level.distance(target.pos, Dungeon.hero.pos) >= 6) {
-			if (target instanceof Mob){
-				((Mob) target).EXP /= 2;
-			}
-			target.destroy();
-			target.sprite.killAndErase();
-			Dungeon.level.mobs.remove(target);
+            if(target.getClass()!= RatXMAS.class)
+            //极度恐惧buff也不会清除圣诞狗
+            {
+                if (target instanceof Mob) {
+                    ((Mob) target).EXP /= 2;
+                }
+                target.destroy();
+                target.sprite.killAndErase();
+                Dungeon.level.mobs.remove(target);
+            }
 		} else {
 			left--;
 			if (left <= 0){

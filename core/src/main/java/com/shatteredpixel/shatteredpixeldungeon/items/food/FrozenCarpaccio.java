@@ -45,6 +45,7 @@ public class FrozenCarpaccio extends Food {
 		super.satisfy(hero);
 		effect(hero);
 	}
+    private static boolean noText = false;
 
 	public static void effect(Hero hero){
 		switch (Random.Int( 5 )) {
@@ -67,8 +68,17 @@ public class FrozenCarpaccio extends Food {
 					hero.sprite.emitter().burst( Speck.factory( Speck.HEALING ), 1 );
 				}
 				break;
+            case 4:
+                noText=true;
+                break;
 		}
 	}
+
+    @Override
+    public void EatText(){
+        if(noText)
+            super.EatText();
+    }
 	
 	public static Food cook( MysteryMeat ingredient ) {
 		FrozenCarpaccio result = new FrozenCarpaccio();

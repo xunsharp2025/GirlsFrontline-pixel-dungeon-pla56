@@ -121,8 +121,26 @@ public class WandOfFrost extends DamageWand {
 
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
+        Chill chill = (Chill)defender.buff(Chill.class);
+        if (chill != null) {
+            float procChance = (float)((int)Math.floor((double)chill.cooldown()) - 1) / 9.0F;
+            procChance *= procChanceMultiplier(attacker);
+            if (Random.Float() < procChance) {
+                final float powerMulti = Math.max(1.0F, procChance);
+                (new FlavourBuff() {
+                    {
+                        this.actPriority = 100;
+                    }
 
-	}
+                    public boolean act() {
+                        Buff.affect(this.target, Frost.class, (float)Math.round(10.0F * powerMulti));
+                        return super.act();
+                    }
+                }).attachTo(defender);
+            }
+        }
+
+    }
 
 	@Override
 	public void staffFx(MagesStaff.StaffParticle particle) {

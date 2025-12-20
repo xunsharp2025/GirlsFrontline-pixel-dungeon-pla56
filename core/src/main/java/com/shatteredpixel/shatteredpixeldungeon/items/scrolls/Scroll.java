@@ -234,9 +234,10 @@ public abstract class Scroll extends Item {
 
 	@Override
 	public String info() {
+        String noteA = NoteGet(this);
 		return isKnown() ?
-			desc() :
-			Messages.get(this, "unknown_desc");
+			super.info() :
+			noteA+Messages.get(this, "unknown_desc");
 	}
 
 	@Override

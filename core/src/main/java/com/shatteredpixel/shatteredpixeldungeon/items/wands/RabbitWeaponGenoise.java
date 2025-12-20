@@ -16,7 +16,7 @@ import com.watabou.utils.PathFinder;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
-public class WandOfGenoise extends Wand {
+public class RabbitWeaponGenoise extends Wand {
     {
         image = ItemSpriteSheet.WAND_TRANSFUSION;
 

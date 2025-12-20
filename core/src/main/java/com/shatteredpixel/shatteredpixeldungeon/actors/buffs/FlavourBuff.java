@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+
 //buff whose only internal logic is to wait and detach after a time.
 public class FlavourBuff extends Buff {
 	
@@ -29,6 +31,13 @@ public class FlavourBuff extends Buff {
 		detach();
 		return true;
 	}
+    @Override
+    public String toString() {
+        return Messages.get(this, "name");
+    }
+    public String desc() {
+        return Messages.get(this, "desc", this.dispTurns());
+    }
 
 	//flavour buffs can all just rely on cooldown()
 	protected String dispTurns() {
@@ -39,4 +48,5 @@ public class FlavourBuff extends Buff {
 	public String iconTextDisplay() {
 		return Integer.toString((int)visualcooldown());
 	}
+
 }

@@ -1,5 +1,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
+
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -7,6 +9,7 @@ import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.TestItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -40,14 +43,14 @@ public class TestExperience extends TestItem {
         super.execute(hero, action);
         if (action.equals(AC_SET)){
             setLevel();
-            updateLevel();
         }
     }
     private void updateLevel(){
-        if(level>0&&level-curUser.lvl!=0){
-            curUser.lvl = level;
+        if(level>0&&level-hero.lvl!=0){
+            new PotionOfExperience().apply(hero);
+            hero.lvl = level;
             Sample.INSTANCE.play( Assets.Sounds.READ );
-            curUser.updateHT( true );
+            hero.updateHT( true );
         }
     }
 

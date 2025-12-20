@@ -57,6 +57,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bee;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Piranha;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RatXMAS;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Statue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Swarm;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Wraith;
@@ -102,8 +103,15 @@ public class WandOfCorruption extends Wand {
 	}
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
+        int level = Math.max(0, this.buffedLvl());
+        float procChance = ((float)level + 1.0F) / ((float)level + 6.0F) * procChanceMultiplier(attacker);
+        if (Random.Float() < procChance) {
+            float powerMulti = Math.max(1.0F, procChance);
+            if(defender.getClass()!= RatXMAS.class)
+            Buff.prolong(defender, Amok.class, (float)Math.round((float)(4 + level * 2) * powerMulti));
+        }
 
-	}
+    }
 	private static final float MAJOR_DEBUFF_WEAKEN = 1/2f;
 	private static final HashMap<Class<? extends Buff>, Float> MAJOR_DEBUFFS = new HashMap<>();
 	static{

@@ -32,7 +32,10 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.mage.WildMagic;
+import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Blazing;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
@@ -46,6 +49,7 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 import com.watabou.utils.GameMath;
 import com.watabou.utils.PathFinder;
+import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
@@ -133,9 +137,49 @@ public class WandOfFireblast extends DamageWand {
 	}
 
 	@Override
-	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
+    public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
+        float procChance = 0.0F;
 
-	}
+        for(int i : PathFinder.NEIGHBOURS9) {
+            if (Actor.findChar(defender.pos + i) != null && Actor.findChar(defender.pos + i).buff(Burning.class) != null) {
+                procChance += 0.25F;
+            } else if (Fire.volumeAt(defender.pos + i, Fire.class) > 0) {
+                procChance += 0.05F;
+            }
+        }
+
+        procChance = Math.min(1.0F, procChance);
+        procChance *= Wand.procChanceMultiplier(attacker);
+        if (Random.Float() < procChance) {
+            float powerMulti = Math.max(1.0F, procChance);
+            Blob fire = (Blob)Dungeon.level.blobs.get(Fire.class);
+            CellEmitter.center(defender.pos).burst(BlastParticle.FACTORY, 30);
+            if (fire != null) {
+                for(int i : PathFinder.NEIGHBOURS9) {
+                    CellEmitter.get(defender.pos + i).burst(SmokeParticle.FACTORY, 4);
+                    if (Fire.volumeAt(defender.pos + i, Fire.class) > 0) {
+                        Dungeon.level.destroy(defender.pos + i);
+                        GameScene.updateMap(defender.pos + i);
+                        fire.clear(defender.pos + i);
+                    }
+
+                    Char ch = Actor.findChar(defender.pos + i);
+                    if (ch != null) {
+                        if (ch.buff(Burning.class) != null) {
+                            ((Burning)ch.buff(Burning.class)).detach();
+                        }
+
+                        if (ch.alignment == Char.Alignment.ENEMY) {
+                            ch.damage(Math.round(powerMulti * (float)Random.NormalIntRange(2 + 2 * this.buffedLvl(), 8 + 4 * this.buffedLvl())), this);
+                        }
+                    }
+                }
+            }
+
+            Sample.INSTANCE.play("sounds/blast.mp3");
+        }
+
+    }
 
 	@Override
 	public void fx(Ballistica bolt, Callback callback) {

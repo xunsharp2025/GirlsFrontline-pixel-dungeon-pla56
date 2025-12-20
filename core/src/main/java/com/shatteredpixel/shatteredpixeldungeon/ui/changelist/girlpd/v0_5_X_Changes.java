@@ -28,6 +28,7 @@ import java.util.ArrayList;
 
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
+    	add_0_5_6_Changes(changeInfos);
     	add_0_5_5_4_Changes(changeInfos);
     	add_0_5_5_3_Changes(changeInfos);
     	add_0_5_5_2_Changes(changeInfos);
@@ -41,6 +42,100 @@ public class v0_5_X_Changes {
 		add_0_5_1_Changes(changeInfos);
 		add_0_5_0_Changes(changeInfos);
     }
+    public static void add_0_5_6_Changes( ArrayList<ChangeInfo> changeInfos ){
+        ChangeInfo changes = new ChangeInfo("v0.5.6", true, "");
+        changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "buffs"), false, null);
+		changes.hardlight( CharSprite.POSITIVE );
+		changeInfos.add(changes);
+
+		Image g11 = new Image(HeroSprite.avatar(HeroClass.MAGE, 4));
+		g11.scale.set(0.8f);
+        changes.addButton( new ChangeButton(g11, "职业强化",
+        	"_-_ 角色_G11_的职业_鹰眼_获得强化\n"+
+            "_-_ 该转职本该实现的_装载不同子弹获得不同近战攻击效果_得到了正常实现，以此保证了两个转职实用性的平衡。\n"+
+            "_-_ 同时，天赋_蓄能打击_获得同步强化，在增强_子弹效果_的同时还会增加特殊_近战攻击_强度。"
+        ));
+
+        Image ump9 = new Image(HeroSprite.avatar(HeroClass.ROGUE, 4));
+		ump9.scale.set(0.8f);
+        changes.addButton( new ChangeButton(ump9, "天赋强化",
+        	"_-_ 角色_UMP9_的天赋_行窃预知_获得强化\n"+
+            "_-_ 该天赋+1时发现隐藏房间的概率提高为_67%_，+2时的概率提高为_100%_"
+        ));
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CROWN, null), "新型火控元件",
+		"_-_ 可以将外骨骼进行升级的_新型火控元件_现在可以在不同的外骨骼间进行转移\n" +
+		"_-_ 转移后原外骨骼将直接被_销毁_，而新外骨骼成为_人形专属配件_\n"+
+		"_-_ 将_新型火控元件_进行转移时，被加强的外骨骼将直接被鉴定"
+		));
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		changes.hardlight( CharSprite.WARNING );
+		changeInfos.add(changes);
+
+		Image ep = new Image(Assets.ELPHELT, 0 ,0 ,15 ,24);
+        ep.scale.x=0.8f;
+        ep.scale.y=0.8f;
+        changes.addButton(new ChangeButton(ep,"艾尔菲尔特",
+        	"_-_ 修复了BOSS_艾尔菲尔特_战斗地图中的_无敌点位_\n"+
+        	"_-_ 艾尔菲尔特在遇见特殊的_无法接近玩家_的情况时，将会进行_穿墙索敌_，请避免故意卡_无敌点位_"
+        ));
+
+        Image gm = new Image(Assets.Sprites.MANTI, 0 ,0 ,48 ,40);
+        gm.scale.x=0.8f;
+        gm.scale.y=0.8f;
+        changes.addButton(new ChangeButton(gm, "蝎甲兽", 
+        "_-_ 敌人_蝎甲兽_的生命值上限提高，且对单次高额伤害获得伤害阈值。\n" +
+		"_-_ 这意味着蝎甲兽将强制性需要多次攻击才能击败"
+		));
+
+		Image imageTemp = new Image(Assets.Sprites.TROLL, 0 ,0 ,12 ,21);
+        imageTemp.scale.x=0.8f;
+        imageTemp.scale.y=0.8f;
+        changes.addButton(new ChangeButton(imageTemp, "游戏优化", 
+            "_-_ 更正了_测试模式_怪物生成器的部分错误。\n"+
+			"_-_ 实现了先前没能实现的GSH18天赋_元气一餐_的效果。\n"+ 
+			"_-_ 实现了先前没能实现的UMP45天赋_刻印转移_的效果。\n"+
+			"_-_ 调整了部分一次性消耗品_被消耗_的时机，避免因为各种_意外_导致物品未生效便消失。\n"+
+			"_-_ 优化了代码，避免因为部分角色的_特殊原因_导致_固定种子_出现不同的物品_分化_。\n"+
+			"_-_ 修复了部分情况下，_切割者_贴墙死亡会丢失部分掉落物的BUG。\n"+
+			"_-_ 修复了部分情况下，_切割者_会掉落相同遗物，相同遗物可以同时使用的BUG。\n"+
+			"_-_ 修复了本该初始中立的怪物，在循环刷新中以敌对态度出现的问题。\n"+
+			"_-_ 优化了测试模式部分测试工具的_使用手感_,消除了_跳层器_的下楼延迟。\n"+
+			"_-_ 优化了了_种子系统_现在可以更自由的使用种子系统了。\n"+
+			"_-_ 迭代了调用转换方法，并兼容了双端错误报告。\n"+
+			"_-_ 将_空降妖精_与_曼蒂装甲_加入了遗物嬗变池。\n"+
+			"_-_ 将_标签系统_加入了游戏，玩家可以给物品自定义标签以便利记忆物品情况。\n"+
+			"_-_ 进行了_文案_优化。\n"+
+			"_-_ 进行了_贴图_优化。"
+        ));
+        
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
+		changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+		 changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CANDY_CANE, null), "圣诞节！",
+		"_-_ 全面扩展了_圣诞节彩蛋_！\n" +
+		"_-_ 圣诞节期间将出现_限时稀有敌人_，掉落_限时稀有奖励_，同时有_隐藏徽章_等待你的收集！\n\n"+
+		"_-_ 注：圣诞节期间指每年12月24-25号前后各7天（共14天）时间"
+		));
+
+		changes.addButton( new ChangeButton(Icons.get(Icons.WARNING), "历史错误报告收集系统",
+        	"_-_ 加入了_历史错误报告_系统，可自动保留近期的错误报告，点击主页面右下角按钮可以进入。\n"+
+        	"_-_ 此系统旨在玩家可以便利的提供给开发者未能及时保留的错误报告，便于BUG的溯源与修复。\n"
+        ));
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY,null), "水晶房间",
+        "_-_ 需要三把钥匙才能完全开启的_水晶房间_增新了变体\n"+
+        "_-_ 此类房间将有概率变体为共有6个小间，玩家可以进行6选3猜选奖励的特殊房间"
+        ));
+
+    }
+
+
 
     public static void add_0_5_5_4_Changes( ArrayList<ChangeInfo> changeInfos ){
         ChangeInfo changes = new ChangeInfo("v0.5.5.4", true, "");
@@ -215,12 +310,11 @@ public class v0_5_X_Changes {
 		changes.hardlight( CharSprite.WARNING );
 		changeInfos.add(changes);
 
-        Image ac = new Image(Assets.Sprites.CRAB, 0 ,0 ,15 ,18);
+        Image ac = new Image(Assets.Sprites.BRUTE, 0 ,0 ,15 ,18);
         changes.addButton(new ChangeButton(ac,"索敌精英",
         	"_-_ 优化了_索敌精英_类敌人的索敌逻辑，索敌精英将不能越过单位直接攻击玩家。\n"+
         	"_-_ 这意味着现在不会在被围困时被_索敌精英_类敌人从远处直接攻击到了。"
         ));
-
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.MACCOL,null), "大麦味可乐",
         "_-_ _大麦味可乐_重新回到了游戏！\n"+
         "_-_ 现在商店中的_压缩饼干_将有概率变为_大麦味可乐_！"

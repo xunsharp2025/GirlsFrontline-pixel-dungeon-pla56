@@ -113,8 +113,10 @@ public abstract class InventoryStone extends Runestone {
 			if (item != null) {
 				
 				((InventoryStone)curItem).onItemSelected( item );
-
-                curItem = detach( hero.belongings.backpack );
+                if(!curItem.equals(new StoneOfIntuition())){
+                    //非感知符石在此消耗，感知符石在使用完毕时消耗
+                    curItem = detach( hero.belongings.backpack );
+                }
 			}
 		}
 	};

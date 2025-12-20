@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.ArcaneResin;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -158,16 +159,20 @@ public class MagesStaff extends MeleeWeapon {
 
     @Override
     public int proc(Char attacker, Char defender, int damage) {
-        if (attacker.buff(Talent.EmpoweredStrikeTracker.class) != null){
-            attacker.buff(Talent.EmpoweredStrikeTracker.class).detach();
-            damage = Math.round( damage * (1f + Dungeon.hero.pointsInTalent(Talent.EMPOWERED_STRIKE)/4f));
+
+        Talent.EmpoweredStrikeTracker empoweredStrike = attacker.buff(Talent.EmpoweredStrikeTracker.class);
+        if (empoweredStrike != null){
+            //受战法三层专属天赋蓄能打击影响，老魔杖发射子弹后的首次攻击增加伤害
+            damage = Math.round( damage * (1f + Dungeon.hero.pointsInTalent(Talent.EMPOWERED_STRIKE)/6f));
         }
 
         if (wand.curCharges >= wand.maxCharges && attacker instanceof Hero && Random.Int(5) < ((Hero) attacker).pointsInTalent(Talent.EXCESS_CHARGE)){
+            //战法三层专属天赋盈能屏障效果
             Buff.affect(attacker, Barrier.class).setShield(buffedLvl()*2);
         }
 
         if (attacker instanceof Hero && ((Hero) attacker).hasTalent(Talent.MYSTICAL_CHARGE)){
+            //战法三层天赋充能秘术效果
             Hero hero = (Hero) attacker;
             for (Buff b : hero.buffs()){
                 if (b instanceof Artifact.ArtifactBuff) {
@@ -178,9 +183,20 @@ public class MagesStaff extends MeleeWeapon {
 
         if (wand != null &&
                 attacker instanceof Hero && ((Hero)attacker).subClass == HeroSubClass.BATTLEMAGE) {
+            //战法使用老魔杖的近战效果效果
             if (wand.curCharges < wand.maxCharges) wand.partialCharge += 0.5f;
+            //为自身回复0.5充能
             ScrollOfRecharging.chargeParticle((Hero)attacker);
-            //wand.onHit(this, attacker, defender, damage);
+            this.wand.onHit(this, attacker, defender, damage);
+            //执行填充法杖的近战效果
+        }
+
+        if (empoweredStrike != null) {
+                empoweredStrike.detach();
+
+            if (!(defender instanceof Mob) || !((Mob)defender).surprisedBy(attacker)) {
+                Sample.INSTANCE.play("sounds/hit_strong.mp3", 0.75F, 1.2F);
+            }
         }
         return super.proc(attacker, defender, damage);
     }
@@ -191,7 +207,7 @@ public class MagesStaff extends MeleeWeapon {
         if (owner instanceof Hero
                 && wand instanceof WandOfDisintegration
                 && ((Hero)owner).subClass == HeroSubClass.BATTLEMAGE){
-            reach++;
+            reach += Math.round(Wand.procChanceMultiplier(owner));
         }
         return reach;
     }

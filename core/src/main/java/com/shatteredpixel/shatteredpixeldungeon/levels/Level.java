@@ -48,6 +48,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.SpiritHawk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bestiary;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RatXMAS;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.YogFist;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Sheep;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlowParticle;
@@ -488,6 +489,9 @@ public abstract class Level implements Bundlable {
 		}
 
 		Mob m = Reflection.newInstance(mobsToSpawn.remove(0));
+        if((Dungeon.isXMAS()||Dungeon.lockXMAS)&&Random.Int(100)<4&&Dungeon.depth<=5)
+            m = Reflection.newInstance(RatXMAS.class);
+        //打开圣诞开关，满足概率，并且楼层是5层以内，直接替换成RatXMAS
 		if (Dungeon.isChallenged(Challenges.CHAMPION_ENEMIES)){
 			ChampionEnemy.rollForChampion(m);
 		}

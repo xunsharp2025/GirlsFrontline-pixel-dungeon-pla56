@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Charm;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Beam;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
+import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BloodParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
@@ -138,8 +139,18 @@ public class WandOfTransfusion extends Wand {
 
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
+        if (defender.buff(Charm.class) != null && ((Charm)defender.buff(Charm.class)).object == attacker.id()) {
+            this.freeCharge = true;
+            int shieldToGive = Math.round((float)(2 * (5 + this.buffedLvl())) * procChanceMultiplier(attacker));
+            ((Barrier)Buff.affect(attacker, Barrier.class)).setShield(shieldToGive);
+            //attacker.sprite.showStatusWithIcon(65280, Integer.toString(shieldToGive), FloatingText.SHIELDING, new Object[0]);
+            //在玩家上方显示所获得护盾的数值，由于目前没有showStatusWithIcon方法，此条需要删除
+            //但不清楚后续是否会做这个东西，所以暂且注释掉
+            GLog.p(Messages.get(this, "charged", new Object[0]), new Object[0]);
+            attacker.sprite.emitter().burst(BloodParticle.BURST, 20);
+        }
 
-	}
+    }
 
 	@Override
 	public void fx(Ballistica beam, Callback callback) {

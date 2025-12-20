@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Lightning;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SparkParticle;
@@ -34,9 +35,11 @@ import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Camera;
+import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
@@ -65,6 +68,14 @@ public class WandOfLightning extends DamageWand {
 	@Override
 	public void onZap(Ballistica bolt) {
 
+        for(Char ch : this.affected.toArray(new Char[0])) {
+            if (ch != curUser && ch.alignment == curUser.alignment && ch.pos != bolt.collisionPos) {
+                this.affected.remove(ch);
+            } else if (ch.buff(LightningCharge.class) != null) {
+                this.affected.remove(ch);
+            }
+        }
+
 		//lightning deals less damage per-target, the more targets that are hit.
 		float multipler = 0.4f + (0.6f/affected.size());
 		//if the main target is in water, all affected take full damage
@@ -75,9 +86,6 @@ public class WandOfLightning extends DamageWand {
 			ch.sprite.centerEmitter().burst( SparkParticle.FACTORY, 3 );
 			ch.sprite.flash();
 
-			if (ch != curUser && ch.alignment == curUser.alignment && ch.pos != bolt.collisionPos){
-				continue;
-			}
 			wandProc(ch, chargesPerCast());
 			if (ch == curUser) {
 				ch.damage(Math.round(damageRoll() * multipler * 0.5f), this);
@@ -94,33 +102,45 @@ public class WandOfLightning extends DamageWand {
 
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
+        float procChance = ((float)this.buffedLvl() + 1.0F) / ((float)this.buffedLvl() + 4.0F) * procChanceMultiplier(attacker);
+        if (Random.Float() < procChance) {
+            float powerMulti = Math.min(1.0F, procChance);
+            FlavourBuff.prolong(attacker, LightningCharge.class, powerMulti * WandOfLightning.LightningCharge.DURATION);
+            //战法获得对电杖的增益buff，这里的注释暂且沿用破碎的命名“起电”
+            attacker.sprite.centerEmitter().burst(SparkParticle.FACTORY, 10);
+            attacker.sprite.flash();
+            Sample.INSTANCE.play("sounds/lightning.mp3");
+        }
 
-	}
+    }
 
 	private void arc( Char ch ) {
+        //增加内容：战法获取“起电”之后释放电杖的增益
+        int dist = Dungeon.level.water[ch.pos] ? 2 : 1;
+        if (curUser.buff(LightningCharge.class) != null) {
+            ++dist;
+        }
 
-		int dist = (Dungeon.level.water[ch.pos] && !ch.flying) ? 2 : 1;
+        ArrayList<Char> hitThisArc = new ArrayList();
+        PathFinder.buildDistanceMap(ch.pos, BArray.not(Dungeon.level.solid, (boolean[])null), dist);
 
-		ArrayList<Char> hitThisArc = new ArrayList<>();
-		PathFinder.buildDistanceMap( ch.pos, BArray.not( Dungeon.level.solid, null ), dist );
-		for (int i = 0; i < PathFinder.distance.length; i++) {
-			if (PathFinder.distance[i] < Integer.MAX_VALUE){
-				Char n = Actor.findChar( i );
-				if (n == Dungeon.hero && PathFinder.distance[i] > 1)
-					//the hero is only zapped if they are adjacent
-					continue;
-				else if (n != null && !affected.contains( n )) {
-					hitThisArc.add(n);
-				}
-			}
-		}
-		
-		affected.addAll(hitThisArc);
-		for (Char hit : hitThisArc){
-			arcs.add(new Lightning.Arc(ch.sprite.center(), hit.sprite.center()));
-			arc(hit);
-		}
-	}
+        for(int i = 0; i < PathFinder.distance.length; ++i) {
+            if (PathFinder.distance[i] < Integer.MAX_VALUE) {
+                Char n = Actor.findChar(i);
+                if ((n != Dungeon.hero || PathFinder.distance[i] <= 1) && n != null && !this.affected.contains(n)) {
+                    hitThisArc.add(n);
+                }
+            }
+        }
+
+        this.affected.addAll(hitThisArc);
+
+        for(Char hit : hitThisArc) {
+            this.arcs.add(new Lightning.Arc(ch.sprite.center(), hit.sprite.center()));
+            this.arc(hit);
+        }
+
+    }
 	
 	@Override
 	public void fx(Ballistica bolt, Callback callback) {
@@ -160,5 +180,23 @@ public class WandOfLightning extends DamageWand {
 		particle.x -= dst;
 		particle.y += dst;
 	}
-	
+
+    public static class LightningCharge extends FlavourBuff {
+        //“起电”buff
+        public static float DURATION = 10.0F;
+
+        public LightningCharge() {
+            this.type = buffType.POSITIVE;
+        }
+
+        public int icon() {
+            //“起电”buff的图标，沿用破碎的隐身图标变色
+            // 这里根据龙血、毒粹的图标我有想过使用充能的图标，但这可能会误导玩家，所以沿用了破碎的方案
+            return BuffIndicator.INVISIBLE;
+        }
+
+        public void tintIcon(Image icon) {
+            icon.hardlight(1.0F, 1.0F, 0.0F);
+        }
+    }
 }

@@ -69,14 +69,14 @@ public class AboutScene extends PixelScene {
 				"Girl Front Line Pixel Dungeon",
 				Icons.GIRLPD.get(),
 				"新少前地牢开发团队\n"+
-				"少前地牢是一款_完全开源且完全免费_的\n少女前线及破碎地牢同人游戏。\n如果您从任何渠道_花费资金购买_了\n这款游戏，您已经遭遇了盗版诈骗\n请立即尝试退款以维护您的权利",
+				"少前地牢是一款_完全开源且完全免费_的\n少女前线及破碎地牢同人游戏。\n如果您从任何渠道_花费资金购买_了\n这款游戏，您已经遭遇了盗版诈骗\n请立即尝试退款以维护您的权利\nQ群：897141018",
 				null,
 				null);
 
 		shpx.setSize( fullWidth, 0);
         shpx.setPos((w - fullWidth)/2f, 6);
 		content.add(shpx);
-		addLine(74, content);
+		addLine(76, content);
 
 		CreditsBlock alex = new CreditsBlock(false, 0xffbfa6,
 				"项目发起人",

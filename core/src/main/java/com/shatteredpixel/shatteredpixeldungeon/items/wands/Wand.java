@@ -124,6 +124,10 @@ public abstract class Wand extends Item {
 
 	public abstract void onHit(MagesStaff staff, Char attacker, Char defender, int damage);
 
+    public static float procChanceMultiplier(Char attacker) {
+        return attacker.buff(Talent.EmpoweredStrikeTracker.class) != null ? 1.0F + (float)((Hero)attacker).pointsInTalent(Talent.EMPOWERED_STRIKE) / 2.0F : 1.0F;
+    }
+
 	public boolean tryToZap( Hero owner, int target ){
 
 		if (owner.buff(MagicImmune.class) != null){
@@ -235,7 +239,7 @@ public abstract class Wand extends Item {
 
 	@Override
 	public String info() {
-		String desc = desc();
+		String desc = super.info();
 
 		desc += "\n\n" + statsDesc();
 
@@ -405,6 +409,11 @@ public abstract class Wand extends Item {
 			}
 		}
 
+        if (Dungeon.hero.hasTalent(Talent.EMPOWERED_STRIKE) && this.charger != null && this.charger.target == Dungeon.hero && !Dungeon.hero.belongings.contains(this)) {
+            Buff.prolong(Dungeon.hero, Talent.EmpoweredStrikeTracker.class, 10.0F);
+            //使用老魔杖发射子弹之后，赋予一个buff以标注施法后的首次攻击
+        }
+        
 		//if the wand is owned by the hero, but not in their inventory, it must be in the staff
 		if (charger != null
 				&& charger.target == Dungeon.hero

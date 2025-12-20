@@ -722,7 +722,7 @@ public class WndJournal extends WndTabbed {
 				item.setRect( 0, pos, width, ITEM_HEIGHT );
 				content.add( item );
 				items.add( item );
-				
+
 				pos += item.height();
 			}
 			
@@ -739,6 +739,8 @@ public class WndJournal extends WndTabbed {
 				super( new ItemSprite(item), Messages.titleCase(item.trueName()));
 				
 				this.item = item;
+                this.item.canShowNote=false;
+                this.item.canNote=false;
 				this.seen = seen;
 
 				if ( seen && !IDed ){
@@ -768,6 +770,8 @@ public class WndJournal extends WndTabbed {
 						GameScene.show(new WndTitledMessage(new Image(icon),
 								Messages.titleCase(item.trueName()), item.desc()));
 					} else {
+                        item.canNote=false;
+                        item.canShowNote=false;
 						GameScene.show(new WndTitledMessage(new Image(icon),
 								Messages.titleCase(item.trueName()), item.info()));
 					}

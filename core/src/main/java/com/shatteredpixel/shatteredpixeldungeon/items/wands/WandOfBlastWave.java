@@ -25,7 +25,10 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Effects;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
@@ -103,13 +106,21 @@ public class WandOfBlastWave extends DamageWand {
 				throwChar(ch, trajectory, strength, false);
 			}
 		}
-		
+
 	}
 
 	@Override
-	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
+    public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
+        if (defender.buff(Paralysis.class) != null && defender.buff(BWaveOnHitTracker.class) == null) {
+            defender.buff(Paralysis.class).detach();
+            int dmg = Random.NormalIntRange(8 + 2 * this.buffedLvl(), 12 + 3 * this.buffedLvl());
+            defender.damage(Math.round(procChanceMultiplier(attacker) * (float)dmg), this);
+            WandOfBlastWave.BlastWave.blast(defender.pos);
+            Sample.INSTANCE.play("sounds/blast.mp3");
+            Buff.prolong(defender, BWaveOnHitTracker.class, 3.0F);
+        }
 
-	}
+    }
 
 	public static void throwChar(final Char ch, final Ballistica trajectory, int power){
 		throwChar(ch, trajectory, power, true);
@@ -197,14 +208,19 @@ public class WandOfBlastWave extends DamageWand {
 
 	@Override
 	public void staffFx(MagesStaff.StaffParticle particle) {
-		particle.color( 0x664422 ); particle.am = 0.6f;
+		particle.color( 0x664422 );
+        particle.am = 0.6f;
 		particle.setLifespan(3f);
 		particle.speed.polar(Random.Float(PointF.PI2), 0.3f);
 		particle.setSize( 1f, 2f);
 		particle.radiateXY(2.5f);
 	}
 
-	public static class BlastWave extends Image {
+    public static class BWaveOnHitTracker extends FlavourBuff {
+    }
+
+
+    public static class BlastWave extends Image {
 
 		private static final float TIME_TO_FADE = 0.2f;
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2020 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,53 +21,31 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.food;
 
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.CounterBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
-import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 
-public class Berry extends Food {
+public class XMasSugar extends Food {
 
 	{
-		image = ItemSpriteSheet.BERRY;
-		energy = Hunger.HUNGRY/3f; //100 food value
-
-		bones = false;
+		image = ItemSpriteSheet.CANDY_CANE;
+		energy = Hunger.STARVING;
 	}
-
-	@Override
-	protected float eatingTime(){
-		if(Dungeon.hero.hasTalent(Talent.INVIGORATING_MEAL)){
-			return 0;
-		}else{
-			return 1;
-		}
-	}
-    @Override
-    public void EatText(){
-        GLog.i( Messages.get(this, "eat_msg") );
-    }
-
+	
 	@Override
 	protected void satisfy(Hero hero) {
 		super.satisfy(hero);
-		SeedCounter counter = Buff.count(hero, SeedCounter.class, 1);
-		if (counter.count() >= 2){
-			Dungeon.level.drop(Generator.random(Generator.Category.SEED), hero.pos).sprite.drop();
-			counter.detach();
-		}
+        Buff.affect( hero, Recharging.class, 2f ); //half of a charge
+        ScrollOfRecharging.chargeParticle( hero );
 	}
+    @Override
+    public void EatText(){
+        GLog.i( Messages.get(this, "sweet_msg") );
+    }
 
-	@Override
-	public int value() {
-		return 5*quantity;
-	}
-
-	public static class SeedCounter extends CounterBuff{{revivePersists = true;}};
 }

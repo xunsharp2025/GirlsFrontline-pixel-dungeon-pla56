@@ -1,5 +1,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
+
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.EnergyCrystal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
@@ -145,13 +147,11 @@ public class LazyTest extends TestGenerator {
             new Sungrass.Seed().quantity(100).identify().collect();
             new Swiftthistle.Seed().quantity(100).identify().collect();
 
-            for (int i = 0; i < 6; i++) {
-                new PotionOfStrength().apply(hero);
-            }
-
-            for (int i = 0; i < 41; i++) {
-                new PotionOfExperience().apply(hero);
-            }
+            new PotionOfStrength().apply(hero);
+            hero.STR=16;
+            new PotionOfExperience().apply(hero);
+            hero.lvl=40;
+            hero.updateHT( true );
 
             RingOfAccuracy roa = new RingOfAccuracy();
             roa.level(22);

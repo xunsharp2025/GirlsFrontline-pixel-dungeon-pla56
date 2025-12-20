@@ -46,6 +46,7 @@ public class MysteryMeat extends Food {
 		super.satisfy(hero);
 		effect(hero);
 	}
+    private static boolean noText = false;
 
 	public static void effect(Hero hero){
 		switch (Random.Int( 5 )) {
@@ -65,8 +66,16 @@ public class MysteryMeat extends Food {
 				GLog.w( Messages.get(MysteryMeat.class, "stuffed") );
 				Buff.prolong( hero, Slow.class, Slow.DURATION );
 				break;
+            case 4:
+                noText=true;
+                break;
 		}
 	}
+    @Override
+    public void EatText(){
+        if(noText)
+            super.EatText();
+    }
 	
 	public static class PlaceHolder extends MysteryMeat {
 		

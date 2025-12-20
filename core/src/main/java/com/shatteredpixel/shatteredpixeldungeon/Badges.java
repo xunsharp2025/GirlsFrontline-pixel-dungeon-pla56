@@ -174,7 +174,8 @@ public class Badges {
 		CHAMPION_2                  ( 113 ),
 		CHAMPION_3                  ( 114 ),
 
-		CRYSTAL_TROPHY					(115,true);
+		CRYSTAL_TROPHY					(115,true),
+        XMASGift				(  119);
 
 		public boolean meta;
 
@@ -912,6 +913,9 @@ public class Badges {
 	public static void validateElpheltKilled() {
 		displayBadge( Badge.KILL_ELPHELT );
 	}
+    public static void validateXMASGift() {
+        displayBadge( Badge.XMASGift );
+    }
 
 	public static void validateChampion( int challenges ) {
 		if (challenges == 0) return;

@@ -27,6 +27,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Fire;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RatXMAS;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
@@ -111,6 +112,7 @@ public abstract class ChampionEnemy extends Buff {
 				case 4:             Buff.affect(m, Blessed.class);      break;
 				case 5:             Buff.affect(m, Growing.class);      break;
 			}
+            if(m.getClass()!= RatXMAS.class)
 			m.state = m.WANDERING;
 		}
 	}

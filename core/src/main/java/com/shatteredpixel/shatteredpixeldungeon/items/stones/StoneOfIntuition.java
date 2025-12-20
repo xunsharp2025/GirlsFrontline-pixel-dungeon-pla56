@@ -113,10 +113,13 @@ public class StoneOfIntuition extends InventoryStone {
 
 					if (curUser.buff(IntuitionUseTracker.class) == null){
 						GLog.h( Messages.get(WndGuess.class, "preserved") );
-						new StoneOfIntuition().collect();
 						Buff.affect(curUser, IntuitionUseTracker.class);
 					} else {
 						curUser.buff(IntuitionUseTracker.class).detach();
+                        if (StoneOfIntuition.curItem instanceof StoneOfIntuition) {
+                            StoneOfIntuition.curItem.detach(StoneOfIntuition.curUser.belongings.backpack);
+                        }
+                        //在使用结束时才扣减数量
 					}
 					
 					curGuess = null;
@@ -207,7 +210,6 @@ public class StoneOfIntuition extends InventoryStone {
 		@Override
 		public void onBackPressed() {
 			super.onBackPressed();
-			new StoneOfIntuition().collect();
 		}
 	}
 }

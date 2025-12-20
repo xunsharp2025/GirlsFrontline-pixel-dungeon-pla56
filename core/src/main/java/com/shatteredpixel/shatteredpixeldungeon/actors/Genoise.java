@@ -14,6 +14,7 @@ import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
 public class Genoise extends Actor {
+    //彩蛋武器独有的蛋糕炸弹效果，大兔子大蛋糕炸弹在其自身的类已经写了
 
     {
         actPriority = BUFF_PRIO;
@@ -61,6 +62,7 @@ public class Genoise extends Actor {
 
         if (target >= 0 && Dungeon.level.heroFOV[target]) {
             CellEmitter.center( target ).burst( BlastParticle.FACTORY, 30 );
+            //中心爆炸粒子效果
         }
 
         boolean terrainAffected = false;
@@ -69,23 +71,30 @@ public class Genoise extends Actor {
             if (c >= 0 && c < Dungeon.level.length()) {
                 if (Dungeon.level.heroFOV[c]) {
                     CellEmitter.get( c ).burst( SmokeParticle.FACTORY, 4 );
+                    //周围爆炸粒子效果
                 }
 
                 if (Dungeon.level.flamable[c]) {
                     Dungeon.level.destroy( c );
                     GameScene.updateMap( c );
                     terrainAffected = true;
+                    //更新地形
                 }
 
                 //destroys items / triggers bombs caught in the blast.
                 Heap heap = Dungeon.level.heaps.get( c );
                 if(heap != null)
                     heap.explode();
+                //炸普通箱子
 
                 Char ch = Actor.findChar( c );
                 if (ch != null) {
                     //those not at the center of the blast take damage less consistently.
                     int dmg = Random.NormalIntRange(minDmg, maxDmg) * (c == target ? 2 : 1) - ch.drRoll();
+                    //minDmg为20+彩蛋武器等级，maxDmg为30+2*彩蛋武器等级，所以Random这一项相当于是基础20~30、成长1-2的基础伤害
+                    //然后c==target这一项的作用是给中心格伤害翻倍
+                    //drRoll的作用是计算怪物自身的防御
+                    //综上，蛋糕炸弹的伤害计算就是基础20~30、成长1-2的基础伤害、对中心格伤害翻倍、计算怪物防御
                     if (dmg > 0) {
                         ch.damage( dmg , Dungeon.hero );
                     }

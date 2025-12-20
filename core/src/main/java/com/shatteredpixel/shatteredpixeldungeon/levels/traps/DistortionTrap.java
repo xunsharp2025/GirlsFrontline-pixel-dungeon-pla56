@@ -38,6 +38,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GolyatPlus;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Piranha;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RatXMAS;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Senior;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Statue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Wraith;
@@ -106,12 +107,15 @@ public class DistortionTrap extends Trap{
 				case 1:
 					if (Dungeon.depth != 5 && Random.Int(100) == 0){
 						mob = new RatKing();
-						break;
-					}
+                        break;
+                    } else if (Random.Int(100)<1) {
+                        mob = new RatXMAS();
+                        break;
+                    }
 				case 3: case 5 : default:
 					int floor;
 					do {
-						floor = Random.Int(25);
+						floor = Random.Int(30);
 					} while( Dungeon.bossLevel(floor));
 					mob = Reflection.newInstance(Bestiary.getMobRotation(floor).get(0));
 					break;

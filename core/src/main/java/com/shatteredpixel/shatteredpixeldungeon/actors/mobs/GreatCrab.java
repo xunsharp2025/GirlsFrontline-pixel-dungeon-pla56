@@ -25,6 +25,8 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost;
+import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CapeOfThorns;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.MasterThievesArmband;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
@@ -122,8 +124,12 @@ public class GreatCrab extends Crab {
 			MasterThievesArmband.StolenTracker stolen = buff(MasterThievesArmband.StolenTracker.class);
 			if (stolen == null || !stolen.itemWasStolen()) {
 				if (Random.Float() < 0.25f) { // 25% 掉落率
-					CapeOfThorns cape = new CapeOfThorns();
-					Dungeon.level.drop(cape, pos).sprite.drop();
+                    CapeOfThorns cape = new CapeOfThorns();
+                    if (Generator.removeArtifact(((Artifact)cape).getClass())){
+                        //能成功在神器池子中将荆棘斗篷去除后再允许生成
+                        //参考对象：上一局的遗物对本局生成神器的影响
+                        Dungeon.level.drop(cape, pos).sprite.drop();
+                    }
 				}
 			}
 		}

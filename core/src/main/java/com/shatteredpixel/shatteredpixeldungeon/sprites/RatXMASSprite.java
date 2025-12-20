@@ -24,33 +24,27 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.watabou.noosa.TextureFilm;
 
-public class EarthGuardianSprite extends MobSprite {
+public class RatXMASSprite extends RatSprite {
 
-	public EarthGuardianSprite() {
-		super();
+	public RatXMASSprite() {
+        super();
 
-		texture( Assets.Sprites.GUARDIAN );
+        texture( Assets.Sprites.RAT );
 
-		TextureFilm frames = new TextureFilm( texture, 22, 23 );
+        TextureFilm frames = new TextureFilm( texture, 16, 15 );
 
-		idle = new Animation( 2, true );
-		idle.frames( frames, 0, 0, 0, 0, 0, 1, 1 );
+        idle = new Animation( 2, true );
+        idle.frames( frames, 0+16*2, 0+16*2, 0+16*2, 1+16*2 );
 
-		run = new Animation( 15, true );
-		run.frames( frames, 2, 3, 4, 5, 6, 7 );
+        run = new Animation( 10, true );
+        run.frames( frames, 6+16*2, 7+16*2, 8+16*2, 9+16*2, 10+16*2 );
 
-		attack = new Animation( 12, false );
-		attack.frames( frames, 8, 9, 10,11,10,11 );
+        attack = new Animation( 15, false );
+        attack.frames( frames, 2+16*2, 3+16*2, 4+16*2, 5+16*2, 0+16*2 );
 
-		die = new Animation( 10, false );
-		die.frames( frames, 12, 13, 14, 15,16, 16,17,18,18 );
+        die = new Animation( 10, false );
+        die.frames( frames, 11+16*2, 12+16*2, 13+16*2, 14+16*2 );
 
-		play( idle );
+        play( idle );
 	}
-
-	@Override
-	public int blood() {
-		return 0xFF966400;
-	}
-
 }

@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import static com.shatteredpixel.shatteredpixeldungeon.Chrome.Type.GREY_BUTTON;
 import static com.shatteredpixel.shatteredpixeldungeon.Chrome.Type.GREY_BUTTON_TR;
 import static com.shatteredpixel.shatteredpixeldungeon.Chrome.Type.TOAST_TR;
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.version;
 
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BannerSprites;
@@ -193,7 +194,7 @@ public class TitleScene extends PixelScene {
 		add( version );
 
         ErrorButton btnError = new ErrorButton();
-        btnError.setPos( w-version.width()+30, version.y-20 );
+        btnError.setPos( w-25, version.y-20 );
         add(btnError);
 
 		if (DeviceCompat.isDesktop()) {
@@ -250,8 +251,15 @@ public class TitleScene extends PixelScene {
 		if(newGame){
 			InterlevelScene.start();
 		}else{
-			try{InterlevelScene.restore();}
-			catch(IOException e){Game.reportException(e);}
+            if(version<=643){
+                //643版本在生成器中添加了生成后又移除，导致在添加生成的情况下进入过的存档，在移除生成之后会崩档。
+                //由于只在内测版本出现这种情况，所以不对正常存档做改动，正常存档崩了就删档吧
+                //这里对643及以前版本生成的返回地表存档进行删档以处理崩档情况。
+                Dungeon.deleteGame(GamesInProgress.curSlot, true);
+            }else {
+                try{InterlevelScene.restore();}
+                catch(IOException e){Game.reportException(e);}
+            }
 		}
 		Game.switchScene(GameScene.class);
 	}

@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 import static com.shatteredpixel.shatteredpixeldungeon.Challenges.NO_FOOD;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Maccol;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Pasty;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SeniorSprite;
@@ -34,7 +35,7 @@ public class Senior extends Monk {
 	{
 		spriteClass = SeniorSprite.class;
 		//loot = Dungeon.isChallenged(NO_FOOD) ? new Maccol() : new Pasty();
-		loot = new Pasty(); // 直接使用Pasty
+		loot = Food.SummonPasty(); // 馅饼分割
 		lootChance = 1f;
 	}
 	

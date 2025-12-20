@@ -27,6 +27,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RatXMAS;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfCleansing;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Crossbow;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -63,6 +64,7 @@ public class CleansingDart extends TippedDart {
 
                 public boolean act() {
                     if (((Mob)defender).state == ((Mob)defender).HUNTING || ((Mob)defender).state == ((Mob)defender).FLEEING) {
+                        if(defender.getClass()!=RatXMAS.class)
                         ((Mob)defender).state = ((Mob)defender).WANDERING;
                     }
 

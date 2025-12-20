@@ -344,7 +344,7 @@ public class Assets {
 		public static final String ROT_HEART  = "sprites/rot_heart.png";
 		public static final String GUARD      = "sprites/guard.png";
 		public static final String WARDS      = "sprites/wards.png";
-		public static final String GUARDIAN   = "sprites/guardian.png";
+		public static final String GUARDIAN   = "sprites/girlpd/SAT8.png";
 		public static final String SLIME      = "sprites/slime.png";
 		public static final String SNAKE      = "sprites/snake.png";
 		public static final String NECRO      = "sprites/necromancer.png";
@@ -355,7 +355,7 @@ public class Assets {
 		public static final String DM100      = "sprites/dm100.png";
 		public static final String PYLON      = "sprites/pylon.png";
 		public static final String DM200      = "sprites/dm200.png";
-		public static final String LOTUS      = "sprites/lotus.png";
+		public static final String LOTUS      = "sprites/girlpd/lotus1.png";
 		public static final String NINJA_LOG  = "sprites/ninja_log.png";
 		public static final String SPIRIT_HAWK= "sprites/spirit_hawk.png";
 		public static final String RED_SENTRY = "sprites/girlpd/red_pointer.png";

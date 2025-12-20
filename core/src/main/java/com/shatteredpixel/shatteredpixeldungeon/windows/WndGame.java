@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
@@ -36,6 +37,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.watabou.noosa.Game;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class WndGame extends Window {
 
@@ -93,6 +95,8 @@ public class WndGame extends Window {
 				@Override
 				protected void onClick() {
 					try{Dungeon.saveAll();
+                        Item.itemA=new ArrayList<>();
+                        Item.NOTEA=new ArrayList<>();
 					}catch(IOException e){Game.reportException(e);}
 					Game.switchScene(TitleScene.class);
 				}

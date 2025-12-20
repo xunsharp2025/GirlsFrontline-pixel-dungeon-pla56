@@ -64,7 +64,7 @@ public class SecretLarderRoom extends SecretRoom {
 		while (extraFood > 0){
 			Food food;
 			if (extraFood >= Hunger.STARVING){
-				food = Dungeon.isChallenged(NO_FOOD) ? new Maccol() : new Pasty();
+				food = Dungeon.isChallenged(NO_FOOD) ? new Maccol() : Food.SummonPasty();
 				extraFood -= Hunger.STARVING;
 			} else {
 				food = new ChargrilledMeat();

@@ -455,7 +455,7 @@ public class Armor extends EquipableItem {
 	
 	@Override
 	public String info() {
-		String info = desc();
+		String info = super.info();
 		
 		if (levelKnown) {
 			info += "\n\n" + Messages.get(Armor.class, "curr_absorb", DRMin(), DRMax(), STRReq());

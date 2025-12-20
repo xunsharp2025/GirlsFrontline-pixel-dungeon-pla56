@@ -44,7 +44,6 @@ public class Pasty extends Food {
 		NONE,
 		EASTER, //TBD
 		HWEEN,//2nd week of october though first day of november，公历11月1日
-		XMAS,//3rd week of december through first week of january，公历12月25日
 		ZHONG_QIU//农历八月十五日
 	}
 
@@ -64,19 +63,9 @@ public class Pasty extends Food {
 
         if (holiday == Holiday.NONE){
 			switch(calendar.get(Calendar.MONTH)){
-				case Calendar.JANUARY:
-					if (calendar.get(Calendar.WEEK_OF_MONTH) == 1){
-						holiday = Holiday.XMAS;
-					}
-					break;
 				case Calendar.NOVEMBER:
 					if (calendar.get(Calendar.DAY_OF_MONTH) == 1){
 						holiday = Holiday.HWEEN;
-					}
-					break;
-				case Calendar.DECEMBER:
-					if (calendar.get(Calendar.WEEK_OF_MONTH) >= 3){
-						holiday = Holiday.XMAS;
 					}
 					break;
 			}
@@ -101,9 +90,6 @@ public class Pasty extends Food {
 			case HWEEN:
 				image = ItemSpriteSheet.PUMPKIN_PIE;
 				break;
-			case XMAS:
-				image = ItemSpriteSheet.CANDY_CANE;
-				break;
 			case ZHONG_QIU:
 				image = ItemSpriteSheet.SALTYMOONCAKE;
 				break;
@@ -124,10 +110,6 @@ public class Pasty extends Food {
 				hero.HP = Math.min(hero.HP + hero.HT/10, hero.HT);
 				hero.sprite.emitter().burst( Speck.factory( Speck.HEALING ), 1 );
 				break;
-			case XMAS:
-				Buff.affect( hero, Recharging.class, 2f ); //half of a charge
-				ScrollOfRecharging.chargeParticle( hero );
-				break;
 		}
 	}
 
@@ -138,8 +120,6 @@ public class Pasty extends Food {
 				return Messages.get(this, "pasty");
 			case HWEEN:
 				return Messages.get(this, "pie");
-			case XMAS:
-				return Messages.get(this, "cane");
 			case ZHONG_QIU:
 				return Messages.get(this, "salty_moon_cake");
 		}
@@ -152,8 +132,6 @@ public class Pasty extends Food {
 				return Messages.get(this, "pasty_desc");
 			case HWEEN:
 				return Messages.get(this, "pie_desc");
-			case XMAS:
-				return Messages.get(this, "cane_desc");
 			case ZHONG_QIU:
 				return Messages.get(this, "salty_moon_cake_desc");
 		}

@@ -145,9 +145,9 @@ public class WandOfPrismaticLight extends DamageWand {
 	}
 
 	@Override
-	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
-
-	}
+    public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
+        Buff.prolong(defender, Cripple.class, (float)Math.round((float)(1 + staff.buffedLvl()) * procChanceMultiplier(attacker)));
+    }
 
 	@Override
 	public void staffFx(MagesStaff.StaffParticle particle) {

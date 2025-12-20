@@ -104,6 +104,8 @@ public class QuickRecipe extends Component {
 		this.inputs = new ArrayList<>();
 		for (final Item in : inputs) {
 			anonymize(in);
+            in.canNote=false;
+            in.canShowNote=false;
 			ItemSlot curr;
 			curr = new ItemSlot(in) {
 				{
@@ -150,6 +152,8 @@ public class QuickRecipe extends Component {
 		add(arrow);
 		
 		anonymize(output);
+        output.canNote=false;
+        output.canShowNote=false;
 		this.output = new ItemSlot(output){
 			@Override
 			protected void onClick() {

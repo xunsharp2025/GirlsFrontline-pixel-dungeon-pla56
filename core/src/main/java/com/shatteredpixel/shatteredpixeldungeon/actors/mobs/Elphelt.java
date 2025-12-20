@@ -94,7 +94,7 @@ public class Elphelt extends Mob {
 
 	private float warnDelay() { return 1f; }
 	private float bridleExpressDelay() { return  1.5f; }
-	private float magnumDelay() { return 1.5f; }
+	private float magnumDelay() { return 2f; }
 
 
 	@Override
@@ -212,7 +212,7 @@ public class Elphelt extends Mob {
                         return ( see && (Dungeon.level.distance(pos, enemy.pos) <= RANGE_MAGNUM) );
                     }
 				} else {
-                    traceMagnum = new Ballistica(pos, enemy.pos, Ballistica.PROJECTILE);
+                    traceMagnum = new Ballistica(pos, enemy.pos, Ballistica.BigRabbitOnly);
                     boolean see = fieldOfView[enemy.pos];
                     return ( timerRush < 2 && see && (Dungeon.level.distance(pos, enemy.pos) <= RANGE_MAGNUM) );
                 }
@@ -372,7 +372,7 @@ public class Elphelt extends Mob {
 
 	@Override
 	public void die( Object cause ) {
-		Dungeon.level.drop( new Cypros().identify(), pos).sprite.drop();
+		Dungeon.level.drop( new Cypros().identifyA(), pos).sprite.drop();
 		Badges.validateElpheltKilled();
 		GameScene.bossSlain();
 		super.die( cause );

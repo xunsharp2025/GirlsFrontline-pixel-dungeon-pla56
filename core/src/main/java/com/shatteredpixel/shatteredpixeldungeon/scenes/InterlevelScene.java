@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
@@ -102,7 +103,7 @@ public class InterlevelScene extends PixelScene {
 	{
 		inGameScene = true;
 	}
-	
+
 	@Override
 	public void create() {
 		super.create();
@@ -163,15 +164,48 @@ public class InterlevelScene extends PixelScene {
 		else if (lastRegion == 4)    loadingAsset = Assets.Interfaces.LOADING_CITY;
 		else if (lastRegion == 5)    loadingAsset = Assets.Interfaces.LOADING_HALLS;
 		else                         loadingAsset = Assets.Interfaces.SHADOW;
-		
-		//slow down transition when displaying an install prompt
-		if (Updates.isInstallable()){
-			fadeTime += 0.5f; //adds 1 second total
-		//speed up transition when debugging
-		} else if (DeviceCompat.isDebug()){
+
+        //slow down transition when displaying an install prompt
+        if (Updates.isInstallable()){
+            fadeTime += 0.5f; //adds 1 second total
+            //speed up transition when debugging
+        }else if (DeviceCompat.isDebug()|| Dungeon.isChallenged(Challenges.TEST_MODE)){
 			fadeTime = 0f;
+            //debug版本或者测试模式将楼层切换的时间fadeTime设置为0
 		}
-		
+        if(!DeviceCompat.isDebug()&& !Dungeon.isChallenged(Challenges.TEST_MODE)){
+            //非debug版本进入过测试模式后进入普通对局时，重新对fadeTime赋值
+            fadeTime = NORM_FADE;
+            switch (mode){
+                case DESCEND:
+                    if (Dungeon.hero == null){
+                        fadeTime = SLOW_FADE;
+                    } else {
+                        loadingDepth = Dungeon.depth+1;
+                        if (!(Statistics.deepestFloor < loadingDepth)) {
+                            fadeTime = FAST_FADE;
+                        } else if (loadingDepth == 6 || loadingDepth == 11
+                                || loadingDepth == 16 || loadingDepth == 21) {
+                            fadeTime = SLOW_FADE;
+                        }
+                    }
+                    break;
+                case ASCEND:
+                    fadeTime = FAST_FADE;
+                    break;
+                case RETURN:
+                case FALL:
+                case CONTINUE:
+                default:
+                    break;
+            }
+            if (Updates.isInstallable()){
+                fadeTime += 0.5f; //adds 1 second total
+                //speed up transition when debugging
+            }
+        }
+
+
 		SkinnedBlock bg = new SkinnedBlock(Camera.main.width, Camera.main.height, loadingAsset ){
 			@Override
 			protected NoosaScript script() {

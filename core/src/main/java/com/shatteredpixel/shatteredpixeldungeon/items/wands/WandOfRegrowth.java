@@ -215,8 +215,25 @@ public class WandOfRegrowth extends Wand {
 
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
+        boolean grass = false;
+        int terr = Dungeon.level.map[attacker.pos];
+        if (terr == 2 || terr == 15 || terr == 30) {
+            grass = true;
+        }
 
-	}
+        terr = Dungeon.level.map[defender.pos];
+        if (terr == 2 || terr == 15 || terr == 30) {
+            grass = true;
+        }
+
+        if (grass) {
+            int level = Math.max(0, staff.buffedLvl());
+            int healing = Math.round((float)damage * ((float)level + 2.0F) / ((float)level + 6.0F) / 2.0F);
+            healing = Math.round((float)healing * procChanceMultiplier(attacker));
+            ((Sungrass.Health)Buff.affect(attacker, Sungrass.Health.class)).boost(healing);
+        }
+
+    }
 
 	public void fx(Ballistica bolt, Callback callback) {
 

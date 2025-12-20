@@ -84,8 +84,15 @@ public class WandOfCorrosion extends Wand {
 	}
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
+        int level = Math.max(0, this.buffedLvl());
+        float procChance = ((float)level + 1.0F) / ((float)level + 3.0F) * procChanceMultiplier(attacker);
+        if (Random.Float() < procChance) {
+            float powerMulti = Math.max(1.0F, procChance);
+            ((Ooze)Buff.affect(defender, Ooze.class)).set(20.0F * powerMulti);
+            CellEmitter.center(defender.pos).burst(CorrosionParticle.SPLASH, 5);
+        }
 
-	}
+    }
 
 	@Override
 	public void staffFx(MagesStaff.StaffParticle particle) {

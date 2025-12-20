@@ -362,11 +362,13 @@ public class Potion extends Item {
 	public String name() {
 		return isKnown() ? super.name() : Messages.get(this, color);
 	}
-	
-	@Override
-	public String info() {
-		return isKnown() ? desc() : Messages.get(this, "unknown_desc");
-	}
+    @Override
+    public String info() {
+        String noteA = NoteGet(this);
+        return isKnown() ?
+                super.info() :
+                noteA+Messages.get(this, "unknown_desc");
+    }
 	
 	@Override
 	public boolean isIdentified() {

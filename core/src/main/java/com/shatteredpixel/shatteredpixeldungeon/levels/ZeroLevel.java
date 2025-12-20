@@ -2,6 +2,7 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.RatKing;
 import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.SceneSwitcher;
 import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.WindowTrigger;
 import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Teleporter;
@@ -57,6 +58,11 @@ public class ZeroLevel extends Level {
 
 		int title=(TEMP_MIN+2)*width()+TEMP_MIN;
 		map[title]=Terrain.STATUE;
+
+        RatKing king = new RatKing();
+        king.pos = title+1;
+        mobs.add( king );
+
 		placeTrigger(new ComputerTriger().create(title,TitleScene.class));
 
 		//int teleporter=title+2;

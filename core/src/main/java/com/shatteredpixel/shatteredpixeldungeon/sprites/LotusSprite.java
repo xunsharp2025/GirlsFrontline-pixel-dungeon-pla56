@@ -44,19 +44,16 @@ public class LotusSprite extends MobSprite {
 
 		texture( Assets.Sprites.LOTUS );
 
-		TextureFilm frames = new TextureFilm( texture, 19, 16 );
+		TextureFilm frames = new TextureFilm( texture, 17, 16 );
 
-		idle = new MovieClip.Animation( 1, true );
-		idle.frames( frames, 0 );
+        idle = new Animation( 12, true );
+        idle.frames( frames,  1,1,2,2, 3,3 );
 
-		run = new MovieClip.Animation( 1, true );
-		run.frames( frames, 0 );
+        run = idle.clone();
+        attack = idle.clone();
 
-		attack = new MovieClip.Animation( 1, false );
-		attack.frames( frames, 0 );
-
-		die = new MovieClip.Animation( 1, false );
-		die.frames( frames, 0 );
+		die = new MovieClip.Animation( 12, false );
+		die.frames( frames, 4,5 );
 
 		play( idle );
 	}

@@ -119,7 +119,7 @@ public class WandOfDisintegration extends DamageWand {
 
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
-
+        //解离的近战效果为增加距离，已在老魔杖中写了
 	}
 
 	private int distance() {

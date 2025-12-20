@@ -56,6 +56,14 @@ public class Food extends Item {
 
 		bones = true;
 	}
+    public static Food SummonPasty(){
+        // 馅饼分割
+        if(Dungeon.isXMAS()){
+            return new XMasSugar();
+        }else {
+            return new Pasty();
+        }
+    }
 	
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
@@ -74,7 +82,7 @@ public class Food extends Item {
 			detach( hero.belongings.backpack );
 
 			satisfy(hero);
-			GLog.i( Messages.get(this, "eat_msg") );
+            EatText();
 			
 			hero.sprite.operate( hero.pos );
 			hero.busy();
@@ -90,6 +98,10 @@ public class Food extends Item {
 			
 		}
 	}
+    public void EatText(){
+        GLog.i( Messages.get(this, "eat_msg") );
+    }
+
 
 	public static float eatingTimeStatic(){
 		if(Dungeon.hero.hasTalent(Talent.IRON_STOMACH)

@@ -30,6 +30,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ooze;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
+import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.SkeletonKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.GooBlob;
@@ -270,7 +272,12 @@ public class Goo extends Mob {
 		
 		// 添加12.5%概率掉落LloydsBeacon
 		if (Random.Float() < 0.125f) {
-			Dungeon.level.drop( new LloydsBeacon(), pos ).sprite.drop();
+
+            if (Generator.removeArtifact(LloydsBeacon.class)){
+                //能成功在神器池子中将空降妖精去除后再允许生成
+                //参考对象：上一局的遗物对本局生成神器的影响
+                Dungeon.level.drop( new LloydsBeacon(), pos ).sprite.drop();
+            }
 		}
 		
 		Badges.validateBossSlain(Badges.Badge.BOSS_SLAIN_1);
