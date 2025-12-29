@@ -49,19 +49,26 @@ public class FncSprite extends MobSprite {
             boolean Last = (trackerA != null) ;
 
             if(Last){
-                if(trackerA.count()>=2){
-                    id = 2;
-                }else if(trackerA.count()>0) {
+                if(trackerA.count()==1){
+                    //护甲技能
                     id = 1;
-                    if(XMAS)
-                        id = 3;
                     if (parent != null)
                         aura(0xFFFF00);
+                }else if(trackerA.count()==2) {
+                    //圣诞礼物
+                    id = 3;
+                }else if(trackerA.count()==3){
+                    //二者
+                    id = 2;
+                }else {
+                    //默认，或上述代码遗漏考虑的地方
+                    id = 0;
                 }
             }
         }
 
         if(Dungeon.depth==0&&XMAS){
+            //0层圣诞节锁定皮肤
             id = 2;
         }
 

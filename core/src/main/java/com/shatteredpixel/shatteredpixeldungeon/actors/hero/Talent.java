@@ -163,6 +163,8 @@ public enum Talent {
 	BARGAIN_SKILLS(132),TRAP_EXPERT(133),HOW_DARE_YOU(134),JIEFANGCI(135),NIGHT_EXPERT(136),
 	//type561 T3
 	SEARCH_ARMY(137, 3), ELITE_ARMY(138, 3),
+    //type561 T4-1
+    Type56FourOneOne(137, 4), Type56FourOneTwo(137, 4),Type56FourOneThree(137, 4),
 	//pulseTrooper T3
 	SIMPLE_RELOAD(139, 3), MORE_POWER(140, 3), ENDURE_EMP(141, 3),
 	//modernReborner T3

@@ -64,8 +64,10 @@ public class CleansingDart extends TippedDart {
 
                 public boolean act() {
                     if (((Mob)defender).state == ((Mob)defender).HUNTING || ((Mob)defender).state == ((Mob)defender).FLEEING) {
-                        if(defender.getClass()!=RatXMAS.class)
-                        ((Mob)defender).state = ((Mob)defender).WANDERING;
+                        if(defender!=null){
+                            if (defender.getClass() != RatXMAS.class)
+                                ((Mob) defender).state = ((Mob) defender).WANDERING;
+                        }
                     }
 
                     ((Mob)defender).beckon(Dungeon.level.randomDestination(defender));

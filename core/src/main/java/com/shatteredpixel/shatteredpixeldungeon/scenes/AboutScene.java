@@ -76,7 +76,8 @@ public class AboutScene extends PixelScene {
 		shpx.setSize( fullWidth, 0);
         shpx.setPos((w - fullWidth)/2f, 6);
 		content.add(shpx);
-		addLine(76, content);
+        int firstLine = 76;
+		addLine(firstLine, content);
 
 		CreditsBlock alex = new CreditsBlock(false, 0xffbfa6,
 				"项目发起人",
@@ -97,7 +98,7 @@ public class AboutScene extends PixelScene {
 		charlie.setSize( colWidth/2f, 0);
         charlie.setPos(alex.right(), alex.top());
 		content.add(charlie);
-		addLine(100, content);
+		addLine(firstLine+28, content);
 
 		//*** Art Credits ***
 		CreditsBlock arcnor = new CreditsBlock(true, 0xcf3227,

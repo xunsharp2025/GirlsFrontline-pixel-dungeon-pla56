@@ -489,7 +489,7 @@ public abstract class Level implements Bundlable {
 		}
 
 		Mob m = Reflection.newInstance(mobsToSpawn.remove(0));
-        if((Dungeon.isXMAS()||Dungeon.lockXMAS)&&Random.Int(100)<4&&Dungeon.depth<=5)
+        if((Dungeon.isXMAS()||Dungeon.lockXMAS)&&Random.Int(100)<8&&Dungeon.depth<=5)
             m = Reflection.newInstance(RatXMAS.class);
         //打开圣诞开关，满足概率，并且楼层是5层以内，直接替换成RatXMAS
 		if (Dungeon.isChallenged(Challenges.CHAMPION_ENEMIES)){

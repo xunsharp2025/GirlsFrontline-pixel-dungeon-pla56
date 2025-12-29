@@ -249,7 +249,6 @@ public class Item implements Bundlable {
             NOTEA.add(text);
             Dungeon.NOTEAOfSave.add(text);
         }
-        item.noted = text;
     }
     public static String ClassNoteToItem(Item item){
         String note;

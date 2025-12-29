@@ -105,7 +105,6 @@ public class Terrain {
 		flags[STATUE_SP]	= flags[STATUE] | BREAKABLE ;
 		flags[BOOKSHELF]	= flags[BARRICADE] | BREAKABLE ;
 		flags[ALCHEMY]		= SOLID | BREAKABLE ;
-
 	}
 
 	public static int discover( int terr ) {

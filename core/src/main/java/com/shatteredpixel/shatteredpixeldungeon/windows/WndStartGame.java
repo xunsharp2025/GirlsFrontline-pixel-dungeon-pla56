@@ -56,45 +56,93 @@ import com.watabou.utils.DeviceCompat;
 
 import java.io.IOException;
 
+import java.util.ArrayList;
+
 public class WndStartGame extends Window {
 
 	private static final int WIDTH	= 117;
 	private static final int HEIGHT	= 150;
 
+	// 定义每页显示的角色数量
+	private static final int ROLES_PER_PAGE = 4;
+
+	// 翻页功能相关成员变量
+	private ArrayList<HeroBtn> heroButtons;
+	private int currentPage = 0;
+	private int totalPages = 0;
+	private ArrayList<HeroClass> visibleClasses;
+	private RedButton prevButton;
+	private RedButton nextButton;
+
 	public WndStartGame(final int slot){
 		super();
 
+		heroButtons = new ArrayList<>();
+
+		// 渲染标题文本
 		RenderedTextBlock title = PixelScene.renderTextBlock(Messages.get(this, "title"), 12 );
 		title.hardlight(Window.TITLE_COLOR);
-		title.setPos((WIDTH - title.width())/2f,2);
+		title.setPos((WIDTH - title.width())/2f, 3); // 稍微调整标题位置
 		add(title);
 
-		// 计算可见角色的数量（排除NONE）
-		int numVisibleClasses = 0;
+		// 添加翻页按钮（固定在顶部左右角）
+		prevButton = new RedButton("<") {
+			@Override
+			protected void onClick() {
+				showPreviousPage();
+			}
+		};
+		prevButton.setRect(1, 2, 12, 12); // 固定在左上角，大小10x10
+		add(prevButton);
+
+		nextButton = new RedButton(">") {
+			@Override
+			protected void onClick() {
+				showNextPage();
+			}
+		};
+		nextButton.setRect(WIDTH - 11, 2, 12, 12); // 固定在右上角，大小10x10
+		add(nextButton);
+
+		// 收集所有可见角色（排除NONE）
+		visibleClasses = new ArrayList<>();
 		for (HeroClass cl : HeroClass.values()) {
 			if (cl != HeroClass.NONE) {
-				numVisibleClasses++;
+				visibleClasses.add(cl);
 			}
 		}
 
+		// 计算总页数
+		totalPages = (int)Math.ceil((float)visibleClasses.size() / ROLES_PER_PAGE);
+
+		// 设置翻页按钮的可见性和激活状态
+		prevButton.visible = currentPage > 0; // 第一页时隐藏上一页按钮
+		prevButton.active = currentPage > 0;
+		nextButton.visible = currentPage < totalPages - 1; // 最后一页时隐藏下一页按钮
+		nextButton.active = currentPage < totalPages - 1;
+
 		// 动态计算角色按钮间距
 		// 间距公式：(总宽度 - 所有按钮总宽度)/(按钮数量 + 1)
-		float heroBtnSpacing = (WIDTH - numVisibleClasses * HeroBtn.WIDTH) / (numVisibleClasses + 1f);
+		float heroBtnSpacing = (WIDTH - ROLES_PER_PAGE * HeroBtn.WIDTH) / (ROLES_PER_PAGE + 1f);
 
 		float curX = heroBtnSpacing;
-		for (HeroClass cl : HeroClass.values()){
-			if (cl != HeroClass.NONE){
-				HeroBtn button = new HeroBtn(cl);
-				button.setRect(curX, title.height() + 4, HeroBtn.WIDTH, HeroBtn.HEIGHT);
-				curX += HeroBtn.WIDTH + heroBtnSpacing;
-				add(button);
-			}
+		// 只创建当前页需要显示的角色按钮
+		int startIndex = currentPage * ROLES_PER_PAGE;
+		int endIndex = Math.min(startIndex + ROLES_PER_PAGE, visibleClasses.size());
+		for (int i = startIndex; i < endIndex; i++) {
+			HeroClass cl = visibleClasses.get(i);
+			HeroBtn button = new HeroBtn(cl);
+			button.setRect(curX, title.height() + 4, HeroBtn.WIDTH, HeroBtn.HEIGHT); // 角色按钮在标题下方
+			curX += HeroBtn.WIDTH + heroBtnSpacing;
+            button.enable = true;
+			add(button);
+			heroButtons.add(button);
 		}
 
 		ColorBlock separator = new ColorBlock(1, 1, 0xFF222222);
 		separator.size(WIDTH, 1);
 		separator.x = 0;
-		separator.y = title.height() + 6 + HeroBtn.HEIGHT;
+		separator.y = title.height() + 6 + HeroBtn.HEIGHT; // 分隔线在角色按钮下方
 		add(separator);
 
 		HeroPane ava = new HeroPane();
@@ -168,28 +216,28 @@ public class WndStartGame extends Window {
 				@Override
 				protected void onClick() {
 					GirlsFrontlinePixelDungeon.scene().addToFront(
-						new WndTextInput(
-							Messages.get(WndStartGame.class, "set_seed_title"),
-							Messages.get(WndStartGame.class, "set_seed_desc"),
-							SPDSettings.seedCode(),
-							20,
-							false,
-							Messages.get(WndStartGame.class, "set_seed_confirm"),
-							Messages.get(WndStartGame.class, "set_seed_cancel")
-						){
-							@Override
-							public void onSelect(boolean check, String text) {
-								if(check){
-                                    text = DungeonSeed.formatText(text);
-                                    long seed = DungeonSeed.convertFromText(text);
-                                    if (seed != -1){
-                                        SPDSettings.seedCode(text);
-                                    } else {
-                                        SPDSettings.seedCode(SPDSettings.SEED_CODE_RANDOM);
-                                    }
+							new WndTextInput(
+									Messages.get(WndStartGame.class, "set_seed_title"),
+									Messages.get(WndStartGame.class, "set_seed_desc"),
+									SPDSettings.seedCode(),
+									20,
+									false,
+									Messages.get(WndStartGame.class, "set_seed_confirm"),
+									Messages.get(WndStartGame.class, "set_seed_cancel")
+							){
+								@Override
+								public void onSelect(boolean check, String text) {
+									if(check){
+									    text = DungeonSeed.formatText(text);
+									    long seed = DungeonSeed.convertFromText(text);
+									    if (seed != -1){
+									        SPDSettings.seedCode(text);
+									    } else {
+									        SPDSettings.seedCode(SPDSettings.SEED_CODE_RANDOM);
+									    }
+									}
 								}
 							}
-						}
 					);
 				}
 
@@ -198,7 +246,7 @@ public class WndStartGame extends Window {
 					if( !visible && GamesInProgress.selectedClass != null){
 						visible = true;
 					}
-                    icon(!SPDSettings.seedCode().equals(SPDSettings.SEED_CODE_RANDOM) ? new ItemSprite(ItemSpriteSheet.SEED_SUNGRASS) :new ItemSprite(ItemSpriteSheet.SEED_FADELEAF));
+				    icon(!SPDSettings.seedCode().equals(SPDSettings.SEED_CODE_RANDOM) ? new ItemSprite(ItemSpriteSheet.SEED_SUNGRASS) :new ItemSprite(ItemSpriteSheet.SEED_FADELEAF));
 					super.update();
 				}
 			};
@@ -213,11 +261,63 @@ public class WndStartGame extends Window {
 
 	}
 
+	// 显示上一页
+	private void showPreviousPage() {
+		if (currentPage > 0) {
+			currentPage--;
+			updateHeroButtons();
+		}
+	}
+
+	// 显示下一页
+	private void showNextPage() {
+		if (currentPage < totalPages - 1) {
+			currentPage++;
+			updateHeroButtons();
+		}
+	}
+
+	// 更新角色按钮显示
+	private void updateHeroButtons() {
+		// 移除所有现有角色按钮
+		for (HeroBtn button : heroButtons) {
+            button.enable = false;
+			remove(button);
+		}
+		heroButtons.clear();
+
+		// 计算当前页需要显示的角色范围
+		int startIndex = currentPage * ROLES_PER_PAGE;
+		int endIndex = Math.min(startIndex + ROLES_PER_PAGE, visibleClasses.size());
+
+		// 动态计算角色按钮间距
+		float heroBtnSpacing = (WIDTH - (endIndex - startIndex) * HeroBtn.WIDTH) / ((endIndex - startIndex) + 1f);
+
+		float curX = heroBtnSpacing;
+		// 创建当前页的角色按钮
+		for (int i = startIndex; i < endIndex; i++) {
+			HeroClass cl = visibleClasses.get(i);
+			HeroBtn button = new HeroBtn(cl);
+			button.setRect(curX, 14, HeroBtn.WIDTH, HeroBtn.HEIGHT); // y坐标与原代码保持一致
+			curX += HeroBtn.WIDTH + heroBtnSpacing;
+            button.enable = true;
+			add(button);
+			heroButtons.add(button);
+		}
+
+		// 更新翻页按钮状态
+		prevButton.visible = currentPage > 0; // 第一页时隐藏上一页按钮
+		prevButton.active = currentPage > 0;
+		nextButton.visible = currentPage < totalPages - 1; // 最后一页时隐藏下一页按钮
+		nextButton.active = currentPage < totalPages - 1;
+	}
+
 	private static class HeroBtn extends Button {
 
 		private HeroClass cl;
 
 		private Image heroIcon;
+        private boolean enable = false;
 
 		private static final int WIDTH = HeroSprite.FRAME_WIDTH;
 		private static final int HEIGHT = HeroSprite.FRAME_HEIGHT;
@@ -257,14 +357,15 @@ public class WndStartGame extends Window {
 		@Override
 		protected void onClick() {
 			super.onClick();
-
-			if( !cl.isUnlocked() ){
-				GirlsFrontlinePixelDungeon.scene().addToFront( new WndMessage(cl.unlockMsg()));
-			} else if (GamesInProgress.selectedClass == cl) {
-				GirlsFrontlinePixelDungeon.scene().add(new WndHeroInfo(cl));
-			} else {
-				GamesInProgress.selectedClass = cl;
-			}
+            if(enable){
+                if( !cl.isUnlocked() ){
+                    GirlsFrontlinePixelDungeon.scene().addToFront( new WndMessage(cl.unlockMsg()));
+                } else if (GamesInProgress.selectedClass == cl) {
+                    GirlsFrontlinePixelDungeon.scene().add(new WndHeroInfo(cl));
+                } else {
+                    GamesInProgress.selectedClass = cl;
+                }
+            }
 		}
 	}
 

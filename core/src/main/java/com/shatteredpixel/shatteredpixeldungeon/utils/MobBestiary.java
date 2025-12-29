@@ -47,6 +47,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GnollTrickster;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GoldenMimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Golem;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Golyat;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GolyatFactory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GolyatPlus;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GreatCrab;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Guard;
@@ -55,17 +56,16 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Jupiter;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mg5;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Monk;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Necromancer;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Nemeum;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Piranha;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Rat;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RatXMAS;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RipperDemon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RotHeart;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RotLasher;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Scorpio;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Senior;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Shaman;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Skeleton;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Snake;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Spinner;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Statue;
@@ -201,7 +201,7 @@ public enum MobBestiary {
         SEWER.addEntities(
                 Snake.class, Rat.class, Gnoll.class, Crab.class, Swarm.class);
 
-        PRISON.addEntities(Golyat.class,Thief.class,
+        PRISON.addEntities(Golyat.class,GolyatFactory.class,Thief.class,
                 Shaman.RedShaman.class,
                 Shaman.BlueShaman.class,
                 Shaman.PurpleShaman.class,
@@ -228,7 +228,8 @@ public enum MobBestiary {
                 Bandit.class, GolyatPlus.class,
                 ArmoredBrute.class, GnollSWAP.class,
                 Elemental.ChaosElemental.class, Senior.class,
-                CrystalMimic.class, ArmoredStatue.class);
+                CrystalMimic.class, ArmoredStatue.class,
+                RatXMAS.class);
 
         QUEST.addEntities(
                 FetidRat.class, GnollTrickster.class, GreatCrab.class,
@@ -266,7 +267,7 @@ public enum MobBestiary {
     static {
         classConversions.put(CorpseDust.DustWraith.class,      Wraith.class);
 
-        classConversions.put(Necromancer.NecroSkeleton.class,  Skeleton.class);
+        classConversions.put(GolyatFactory.FactoryGolyat.class,  GolyatFactory.class);
 
         classConversions.put(TenguDartTrap.class,              PoisonDartTrap.class);
 

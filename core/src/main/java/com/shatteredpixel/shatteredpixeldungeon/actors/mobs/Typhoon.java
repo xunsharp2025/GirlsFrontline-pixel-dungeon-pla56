@@ -9,6 +9,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
+import com.shatteredpixel.shatteredpixeldungeon.effects.TargetedCell;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.PurpleParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Grim;
@@ -101,6 +102,12 @@ public class Typhoon extends Hydra {
             return super.doAttack(enemy);
         } else if (!beamCharged){
             ((TyphoonSprite)sprite).charge( enemy.pos );
+            Ballistica b = new Ballistica(pos, enemy.pos, Ballistica.STOP_SOLID);
+            for (int p : b.path) {
+                sprite.parent.add(new TargetedCell(p, 0xFF0000));
+                if (p == b.collisionPos)
+                    break;
+            }
             spend( attackDelay()*14f );
             beamCharged = true;
             return true;

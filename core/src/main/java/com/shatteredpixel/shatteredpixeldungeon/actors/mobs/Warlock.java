@@ -134,7 +134,8 @@ public class Warlock extends Mob implements Callback {
 	public Item createLoot(){
 
 		// 1/6 chance for healing, scaling to 0 over 8 drops
-		if (Random.Int(3) == 0 && Random.Int(8) > Dungeon.LimitedDrops.WARLOCK_HP.count ){
+		if (Random.Int(3) == 0 && Random.Int(8) >= Dungeon.LimitedDrops.WARLOCK_HP.count ){
+            //修复术士/四区狙娘掉落血瓶应为8而实际为7的bug，理由如下：当掉落7个的时候计数为7，而Random（7）的范围是0-7，所以破碎出现了只能掉落7个的bug
 			Dungeon.LimitedDrops.WARLOCK_HP.count++;
 			return new PotionOfHealing();
 		} else {

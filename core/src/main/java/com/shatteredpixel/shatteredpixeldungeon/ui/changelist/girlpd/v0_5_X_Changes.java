@@ -18,6 +18,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.RipperSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SpawnerSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SpinnerCatSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.TyphoonSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.AgentSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.ChangeButton;
@@ -28,7 +29,8 @@ import java.util.ArrayList;
 
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
-    	add_0_5_6_Changes(changeInfos);
+    	add_0_5_6_A_Changes(changeInfos);
+		add_0_5_6_Changes(changeInfos);
     	add_0_5_5_4_Changes(changeInfos);
     	add_0_5_5_3_Changes(changeInfos);
     	add_0_5_5_2_Changes(changeInfos);
@@ -42,7 +44,70 @@ public class v0_5_X_Changes {
 		add_0_5_1_Changes(changeInfos);
 		add_0_5_0_Changes(changeInfos);
     }
-    public static void add_0_5_6_Changes( ArrayList<ChangeInfo> changeInfos ){
+    public static void add_0_5_6_A_Changes( ArrayList<ChangeInfo> changeInfos ){
+        ChangeInfo changes = new ChangeInfo("v0.5.6-A", true, "");
+        changes.hardlight( Window.TITLE_COLOR );
+        changeInfos.add(changes);
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "buffs"), false, null);
+        changes.hardlight( CharSprite.POSITIVE );
+        changeInfos.add(changes);
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CROWN, null), "增强-平衡性调整",
+        "_-_ 文本1\n" +
+        "_-_ 文本2\n" +
+        "_-_ 文本3\n"));
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+        changes.hardlight( CharSprite.WARNING );
+        changeInfos.add(changes);
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+        changes.hardlight( CharSprite.WARNING );
+        changeInfos.add(changes);
+        ArrayList<String> pageContents = new ArrayList<>();
+        pageContents.add(
+            "_-_ 优化小版本的版本号，为A-B-C。\n" +
+            "_-_ 写入了新的多页内容，使得文本可阅读性变高。\n" +
+            "_-_ 修复了一些UI显示问题\n"
+        );
+        pageContents.add(
+            "_-_ 改进了游戏平衡性\n" +
+            "_-_ 增加了新的游戏机制\n" +
+            "_-_ 修复了一些已知的bug\n"
+        );
+        pageContents.add(
+            "_-_ 更新了部分游戏资源\n" +
+            "_-_ 优化了玩家体验\n" +
+            "_-_ 增加了新的游戏功能\n"
+        );
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY, null), "改动-系统优化", pageContents));
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
+        changes.hardlight( Window.TITLE_COLOR );
+        changeInfos.add(changes);
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.EXOTIC_CRIMSON, null), "新内容",
+        "_-_ 文本1\n" +
+        "_-_ 文本2\n" +
+        "_-_ 文本3\n"));
+        AgentSprite.AgentSpriteRe agent = new AgentSprite.AgentSpriteRe();
+        agent.scale.set(PixelScene.align(0.6f));
+        changes.addButton(new ChangeButton(agent, "代理人",
+        "_-_ 加入代理人贴图\n" ));
+
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "nerfs"), false, null);
+		changes.hardlight( CharSprite.NEGATIVE );
+		changeInfos.add(changes);
+
+		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY, null), "削弱-平衡性调整",
+        "_-_ 削弱了_水晶房间_的奖励：如经验药水和嬗变磁盘已被鉴定；则不会同时出现在渐进水晶房内\n" +
+        "_-_ 文本2\n" +
+        "_-_ 文本3\n"));
+    }
+
+	public static void add_0_5_6_Changes( ArrayList<ChangeInfo> changeInfos ){
         ChangeInfo changes = new ChangeInfo("v0.5.6", true, "");
         changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
@@ -85,8 +150,8 @@ public class v0_5_X_Changes {
         ));
 
         Image gm = new Image(Assets.Sprites.MANTI, 0 ,0 ,48 ,40);
-        gm.scale.x=0.8f;
-        gm.scale.y=0.8f;
+        gm.scale.x=0.5f;
+        gm.scale.y=0.5f;
         changes.addButton(new ChangeButton(gm, "蝎甲兽", 
         "_-_ 敌人_蝎甲兽_的生命值上限提高，且对单次高额伤害获得伤害阈值。\n" +
 		"_-_ 这意味着蝎甲兽将强制性需要多次攻击才能击败"
@@ -200,7 +265,8 @@ public class v0_5_X_Changes {
 			"_-_ 将_传送器_的贴图优化。\n"+
 			"_-_ 优化了部分地图的_渲染模式_，避免了_贴图重叠_的情况发生。\n"+
 			"_-_ 差分了_西蒙诺夫_与_带护甲的西蒙诺夫_的贴图与介绍文本，防止玩家无法正确估算其战斗力。\n"+
-			"_-_ 为离开兔子层增加了_提示文本_，防止有人在此_遗漏重要物品_。"
+			"_-_ 为离开兔子层增加了_提示文本_，防止有人在此_遗漏重要物品_。\n"+
+			"_-_ 将_M99_武器恢复为破碎地牢'关刀'\n"
         ));
 
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
@@ -336,7 +402,7 @@ public class v0_5_X_Changes {
             "_-_ 现在艾尔菲尔特被击败后，将不会清理掉地面的_掉落物_了。\n"+
             "_-_ _ND-B子弹配件_击败艾尔菲尔特将不再会导致闪退。\n"+
             "_-_ 艾尔菲尔特被击败后，玩家的_盟友_将不再会被清除。\n"
-        ));  
+        )); 
         
         changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.GLAIVE, null), "M99",
             "_-_ M99的攻击速度略微降低，但射程略微增加。\n"

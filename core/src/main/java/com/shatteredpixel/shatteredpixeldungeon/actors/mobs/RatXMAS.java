@@ -67,7 +67,7 @@ public class RatXMAS extends Rat{
     public void rollToDropLoot() {
         super.rollToDropLoot();
         if(Dungeon.LimitedDrops.XMAS_GIFT.count==0){
-            if(Random.Int(8)==0){
+            if(Random.Int(5)==0){
                 Dungeon.level.drop(new XMasGift(), pos).sprite.drop();
                 Dungeon.LimitedDrops.XMAS_GIFT.count++;
             }

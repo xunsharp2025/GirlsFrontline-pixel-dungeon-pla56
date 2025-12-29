@@ -23,6 +23,9 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CyclopsSprite;
@@ -40,6 +43,9 @@ public class Cyclops extends Mob {
         maxLvl = 36;
 
         properties.add(Property.ARMO);
+
+        loot = Generator.Category.POTION;
+        lootChance = 0.5f;
     }
 
     private boolean enraged = false;
@@ -72,6 +78,35 @@ public class Cyclops extends Mob {
                 sprite.showStatus( CharSprite.NEGATIVE, Messages.get(this, "enraged") );
             }
         }
+    }
+    @Override
+    public Item createLoot(){
+
+        if (Random.Int(3) < 1 && Random.Int(6) >= Dungeon.LimitedDrops.CYCLOPS_HP.count ){
+            //照搬的术士Warlock
+            Dungeon.LimitedDrops.CYCLOPS_HP.count++;
+            return new PotionOfHealing();
+        } else {
+            Item i = Generator.random(Generator.Category.POTION);
+            int healingTried = 0;
+            while (i instanceof PotionOfHealing){
+                healingTried++;
+                i = Generator.random(Generator.Category.POTION);
+            }
+            //进行随机药水生成，但是从中去除治疗并计数
+
+            //将前面随机药水随机到后去除的治疗归还到随机池子
+            if (healingTried > 0){
+                for (int j = 0; j < Generator.Category.POTION.classes.length; j++){
+                    if (Generator.Category.POTION.classes[j] == PotionOfHealing.class){
+                        Generator.Category.POTION.probs[j] += healingTried;
+                    }
+                }
+            }
+
+            return i;
+        }
+
     }
 
 }

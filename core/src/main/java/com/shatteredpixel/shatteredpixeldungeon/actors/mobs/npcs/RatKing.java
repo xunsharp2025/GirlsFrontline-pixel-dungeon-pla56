@@ -258,9 +258,6 @@ public class RatKing extends NPC {
     }
 
     private void SetLast(int i) {
-        if(hero.buff(LastTracker.class)!=null){
-            hero.buff(LastTracker.class).detach();
-        }
         Buff.count(hero,LastTracker.class,i);
     }
 

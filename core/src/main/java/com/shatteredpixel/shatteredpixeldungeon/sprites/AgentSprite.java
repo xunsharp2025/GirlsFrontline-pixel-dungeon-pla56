@@ -24,89 +24,81 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Callback;
 
-public class DreamerSprite extends FistSprite {
+public class AgentSprite extends FistSprite {
+
     {
-        boltType = MagicMissile.FIRE;
+        boltType = MagicMissile.SHADOW;
     }
-	
-	public DreamerSprite() {
+
+	public AgentSprite() {
 		super();
 		
-		texture( Assets.DREAMER );
+		texture( Assets.AGENT );
 		
-		TextureFilm frames = new TextureFilm( texture, 24, 24 );
+		TextureFilm frames = new TextureFilm( texture, 26, 24 );
 		
-		idle = new Animation( 2, true );
-		idle.frames( frames, 0, 1, 2, 1, 0 );
+		idle = new Animation( 3, true );
+		idle.frames( frames, 0, 0, 0, 0, 0, 1, 2 );
 		
-		run = new Animation( 3, true );
-		run.frames( frames, 0, 1, 2, 1, 0 );
+		run = new Animation( 6, true );
+		run.frames( frames, 3, 4, 5, 6, 7, 8 );
 		
-		attack = new Animation( 8, false );
-		attack.frames( frames, 0, 3, 4, 0 );
+		attack = new Animation( 16, false );
+		attack.frames( frames, 9, 9, 10, 10, 13, 11, 11, 12, 11, 12, 13, 13 );
 
         zap = new Animation( 8, false );
-        zap.frames( frames, 0, 3, 4, 0 );
+        zap.frames( frames, 11, 12, 13, 13, 13, 12, 13 );
 
-        die = new Animation( 8, false );
-		die.frames( frames, 0, 3, 5, 6, 7 );
+        die = new Animation( 4, false );
+		die.frames( frames, 14, 15, 16, 17, 17 );
 		
 		play( idle );
 	}
-	
-	private int posToShoot;
-	
+
+
 	@Override
 	public void attack( int cell ) {
-		posToShoot = cell;
 		super.attack( cell );
 
         jump(ch.pos, ch.pos, null, 0, 0.34f );
 	}
-	
-	@Override
-	public void onComplete( Animation anim ) {
-		if (anim == attack) {
-
-			Sample.INSTANCE.play( Assets.Sounds.ZAP );
-			MagicMissile.boltFromChar( parent,
-					MagicMissile.SHADOW,
-					this,
-					posToShoot,
-					new Callback() {
-						@Override
-						public void call() {
-							ch.onAttackComplete();
-						}
-					} );
-
-			idle();
-			
-		} else {
-			super.onComplete( anim );
-		}
-	}
 
     @Override
     protected int texOffset() {
-        return 0;
+        return 50;
     }
 
     @Override
     protected Emitter createEmitter() {
         Emitter emitter = emitter();
-        emitter.pour( FlameParticle.FACTORY, 0.06f );
+        emitter.pour(ShadowParticle.MISSILE, 0.06f );
         return emitter;
     }
 
     @Override
     public int blood() {
-        return 0xFFFFDD34;
+        return 0xFF4A2F53;
     }
 
+
+    //用于更新日志显示的代理人的待机动作
+    public static class AgentSpriteRe extends MobSprite {
+        public AgentSpriteRe() {
+            super();
+
+            texture( Assets.AGENT );
+
+            TextureFilm frames = new TextureFilm( texture, 26, 24 );
+
+            idle = new Animation( 3, true );
+            idle.frames( frames, 0, 0, 0, 0, 0, 1, 2 );
+            play( idle );
+        }
+    }
 }

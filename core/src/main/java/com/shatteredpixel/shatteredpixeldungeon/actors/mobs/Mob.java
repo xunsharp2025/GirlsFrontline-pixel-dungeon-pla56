@@ -366,13 +366,17 @@ public abstract class Mob extends Char {
 		if ((buff instanceof Terror && buff(Dread.class) == null)
 				|| (buff instanceof Dread && buff(Terror.class) == null)) {
 			if (enemySeen) {
-				sprite.showStatus(CharSprite.NEGATIVE, Messages.get(this, "rage"));
-                if(enemy.getClass() != RatXMAS.class)
-                    state = HUNTING;
+                sprite.showStatus(CharSprite.NEGATIVE, Messages.get(this, "rage"));
+                if (enemy != null) {
+                    if (enemy.getClass() != RatXMAS.class)
+                        state = HUNTING;
+                }
             } else {
-                if (enemy.getClass() != RatXMAS.class)
-                    state = WANDERING;
-			}
+                if (enemy != null) {
+                    if (enemy.getClass() != RatXMAS.class)
+                        state = WANDERING;
+                }
+            }
 		}
 	}
 	

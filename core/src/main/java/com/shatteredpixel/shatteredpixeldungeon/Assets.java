@@ -45,6 +45,7 @@ public class Assets {
 	public static final String DISLOLI		= "sprites/boss/disloli.png";
 	public static final String GARM			= "sprites/garm.png";
 	public static final String DREAMER		= "sprites/dreamer.png";
+    public static final String AGENT		= "sprites/boss/Agent.png";
 	public static final String AEGIS		= "sprites/aegis.png";
 	public static final String FNC			= "sprites/girlpd/fnc.png";
 	public static final String PROWLER		= "sprites/girlpd/prowler.png";
@@ -90,14 +91,19 @@ public class Assets {
 		public static final String WATER_CITY   = "environment/water3.png";
 		public static final String WATER_HALLS  = "environment/water4.png";
 
+		//need Organize
 		public static final String WEAK_FLOOR       = "environment/custom_tiles/weak_floor.png";
 		public static final String ZERO_LEVEL       = "environment/custom_tiles/zero_level.png";
+		public static final String ROOM             = "environment/custom_tiles/room.png";
+		public static final String ROOM404_1        = "environment/custom_tiles/room404-1.png";
 		public static final String SEWER_BOSS       = "environment/custom_tiles/sewer_boss.png";
 		public static final String PRISON_QUEST     = "environment/custom_tiles/prison_quests.png";
 		public static final String PRISON_EXIT      = "environment/custom_tiles/prison_exit.png";
 		public static final String CAVES_BOSS       = "environment/custom_tiles/caves_boss.png";
 		public static final String CITY_BOSS        = "environment/custom_tiles/city_boss.png";
 		public static final String HALLS_SP         = "environment/custom_tiles/halls_special.png";
+		public static final String FORWARD_CAMP     = "environment/custom_tiles/Forward_Camp.png";
+		public static final String FORWARD_CAMP_1   = "environment/custom_tiles/Forward_Camp-1.png";
 	}
 	
 	//TODO include other font assets here? Some are platform specific though...
@@ -348,6 +354,7 @@ public class Assets {
 		public static final String SLIME      = "sprites/slime.png";
 		public static final String SNAKE      = "sprites/snake.png";
 		public static final String NECRO      = "sprites/necromancer.png";
+        public static final String GOLYATFACTORY      = "sprites/girlpd\\golyatfactory.png";
 		public static final String GHOUL      = "sprites/girlpd/undead.png";
 		public static final String RIPPER     = "sprites/ripper.png";
         public static final String GNOLLSWAP = "sprites/GnollSWAP.png";

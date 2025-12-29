@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.CorrosionParticle;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.TextureFilm;
@@ -29,6 +30,9 @@ import com.watabou.noosa.particles.Emitter;
 
 public class GarmSprite extends FistSprite {
 //    private static final float SLAM_TIME	= 0.33f;
+    {
+        boltType = MagicMissile.CORROSION;
+    }
 
 	public GarmSprite() {
 		super();
@@ -77,7 +81,7 @@ public class GarmSprite extends FistSprite {
 
     @Override
     protected int texOffset() {
-        return 0;
+        return 30;
     }
 
     @Override

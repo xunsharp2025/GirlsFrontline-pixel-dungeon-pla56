@@ -47,6 +47,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.AgentSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.DreamerSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.FistSprite;
@@ -515,7 +516,7 @@ public abstract class YogFist extends Mob {
 	public static class DarkFist extends YogFist {
 
 		{
-			spriteClass = FistSprite.Dark.class;
+			spriteClass = AgentSprite.class;
 
 			canRangedInMelee = false;
 		}

@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon;
 
+import static com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring.getBuffedBonus;
+
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -189,6 +191,20 @@ abstract public class Weapon extends KindOfWeapon {
 	
 	@Override
 	public float delayFactor( Char owner ) {
+        if(baseDelay(owner)>1.0f){
+            //基础攻速大于1回合，有可能受到额外收益
+            if((1f/speedMultiplier(owner))<=1.0f){
+                //攻速乘数小于1时
+                if(baseDelay(owner) * (1f/speedMultiplier(owner))<=1.0f){
+                    //受狂怒影响后攻速小于1回合，不受额外收益
+                    return baseDelay(owner) * (1f/speedMultiplier(owner));
+                }else
+                    //受狂怒影响后攻速仍大于1回合，额外吃一倍狂怒戒指收益
+                    //吃两倍狂怒收益小于1回合时，设置为1回合
+                    //吃两倍狂怒后仍大于1回合，则返回两倍狂怒收益的攻速
+                    return Math.max(1, baseDelay(owner) * (1f/speedMultiplier(owner))* (1f/speedMultiplier(owner)));
+            }
+        }
 		return baseDelay(owner) * (1f/speedMultiplier(owner));
 	}
 

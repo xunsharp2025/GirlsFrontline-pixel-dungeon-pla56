@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Beam;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfGenoise;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
@@ -53,10 +54,8 @@ public class Cypros extends MeleeWeapon {
     {
         mode = Mode.TRAVAILLER;
         image = ItemSpriteSheet.TRAVAILLER;
-
         defaultAction = AC_ZAP;
         usesTargeting = true;
-        updataDEFGAIN();
 
         unique = true;
         bones = false;
@@ -75,19 +74,18 @@ public class Cypros extends MeleeWeapon {
     private Wand wand;
 
     public Item identifyA(){
-        updataDEFGAIN();
         return identify();
     }
 
 
+    boolean canShowDEF = true;
     public enum Mode {
         TRAVAILLER,/*shotgun*/
         CONFIRE,/*rifle*/
         MAGNUM;/*pistol*/
-        static int DEFGAIN;
 
         public String desc(){
-            return Messages.get(this, name(),DEFGAIN);
+            return Messages.get(this, name());
         }
         public String title(){
             return Messages.get(this,name()+".title");
@@ -103,6 +101,7 @@ public class Cypros extends MeleeWeapon {
 
     public Cypros(){
         Wand wand = new RabbitWeaponGenoise();
+        Wand wandold = new WandOfGenoise();
 
         wand.cursed = false;
         wand.maxCharges = 1;
@@ -114,7 +113,6 @@ public class Cypros extends MeleeWeapon {
 
     public void setMode(Mode newMode,boolean doShow) {
         if (newMode == mode) {
-            updataDEFGAIN();
             return;
         }
 
@@ -133,7 +131,7 @@ public class Cypros extends MeleeWeapon {
                 DEF = 5;
                 DEFUPGRADE = 2;
                 timeChange = 2f;
-                updataDEFGAIN();
+                canShowDEF = true;
                 ACC = 1.1f;
                 timeChange += 3.0f;
                 break;
@@ -141,9 +139,8 @@ public class Cypros extends MeleeWeapon {
                 image = ItemSpriteSheet.CONFIRE;
                 RCH = 3;
                 DLY = 3f;
-                updataDEFGAIN();
                 ACC = 1.5f;
-                Mode.DEFGAIN=0;
+                canShowDEF = false;
                 timeChange += 1f;
                 break;
             case MAGNUM:
@@ -151,13 +148,11 @@ public class Cypros extends MeleeWeapon {
                 RCH = 1;
                 DLY = 1f;
                 timeChange = 1f;
-                updataDEFGAIN();
                 ACC = 1.25f;
-                Mode.DEFGAIN=0;
+                canShowDEF = false;
                 timeChange += 0.5f;
                 break;
         }
-
         updateQuickslot();
         if (doShow && curUser != null) {
             curUser.spend(timeChange);
@@ -320,13 +315,6 @@ public class Cypros extends MeleeWeapon {
             wand.gainCharge(amt);
         }
     }
-    public void updataDEFGAIN(){
-        int DEF = 5;
-        int DEFUPGRADE = 2;
-        int baseDEF=DEF+DEFUPGRADE*buffedLvl();
-        int REM=-2*Math.max(0,STRReq()-hero.STR);
-        Mode.DEFGAIN=Math.max(0,baseDEF+REM);
-    }
 
     @Override
     public Item upgrade(boolean enchant) {
@@ -378,8 +366,11 @@ public class Cypros extends MeleeWeapon {
             case NONE:
         }
 
+        if(mode.desc()!="")
         // 모드 별 설명 추가
-        info += "\n\n" + mode.desc();
+            info += "\n\n" + mode.desc();
+        if(canShowDEF)
+            info += "\n\n" + DEFGAIN();
 
         if (enchantment != null && (cursedKnown || !enchantment.curse())){
             info += "\n\n" + Messages.get(Weapon.class, "enchanted", enchantment.name());
@@ -393,6 +384,14 @@ public class Cypros extends MeleeWeapon {
         }
 
         return info;
+    }
+    private String DEFGAIN(){
+        int DEF = 5;
+        int DEFUPGRADE = 2;
+        int baseDEF=DEF+DEFUPGRADE*buffedLvl();
+        int REM=-2*Math.max(0,STRReq()-hero.STR);
+        int DEFGAIN=Math.max(0,baseDEF+REM);
+        return Messages.get(Cypros.class,"DEF",DEFGAIN);
     }
 
     @Override

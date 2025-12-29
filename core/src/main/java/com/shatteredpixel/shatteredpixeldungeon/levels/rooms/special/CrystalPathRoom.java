@@ -27,7 +27,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.CrystalKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.IronKey;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfEnchantment;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
@@ -267,9 +269,6 @@ public class CrystalPathRoom extends SpecialRoom {
         for(EmptyRoom room : rooms) {
             Painter.fill(level, room, 14);
         }
-
-        Painter.set(level, prize1, 11);
-        Painter.set(level, prize2, 11);
         //药水物品链表
         ArrayList<Item> potions = new ArrayList();
         //磁盘物品链表
@@ -277,11 +276,38 @@ public class CrystalPathRoom extends SpecialRoom {
         //填充药水链表
         potions.add(Generator.random(Random.oneOf(Generator.Category.POTION)));//potion[0]
         potions.add(Generator.random(Random.oneOf(Generator.Category.POTION)));//potion[1]
-        potions.add(new PotionOfExperience());//potion[2]
         //填充磁盘链表
         scrolls.add(Generator.random(Random.oneOf(Generator.Category.SCROLL)));//scroll[0]
         scrolls.add(Generator.random(Random.oneOf(Generator.Category.SCROLL)));//scroll[1]
-        scrolls.add(new ScrollOfTransmutation());//scroll[2]
+        Potion p = new PotionOfExperience();
+        Scroll s = new ScrollOfTransmutation();
+        boolean isEXP = false;
+        if(p.isKnown()&&s.isKnown()){
+            potions.add(p);
+            scrolls.add(s);
+        } else {
+            if (Random.Int(2) == 0) {
+                scrolls.add(new ScrollOfTransmutation());
+                potions.add(Generator.random(Random.oneOf(Generator.Category.POTION)));
+                isEXP = false;
+            } else {
+                scrolls.add(Generator.random(Random.oneOf(Generator.Category.SCROLL)));
+                potions.add(new PotionOfExperience());
+                isEXP = true;
+            }
+        }
+        if ((p.isKnown() && s.isKnown()) || (!p.isKnown() && !s.isKnown())) {
+            Painter.set(level, prize1, 11);
+            Painter.set(level, prize2, 11);
+        }else {
+            if(isEXP){
+                Painter.set(level, prize1, 11);
+                Painter.set(level, prize2, 9);
+            }else {
+                Painter.set(level, prize1, 9);
+                Painter.set(level, prize2, 11);
+            }
+        }
         /*以下为物品生成并掉落，读取对应链表的第0位，将其生成并移除（移除后后续物品填充上来）
         然后在对应的room将生成的物品drop到地上*/
         //以下是药水的生成，同侧room为0,2,4

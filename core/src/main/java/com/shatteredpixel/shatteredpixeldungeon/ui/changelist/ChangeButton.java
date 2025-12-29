@@ -29,12 +29,15 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.ui.Component;
 
+import java.util.ArrayList;
+
 //not actually a button, but functions as one.
 public class ChangeButton extends Component {
 	
 	protected Image icon;
 	protected String title;
 	protected String message;
+	protected ArrayList<String> pageMessages;
 	
 	public ChangeButton( Image icon, String title, String message){
 		super();
@@ -44,6 +47,20 @@ public class ChangeButton extends Component {
 		
 		this.title = Messages.titleCase(title);
 		this.message = message;
+		this.pageMessages = null;
+		
+		layout();
+	}
+	
+	public ChangeButton(Image icon, String title, ArrayList<String> pageMessages) {
+		super();
+		
+		this.icon = icon;
+		add(this.icon);
+		
+		this.title = Messages.titleCase(title);
+		this.message = null;
+		this.pageMessages = pageMessages;
 		
 		layout();
 	}
@@ -53,7 +70,11 @@ public class ChangeButton extends Component {
 	}
 	
 	protected void onClick() {
-		GirlsFrontlinePixelDungeon.scene().add(new ChangesWindow(new Image(icon), title, message));
+		if (pageMessages != null && !pageMessages.isEmpty()) {
+			GirlsFrontlinePixelDungeon.scene().add(new ChangesWindowWithPages(new Image(icon), title, pageMessages));
+		} else {
+			GirlsFrontlinePixelDungeon.scene().add(new ChangesWindow(new Image(icon), title, message));
+		}
 	}
 	
 	@Override
@@ -65,3 +86,4 @@ public class ChangeButton extends Component {
 		PixelScene.align(icon);
 	}
 }
+

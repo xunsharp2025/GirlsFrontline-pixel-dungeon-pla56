@@ -35,7 +35,7 @@ public class Dragun extends Mob {
         EXP = 16;
         defenseSkill = 75;
         baseSpeed = 2f;
-        maxLvl = 26;
+        maxLvl = 28;
 
         loot = new Torch();
         lootChance = 0.253f;

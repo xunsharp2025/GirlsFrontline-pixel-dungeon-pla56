@@ -63,6 +63,8 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.ZeroLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ZeroLevelSub;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Room404;
 import com.shatteredpixel.shatteredpixeldungeon.levels.RabbitBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
@@ -98,9 +100,11 @@ public class Dungeon {
 
 		//Health potion sources
 		//enemies
+        CYCLOPS_HP,
 		GUARD_HP,
 		SWARM_HP,
 		NECRO_HP,
+        FACTORY_HP,
 		BAT_HP,
 		WARLOCK_HP,
 		//Demon spawners are already limited in their spawnrate, no need to limit their health drops
@@ -164,6 +168,10 @@ public class Dungeon {
 	public static int mobsToChampion;
 
 	public static Hero hero;
+    public static int mobRan;
+    public static void resetTest(){
+        mobRan = 2;
+    }
 	public static Level level;
     static final Calendar calendar = Calendar.getInstance();
     public static boolean isXMAS(){
@@ -219,6 +227,7 @@ public class Dungeon {
 			Scroll.initLabels();
 			Potion.initColors();
 			Ring.initGems();
+            resetTest();
 	
 			SpecialRoom.initForRun();
 			SecretRoom.initForRun();
@@ -233,6 +242,9 @@ public class Dungeon {
 
 		quickslot.reset();
 		QuickSlotButton.reset();
+        Item.itemA=new ArrayList<>();
+        Item.NOTEA=new ArrayList<>();
+        //在创建游戏处重置
 		
 		depth = 0;
 		gold = 0;
@@ -317,6 +329,12 @@ public class Dungeon {
 			level = new HallsBossLevel();break;
 		case 31:
 			level = new LastLevel();break;
+		case 1000:
+			level = new ZeroLevelSub();
+			break;
+		case 2000:
+			level = new Room404();
+			break;
 		default:
 			level = new DeadEndLevel();
 		}
@@ -501,7 +519,6 @@ public class Dungeon {
             bundle.put(NOTESAVEA,ItemToSave);
             //物品类型
             itemAOfSave=new ArrayList<>();
-            Item.itemA=new ArrayList<>();
 
             int countB = 0;
             String NoteToSave[]= new String[NOTEAOfSave.size()];
@@ -511,7 +528,6 @@ public class Dungeon {
             bundle.put(NOTESAVEB,NoteToSave);
             //对应物品类型的标签
             NOTEAOfSave=new ArrayList<>();
-            Item.NOTEA=new ArrayList<>();
             bundle.put( LOCKXMAS, lockXMAS );
 
             bundle.put( GOLD, gold );
@@ -580,7 +596,7 @@ public class Dungeon {
 	
 	public static void saveAll() throws IOException {
 		if (hero != null && (hero.isAlive() || WndResurrect.instance != null)) {
-			
+
 			Actor.fixTime();
 			saveGame( GamesInProgress.curSlot );
 			saveLevel( GamesInProgress.curSlot );
@@ -590,10 +606,12 @@ public class Dungeon {
 	}
 	
 	public static void loadGame( int save ) throws IOException {
+        resetTest();
 		loadGame( save, true );
 	}
 	
 	public static void loadGame( int save, boolean fullLoad ) throws IOException {
+        resetTest();
 		Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.gameFile( save ) );
 
 		levelId = bundle.getInt( LEVEL_ID );
@@ -602,32 +620,27 @@ public class Dungeon {
 		seed = bundle.contains( SEED ) ? bundle.getLong( SEED ) : DungeonSeed.randomSeed();
 
         itemAOfSave = new ArrayList<>();
-        if(version>643){
-            Class[] ItemToSave = bundle.getClassArray( NOTESAVEA );
-            for(int j = 0; j < ItemToSave.length; j++) {
-                try {
-                    itemAOfSave.add(ItemToSave[j]);
-                } catch (Exception e) {
-                    GirlsFrontlinePixelDungeon.reportException(e);
-                }
+        Class[] ItemToSave = bundle.getClassArray(NOTESAVEA);
+        for (int j = 0; j < ItemToSave.length; j++) {
+            try {
+                itemAOfSave.add(ItemToSave[j]);
+            } catch (Exception e) {
+                GirlsFrontlinePixelDungeon.reportException(e);
             }
         }
         Item.itemA=itemAOfSave;
 
         NOTEAOfSave = new ArrayList<>();
-        if(version>643){
-            String[] NoteToSave = bundle.getStringArray( NOTESAVEB );
-            for(int i = 0; i < NoteToSave.length; i++) {
-                try {
-                    NOTEAOfSave.add(NoteToSave[i]);
-                } catch (Exception e) {
-                    GirlsFrontlinePixelDungeon.reportException(e);
-                }
+        String[] NoteToSave = bundle.getStringArray(NOTESAVEB);
+        for (int i = 0; i < NoteToSave.length; i++) {
+            try {
+                NOTEAOfSave.add(NoteToSave[i]);
+            } catch (Exception e) {
+                GirlsFrontlinePixelDungeon.reportException(e);
             }
         }
         Item.NOTEA=NOTEAOfSave;
         lockXMAS = false;
-        if(version>643)
         lockXMAS = bundle.getBoolean(LOCKXMAS);
 
 		Actor.clear();

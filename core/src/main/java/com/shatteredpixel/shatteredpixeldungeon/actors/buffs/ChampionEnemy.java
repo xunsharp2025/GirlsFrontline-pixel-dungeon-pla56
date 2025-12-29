@@ -125,13 +125,15 @@ public abstract class ChampionEnemy extends Buff {
 
 		@Override
 		public void onAttackProc(Char enemy) {
+            if (!Dungeon.level.water[enemy.pos]) {
 			Buff.affect(enemy, Burning.class).reignite(enemy);
+            }
 		}
 
 		@Override
 		public void detach() {
 			for (int i : PathFinder.NEIGHBOURS9){
-				if (!Dungeon.level.solid[target.pos+i]){
+				if (!Dungeon.level.solid[target.pos+i]&& !Dungeon.level.water[this.target.pos + i]){
 					GameScene.add(Blob.seed(target.pos+i, 2, Fire.class));
 				}
 			}

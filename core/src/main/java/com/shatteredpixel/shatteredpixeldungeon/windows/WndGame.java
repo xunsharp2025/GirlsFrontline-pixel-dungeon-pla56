@@ -104,6 +104,17 @@ public class WndGame extends Window {
 			curBtn.icon(Icons.get(Icons.DISPLAY));
 		}
 
+		// 重建0层(自杀)
+		if(0==GamesInProgress.curSlot){
+			addButton(curBtn = new RedButton( Messages.get(this, "kill") ) {
+				@Override
+				protected void onClick() {
+					Dungeon.hero.damage(9999999,Dungeon.hero);
+				}
+			} );
+			curBtn.icon(Icons.get(Icons.EXIT));
+		}
+
 		//exit
 		if(0==GamesInProgress.curSlot){
 			addButton(curBtn = new RedButton( Messages.get(this, "exit") ) {

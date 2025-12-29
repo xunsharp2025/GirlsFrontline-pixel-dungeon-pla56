@@ -119,7 +119,8 @@ public abstract class InventoryScroll extends Scroll {
 				
 				((InventoryScroll)curItem).onItemSelected( item );
 				((InventoryScroll)curItem).readAnimation();
-                curItem = detach( hero.belongings.backpack );
+                if(!identifiedByUse)
+                    curItem = detach(hero.belongings.backpack );
 				Sample.INSTANCE.play( Assets.Sounds.READ );
 				
 			} else if (identifiedByUse && !((Scroll)curItem).anonymous) {

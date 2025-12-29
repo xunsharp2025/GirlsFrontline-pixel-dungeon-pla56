@@ -107,8 +107,10 @@ public class WandOfCorruption extends Wand {
         float procChance = ((float)level + 1.0F) / ((float)level + 6.0F) * procChanceMultiplier(attacker);
         if (Random.Float() < procChance) {
             float powerMulti = Math.max(1.0F, procChance);
-            if(defender.getClass()!= RatXMAS.class)
-            Buff.prolong(defender, Amok.class, (float)Math.round((float)(4 + level * 2) * powerMulti));
+            if (defender != null) {
+                if (defender.getClass() != RatXMAS.class)
+                    Buff.prolong(defender, Amok.class, (float) Math.round((float) (4 + level * 2) * powerMulti));
+            }
         }
 
     }

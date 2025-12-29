@@ -54,10 +54,10 @@ public class Guard extends Mob {
 		EXP = 15;
 		defenseSkill = 5;
 		baseSpeed = 0.8f;
-		maxLvl = 26;
+		maxLvl = 28;
 
-		loot = new PotionOfHealing();
-		lootChance = 0.3333f;
+        loot = Generator.Category.POTION;
+        lootChance = 0.5f;
 	}
 
 	@Override
@@ -106,16 +106,35 @@ public class Guard extends Mob {
 		immunities.add( Terror.class );
 	}
 
-	@Override
-	public float lootChance() {
-		return super.lootChance() * (5f - Dungeon.LimitedDrops.GUARD_HP.count) / 5f;
-	}
+    @Override
+    public Item createLoot(){
 
-	@Override
-	public Item createLoot(){
-		Dungeon.LimitedDrops.GUARD_HP.count++;
-		return super.createLoot();
-	}
+        if (Random.Int(3) < 1 && Random.Int(9) >= Dungeon.LimitedDrops.GUARD_HP.count ){
+            //照搬的术士Warlock
+            Dungeon.LimitedDrops.GUARD_HP.count++;
+            return new PotionOfHealing();
+        } else {
+            Item i = Generator.random(Generator.Category.POTION);
+            int healingTried = 0;
+            while (i instanceof PotionOfHealing){
+                healingTried++;
+                i = Generator.random(Generator.Category.POTION);
+            }
+            //进行随机药水生成，但是从中去除治疗并计数
+
+            //将前面随机药水随机到后去除的治疗归还到随机池子
+            if (healingTried > 0){
+                for (int j = 0; j < Generator.Category.POTION.classes.length; j++){
+                    if (Generator.Category.POTION.classes[j] == PotionOfHealing.class){
+                        Generator.Category.POTION.probs[j] += healingTried;
+                    }
+                }
+            }
+
+            return i;
+        }
+
+    }
 
 	private static String DISARMHITS = "hitsToDisarm";
 
