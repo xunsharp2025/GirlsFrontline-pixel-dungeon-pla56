@@ -42,9 +42,9 @@ public enum HeroSubClass {
 	SNIPER(HeroIcon.SNIPER),
 	WARDEN(HeroIcon.WARDEN),
 
-	PULSETROOPER(HeroIcon.PULSETROOPER),
-	MODERN_REBORNER(HeroIcon.MODERN_REBORNER),
-	
+    //第一个为现用的整理后的，第二个是给旧存档留的接口
+    EMP_BOMB(HeroIcon.EMP_BOMB), PULSETROOPER(HeroIcon.EMP_BOMB),
+    GUN_MASTER(HeroIcon.GUN_MASTER), MODERN_REBORNER(HeroIcon.GUN_MASTER),
 	// GSH18子职业
 	THE_HEART_OF_SIRIUS(HeroIcon.BERSERKER), // 天狼星心脏
 	MOBILE_MEDICALTABLE(HeroIcon.GLADIATOR); // 行走手术台

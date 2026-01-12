@@ -96,6 +96,7 @@ public class SandalsOfNature extends Artifact {
 				updateQuickslot();
 			}
 		}
+        lockchB();
 	}
 
 	@Override

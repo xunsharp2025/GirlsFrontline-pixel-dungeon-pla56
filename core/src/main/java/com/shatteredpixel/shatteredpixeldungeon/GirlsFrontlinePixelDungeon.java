@@ -43,6 +43,9 @@ public class GirlsFrontlinePixelDungeon extends Game {
 	public static final int v1_1_2   = 587;
 	public static final int v1_2_0   = 609;
 	
+	//保存上一个场景类，用于返回功能
+	public static Class<? extends PixelScene> previousSceneClass;
+	
 	public GirlsFrontlinePixelDungeon( PlatformSupport platform ) {
 		super(sceneClass==null?WelcomeScene.class:sceneClass,platform );
 
@@ -102,6 +105,10 @@ public class GirlsFrontlinePixelDungeon extends Game {
 	
 	@Override
 	protected void switchScene() {
+		//在切换场景之前记录当前场景
+		if (scene instanceof PixelScene) {
+			previousSceneClass = (Class<? extends PixelScene>) scene.getClass();
+		}
 		super.switchScene();
 		if (scene instanceof PixelScene){
 			((PixelScene) scene).restoreWindows();

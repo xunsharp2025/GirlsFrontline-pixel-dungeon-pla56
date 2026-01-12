@@ -191,7 +191,7 @@ public class WndHero extends WndTabbed {
 			// 添加饱食度显示
 			Hunger hunger = Dungeon.hero.buff(Hunger.class);
 			if (hunger != null) {
-			    statSlot( Messages.get(this, "hunger"), String.format("%.0f/%.0f", hunger.hunger(), Hunger.STARVING) );
+			    statSlot( Messages.get(this, "hunger"), String.format("%.0f/%.0f", hunger.hunger()-Hunger.minlevel, Hunger.STARVING-Hunger.minlevel) );
 			}
 			
 			pos += GAP;

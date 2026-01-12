@@ -29,7 +29,7 @@ import java.util.ArrayList;
 
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
-    	add_0_5_6_A_Changes(changeInfos);
+    	add_0_5_7_Changes(changeInfos);
 		add_0_5_6_Changes(changeInfos);
     	add_0_5_5_4_Changes(changeInfos);
     	add_0_5_5_3_Changes(changeInfos);
@@ -44,8 +44,8 @@ public class v0_5_X_Changes {
 		add_0_5_1_Changes(changeInfos);
 		add_0_5_0_Changes(changeInfos);
     }
-    public static void add_0_5_6_A_Changes( ArrayList<ChangeInfo> changeInfos ){
-        ChangeInfo changes = new ChangeInfo("v0.5.6-A", true, "");
+    public static void add_0_5_7_Changes( ArrayList<ChangeInfo> changeInfos ){
+        ChangeInfo changes = new ChangeInfo("v0.5.7", true, "");
         changes.hardlight( Window.TITLE_COLOR );
         changeInfos.add(changes);
 
@@ -57,32 +57,6 @@ public class v0_5_X_Changes {
         "_-_ 文本1\n" +
         "_-_ 文本2\n" +
         "_-_ 文本3\n"));
-
-        changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
-        changes.hardlight( CharSprite.WARNING );
-        changeInfos.add(changes);
-
-        changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
-        changes.hardlight( CharSprite.WARNING );
-        changeInfos.add(changes);
-        ArrayList<String> pageContents = new ArrayList<>();
-        pageContents.add(
-            "_-_ 优化小版本的版本号，为A-B-C。\n" +
-            "_-_ 写入了新的多页内容，使得文本可阅读性变高。\n" +
-            "_-_ 修复了一些UI显示问题\n"
-        );
-        pageContents.add(
-            "_-_ 改进了游戏平衡性\n" +
-            "_-_ 增加了新的游戏机制\n" +
-            "_-_ 修复了一些已知的bug\n"
-        );
-        pageContents.add(
-            "_-_ 更新了部分游戏资源\n" +
-            "_-_ 优化了玩家体验\n" +
-            "_-_ 增加了新的游戏功能\n"
-        );
-
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY, null), "改动-系统优化", pageContents));
 
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
         changes.hardlight( Window.TITLE_COLOR );
@@ -198,6 +172,27 @@ public class v0_5_X_Changes {
         "_-_ 此类房间将有概率变体为共有6个小间，玩家可以进行6选3猜选奖励的特殊房间"
         ));
 
+		changes = new ChangeInfo("0.5.6-A", false, null);
+        changes.hardlight( CharSprite.WARNING );
+        changeInfos.add(changes);
+        ArrayList<String> pageContents = new ArrayList<>();
+        pageContents.add(
+            "_-_ 优化小版本的版本号，为A-B-C。\n" +
+            "_-_ 写入了新的多页内容，使得文本可阅读性变高。\n" +
+            "_-_ 修复了一些UI显示问题\n"
+        );
+        pageContents.add(
+            "_-_ 改进了游戏平衡性\n" +
+            "_-_ 增加了新的游戏机制\n" +
+            "_-_ 修复了一些已知的bug\n"
+        );
+        pageContents.add(
+            "_-_ 更新了部分游戏资源\n" +
+            "_-_ 优化了玩家体验\n" +
+            "_-_ 增加了新的游戏功能\n"
+        );
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY, null), "改动-系统优化", pageContents));
     }
 
 

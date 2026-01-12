@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.CrystalKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.IronKey;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
@@ -60,6 +61,10 @@ public class CrystalVaultRoom extends SpecialRoom {
 		Item i1, i2;
 		i1 = prize();
 		i2 = prize();
+
+        if(i1 instanceof Ring && i2 instanceof Ring)
+            i2 = prize();
+        //强制双水晶箱不同时生成两个瞄准镜
 
 		int i1Pos, i2Pos;
 		int doorPos = level.pointToCell(entrance());

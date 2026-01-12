@@ -21,15 +21,18 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
 import static com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring.getBuffedBonus;
 
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Berserk;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EquipLevelUp;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.type561.Type56FourTwo;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.KindOfWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfFuror;
@@ -281,7 +284,10 @@ abstract public class Weapon extends KindOfWeapon {
 	@Override
 	public int buffedLvl() {
 		if (isEquipped( Dungeon.hero ) || Dungeon.hero.belongings.contains( this )){
-			return super.buffedLvl();
+            int lvl = super.buffedLvl();
+            if (hero!=null&&hero.buff(EquipLevelUp.class) != null)
+                lvl += Dungeon.hero.hasTalent(Talent.Type56FourTwoTwo)?Dungeon.hero.pointsInTalent(Talent.Type56FourTwoTwo):1;
+			return lvl;
 		} else {
 			return level();
 		}

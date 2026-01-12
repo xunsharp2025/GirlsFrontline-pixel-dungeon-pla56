@@ -24,21 +24,28 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Wandmaker;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.CorpseDust;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Embers;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Rotberry;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
+import com.shatteredpixel.shatteredpixeldungeon.ui.IconButton;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ItemSlot;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.ui.WndTextInput;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.NinePatch;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.ui.Component;
@@ -54,12 +61,12 @@ public class WndWandmaker extends Window {
 	Item questItem;
 
 	public WndWandmaker( final Wandmaker wandmaker, final Item item ) {
-		
+
 		super();
 
 		this.wandmaker = wandmaker;
 		this.questItem = item;
-		
+
 		IconTitle titlebar = new IconTitle();
 		titlebar.icon(new ItemSprite(item.image(), null));
 		titlebar.label(Messages.titleCase(item.name()));
@@ -79,18 +86,18 @@ public class WndWandmaker extends Window {
 		message.maxWidth(WIDTH);
 		message.setPos(0, titlebar.bottom() + GAP);
 		add( message );
-		
+
 		RewardButton btnWand1 = new RewardButton( Wandmaker.Quest.wand1 );
 		btnWand1.setRect( (WIDTH - BTN_GAP) / 2 - BTN_SIZE, message.top() + message.height() + BTN_GAP, BTN_SIZE, BTN_SIZE );
 		add( btnWand1 );
-		
+
 		RewardButton btnWand2 = new RewardButton( Wandmaker.Quest.wand2 );
 		btnWand2.setRect( btnWand1.right() + BTN_GAP, btnWand1.top(), BTN_SIZE, BTN_SIZE );
 		add(btnWand2);
-		
+
 		resize(WIDTH, (int) btnWand2.bottom());
 	}
-	
+
 	private void selectReward( Item reward ) {
 
 		if (reward == null){
@@ -115,9 +122,9 @@ public class WndWandmaker extends Window {
 		}
 
 		wandmaker.destroy();
-		
+
 		wandmaker.sprite.die();
-		
+
 		Wandmaker.Quest.complete();
 	}
 
@@ -191,6 +198,44 @@ public class WndWandmaker extends Window {
 
 			resize(width, (int)btnCancel.bottom());
 		}
+        @Override
+        protected IconButton Itemnote(Item item){
+            return new IconButton(Icons.RENAME_ON.get()){
+                @Override
+                protected void onClick() {
+                    super.onClick();
+                    String note =Item.ClassNoteToItem(item);
+                    String noteAdd="";
+                    if(item.stackable){
+                        if(item instanceof Scroll ||item instanceof Potion){
+                            noteAdd=Messages.get(Item.class, "noteclassb");
+                        }else {
+                            noteAdd=Messages.get(Item.class, "noteclassa");
+                        }
+                    }
+                    GirlsFrontlinePixelDungeon.scene().addToFront(
+                            new WndTextInput(
+                                    item.name(),
+                                    Messages.get(Item.class, "note_desc",noteAdd,note),
+                                    note,
+                                    40,
+                                    false,
+                                    Messages.get(Item.class, "set_note_yes"),
+                                    Messages.get(Item.class, "set_note_no")
+                            ){
+                                @Override
+                                public void onSelect(boolean check, String text) {
+                                    if(check){
+                                        item.notedSet(text);
+                                        hide();
+                                        Game.scene().add(new RewardWindow(item));
+                                    }
+                                }
+                            }
+                    );
+                }
+            };
+        }
 	}
 
 }

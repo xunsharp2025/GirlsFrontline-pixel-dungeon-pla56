@@ -81,6 +81,7 @@ public class TalismanOfForesight extends Artifact {
 			else if (charge < 5)    GLog.i( Messages.get(this, "low_charge") );
 			else                    GameScene.selectCell(scry);
 		}
+        lockchB();
 	}
 
 	@Override
@@ -252,6 +253,7 @@ public class TalismanOfForesight extends Artifact {
 
 		@Override
 		public boolean act() {
+            lockcha();
 			spend( TICK );
 
 			boolean smthFound = false;

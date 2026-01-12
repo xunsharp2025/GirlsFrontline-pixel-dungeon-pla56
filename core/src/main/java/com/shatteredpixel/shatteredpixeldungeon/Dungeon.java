@@ -25,11 +25,14 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Awareness;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Light;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicalSight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevealedArea;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.SpiritHawk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -41,6 +44,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
@@ -60,12 +65,12 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.LastLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.RabbitBossLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Room404;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.ZeroLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.ZeroLevelSub;
-import com.shatteredpixel.shatteredpixeldungeon.levels.Room404;
-import com.shatteredpixel.shatteredpixeldungeon.levels.RabbitBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -87,7 +92,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
-import java.util.Objects;
 
 public class Dungeon {
 	//enum of items which have limited spawns, records how many have spawned
@@ -169,8 +173,24 @@ public class Dungeon {
 
 	public static Hero hero;
     public static int mobRan;
+    public static boolean ArmorLock;
+    public static boolean ArtifactLock;
+    public static boolean WandLock;
     public static void resetTest(){
         mobRan = 2;
+        ArmorLock = false;
+        ArtifactLock = false;
+        WandLock = false;
+        Hunger.minlevel = 0;
+    }
+    public static void resetGenerator(){
+        for (int j = 0; j < Generator.Category.FOOD.classes.length; j++) {
+            if (Generator.Category.FOOD.classes[j] == Food.class ) {
+                Generator.Category.FOOD.probs[j] = 4;
+            }else if( Generator.Category.FOOD.classes[j] == SaltyZongzi.class){
+                Generator.Category.FOOD.probs[j] = 0;
+            }
+        }
     }
 	public static Level level;
     static final Calendar calendar = Calendar.getInstance();
@@ -182,8 +202,8 @@ public class Dungeon {
         }
     }
     public static boolean lockXMAS;
-    public static ArrayList<Class> itemAOfSave = new ArrayList<>();
-    public static ArrayList<String> NOTEAOfSave = new ArrayList<>();
+    public static ArrayList<Class> itemAOfSave ;
+    public static ArrayList<String> NOTEAOfSave ;
 
 	public static QuickSlot quickslot = new QuickSlot();
 	
@@ -208,7 +228,14 @@ public class Dungeon {
 	}
 
 	public static void init(String seedCode,int paramChallenges) {
-
+        if(Game.lockXMAS){
+            Game.lockXMAS = false;
+            lockXMAS = true;
+        }
+        itemAOfSave = new ArrayList<>();
+        NOTEAOfSave = new ArrayList<>();
+        Item.itemA = new ArrayList<>();
+        Item.NOTEA = new ArrayList<>();
 		version = Game.versionCode;
 		challenges = paramChallenges;
 		mobsToChampion = -1;
@@ -221,14 +248,18 @@ public class Dungeon {
 	
 		Actor.clear();
 		Actor.resetNextID();
-		
+
+        resetGenerator();
+        //按理说这种权重会变动的生成表，理应在生成器中设置成标准表，然后再进行复制的，
+        //但考虑到节日食物的生成权重会跟随日期动态变化，终归还是要有一个来到这里在创建/读取存档的时机重置
+        //重置节日食物要在创建、读取的时候修改，而重置受影响食物只需要在创建处修改，所以选择重置受影响食物
 		Random.pushGenerator( seed );
 	
 			Scroll.initLabels();
 			Potion.initColors();
 			Ring.initGems();
             resetTest();
-	
+
 			SpecialRoom.initForRun();
 			SecretRoom.initForRun();
 	
@@ -242,9 +273,6 @@ public class Dungeon {
 
 		quickslot.reset();
 		QuickSlotButton.reset();
-        Item.itemA=new ArrayList<>();
-        Item.NOTEA=new ArrayList<>();
-        //在创建游戏处重置
 		
 		depth = 0;
 		gold = 0;
@@ -266,10 +294,18 @@ public class Dungeon {
 		Generator.fullReset();
 		hero = new Hero();
 		hero.live();
-		
 		Badges.reset();
 		
 		GamesInProgress.selectedClass.initHero( hero );
+        if(hero.heroClass==HeroClass.TYPE561) {
+            Hunger.minlevel = -100;
+            for (int j = 0; j < Generator.Category.FOOD.classes.length; j++) {
+                if (Generator.Category.FOOD.classes[j] == Food.class || Generator.Category.FOOD.classes[j] == SaltyZongzi.class) {
+                    Generator.Category.FOOD.probs[j] = 2;
+                }
+            }
+            Buff.affect(hero, Hunger.class).satisfy(100);
+        }
 	}
 
 	public static boolean isChallenged( int mask ) {
@@ -291,6 +327,9 @@ public class Dungeon {
 			}
 		}
 
+        if(hero.hasTalent(Talent.Type56Two_Sight)&&Random.Int(1)<1) {
+            Buff.affect(hero, MindVision.class, 3 * hero.pointsInTalent(Talent.Type56Two_Sight));
+        }
 		level.create(depth,id);
 		Statistics.qualifiedForNoKilling = !bossLevel();
 		return level;
@@ -518,7 +557,6 @@ public class Dungeon {
             }
             bundle.put(NOTESAVEA,ItemToSave);
             //物品类型
-            itemAOfSave=new ArrayList<>();
 
             int countB = 0;
             String NoteToSave[]= new String[NOTEAOfSave.size()];
@@ -527,7 +565,6 @@ public class Dungeon {
             }
             bundle.put(NOTESAVEB,NoteToSave);
             //对应物品类型的标签
-            NOTEAOfSave=new ArrayList<>();
             bundle.put( LOCKXMAS, lockXMAS );
 
             bundle.put( GOLD, gold );
@@ -590,8 +627,12 @@ public class Dungeon {
 	public static void saveLevel( int save ) throws IOException {
 		Bundle bundle = new Bundle();
 		bundle.put( LEVEL, level );
-		
-		FileUtils.bundleToFile(GamesInProgress.depthFile(save,level.levelId),bundle);
+
+        if(level.FirstSave){
+            level.FirstSave = false;
+            FileUtils.bundleToFile(GamesInProgress.depthFile(save,level.levelId+10000),bundle);
+        }
+        FileUtils.bundleToFile(GamesInProgress.depthFile(save,level.levelId),bundle);
 	}
 	
 	public static void saveAll() throws IOException {
@@ -621,25 +662,29 @@ public class Dungeon {
 
         itemAOfSave = new ArrayList<>();
         Class[] ItemToSave = bundle.getClassArray(NOTESAVEA);
-        for (int j = 0; j < ItemToSave.length; j++) {
-            try {
-                itemAOfSave.add(ItemToSave[j]);
-            } catch (Exception e) {
-                GirlsFrontlinePixelDungeon.reportException(e);
+        if (ItemToSave != null) {
+            for (int j = 0; j < ItemToSave.length; j++) {
+                try {
+                    itemAOfSave.add(ItemToSave[j]);
+                } catch (Exception e) {
+                    GirlsFrontlinePixelDungeon.reportException(e);
+                }
             }
         }
-        Item.itemA=itemAOfSave;
+        Item.itemA = itemAOfSave;
 
         NOTEAOfSave = new ArrayList<>();
         String[] NoteToSave = bundle.getStringArray(NOTESAVEB);
-        for (int i = 0; i < NoteToSave.length; i++) {
-            try {
-                NOTEAOfSave.add(NoteToSave[i]);
-            } catch (Exception e) {
-                GirlsFrontlinePixelDungeon.reportException(e);
+        if (NoteToSave != null) {
+            for (int i = 0; i < NoteToSave.length; i++) {
+                try {
+                    NOTEAOfSave.add(NoteToSave[i]);
+                } catch (Exception e) {
+                    GirlsFrontlinePixelDungeon.reportException(e);
+                }
             }
         }
-        Item.NOTEA=NOTEAOfSave;
+        Item.NOTEA = NOTEAOfSave;
         lockXMAS = false;
         lockXMAS = bundle.getBoolean(LOCKXMAS);
 
@@ -698,9 +743,17 @@ public class Dungeon {
 		}
 		
 		Notes.restoreFromBundle( bundle );
-		
+
 		hero = null;
 		hero = (Hero)bundle.get( HERO );
+        if(hero.heroClass== HeroClass.TYPE561){
+            Hunger.minlevel = -100;
+            for (int j = 0; j < Generator.Category.FOOD.classes.length; j++) {
+                if (Generator.Category.FOOD.classes[j] == Food.class || Generator.Category.FOOD.classes[j] == SaltyZongzi.class) {
+                    Generator.Category.FOOD.probs[j] = 2;
+                }
+            }
+        }
 		depth = bundle.getInt( DEPTH );
 
 		gold = bundle.getInt( GOLD );

@@ -36,6 +36,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.SugarZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.journal.GuidePage;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.GoldenKey;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
@@ -444,6 +445,30 @@ public abstract class RegularLevel extends Level {
 				}
 			}
 		}
+        if (Dungeon.hero.hasTalent(Talent.Type56One_FOOD)){
+            Talent.ZongziDropped dropped = Buff.affect(Dungeon.hero, Talent.ZongziDropped.class);
+            if (dropped.count() < 2 + 2*Dungeon.hero.pointsInTalent(Talent.Type56One_FOOD)){
+                int cell;
+                int tries = 100;
+                boolean valid;
+                do {
+                    cell = randomDropCell(SpecialRoom.class);
+                    valid = cell != -1 && !(room(cell) instanceof SecretRoom)
+                            && !(room(cell) instanceof ShopRoom)
+                            && map[cell] != Terrain.EMPTY_SP
+                            && map[cell] != Terrain.WATER
+                            && map[cell] != Terrain.PEDESTAL;
+                } while (tries-- > 0 && !valid);
+                if (valid) {
+                    if (map[cell] == Terrain.HIGH_GRASS || map[cell] == Terrain.FURROWED_GRASS) {
+                        map[cell] = Terrain.GRASS;
+                        losBlocking[cell] = false;
+                    }
+                    drop(new SugarZongzi(), cell).type = Heap.Type.CHEST;
+                    dropped.countUp(1);
+                }
+            }
+        }
 
 		//guide pages
 		Collection<String> allPages = Document.ADVENTURERS_GUIDE.pageNames();

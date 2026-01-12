@@ -97,6 +97,7 @@ public class MasterThievesArmband extends Artifact {
 			}
 
 		}
+        lockchB();
 	}
 
 	private CellSelector.Listener targeter = new CellSelector.Listener(){
@@ -249,6 +250,7 @@ public class MasterThievesArmband extends Artifact {
 
 		@Override
 		public boolean act() {
+            lockcha();
 			if (cursed && Dungeon.gold > 0 && Random.Int(5) == 0){
 				Dungeon.gold--;
 			}

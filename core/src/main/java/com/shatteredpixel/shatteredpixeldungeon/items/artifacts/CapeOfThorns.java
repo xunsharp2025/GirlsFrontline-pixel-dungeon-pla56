@@ -58,6 +58,7 @@ public class CapeOfThorns extends Artifact {
 		if (charge >= chargeCap){
 			target.buff(Thorns.class).proc(0, null, null);
 		}
+        lockchB();
 	}
 	
 	@Override
@@ -78,6 +79,7 @@ public class CapeOfThorns extends Artifact {
 
 		@Override
 		public boolean act(){
+            lockcha();
 			if (cooldown > 0) {
 				cooldown--;
 				if (cooldown == 0) {

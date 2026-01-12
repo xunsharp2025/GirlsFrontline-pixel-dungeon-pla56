@@ -67,6 +67,20 @@ public class BrokenSeal extends Item {
 		return glyph;
 	}
 
+    @Override
+    public String name() {
+        if (null != getGlyph()) {
+            return getGlyph().name(" "+super.name());
+        } else
+            return super.name();
+    }
+    @Override
+    public String info(){
+        String info = super.info();
+        if(null!=getGlyph())
+            info += "\n\n" + glyph.desc();
+        return info;
+    }
     public boolean canTransferGlyph() {
         if(Dungeon.hero.hasTalent(Talent.RUNIC_TRANSFERENCE)){
             if (this.glyph == null) {
@@ -148,23 +162,33 @@ public class BrokenSeal extends Item {
 				if (!armor.levelKnown){
 					GLog.w(Messages.get(BrokenSeal.class, "unknown_armor"));
 
-				} else if ((armor.cursed || armor.level() < 0)
+				} else if (!ExtractABLE&&(armor.cursed || armor.level() < 0)
 						&& (seal.getGlyph() == null || !seal.getGlyph().curse())){
 					GLog.w(Messages.get(BrokenSeal.class, "degraded_armor"));
 
 				} else if (armor.glyph != null && seal.getGlyph() != null
 						&& armor.glyph.getClass() != seal.getGlyph().getClass()) {
+                    String choose_desc = Messages.get(BrokenSeal.class, "choose_desc");
+                    if(!ExtractABLE){
+                        choose_desc += Messages.get(BrokenSeal.class, "warning");
+                    }
 					GameScene.show(new WndOptions(new ItemSprite(seal),
 							Messages.get(BrokenSeal.class, "choose_title"),
-							Messages.get(BrokenSeal.class, "choose_desc"),
+							choose_desc,
 							armor.glyph.name(),
 							seal.getGlyph().name()){
 						@Override
 						protected void onSelect(int index) {
-                            if(!ExtractABLE){
-                                if (index == 0) seal.setGlyph(null);
-                            }else{
-                                seal.setGlyph(armor.glyph);
+                            if( index == 0 ){
+                                //选择使用护甲
+                                if(ExtractABLE){
+                                    seal.setGlyph(armor.glyph);
+                                }else {
+                                    seal.setGlyph(null);
+                                }
+                            }else {
+                                //选择使用袖章时
+                                armor.glyph = seal.getGlyph();
                             }
 							//if index is 1, then the glyph transfer happens in affixSeal
 

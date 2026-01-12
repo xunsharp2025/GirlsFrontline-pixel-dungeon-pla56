@@ -8,10 +8,15 @@ import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.QuickSlot;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.custom.messages.M;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.TestItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.EquipableItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.LostBackpack;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClassArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.ChaliceOfBlood;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.AlchemicalCatalyst;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
@@ -22,9 +27,12 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.Elixir;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Cypros;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.WndTextInput;
 import com.shatteredpixel.shatteredpixeldungeon.ui.WndTextNumberInput;
@@ -48,6 +56,7 @@ public class debugBook extends TestItem {
     private static String AC_STR = "STR";
     private static String AC_LVL = "LVL";
     private static String AC_MOB = "MOB";
+    private static String AC_CHA = "CHA";
     @Override
     public String name(){
         return Messages.get(this, "name") + modeName();
@@ -65,6 +74,10 @@ public class debugBook extends TestItem {
                 return "-"+Messages.get(this, "ac_ign");
             case 5:
                 return "-"+Messages.get(this, "ac_mob");
+            case 6:
+                return "-"+Messages.get(this, "ac_cha");
+            case 7:
+                return "-"+Messages.get(this, "ac_reset");
             default:
                 return "";
         }
@@ -82,8 +95,22 @@ public class debugBook extends TestItem {
                 return Messages.get(this, "ign");
             case 5:
                 return Messages.get(this, "mob");
+            case 6:
+                return Messages.get(this, "cha",chadesc());
+            case 7:
+                return Messages.get(this, "reset");
             default:
                 return "";
+        }
+    }
+    private String chadesc(){
+        switch (chargemode){
+            case 1:
+                return Messages.get(this,"cha_rem");
+            case 2:
+                return Messages.get(this,"cha_lock");
+            case 0: default:
+                return Messages.get(this,"cha_full");
         }
     }
     @Override
@@ -121,6 +148,13 @@ public class debugBook extends TestItem {
             case 5:
                 actions.add(AC_MOB);
                 defaultAction=AC_MOB;
+            case 6:
+                actions.add(AC_CHA);
+                defaultAction=AC_CHA;
+            case 7:
+                defaultAction=AC_APPLY;
+                break;
+
         }
         return actions;
     }
@@ -128,16 +162,18 @@ public class debugBook extends TestItem {
     @Override
     public void execute(Hero hero, String action) {
         super.execute(hero, action);
-        if (action.equals(AC_SETMODE)){
+        if (action.equals(AC_SETMODE)) {
             setMode();
-        }else if(action.equals(AC_EXP)){
+        } else if (action.equals(AC_EXP)) {
             setEXP();
-        }else if(action.equals(AC_STR)){
+        } else if (action.equals(AC_STR)) {
             setSTR();
-        }else if(action.equals(AC_LVL)){
+        } else if (action.equals(AC_LVL)) {
             setLVL();
-        }else if(action.equals(AC_MOB)){
+        } else if (action.equals(AC_MOB)) {
             setMOB();
+        } else if (action.equals(AC_CHA)) {
+            setCHA();
         }else if(action.equals(AC_APPLY)){
             switch (modeA){
                 case 1:
@@ -147,13 +183,20 @@ public class debugBook extends TestItem {
                     updateSTR();
                     break;
                 case 3:
-                    GameScene.selectItem( itemLVL);
+                    GameScene.selectItem(itemLVL);
                     break;
                 case 4:
-                    GameScene.selectItem( itemIGN);
+                    GameScene.selectItem(itemIGN);
                     break;
                 case 5:
                     mobAPPLY();
+                    break;
+                case 6:
+                    GameScene.selectItem(itemCHA);
+                    break;
+                case 7:
+                    resetLevel();
+                    break;
                 case 0: default:
                     break;
             }
@@ -185,30 +228,49 @@ public class debugBook extends TestItem {
         if(mode == 1) {
             modeA = 1;
             defaultAction = AC_EXP;
+            GLog.p(Messages.get(this,"modetext",Messages.get(this,"ac_exp")));
             updateQuickslot();
         }
         else if(mode==2){
             modeA = 2;
             defaultAction = AC_STR;
+            GLog.p(Messages.get(this,"modetext",Messages.get(this,"ac_str")));
             updateQuickslot();
         }
         else if(mode==3){
             modeA = 3;
             defaultAction = AC_LVL;
+            GLog.p(Messages.get(this,"modetext",Messages.get(this,"ac_lvl")));
             updateQuickslot();
         }
         else if(mode==4){
             modeA = 4;
             defaultAction = AC_APPLY;
+            GLog.p(Messages.get(this,"modetext",Messages.get(this,"ac_ign")));
             updateQuickslot();
         }
         else if(mode==5){
             modeA = 5;
             defaultAction = AC_MOB;
+            GLog.p(Messages.get(this,"modetext",Messages.get(this,"ac_mob")));
             updateQuickslot();
-        }else {
+        }
+        else if(mode==6){
+            modeA = 6;
+            defaultAction = AC_CHA;
+            GLog.p(Messages.get(this,"modetext",Messages.get(this,"ac_cha")));
+            updateQuickslot();
+        }
+        else if(mode == 7){
+            modeA = 7;
+            defaultAction = AC_APPLY;
+            GLog.p(Messages.get(this,"modetext",Messages.get(this,"ac_reset")));
+            updateQuickslot();
+        }
+        else {
             modeA = 0;
             defaultAction = AC_SETMODE;
+            GLog.p(Messages.get(this,"modetext",Messages.get(this,"ac_setmode")));
             updateQuickslot();
         }
     }
@@ -240,6 +302,8 @@ public class debugBook extends TestItem {
         if(exp-hero.lvl!=0){
             new PotionOfExperience().apply(hero);
             hero.lvl = exp;
+            hero.attackSkill = 10 + exp - 1;
+            hero.defenseSkill = 5 + exp - 1;
             Sample.INSTANCE.play( Assets.Sounds.READ );
             hero.updateHT( true );
         }
@@ -312,16 +376,10 @@ public class debugBook extends TestItem {
         @Override
         public void onSelect( Item item ) {
             if(item != null){
-                int levela = item.level();
                 if(!(lvl > 0)){
                     lvl = 0;
                 }
-                if(levela>lvl){
-                    item.degrade(levela-lvl);
-                }
-                if(levela<lvl){
-                    item.upgrade(lvl - levela);
-                }
+                item.level(lvl);
                 Sample.INSTANCE.play( Assets.Sounds.READ );
             }
         }
@@ -346,10 +404,10 @@ public class debugBook extends TestItem {
         @Override
         public void onSelect( Item item ) {
 
-            if (item instanceof Ring&&!item.levelKnown&&!item.cursedKnown){
-                Ring.initGems();
-            }
             if(item != null){
+                if (item instanceof Ring&&!item.levelKnown&&!item.cursedKnown){
+                    Ring.initGems();
+                }
                 if(item instanceof EquipableItem ||item instanceof Wand){
                     item.levelKnown = false;
                     item.cursedKnown = false;
@@ -385,5 +443,183 @@ public class debugBook extends TestItem {
     }
     private void mobAPPLY(){
         Dungeon.mobRan=mobA;
+    }
+    private int chargemode = 0;
+    private void setCHA(){
+        Game.runOnRenderThread(()->GameScene.show(
+                new WndTextNumberInput(
+                        Messages.get(this, "cha_title"),
+                        Messages.get(this, "cha_body"),
+                        Integer.toString(0),
+                        4,
+                        false,
+                        Messages.get(this, "yes"),
+                        Messages.get(this, "no"),
+                        false){
+                    public void onSelect(boolean check, String text){
+                        if (check && text.matches("\\d+")){
+                            chargemode = Math.min(Integer.parseInt(text), 2);
+                            chargemode = Math.max(chargemode, 0);
+                            GLog.p(Messages.get(this, "changecha"),chadesc());
+                            defaultAction = AC_APPLY;
+                            updateQuickslot();
+                        }
+                    }
+                }));
+    }
+    protected WndBag.ItemSelector itemCHA = new WndBag.ItemSelector() {
+
+        @Override
+        public String textPrompt() {
+            return Messages.get(this, "cha_select");
+        }
+
+        @Override
+        public Class<? extends Bag> preferredBag() {
+            return Belongings.Backpack.class;
+        }
+
+        @Override
+        public boolean itemSelectable(Item item) {
+            return item instanceof ClassArmor||item instanceof Wand||(item instanceof Artifact&&item.getClass()!= ChaliceOfBlood.class)
+                    || item instanceof MagesStaff || item instanceof Cypros;
+        }
+
+        @Override
+        public void onSelect( Item item ) {
+            if(item != null){
+                switch (chargemode){
+                    case 1:
+                        lockcharge(item);
+                        break;
+                    case 2:
+                        lockClass(item);
+                        break;
+                    case 0: default:
+                        fullcharge(item);
+                        break;
+                }
+                Sample.INSTANCE.play( Assets.Sounds.READ );
+            }
+        }
+    };
+    private void fullcharge(Item item){
+        Item itemB;
+        if (item instanceof MagesStaff){
+            itemB = ((MagesStaff) item).wand;
+        }
+        else if(item instanceof Cypros){
+            itemB = ((Cypros) item).wand;
+        }
+        else {
+            itemB = item;
+        }
+
+        if (itemB instanceof ClassArmor){
+            ((ClassArmor) itemB).charge = 100;
+        }
+        else if (itemB instanceof Wand){
+            ((Wand) itemB).curCharges = ((Wand) itemB).maxCharges;
+        }
+        else if (itemB instanceof Artifact){
+            if(((Artifact) itemB).chargeCap>0)
+                ((Artifact) itemB).charge = ((Artifact) itemB).chargeCap;
+        }
+        updateQuickslot();
+    }
+    private void lockcharge(Item item){
+        Item itemB;
+        if (item instanceof MagesStaff){
+            itemB = ((MagesStaff) item).wand;
+        }
+        else if(item instanceof Cypros){
+            itemB = ((Cypros) item).wand;
+        }else {
+            itemB = item;
+        }
+
+        if (itemB instanceof ClassArmor){
+            if(((ClassArmor) itemB).lockcharge){
+                ((ClassArmor) itemB).lockcharge = false;
+                ((ClassArmor) itemB).chargeRem = 0;
+                GLog.n(Messages.get(this,"cha_singleunlock"));
+                //先解除后清除登记，以免改变当前充能
+            }
+            else {
+                ((ClassArmor) itemB).chargeRem = ((ClassArmor) itemB).charge;
+                ((ClassArmor) itemB).lockcharge = true;
+                GLog.p(Messages.get(this,"cha_singlelock"));
+                //先等级后启动，以免丢失当前充能
+            }
+        }
+        else if (itemB instanceof Wand){
+            if(((Wand) itemB).lockcharge){
+                ((Wand) itemB).lockcharge = false;
+                ((Wand) itemB).chargeRem = 0;
+                GLog.n(Messages.get(this,"cha_singleunlock"));
+            }else {
+                ((Wand) itemB).chargeRem = ((Wand) itemB).curCharges;
+                ((Wand) itemB).lockcharge = true;
+                GLog.p(Messages.get(this,"cha_singlelock"));
+            }
+        }
+        else if (itemB instanceof Artifact){
+            if(((Artifact) itemB).lockcharge){
+                ((Artifact) itemB).lockcharge=false;
+                ((Artifact) itemB).chargeRem= 0;
+                GLog.n(Messages.get(this,"cha_singleunlock"));
+            }else {
+                ((Artifact) itemB).chargeRem= ((Artifact) itemB).charge;
+                ((Artifact) itemB).lockcharge=true;
+                GLog.p(Messages.get(this,"cha_singlelock"));
+            }
+        }
+        updateQuickslot();
+    }
+    private void lockClass(Item item){
+        Item itemB;
+        if (item instanceof MagesStaff){
+            itemB = ((MagesStaff) item).wand;
+        }
+        else if(item instanceof Cypros){
+            itemB = ((Cypros) item).wand;
+        }
+        else {
+            itemB = item;
+        }
+
+        if (itemB instanceof ClassArmor){
+            if(Dungeon.ArmorLock){
+                Dungeon.ArmorLock = false;
+                GLog.n(Messages.get(this, "cha_armorunlock"));
+            }else {
+                Dungeon.ArmorLock = true;
+                GLog.p(Messages.get(this, "cha_armorlock"));
+            }
+        }
+        else if (itemB instanceof Wand){
+            if(Dungeon.WandLock){
+                Dungeon.WandLock = false;
+                GLog.n(Messages.get(this, "cha_wandunlock"));
+            }else {
+                Dungeon.WandLock = true;
+                GLog.p(Messages.get(this, "cha_wandlock"));
+            }
+        }
+        else if (itemB instanceof Artifact){
+            if(Dungeon.ArtifactLock){
+                Dungeon.ArtifactLock = false;
+                GLog.n(Messages.get(this, "cha_artifactunlock"));
+            }else {
+                Dungeon.ArtifactLock = true;
+                GLog.p(Messages.get(this, "cha_artifactlock"));
+            }
+        }
+        updateQuickslot();
+    }
+    private void resetLevel(){
+        InterlevelScene.returnDepth = Dungeon.depth;
+        InterlevelScene.mode = InterlevelScene.Mode.RESET;
+        Game.switchScene( InterlevelScene.class );
     }
 }

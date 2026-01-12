@@ -21,6 +21,9 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities;
 
+import static com.shatteredpixel.shatteredpixeldungeon.items.Item.updateQuickslot;
+
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClassArmor;
@@ -38,11 +41,13 @@ public abstract class ArmorAbility implements Bundlable {
 	public void use( ClassArmor armor, Hero hero ){
 		if (targetingPrompt() == null){
 			activate(armor, hero, hero.pos);
+            ArmorLock(armor);
 		} else {
 			GameScene.selectCell(new CellSelector.Listener() {
 				@Override
 				public void onSelect(Integer cell) {
 					activate(armor, hero, cell);
+                    ArmorLock(armor);
 				}
 
 				@Override
@@ -52,6 +57,15 @@ public abstract class ArmorAbility implements Bundlable {
 			});
 		}
 	}
+    public void ArmorLock(ClassArmor armor){
+        if(Dungeon.ArmorLock){
+            armor.charge = 100;
+        }
+        if (armor.lockcharge) {
+            armor.charge = armor.chargeRem;
+        }
+        updateQuickslot();
+    }
 
 	//leave null for no targeting
 	public String targetingPrompt(){
@@ -68,6 +82,8 @@ public abstract class ArmorAbility implements Bundlable {
 			//reduced charge use by 13%/24%/34%/43%
 			chargeUse *= Math.pow( 0.869, hero.pointsInTalent(Talent.HEROIC_ENERGY));
 		}
+        if(Dungeon.ArmorLock)
+            chargeUse = 0;
 		return chargeUse;
 	}
 

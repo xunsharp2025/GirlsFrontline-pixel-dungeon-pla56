@@ -31,7 +31,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
-import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -91,7 +90,7 @@ public class Food extends Item {
 			
 			hero.spend( eatingTime() );
 
-			Talent.onFoodEaten(hero, energy, this);
+			Talent.onFoodEaten(hero, energy(), this);
 			
 			Statistics.foodEaten++;
 			Badges.validateFoodEaten();
@@ -108,7 +107,7 @@ public class Food extends Item {
 		|| Dungeon.hero.hasTalent(Talent.ENERGIZING_MEAL)
 		|| Dungeon.hero.hasTalent(Talent.MYSTICAL_MEAL)
 		|| Dungeon.hero.hasTalent(Talent.INVIGORATING_MEAL)
-		|| Dungeon.hero.hasTalent(Talent.BARGAIN_SKILLS)
+		|| Dungeon.hero.hasTalent(Talent.Type56Two_FOOD)
 		|| Dungeon.hero.hasTalent(Talent.GSH18_ENERGIZING_MEAL)){
 			return TIME_TO_EAT - 2;
 		} else {
@@ -119,20 +118,15 @@ public class Food extends Item {
 	protected float eatingTime(){
 		return eatingTimeStatic();
 	}
+    public float energy(){
+        float buffEnergy = energy;
+        if(Dungeon.hero.hasTalent(Talent.Type56Two_FOOD))
+            buffEnergy+=10+20*Dungeon.hero.pointsInTalent(Talent.Type56Two_FOOD);
+        return buffEnergy;
+    }
 	
 	protected void satisfy( Hero hero ){
-		float buffedEnergy=energy;
-
-		if(hero.hasTalent(Talent.NICE_FOOD)&&hero.isStarving()){
-			buffedEnergy+=50f*hero.pointsInTalent(Talent.NICE_FOOD);
-		}
-
-		if(hero.hasTalent(Talent.BETTER_FOOD)&&this instanceof SaltyZongzi){
-			int heal=(int)(hero.HT*(0.08f*hero.pointsInTalent(Talent.BETTER_FOOD)-0.06f));
-			hero.HP=Math.min(hero.HP+heal,hero.HT);
-			hero.sprite.emitter().burst(Speck.factory(Speck.HEALING),hero.pointsInTalent(Talent.BETTER_FOOD));
-			buffedEnergy+=30f+10f*hero.pointsInTalent(Talent.BETTER_FOOD);
-		}
+		float buffedEnergy=energy();
 
 		if (Dungeon.isChallenged(Challenges.NO_FOOD)){
 			buffedEnergy/=3f;
@@ -140,7 +134,16 @@ public class Food extends Item {
 
 		Buff.affect(hero, Hunger.class).satisfy(buffedEnergy);
 	}
-	
+
+    public static void satisfy( Hero hero ,float buffedEnergy){
+
+        if (Dungeon.isChallenged(Challenges.NO_FOOD)){
+            buffedEnergy/=3f;
+        }
+
+        Buff.affect(hero, Hunger.class).satisfy(buffedEnergy);
+    }
+
 	@Override
 	public boolean isUpgradable() {
 		return false;

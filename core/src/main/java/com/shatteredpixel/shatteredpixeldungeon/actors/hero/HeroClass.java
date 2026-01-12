@@ -37,6 +37,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.Deat
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.ShadowClone;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.SmokeBomb;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.type561.Type56FourOne;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.type561.Type56FourTwo;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Endure;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.HeroicLeap;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Shockwave;
@@ -77,6 +78,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Choco;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.SugarZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfInvisibility;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfMindVision;
@@ -86,6 +88,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTerror;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
@@ -107,7 +110,7 @@ public enum HeroClass {
 	MAGE( HeroSubClass.BATTLEMAGE, HeroSubClass.WARLOCK ),
 	ROGUE( HeroSubClass.ASSASSIN, HeroSubClass.FREERUNNER ),
 	HUNTRESS( HeroSubClass.SNIPER, HeroSubClass.WARDEN ),
-	TYPE561(HeroSubClass.PULSETROOPER, HeroSubClass.MODERN_REBORNER),
+	TYPE561(HeroSubClass.EMP_BOMB, HeroSubClass.GUN_MASTER),
 	GSH18(HeroSubClass.THE_HEART_OF_SIRIUS, HeroSubClass.MOBILE_MEDICALTABLE),
 	NONE(  HeroSubClass.NONE );
 	private HeroSubClass[] subClasses;
@@ -311,8 +314,9 @@ public enum HeroClass {
 		Dungeon.quickslot.setSlot(0,redBook);
 		Dungeon.quickslot.setSlot(1,gun561);
 
+        new ScrollOfTerror().identify().collect();
 		new SaltyZongzi().collect();
-		new PotionOfMindVision().identify();
+        new SugarZongzi().collect();
 	}
 	
 	private static void initGSH18( Hero hero ) {
@@ -348,7 +352,7 @@ public enum HeroClass {
 			case HUNTRESS:
 				return new ArmorAbility[]{new SpectralBlades(), new NaturesPower(), new SpiritHawk()};
 			case TYPE561:
-				return new ArmorAbility[]{new Type56FourOne()};
+				return new ArmorAbility[]{new Type56FourOne(), new Type56FourTwo()};
 			case GSH18:
 				return new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()}; // 使用战士的技能
 	}

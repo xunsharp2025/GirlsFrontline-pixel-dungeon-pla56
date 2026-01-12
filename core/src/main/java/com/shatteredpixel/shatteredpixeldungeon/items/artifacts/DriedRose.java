@@ -99,7 +99,7 @@ public class DriedRose extends Artifact {
 
 	public int droppedPetals = 0;
 
-	public static final String AC_SUMMON = "SUMMON";
+    public static final String AC_SUMMON = "SUMMON";
 	public static final String AC_DIRECT = "DIRECT";
 	public static final String AC_OUTFIT = "OUTFIT";
 
@@ -173,7 +173,7 @@ public class DriedRose extends Artifact {
 					}
 
 					Talent.onArtifactUsed(hero);
-					charge = 0;
+					charge = ghost.HP*100/ghost.HT;
 					partialCharge = 0;
 					updateQuickslot();
 
@@ -195,6 +195,7 @@ public class DriedRose extends Artifact {
 		} else if (action.equals(AC_OUTFIT)){
 			GameScene.show( new WndGhostHero(this) );
 		}
+        lockchB();
 	}
 	
 	public int ghostStrength(){
@@ -261,11 +262,9 @@ public class DriedRose extends Artifact {
 				ghostID = 0;
 			}
 		}
-		if (ghost == null){
-			return super.status();
-		} else {
-			return ((ghost.HP*100) / ghost.HT) + "%";
-		}
+        if(ghost!= null)
+            updateGhostCharge();
+        return super.status();
 	}
 	
 	@Override
@@ -288,6 +287,7 @@ public class DriedRose extends Artifact {
 		} else {
 			int heal = Math.round((1 + level()/3f)*amount);
 			ghost.HP = Math.min( ghost.HT, ghost.HP + heal);
+            updateGhostCharge();
 			updateQuickslot();
 		}
 	}
@@ -304,6 +304,7 @@ public class DriedRose extends Artifact {
 		
 		if (ghost != null){
 			ghost.updateRose();
+            updateGhostCharge();
 			ghost.HP = Math.min(ghost.HP+8, ghost.HT);//抄了破碎代码，把哈基evan的升级玫瑰让幽灵回血加入了
 		}
 
@@ -353,14 +354,52 @@ public class DriedRose extends Artifact {
 		if (bundle.contains(WEAPON)) weapon = (MeleeWeapon)bundle.get( WEAPON );
 		if (bundle.contains(ARMOR))  armor = (Armor)bundle.get( ARMOR );
 	}
+    @Override
+    public String lockinfo(String info){
+        if(Dungeon.ArtifactLock||lockcharge)
+            info+="\n";
+        if(ghost==null) {
+            if (Dungeon.ArtifactLock) {
+                info += "\n刺刀的充能已被_锁定为满充能_。";
+            }
+            if (lockcharge) {
+                info += "\n刺刀的充能已被锁定为_ " + chargeRem + "_点";
+            }
+        }else {
+            if (Dungeon.ArtifactLock) {
+                info += "\nST-AR15的血量已被_锁定为满血_(如果没被秒杀)。";
+            }
+            if (lockcharge) {
+                info += "\nST-AR15的血量已被锁定为_ " + chargeRem + "%_(如果没被秒杀)";
+            }
+        }
+        return info;
+    }
+    private void updateGhostCharge(){
+        charge = (ghost.HP*100)/ghost.HT;
+    }
 
 	public class roseRecharge extends ArtifactBuff {
+        @Override
+        public void lockcha(){
+            if(ghost==null){
+                super.lockcha();
+            }else {
+                if(Dungeon.ArtifactLock){
+                    ghost.HP=ghost.HT;
+                }
+                if(lockcharge){
+                    ghost.HP= chargeRem*ghost.HT/100;
+                }
+            }
+        }
+
 
 		@Override
 		public boolean act() {
-			
+            lockcha();
 			spend( TICK );
-			
+
 			if (ghost == null && ghostID != 0){
 				Actor a = Actor.findById(ghostID);
 				if (a != null){
@@ -371,6 +410,7 @@ public class DriedRose extends Artifact {
 			}
 
 			if (ghost != null && !ghost.isAlive()){
+                charge = 0;
 				ghost = null;
 			}
 			
@@ -390,7 +430,7 @@ public class DriedRose extends Artifact {
 				} else {
 					partialCharge = 0;
 				}
-				
+				updateGhostCharge();
 				return true;
 			} else {
 				defaultAction = AC_SUMMON;

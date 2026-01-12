@@ -45,15 +45,18 @@ public class Artifact extends KindofMisc {
 	protected int levelCap = 0;
 
 	//the current artifact charge
-	protected int charge = 0;
+    public int charge = 0;
 	//the build towards next charge, usually rolls over at 1.
 	//better to keep charge as an int and use a separate float than casting.
 	protected float partialCharge = 0;
 	//the maximum charge, varies per artifact, not all artifacts use this.
-	protected int chargeCap = 0;
+    public int chargeCap = 0;
 
 	//used by some artifacts to keep track of duration of effects or cooldowns to use.
 	protected int cooldown = 0;
+    public boolean lockcharge = false;
+    public int chargeRem = 0;
+    public int chargeMax = 0;
 
 	@Override
 	public boolean doEquip( final Hero hero ) {
@@ -134,16 +137,24 @@ public class Artifact extends KindofMisc {
 	public String info() {
         String info =super.info();
 		if (cursed && cursedKnown && !isEquipped( Dungeon.hero )) {
-			return info + "\n\n" + Messages.get(Artifact.class, "curse_known");
-			
+			info += "\n\n" + Messages.get(Artifact.class, "curse_known");
 		} else if (!isIdentified() && cursedKnown && !isEquipped( Dungeon.hero)) {
-			return info+ "\n\n" + Messages.get(Artifact.class, "not_cursed");
-			
-		} else {
-			return info;
-			
+			info += "\n\n" + Messages.get(Artifact.class, "not_cursed");
 		}
+        info =  lockinfo(info);
+        return info;
 	}
+    protected String lockinfo(String info){
+        if(Dungeon.ArtifactLock||Artifact.this.lockcharge)
+            info+="\n";
+        if(Dungeon.ArtifactLock){
+            info+="\n所有遗物的充能已被_锁定为满充能_(如果有)。";
+        }
+        if(Artifact.this.lockcharge){
+            info+="\n该遗物的充能已被锁定为所记录的数值，当前记录的是_ "+chargeRem+ " _点";
+        }
+        return info;
+    }
 
 	@Override
 	public String status() {
@@ -209,6 +220,25 @@ public class Artifact extends KindofMisc {
 	public void charge(Hero target, float amount){
 		//do nothing by default;
 	}
+    public void lockchB() {
+        if(Dungeon.ArtifactLock){
+            if(Artifact.this.chargeCap>0){
+                Artifact.this.charge=Artifact.this.chargeCap;
+            }
+            if(Artifact.this.chargeMax>0){
+                Artifact.this.charge=Artifact.this.chargeMax;
+            }
+        }
+        if(lockcharge){
+            Artifact.this.charge=Artifact.this.chargeRem;
+        }
+        updateQuickslot();
+    }
+    @Override
+    public void execute( Hero hero, String action ) {
+        super.execute( hero, action );
+        lockchB();
+    }
 
 	public class ArtifactBuff extends Buff {
 
@@ -223,6 +253,9 @@ public class Artifact extends KindofMisc {
 		public void charge(Hero target, float amount){
 			Artifact.this.charge(target, amount);
 		}
+        public void lockcha() {
+            lockchB();
+        }
 
 	}
 	

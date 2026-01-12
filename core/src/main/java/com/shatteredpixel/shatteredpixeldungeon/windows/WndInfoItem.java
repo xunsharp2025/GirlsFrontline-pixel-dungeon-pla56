@@ -45,6 +45,7 @@ public class WndInfoItem extends Window {
 
 	private static final int WIDTH_MIN = 120;
 	private static final int WIDTH_MAX = 220;
+    protected IconButton noteButton;
 
 	//only one WndInfoItem can appear at a time
 	private static WndInfoItem INSTANCE;
@@ -93,7 +94,14 @@ public class WndInfoItem extends Window {
 		
 		RenderedTextBlock txtInfo = PixelScene.renderTextBlock( heap.info(), 6 );
 
-		layoutFields(titlebar, txtInfo);
+        if(heap.type == Heap.Type.FOR_SALE) {
+            noteButton = Tradenote(heap);
+            noteButton.enable(heap.peek().canNote);
+            noteButton.visible = heap.peek().canNote;
+            layoutFields(titlebar, txtInfo, noteButton);
+        }
+        else
+            layoutFields(titlebar, txtInfo);
 	}
     private void layoutFields(IconTitle title, RenderedTextBlock info){
         int width = WIDTH_MIN;
@@ -116,7 +124,6 @@ public class WndInfoItem extends Window {
 
         resize( width, (int)(info.bottom() + 2) );
     }
-    protected IconButton noteButton;
 	private void fillFields( Item item ) {
 		
 		int color = TITLE_COLOR;
@@ -130,7 +137,39 @@ public class WndInfoItem extends Window {
 		titlebar.color( color );
 		
 		RenderedTextBlock txtInfo = PixelScene.renderTextBlock( item.info(), 6 );
-        noteButton = new IconButton(Icons.RENAME_ON.get()){
+        noteButton=Itemnote(item);
+        noteButton.enable(item.canNote);
+        noteButton.visible=item.canNote;
+		
+		layoutFields(titlebar, txtInfo, noteButton);
+	}
+
+	private void layoutFields(IconTitle title, RenderedTextBlock info, IconButton noteButton){
+		int width = WIDTH_MIN;
+
+		info.maxWidth(width);
+
+		//window can go out of the screen on landscape, so widen it as appropriate
+		while (PixelScene.landscape()
+				&& info.height() > 100
+				&& width < WIDTH_MAX){
+			width += 20;
+			info.maxWidth(width);
+		}
+
+		title.setRect( 0, 0, width, 0 );
+		add( title );
+
+		info.setPos(title.left(), title.bottom() + GAP);
+		add( info );
+
+        noteButton.setRect(width-16,0,16,16);
+        add(noteButton);
+
+		resize( width, (int)(info.bottom() + 2) );
+	}
+    protected IconButton Itemnote(Item item){
+        return new IconButton(Icons.RENAME_ON.get()){
             @Override
             protected void onClick() {
                 super.onClick();
@@ -165,34 +204,43 @@ public class WndInfoItem extends Window {
                 );
             }
         };
-        noteButton.enable(item.canNote);
-        noteButton.visible=item.canNote;
-		
-		layoutFields(titlebar, txtInfo, noteButton);
-	}
-
-	private void layoutFields(IconTitle title, RenderedTextBlock info, IconButton noteButton){
-		int width = WIDTH_MIN;
-
-		info.maxWidth(width);
-
-		//window can go out of the screen on landscape, so widen it as appropriate
-		while (PixelScene.landscape()
-				&& info.height() > 100
-				&& width < WIDTH_MAX){
-			width += 20;
-			info.maxWidth(width);
-		}
-
-		title.setRect( 0, 0, width, 0 );
-		add( title );
-
-		info.setPos(title.left(), title.bottom() + GAP);
-		add( info );
-
-        noteButton.setRect(width-16,0,16,16);
-        add(noteButton);
-
-		resize( width, (int)(info.bottom() + 2) );
-	}
+    }
+    protected IconButton Tradenote(Heap heap){
+        Item item=heap.peek();
+        return new IconButton(Icons.RENAME_ON.get()){
+            @Override
+            protected void onClick() {
+                super.onClick();
+                String note =Item.ClassNoteToItem(item);
+                String noteAdd="";
+                if(item.stackable){
+                    if(item instanceof Scroll||item instanceof Potion){
+                        noteAdd=Messages.get(Item.class, "noteclassb");
+                    }else {
+                        noteAdd=Messages.get(Item.class, "noteclassa");
+                    }
+                }
+                GirlsFrontlinePixelDungeon.scene().addToFront(
+                        new WndTextInput(
+                                item.name(),
+                                Messages.get(Item.class, "note_desc",noteAdd,note),
+                                note,
+                                40,
+                                false,
+                                Messages.get(Item.class, "set_note_yes"),
+                                Messages.get(Item.class, "set_note_no")
+                        ){
+                            @Override
+                            public void onSelect(boolean check, String text) {
+                                if(check){
+                                    item.notedSet(text);
+                                    hide();
+                                    Game.scene().add(new WndInfoItem(heap));
+                                }
+                            }
+                        }
+                );
+            }
+        };
+    }
 }

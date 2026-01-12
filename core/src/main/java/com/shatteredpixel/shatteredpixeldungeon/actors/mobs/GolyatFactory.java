@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Adrenaline;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AllyBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Resizing;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Beam;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
@@ -211,9 +212,31 @@ public class GolyatFactory extends Mob {
 		summoning = firstSummon = false;
 
 		myGolyat = new FactoryGolyat();
-		myGolyat.pos = summoningPos;
+        int resizing;
+        do {
+            resizing = Random.Int(50,151);
+        }while (
+            resizing==Math.max(80,resizing)&&resizing==Math.min(resizing,120)
+            //在80%~120%的体型将会重新roll点
+        );
+        if (resizing == 50){
+            resizing = 25;
+            myGolyat.HT=myGolyat.HT*1;
+            myGolyat.HP=myGolyat.HP*1;
+            //预留的特殊体型对生成血量及血量上限的修改接口
+        }
+        else if (resizing == 150){
+            resizing = 251;
+            myGolyat.HT=myGolyat.HT*1;
+            myGolyat.HP=myGolyat.HP*1;
+        }
+        Buff.count(myGolyat, Resizing.class, resizing);
+        //以buff形式保存体型
+
+        myGolyat.pos = summoningPos;
 		GameScene.add( myGolyat );
 		Dungeon.level.occupyCell( myGolyat );
+        myGolyat.sprite.move(myGolyat.pos,myGolyat.pos);
 		((GolyatFactorySprite)sprite).finishSummoning();
 
 		for (Buff b : buffs(AllyBuff.class)){

@@ -103,6 +103,7 @@ public class EtherealChains extends Artifact {
 			}
 
 		}
+        lockchB();
 	}
 
 	private CellSelector.Listener caster = new CellSelector.Listener(){
@@ -261,7 +262,7 @@ public class EtherealChains extends Artifact {
 		int chargeTarget = 5+(level()*2);
 		if (charge < chargeTarget*2){
 			partialCharge += 0.5f*amount;
-			if (partialCharge >= 1){
+			while (partialCharge >= 1){
 				partialCharge--;
 				charge++;
 				updateQuickslot();
@@ -288,6 +289,8 @@ public class EtherealChains extends Artifact {
 		@Override
 		public boolean act() {
 			int chargeTarget = 5+(level()*2);
+            chargeMax = chargeTarget;
+            lockcha();
 			LockedFloor lock = target.buff(LockedFloor.class);
 			if (charge < chargeTarget && !cursed && (lock == null || lock.regenOn())) {
 				//gains a charge in 40 - 2*missingCharge turns

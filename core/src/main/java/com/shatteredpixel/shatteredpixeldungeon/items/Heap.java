@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Wraith;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
@@ -356,7 +357,7 @@ public class Heap implements Bundlable {
 	public String toString(){
 		switch(type){
 			case FOR_SALE:
-				return peek().toString();
+				return peek().toString()+"\n价格 : "+Shopkeeper.sellPrice(peek());
 			case CHEST:
 				return Messages.get(this, "chest");
 			case LOCKED_CHEST:

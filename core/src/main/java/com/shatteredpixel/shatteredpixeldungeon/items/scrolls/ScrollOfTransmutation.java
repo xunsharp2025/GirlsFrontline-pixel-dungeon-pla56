@@ -47,6 +47,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Tipp
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Rotberry;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
@@ -62,15 +63,36 @@ public class ScrollOfTransmutation extends InventoryScroll {
 
 	@Override
 	protected boolean usableOnItem(Item item) {
-		return item instanceof MeleeWeapon ||
-				(item instanceof MissileWeapon && (!(item instanceof Dart) || item instanceof TippedDart)) ||
-				(item instanceof Potion && !(item instanceof Elixir || item instanceof Brew || item instanceof AlchemicalCatalyst)) ||
-				item instanceof Scroll ||
-				item instanceof Ring ||
-				item instanceof Wand ||
-				item instanceof Plant.Seed ||
-				item instanceof Runestone ||
-				item instanceof Artifact;
+		if(item instanceof MeleeWeapon) {
+            return true;
+        }
+        else if (item instanceof MissileWeapon) {
+            return item.getClass() != Dart.class;
+        }
+        else if (item instanceof Potion) {
+            return !(item instanceof Elixir || item instanceof Brew || item instanceof AlchemicalCatalyst);
+        }
+        else if (item instanceof Scroll) {
+            return item != this || item.quantity() > 1 || identifiedByUse;
+        }
+        else if(item instanceof Ring) {
+            return true;
+        }
+        else if(item instanceof Wand) {
+            return true;
+        }
+        else if(item instanceof Plant.Seed) {
+            return item.getClass() != Rotberry.Seed.class;
+        }
+        else if(item instanceof Runestone) {
+            return true;
+        }
+        else if(item instanceof Artifact) {
+            return true;
+        }
+        else {
+            return false;
+        }
 	}
 	
 	@Override
@@ -223,7 +245,7 @@ public class ScrollOfTransmutation extends InventoryScroll {
 	}
 	
 	private static Artifact changeArtifact( Artifact a ) {
-		Artifact n = Generator.randomArtifact();
+		Artifact n = Generator.randomArtifact(true);
 		
 		if (n != null && !Challenges.isItemBlocked(n)){
 			n.cursedKnown = a.cursedKnown;

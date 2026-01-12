@@ -139,6 +139,7 @@ public class HornOfPlenty extends Artifact {
 			GameScene.selectItem(itemSelector);
 
 		}
+        lockchB();
 	}
 
 	@Override
@@ -150,7 +151,7 @@ public class HornOfPlenty extends Artifact {
 	public void charge(Hero target, float amount) {
 		if (charge < chargeCap){
 			partialCharge += 0.25f*amount;
-			if (partialCharge >= 1){
+			while (partialCharge >= 1){
 				partialCharge--;
 				charge++;
 				
@@ -201,8 +202,8 @@ public class HornOfPlenty extends Artifact {
 	
 	public void gainFoodValue( Food food ){
 		if (level() >= 10) return;
-		
-		storedFoodEnergy += food.energy;
+
+		storedFoodEnergy += food.energy();
 		if (storedFoodEnergy >= Hunger.HUNGRY){
 			int upgrades = storedFoodEnergy / (int)Hunger.HUNGRY;
 			upgrades = Math.min(upgrades, 10 - level());

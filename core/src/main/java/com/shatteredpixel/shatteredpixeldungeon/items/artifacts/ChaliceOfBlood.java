@@ -56,6 +56,10 @@ public class ChaliceOfBlood extends Artifact {
 			actions.add(AC_PRICK);
 		return actions;
 	}
+    @Override
+    public String lockinfo(String info){
+        return info;
+    }
 
 	@Override
 	public void execute(Hero hero, String action ) {

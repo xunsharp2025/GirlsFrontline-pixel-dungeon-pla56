@@ -49,6 +49,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.food.Maccol;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Pasty;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Choco;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.XMasSugar;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience;
@@ -478,9 +479,10 @@ public class Generator {
 					Pasty.class,
 					MysteryMeat.class,
 					Maccol.class,
-                    XMasSugar.class
+                    XMasSugar.class,
+                    SaltyZongzi.class
             };
-			FOOD.probs = new float[]{ 4, 0, Dungeon.isXMAS()?0:1, 0, 0, Dungeon.isXMAS()?1:0 };
+			FOOD.probs = new float[]{ 4, 0, HolidayDiff(Pasty.class), 0, 0, HolidayDiff(XMasSugar.class) ,0};
 			
 			RING.classes = new Class<?>[]{
 					RingOfAccuracy.class,
@@ -515,6 +517,11 @@ public class Generator {
 			ARTIFACT.probs = ARTIFACT.defaultProbs.clone();
 		}
 	}
+    private static int HolidayDiff(Class food){
+        if(food == Food.SummonPasty().getClass())
+            return 1;
+        else return 0;
+    }
 
 	private static final float[][] WeaponTierProbs = new float[][]{
 			{0, 63, 20, 12,  2,  3},
@@ -575,7 +582,7 @@ public class Generator {
 			case MISSILE:
 				return randomMissile();
 			case ARTIFACT:
-				Item item = randomArtifact();
+				Item item = randomArtifact(false);
 				//if we're out of artifacts, return a ring instead.
 				return item != null ? item : random(Category.RING);
 			default:
@@ -674,7 +681,7 @@ public class Generator {
 	}
 
 	//enforces uniqueness of artifacts throughout a run.
-	public static Artifact randomArtifact() {
+	public static Artifact randomArtifact(boolean trans) {
 
 		Category cat = Category.ARTIFACT;
 		int i = Random.chances( cat.probs );
@@ -683,9 +690,19 @@ public class Generator {
 		if (i == -1){
 			return null;
 		}
+        Artifact item = Reflection.newInstance((Class<? extends Artifact>) cat.classes[i]);
 
 		cat.probs[i]=0;
-		return (Artifact) Reflection.newInstance((Class<? extends Artifact>) cat.classes[i]).random();
+        if(item.getClass()== LloydsBeacon.class&&!trans){
+            //并非嬗变的情况下随机到了空降，重新随机一次并归还空降的权重
+            item = randomArtifact(false);
+            for (int j = 0; j < Category.ARTIFACT.classes.length; j++){
+                if (Category.ARTIFACT.classes[j] == LloydsBeacon.class){
+                    Category.ARTIFACT.probs[j] = 1;
+                }
+            }
+        }
+		return (Artifact) item.random();
 
 	}
 

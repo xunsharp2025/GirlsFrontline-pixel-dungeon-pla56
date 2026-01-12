@@ -189,6 +189,7 @@ public class LloydsBeacon extends Artifact {
 			
 			
 		}
+        lockchB();
 	}
 
 	protected CellSelector.Listener zapper = new  CellSelector.Listener() {
@@ -280,7 +281,7 @@ public class LloydsBeacon extends Artifact {
 	public void charge(Hero target, float amount) {
 		if (charge < chargeCap){
 			partialCharge += 0.25f*amount;
-			if (partialCharge >= 1){
+			while (partialCharge >= 1){
 				partialCharge--;
 				charge++;
 				updateQuickslot();
@@ -315,6 +316,7 @@ public class LloydsBeacon extends Artifact {
 	public class beaconRecharge extends ArtifactBuff{
 		@Override
 		public boolean act() {
+            lockcha();
 			LockedFloor lock = target.buff(LockedFloor.class);
 			if (charge < chargeCap && !cursed && (lock == null || lock.regenOn())) {
 				partialCharge += 1 / (100f - (chargeCap - charge)*10f);

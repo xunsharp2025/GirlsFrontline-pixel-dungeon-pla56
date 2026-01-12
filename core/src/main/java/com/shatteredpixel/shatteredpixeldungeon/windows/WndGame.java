@@ -95,8 +95,6 @@ public class WndGame extends Window {
 				@Override
 				protected void onClick() {
 					try{Dungeon.saveAll();
-                        Item.itemA=new ArrayList<>();
-                        Item.NOTEA=new ArrayList<>();
 					}catch(IOException e){Game.reportException(e);}
 					Game.switchScene(TitleScene.class);
 				}
@@ -104,15 +102,30 @@ public class WndGame extends Window {
 			curBtn.icon(Icons.get(Icons.DISPLAY));
 		}
 
-		// 重建0层(自杀)
-		if(0==GamesInProgress.curSlot){
-			addButton(curBtn = new RedButton( Messages.get(this, "kill") ) {
+		// 重建0层(自杀) 和 主菜单（0层）
+		if(0==GamesInProgress.curSlot && !heroDied){
+			// 重置楼层按钮
+			RedButton resetBtn = new RedButton( Messages.get(this, "kill") ) {
 				@Override
 				protected void onClick() {
 					Dungeon.hero.damage(9999999,Dungeon.hero);
 				}
-			} );
-			curBtn.icon(Icons.get(Icons.EXIT));
+			};
+			resetBtn.icon(Icons.get(Icons.EXIT));
+			
+			// 主菜单按钮
+			RedButton mainMenuBtn = new RedButton( Messages.get(this, "menu") ) {
+				@Override
+				protected void onClick() {
+					try{Dungeon.saveAll();
+					}catch(IOException e){Game.reportException(e);}
+					Game.switchScene(TitleScene.class);
+				}
+			};
+			mainMenuBtn.icon(Icons.get(Icons.DISPLAY));
+			
+			// 并排添加两个按钮，每个宽度为原来的1/2
+			addButtons(resetBtn, mainMenuBtn);
 		}
 
 		//exit

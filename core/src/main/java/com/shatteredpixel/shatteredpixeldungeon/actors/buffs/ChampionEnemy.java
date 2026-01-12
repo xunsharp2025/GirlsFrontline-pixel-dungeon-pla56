@@ -112,7 +112,7 @@ public abstract class ChampionEnemy extends Buff {
 				case 4:             Buff.affect(m, Blessed.class);      break;
 				case 5:             Buff.affect(m, Growing.class);      break;
 			}
-            if(m.getClass()!= RatXMAS.class)
+            if(m.state!=m.PASSIVE)
 			m.state = m.WANDERING;
 		}
 	}

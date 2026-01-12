@@ -133,6 +133,7 @@ public class AlchemistsToolkit extends Artifact {
 				});
 			}
 		}
+        lockchB();
 
 		updateQuickslot();
 	}
@@ -154,7 +155,7 @@ public class AlchemistsToolkit extends Artifact {
 	@Override
 	public void charge(Hero target, float amount) {
 		partialCharge += 0.25f*amount;
-		if (partialCharge >= 1){
+		while (partialCharge >= 1){
 			partialCharge--;
 			charge++;
 			updateQuickslot();
@@ -212,7 +213,7 @@ public class AlchemistsToolkit extends Artifact {
 
 		@Override
 		public boolean act() {
-
+            lockcha();
 			if (warmUpDelay > 0){
 				if (level() == 10){
 					warmUpDelay = 0;

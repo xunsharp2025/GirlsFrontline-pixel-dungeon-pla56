@@ -64,8 +64,22 @@ abstract public class ClassArmor extends Armor {
 
 	private int armorTier;
 
+    @Override
+    public String info(){
+        String info =super.info();
+        if(Dungeon.ArmorLock||lockcharge)
+            info += "\n";
+        if(Dungeon.ArmorLock)
+            info += "\n改造护甲的充能已被_锁定为满充能_。";
+        if(lockcharge)
+            info += "\n改造护甲的充能已被锁定为_ " + chargeRem + " _点。";
+
+        return info;
+    }
 	private Charger charger;
 	public float charge = 0;
+    public boolean lockcharge = false;
+    public float chargeRem = 0;
 	
 	public ClassArmor() {
 		super( 5 );
@@ -304,6 +318,12 @@ abstract public class ClassArmor extends Armor {
 					charge = 100;
 				}
 			}
+            if(Dungeon.ArmorLock){
+                charge = 100;
+            }
+            if (lockcharge) {
+                charge = chargeRem;
+            }
 			spend(TICK);
 			return true;
 		}

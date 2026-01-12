@@ -51,7 +51,7 @@ public class WaterOfHealth extends WellWater {
 
 		PotionOfHealing.cure( hero );
 		hero.belongings.uncurseEquipped();
-		hero.buff( Hunger.class ).satisfy( Hunger.STARVING );
+		hero.buff( Hunger.class ).satisfy( Hunger.STARVING-Hunger.minlevel );
 
 		hero.HP = hero.HT;
 		hero.sprite.emitter().start( Speck.factory( Speck.HEALING ), 0.4f, 4 );

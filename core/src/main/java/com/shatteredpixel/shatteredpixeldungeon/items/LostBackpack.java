@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.RedBook;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
@@ -57,7 +58,9 @@ public class LostBackpack extends Item {
 					((EquipableItem) i).activate(hero);
 				} else if ( i instanceof CloakOfShadows && hero.hasTalent(Talent.LIGHT_CLOAK)){
 					((CloakOfShadows) i).activate(hero);
-				} else if (i instanceof Wand){
+				} else if ( i instanceof RedBook && hero.hasTalent(Talent.Type56Three_Book)){
+                    ((RedBook) i).activate(hero);
+                } else if (i instanceof Wand){
 					if (holster != null && holster.contains(i)){
 						((Wand) i).charge(hero, MagicalHolster.HOLSTER_SCALE_FACTOR);
 					} else {

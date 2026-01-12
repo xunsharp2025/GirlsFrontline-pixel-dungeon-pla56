@@ -189,6 +189,10 @@ public class ScrollOfMetamorphosis extends ExoticScroll {
 			restrictedTalents.put(Talent.LIGHT_CLOAK, HeroClass.ROGUE);
 
 			restrictedTalents.put(Talent.SEER_SHOT, HeroClass.HUNTRESS);
+            restrictedTalents.put(Talent.Type56Two_Upgrade, HeroClass.TYPE561);
+            restrictedTalents.put(Talent.Type56Three_Bomb, HeroClass.TYPE561);
+            restrictedTalents.put(Talent.Type56Three_Book, HeroClass.TYPE561);
+            //从蜕变池子移除
 		}
 
 		public static WndMetamorphReplace INSTANCE;

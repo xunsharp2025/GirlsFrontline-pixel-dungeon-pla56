@@ -31,12 +31,16 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Archs;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Button;
+import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
+import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndError;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndRanking;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Image;
@@ -53,6 +57,10 @@ public class RankingsScene extends PixelScene {
 	private static final float GAP	= 4;
 	
 	private Archs archs;
+	// 每页显示的记录数
+	private static final int RECORDS_PER_PAGE = 11;
+	
+	private int currentPage = 0;
 
 	@Override
 	public void create() {
@@ -83,16 +91,25 @@ public class RankingsScene extends PixelScene {
 		
 		if (Rankings.INSTANCE.records.size() > 0) {
 
+			// 计算总页数
+			int totalPages = (int) Math.ceil((float) Rankings.INSTANCE.records.size() / RECORDS_PER_PAGE);
+
+			// 确保当前页码有效
+			currentPage = Math.max(0, Math.min(currentPage, totalPages - 1));
+
 			//attempts to give each record as much space as possible, ideally as much space as portrait mode
-			float rowHeight = GameMath.gate(ROW_HEIGHT_MIN, (uiCamera.height - 26)/Rankings.INSTANCE.records.size(), ROW_HEIGHT_MAX);
+			float rowHeight = GameMath.gate(ROW_HEIGHT_MIN, (uiCamera.height - 26)/RECORDS_PER_PAGE, ROW_HEIGHT_MAX);
 
 			float left = (w - Math.min( MAX_ROW_WIDTH, w )) / 2 + GAP;
-			float top = (h - rowHeight  * Rankings.INSTANCE.records.size()) / 2;
+			float top = (h - rowHeight  * RECORDS_PER_PAGE) / 2;
 			
+			int startIndex = currentPage * RECORDS_PER_PAGE;
+			int endIndex = Math.min(startIndex + RECORDS_PER_PAGE, Rankings.INSTANCE.records.size());
 			int pos = 0;
 			
-			for (Rankings.Record rec : Rankings.INSTANCE.records) {
-				Record row = new Record( pos, pos == Rankings.INSTANCE.lastRecord, rec );
+			for (int i = startIndex; i < endIndex; i++) {
+				Rankings.Record rec = Rankings.INSTANCE.records.get(i);
+				Record row = new Record( i, i == Rankings.INSTANCE.lastRecord, rec );
 				float offset = 0;
 				if (rowHeight <= 14){
 					offset = (pos % 2 == 1) ? 5 : -5;
@@ -103,20 +120,78 @@ public class RankingsScene extends PixelScene {
 				pos++;
 			}
 			
-			if (Rankings.INSTANCE.totalNumber >= Rankings.TABLE_SIZE) {
+			// 游戏次数文本
+			RenderedTextBlock label = PixelScene.renderTextBlock( 8 );
+			label.hardlight( 0xCCCCCC );
+			label.setHightlighting(true, Window.SHPX_COLOR);
+			label.text( Messages.get(this, "total") + " _" + Rankings.INSTANCE.wonNumber + "_/" + Rankings.INSTANCE.totalNumber );
+			add( label );
+			
+			// 只有当记录数超过一页时才显示翻页按钮
+			if (totalPages > 1) {
+				// 上一页按钮
+				StyledButton prevButton = new StyledButton(Chrome.Type.GREY_BUTTON, "<"){
+					@Override
+					protected void onClick() {
+						if (currentPage > 0) {
+							currentPage--;
+							create();
+						}
+					}
+				};
+				add(prevButton);
 				
-				RenderedTextBlock label = PixelScene.renderTextBlock( 8 );
-				label.hardlight( 0xCCCCCC );
-				label.setHightlighting(true, Window.SHPX_COLOR);
-				label.text( Messages.get(this, "total") + " _" + Rankings.INSTANCE.wonNumber + "_/" + Rankings.INSTANCE.totalNumber );
-				add( label );
+				// 下一页按钮
+				StyledButton nextButton = new StyledButton(Chrome.Type.GREY_BUTTON, ">"){
+					@Override
+					protected void onClick() {
+						if (currentPage < totalPages - 1) {
+							currentPage++;
+							create();
+						}
+					}
+				};
+				add(nextButton);
+				
+				// 设置按钮和文本位置 - 按钮大小缩小为原来的1/2
+				float btnWidth = 10;
+				float btnHeight = 8;
+				float centerX = w / 2;
+				float bottomY = h - btnHeight - 2*GAP;
 				
 				label.setPos(
-						(w - label.width()) / 2,
-						h - label.height() - 2*GAP
+						centerX - label.width() / 2,
+						bottomY
 				);
 				align(label);
-
+				
+				prevButton.setRect(
+						label.left() - btnWidth - GAP * 3,
+						bottomY,
+						btnWidth,
+						btnHeight
+				);
+				
+				nextButton.setRect(
+						label.right() + GAP * 3,
+						bottomY,
+						btnWidth,
+						btnHeight
+				);
+				
+				// 禁用不可用的按钮
+				prevButton.enable(currentPage > 0);
+				nextButton.enable(currentPage < totalPages - 1);
+			} else {
+				// 只有一页记录时，只显示游戏次数文本
+				float centerX = w / 2;
+				float bottomY = h - label.height() - 2*GAP;
+				
+				label.setPos(
+						centerX - label.width() / 2,
+						bottomY
+				);
+				align(label);
 			}
 			
 		} else {
@@ -132,11 +207,32 @@ public class RankingsScene extends PixelScene {
 			
 		}
 
-		ExitButton btnExit = new ExitButton();
+		//自定义退出按钮，使用与onBackPressed相同的返回逻辑
+		ExitButton btnExit = new ExitButton() {
+			@Override
+			protected void onClick() {
+				//如果上一个场景是游戏场景，返回到游戏场景，否则返回到标题场景
+				if (GirlsFrontlinePixelDungeon.previousSceneClass == GameScene.class) {
+					GirlsFrontlinePixelDungeon.switchNoFade(GameScene.class);
+				} else {
+					GirlsFrontlinePixelDungeon.switchNoFade(TitleScene.class);
+				}
+			}
+		};
 		btnExit.setPos( Camera.main.width - btnExit.width(), 0 );
 		add( btnExit );
 
 		fadeIn();
+	}
+	
+	@Override
+	protected void onBackPressed() {
+		//如果上一个场景是游戏场景，返回到游戏场景，否则返回到标题场景
+		if (GirlsFrontlinePixelDungeon.previousSceneClass == GameScene.class) {
+			GirlsFrontlinePixelDungeon.switchNoFade(GameScene.class);
+		} else {
+			GirlsFrontlinePixelDungeon.switchNoFade(TitleScene.class);
+		}
 	}
 	
 	public static class Record extends Button {

@@ -71,7 +71,7 @@ public class ChangeButton extends Component {
 	
 	protected void onClick() {
 		if (pageMessages != null && !pageMessages.isEmpty()) {
-			GirlsFrontlinePixelDungeon.scene().add(new ChangesWindowWithPages(new Image(icon), title, pageMessages));
+			GirlsFrontlinePixelDungeon.scene().add(new ChangesWindowWithPages(new Image(icon), title, pageMessages, 0));
 		} else {
 			GirlsFrontlinePixelDungeon.scene().add(new ChangesWindow(new Image(icon), title, message));
 		}

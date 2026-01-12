@@ -22,6 +22,9 @@
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Shopkeeper;
@@ -30,10 +33,16 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.MasterThievesArmband;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.IconButton;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
+import com.shatteredpixel.shatteredpixeldungeon.ui.WndTextInput;
+import com.watabou.noosa.Game;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
@@ -167,6 +176,45 @@ public class WndTradeItem extends WndInfoItem {
 
 		resize(width, (int) pos);
 	}
+    @Override
+    protected IconButton Tradenote(Heap heap){
+        Item item=heap.peek();
+        return new IconButton(Icons.RENAME_ON.get()){
+            @Override
+            protected void onClick() {
+                super.onClick();
+                String note =Item.ClassNoteToItem(item);
+                String noteAdd="";
+                if(item.stackable){
+                    if(item instanceof Scroll ||item instanceof Potion){
+                        noteAdd=Messages.get(Item.class, "noteclassb");
+                    }else {
+                        noteAdd=Messages.get(Item.class, "noteclassa");
+                    }
+                }
+                GirlsFrontlinePixelDungeon.scene().addToFront(
+                        new WndTextInput(
+                                item.name(),
+                                Messages.get(Item.class, "note_desc",noteAdd,note),
+                                note,
+                                40,
+                                false,
+                                Messages.get(Item.class, "set_note_yes"),
+                                Messages.get(Item.class, "set_note_no")
+                        ){
+                            @Override
+                            public void onSelect(boolean check, String text) {
+                                if(check){
+                                    item.notedSet(text);
+                                    hide();
+                                    Game.scene().add(new WndTradeItem(heap));
+                                }
+                            }
+                        }
+                );
+            }
+        };
+    }
 	
 	@Override
 	public void hide() {
@@ -188,11 +236,7 @@ public class WndTradeItem extends WndInfoItem {
 		}
 		item.detachAll( hero.belongings.backpack );
 
-        int ofs = PathFinder.NEIGHBOURS9[Random.Int(9)];
-        if (!item.selled&&!Dungeon.level.solid[hero.pos + ofs]&&Dungeon.level.heaps.get( hero.pos + ofs ) == null && Dungeon.level.passable[hero.pos + ofs]) {
-            Dungeon.level.drop(item, hero.pos + ofs).type = Heap.Type.FOR_SALE;
-            item.selled = true;
-        }
+        SellItemPlace(item);
 
 		//selling items in the sell interface doesn't spend time
 		hero.spend(-hero.cooldown());
@@ -209,18 +253,25 @@ public class WndTradeItem extends WndInfoItem {
 			Hero hero = Dungeon.hero;
 			
 			item = item.detach( hero.belongings.backpack );
-
-            int ofs = PathFinder.NEIGHBOURS9[Random.Int(9)];
-            if (!item.selled&&!Dungeon.level.solid[hero.pos + ofs]&&Dungeon.level.heaps.get( hero.pos + ofs ) == null && Dungeon.level.passable[hero.pos + ofs]) {
-                Dungeon.level.drop(item, hero.pos + ofs).type = Heap.Type.FOR_SALE;
-                item.selled = true;
-            }
+            SellItemPlace(item);
 			//selling items in the sell interface doesn't spend time
 			hero.spend(-hero.cooldown());
 
 			new Gold( item.value() ).doPickUp( hero );
 		}
 	}
+    public static void SellItemPlace(Item item){
+        Hero hero = Dungeon.hero;
+        for(int ofs : PathFinder.NEIGHBOURS9) {
+            Char target = Actor.findChar(hero.pos + ofs);
+            if(target!=null&&target.getClass()== Shopkeeper.class)
+                continue;
+            if (!item.selled && !Dungeon.level.solid[hero.pos + ofs] && Dungeon.level.heaps.get(hero.pos + ofs) == null && Dungeon.level.passable[hero.pos + ofs]) {
+                Dungeon.level.drop(item, hero.pos + ofs).type = Heap.Type.FOR_SALE;
+                item.selled = true;
+            }
+        }
+    }
 	
 	private void buy( Heap heap ) {
 		

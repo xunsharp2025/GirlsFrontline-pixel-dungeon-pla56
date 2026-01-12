@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import static com.shatteredpixel.shatteredpixeldungeon.Chrome.Type.GREY_BUTTON;
 import static com.shatteredpixel.shatteredpixeldungeon.Chrome.Type.GREY_BUTTON_TR;
 import static com.shatteredpixel.shatteredpixeldungeon.Chrome.Type.TOAST_TR;
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.version;
 
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BannerSprites;
@@ -100,6 +101,19 @@ public class TitleScene extends PixelScene {
 		signs.y = title.y;
 		add( signs );
 
+		StyledButton btnPlay = new StyledButton(GREY_BUTTON,"进入游戏"){
+			@Override
+			protected void onClick() {
+				if (GamesInProgress.checkAll().isEmpty()){
+					TitleScene.this.add( new WndStartGame(1) );
+				} else {
+					TitleScene.this.add( new WndSelectGameInProgress() );
+				}
+			}
+		};
+		btnPlay.icon(Icons.get(Icons.ENTER));
+		add(btnPlay);
+
 		StyledButton btnZeroLevel=null;
 		if (Badges.isUnlocked(Badges.Badge.HAPPY_END) || DeviceCompat.isDebug()){
 			btnZeroLevel = new StyledButton(GREY_BUTTON,"返回地表"){
@@ -113,19 +127,6 @@ public class TitleScene extends PixelScene {
 		}
 		btnZeroLevel.icon(Icons.get(Icons.ENTER));
 		add(btnZeroLevel);
-
-		StyledButton btnPlay = new StyledButton(GREY_BUTTON,"进入游戏"){
-			@Override
-			protected void onClick() {
-				if (GamesInProgress.checkAll().isEmpty()){
-					TitleScene.this.add( new WndStartGame(1) );
-				} else {
-					TitleScene.this.add( new WndSelectGameInProgress() );
-				}
-			}
-		};
-		btnPlay.icon(Icons.get(Icons.ENTER));
-		add(btnPlay);
 
 		StyledButton btnRankings = new StyledButton(GREY_BUTTON,"排行榜"){
 			@Override
@@ -168,21 +169,21 @@ public class TitleScene extends PixelScene {
 		final int GAP = 2;
 
 		if (landscape()) {
-			btnZeroLevel.setRect(title.x - 50, topRegion + GAP, title.width() + 100 - 1, BTN_HEIGHT);
-			align(btnZeroLevel);
-			btnPlay    .setRect(btnZeroLevel.left(),btnZeroLevel.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
-			btnRankings.setRect(btnPlay.left()     ,btnPlay.bottom()+GAP     ,btnPlay.width()/2f    ,BTN_HEIGHT);
-			btnBadges  .setRect(btnRankings.left() ,btnRankings.bottom()+GAP ,btnPlay.width()/2f    ,BTN_HEIGHT);
-			btnSettings.setRect(btnBadges.right()+2,btnRankings.top()        ,btnPlay.width()/2f-GAP,BTN_HEIGHT);
-			btnAbout   .setRect(btnSettings.left() ,btnSettings.bottom()+GAP ,btnPlay.width()/2f-GAP,BTN_HEIGHT);
+			btnPlay.setRect(title.x - 50, topRegion + GAP, title.width() + 100 - 1, BTN_HEIGHT);
+			align(btnPlay);
+			btnZeroLevel.setRect(btnPlay.left(),btnPlay.bottom()+GAP,btnPlay.width()  ,BTN_HEIGHT);
+			btnRankings.setRect(btnZeroLevel.left()     ,btnZeroLevel.bottom()+GAP     ,btnZeroLevel.width()/2f    ,BTN_HEIGHT);
+			btnBadges  .setRect(btnRankings.left() ,btnRankings.bottom()+GAP ,btnZeroLevel.width()/2f    ,BTN_HEIGHT);
+			btnSettings.setRect(btnBadges.right()+2,btnRankings.top()        ,btnZeroLevel.width()/2f-GAP,BTN_HEIGHT);
+			btnAbout   .setRect(btnSettings.left() ,btnSettings.bottom()+GAP ,btnZeroLevel.width()/2f-GAP,BTN_HEIGHT);
 		} else {
-			btnZeroLevel.setRect(title.x, topRegion+GAP, title.width(), BTN_HEIGHT);
-			align(btnZeroLevel);
-			btnPlay    .setRect(btnZeroLevel.left(),btnZeroLevel.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
-			btnRankings.setRect(btnPlay.left(),btnPlay    .bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
-			btnBadges  .setRect(btnPlay.left(),btnRankings.bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
-			btnSettings.setRect(btnPlay.left(),btnBadges  .bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
-			btnAbout   .setRect(btnPlay.left(),btnSettings.bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
+			btnPlay.setRect(title.x, topRegion+GAP, title.width(), BTN_HEIGHT);
+			align(btnPlay);
+			btnZeroLevel.setRect(btnPlay.left(),btnPlay.bottom()+GAP,btnPlay.width()  ,BTN_HEIGHT);
+			btnRankings.setRect(btnZeroLevel.left(),btnZeroLevel    .bottom()+GAP,btnZeroLevel.width(),BTN_HEIGHT);
+			btnBadges  .setRect(btnZeroLevel.left(),btnRankings.bottom()+GAP,btnZeroLevel.width(),BTN_HEIGHT);
+			btnSettings.setRect(btnZeroLevel.left(),btnBadges  .bottom()+GAP,btnZeroLevel.width(),BTN_HEIGHT);
+			btnAbout   .setRect(btnZeroLevel.left(),btnSettings.bottom()+GAP,btnZeroLevel.width(),BTN_HEIGHT);
 		}
 
 		BitmapText version = new BitmapText( "v" + Game.version, pixelFont);
@@ -248,8 +249,16 @@ public class TitleScene extends PixelScene {
 		if(newGame){
 			InterlevelScene.start();
 		}else{
+			if(version<=643){
+            //643版本在生成器中添加了生成后又移除，导致在添加生成的情况下进入过的存档，在移除生成之后会崩档。
+            //由于只在内测版本出现这种情况，所以不对正常存档做改动，正常存档崩了就删档吧
+            //这里对643及以前版本生成的返回地表存档进行删档以处理崩档情况。
+			//因为地表的存档还可能会有错误所以我先加回来。
+            Dungeon.deleteGame(GamesInProgress.curSlot, true);
+			}else {
             try{InterlevelScene.restore();}
             catch(IOException e){Game.reportException(e);}
+			}
 		}
 		Game.switchScene(GameScene.class);
 	}

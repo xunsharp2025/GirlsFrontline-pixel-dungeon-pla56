@@ -1,14 +1,28 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ArtifactRecharge;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Empulse;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.EnergyParticle;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
+import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -17,9 +31,12 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
+import com.watabou.utils.PathFinder;
+import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
@@ -31,8 +48,10 @@ public class ShootGun extends MeleeWeapon {
     private   Charger charger       = null;
     protected boolean needReload    = true;
     protected boolean hasCharge     = true;
-    protected int     cooldownTurns = 200;
+    protected int cooldownTurns = 200;
     private   int     cooldownLeft  = 0;
+    protected float rate = 1;
+    protected float EMPduration = 0;
 
     private static final String HAS_CHARGE    = "hasCharge";
     private static final String COOLDOWN_LEFT = "cooldownLeft";
@@ -63,9 +82,9 @@ public class ShootGun extends MeleeWeapon {
     public ArrayList<String> actions(Hero hero) {
         ArrayList<String> actions = super.actions(hero);
         if (needReload && !hasCharge){
-            actions.add(AC_RELOAD);    
-        }
-        actions.add(AC_SHOOT);
+            actions.add(AC_RELOAD);
+        } else
+            actions.add(AC_SHOOT);
         return actions;
     }
 
@@ -114,11 +133,115 @@ public class ShootGun extends MeleeWeapon {
         }
     }
 
-    public void onShootComplete(int cell) {
+    public void onShootComplete(int cell, int lvl) {
+        BombDestory(cell);
+        BombAttack(cell, lvl);
+        if(!Dungeon.hero.isAlive()){
+            Dungeon.fail(getClass());
+        }
         hasCharge=false;
-        cooldownLeft=cooldownTurns;
+        int down = 0;
+        if(Dungeon.hero.hasTalent(Talent.Type56Three_Bomb)){
+            switch (Dungeon.hero.pointsInTalent(Talent.Type56Three_Bomb)){
+                case 1:
+                    down=15;
+                    break;
+                case 2:
+                    down=35;
+                    break;
+                case 3:
+                    down=50;
+                    break;
+                default:
+                    down=0;
+                    break;
+            }
+        }
+        cooldownLeft=cooldownTurns-down;
         updateQuickslot();
         curUser.spendAndNext(1f);
+    }
+    protected void BombDestory(int cell){
+        if(rate>0){
+            //伤害倍率大于0
+            Sample.INSTANCE.play(Assets.Sounds.BLAST);
+            if (Dungeon.level.heroFOV[cell]) {
+                CellEmitter.get(cell).burst(BlastParticle.FACTORY,30);
+                //爆炸粒子
+            }
+        }
+        for(int n : PathFinder.NEIGHBOURS9) {
+            //对九格先执行一遍破坏
+            int c =cell + n;
+            if (c >= 0 && c < Dungeon.level.length()) {
+                if(rate<=0){
+                    //伤害倍率为0时不执行对地形和物品的破坏
+                    continue;
+                }
+                if (Dungeon.level.flamable[c]) {
+                    Dungeon.level.destroy(c);
+                    GameScene.updateMap(c);
+                }
+
+                // destroys items / triggers bombs caught in the blast.
+                Heap heap = Dungeon.level.heaps.get(c);
+                if (heap != null)
+                    heap.explode();
+
+                if (Dungeon.level.heroFOV[c]) {
+                    CellEmitter.get(c).burst(SmokeParticle.FACTORY,4);
+                }
+            }
+        }
+    }
+    protected void BombAttack(int cell, int lvl){
+        resetEMP();
+        //重置EMP回合数
+        int attack = 0;
+        for(int m : PathFinder.NEIGHBOURS9) {
+            //再执行伤害，以完整保留掉落物
+            int d =cell + m;
+            if (d >= 0 && d < Dungeon.level.length()) {
+
+                Char target = Actor.findChar(d);
+
+                if (target != null) {
+                    if(Dungeon.hero.hasTalent(Talent.EMP_Three))
+                        attack+=Dungeon.hero.pointsInTalent(Talent.EMP_Three);
+                    //天赋3计数
+                    int damage= BombDamage(lvl);
+                    target.damage((int)(damage*rate),this);
+
+                    if(target.isAlive()&&EMPduration>0){
+                        //EMP
+                        Buff.prolong(target, Empulse.class,EMPduration);
+                        CellEmitter.get(d).burst(EnergyParticle.FACTORY, 10);
+                        //EMP粒子
+                    }
+                }
+
+            }
+        }
+        if (attack>0){
+            attack = Math.min(attack, 6);
+            for (Buff b : Dungeon.hero.buffs()){
+                if (b instanceof Artifact.ArtifactBuff){
+                    if (!((Artifact.ArtifactBuff) b).isCursed()) ((Artifact.ArtifactBuff) b).charge(Dungeon.hero, attack);
+                }
+            }
+            ScrollOfRecharging.chargeParticle(Dungeon.hero);
+        }
+    }
+    protected void resetEMP(){
+        if (Dungeon.hero.subClass== HeroSubClass.EMP_BOMB){
+            EMPduration = 3;
+            if(Dungeon.hero.hasTalent(Talent.EMP_One)){
+                EMPduration+=Dungeon.hero.pointsInTalent(Talent.EMP_One);
+            }
+        }
+    }
+    protected int BombDamage(int lvl){
+        return 0;
     }
 
     @Override
@@ -161,7 +284,7 @@ public class ShootGun extends MeleeWeapon {
                     new Callback(){
                         @Override
                         public void call() {
-                            curShootGun.onShootComplete(cell);
+                            curShootGun.onShootComplete(cell, curShootGun.buffedLvl());
                         }
                     }
                 );

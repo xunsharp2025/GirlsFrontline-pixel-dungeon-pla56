@@ -154,8 +154,8 @@ public class RatKing extends NPC {
             notice();
             yell( Messages.get(this, "not_sleeping") );
             state = WANDERING;
-        } else
-        if (crown != null){
+        }
+        else if (crown != null){
             if (hero.belongings.armor() == null) {
                 yell(Messages.get(RatKing.class, "crown_clothes"));
             } else {
@@ -188,8 +188,8 @@ public class RatKing extends NPC {
                     }
                 });
             }
-        } else
-        if (gift!=null&&!hasGivenSugar){
+        }
+        else if (gift!=null&&!hasGivenSugar){
             SetLast(2);
             gift.GiftCost();
             if(!hasGivenChoco){
@@ -206,8 +206,8 @@ public class RatKing extends NPC {
             if(hero.buff(HintTracker.class)!=null)
                 hero.buff(HintTracker.class).detach();
             //重置点击次数以获取特色文案
-        } else
-        if (!hasGivenChoco) {
+        }
+        else if (!hasGivenChoco) {
             // FNC尚未给予Choco
             GetChock();
             if (isMidAutumn && !hasMooncake) {
@@ -217,8 +217,8 @@ public class RatKing extends NPC {
             if(hero.buff(HintTracker.class)!=null)
                 hero.buff(HintTracker.class).detach();
             //重置点击次数以获取特色文案
-        } else
-        if (hintCount < 3) {
+        }
+        else if (hintCount < 3) {
             if(hasGivenSugar){
                 // FNC获得礼物后的诚挚祝福
                 yellgood(Messages.get(this,"wish_"+hintCount));
@@ -242,15 +242,22 @@ public class RatKing extends NPC {
             }
                 // 增加提示计数器
                 Buff.count(hero, HintTracker.class, 1);
-        } else
-        if (hero.armorAbility instanceof Ratmogrify) {
+        }
+        else if (Dungeon.depth == 0){
+            Game.lockXMAS = !Game.lockXMAS;
+            if(Game.lockXMAS)
+                GLog.p("下一个存档将开启圣诞节彩蛋。");
+            else
+                GLog.n("取消开启。");
+        }
+        else if (hero.armorAbility instanceof Ratmogrify) {
             yellgood( Messages.get(this, "crown_after") );
-        } else
-        if (hasGivenSugar) {
+        }
+        else if (hasGivenSugar) {
             // 给予了礼物后，循环文案是祝福而非护食哈气
             yellgood(Messages.get(this, "wish_cyc"));
-        } else
-        {
+        }
+        else {
             // 没有交易鼠王护甲，并且没有给予礼物，还在获取巧克力后点击多次，触发护食哈气
             yell(Messages.get(this, "what_is_it"));
         }

@@ -46,89 +46,30 @@ public class Gun561 extends ShootGun {
 		hasCharge=false;
 		image = ItemSpriteSheet.GUN561;
 		RCH = 2;
+        cooldownTurns=200;
 	}
 
 	@Override
 	public int min(int lvl) {
-		return hasCharge ? 1 :2+lvl  ;
+		return hasCharge ? 1 :1+lvl;
+        //初始1成长1
 	}
 	@Override
 	public int max(int lvl) {
-		return hasCharge ? 2 :6+lvl*2;
+		return hasCharge ? 2 :8+lvl*2;
+        //初始8成长2
 	}
+    @Override
+    protected int BombDamage(int lvl){
+        return Random.NormalIntRange(2+lvl,16+2*lvl);
+    }
 
 	@Override
-	public void onShootComplete(int cell){
-		float rate=1f;
-		float duration=0f;
+	public void onShootComplete(int cell, int lvl){
 
-		if(Dungeon.hero.subClass==HeroSubClass.PULSETROOPER){
-			rate=Dungeon.hero.pointsInTalent(Talent.MORE_POWER)/6f;
-
-			Sample.INSTANCE.play( Assets.Sounds.LIGHTNING);
-
-			switch(Dungeon.hero.pointsInTalent(Talent.ENDURE_EMP)){
-				case 0:default:duration=5f;break;
-				case 1:        duration=8f;break;
-				case 2:        duration=11f;break;
-				case 3:        duration=15f;break;
-			}
-		}
-
-		if(rate>0.01f){
-			Sample.INSTANCE.play(Assets.Sounds.BLAST);
-			if (Dungeon.level.heroFOV[cell]) {
-				CellEmitter.get(cell).burst(BlastParticle.FACTORY,30);
-			}
-		}
-
-		for(int n : PathFinder.NEIGHBOURS9) {
-			int c =cell + n;
-			if (c >= 0 && c < Dungeon.level.length()) {
-				Char target = Actor.findChar(c);
-
-				if(target!=null&&duration>0.01f){
-					Buff.prolong(target,Empulse.class,duration);
-					CellEmitter.get(c).burst(EnergyParticle.FACTORY, 10);
-				}
-
-				if(rate<=0.01f){
-					continue;
-				}
-
-				if (Dungeon.level.flamable[c]) {
-					Dungeon.level.destroy(c);
-					GameScene.updateMap(c);
-				}
-
-				// destroys items / triggers bombs caught in the blast.
-				Heap heap = Dungeon.level.heaps.get(c);
-				if (heap != null)
-					heap.explode();
-
-				if (Dungeon.level.heroFOV[c]) {
-					CellEmitter.get(c).burst(SmokeParticle.FACTORY,4);
-				}
-
-				if (target != null) {
-					int damage=Random.NormalIntRange(Dungeon.hero.HT/2+5,Dungeon.hero.HT/2+8);
-					rate*=(n==0?1f:0.75f);
-					target.damage((int)(damage*rate),this);
-				}
-			}
-		}
-
-		if(!Dungeon.hero.isAlive()){
-			Dungeon.fail(getClass());
-		}
 
 		Hero hero=Dungeon.hero;
-		cooldownTurns=200-20*hero.pointsInTalent(Talent.FAST_RELOAD);
 
-		if(hero.hasTalent(Talent.SIMPLE_RELOAD)){
-			cooldownTurns-=-5+25*hero.pointsInTalent(Talent.SIMPLE_RELOAD);
-		}
-
-		super.onShootComplete(cell);
+		super.onShootComplete(cell, lvl);
 	}
 }

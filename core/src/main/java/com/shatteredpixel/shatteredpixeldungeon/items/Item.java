@@ -69,8 +69,8 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 
 public class Item implements Bundlable {
-    public static ArrayList<Class> itemA = Dungeon.itemAOfSave;
-    public static ArrayList<String> NOTEA = Dungeon.NOTEAOfSave;
+    public static ArrayList<Class> itemA = new ArrayList<>();
+    public static ArrayList<String> NOTEA = new ArrayList<>();
 
 	protected static final String TXT_TO_STRING_LVL		= "%s %+d";
 	protected static final String TXT_TO_STRING_X		= "%s x%d";
@@ -99,6 +99,7 @@ public class Item implements Bundlable {
     public String noted = "";
     public boolean canNote = true;
     public boolean canShowNote = true;
+    public boolean showSelf = false;
 
 	public boolean levelKnown = false;
 	
@@ -227,9 +228,10 @@ public class Item implements Bundlable {
             NoteItem(changItem,text);
         }else if(this.stackable){
             NoteItem(this,text);
-        }else {
-            this.noted=text;
         }
+        //上面是保存到类，下面是无论如何都对物品本身打标签，用于显示到排行榜
+        this.noted = text;
+
     }
     private void NoteItem(Item item,String text){
         if(itemA.contains(item.getClass())){
@@ -252,7 +254,10 @@ public class Item implements Bundlable {
     }
     public static String ClassNoteToItem(Item item){
         String note;
-        if (itemA.contains(item.getClass())) {
+        if(item.showSelf){
+            note = item.noted;
+        }
+        else if (itemA.contains(item.getClass())) {
             int j = 0;
             for (Class i : itemA) {
                 if (item.getClass() == i) {
@@ -262,7 +267,8 @@ public class Item implements Bundlable {
                 }
             }
             note = NOTEA.get(j);
-        } else {
+        }
+        else {
             note = item.noted;
         }
         return note;

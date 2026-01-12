@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.ui;
 
+import static com.shatteredpixel.shatteredpixeldungeon.items.food.Food.SummonPasty;
+
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.ArcaneResin;
@@ -35,6 +37,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.food.MeatPie;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Pasty;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.StewedMeat;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.XMasSugar;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.AlchemicalCatalyst;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.BlizzardBrew;
@@ -293,7 +296,7 @@ public class QuickRecipe extends Component {
 				result.add(new QuickRecipe( new StewedMeat.threeMeat() ));
 				result.add(null);
 				result.add(new QuickRecipe( new MeatPie.Recipe(),
-						new ArrayList<Item>(Arrays.asList(new Pasty(), new Food(), new MysteryMeat.PlaceHolder())),
+						new ArrayList<Item>(Arrays.asList(SummonPasty(), new Food(), new MysteryMeat.PlaceHolder())),
 						new MeatPie()));
 				result.add(null);
 				result.add(new QuickRecipe( new Blandfruit.CookFruit(),

@@ -140,6 +140,8 @@ public class GamesInProgress {
 		info.ht = hero.HT;
 		info.shld = hero.shielding();
 		info.hunger = (int)hero.buff(Hunger.class).hunger(); // 设置饥饿值
+        if(hero.heroClass==HeroClass.TYPE561)
+            info.hunger+=100;
 		info.heroClass = hero.heroClass;
 		info.subClass = hero.subClass;
 		info.armorTier = hero.tier();

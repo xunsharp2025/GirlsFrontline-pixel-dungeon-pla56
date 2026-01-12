@@ -55,7 +55,7 @@ public class MeatPie extends Food {
 				if (ingredient.quantity() > 0) {
 					if (ingredient instanceof Pasty||ingredient instanceof XMasSugar) {
 						pasty = true;
-					} else if (ingredient.getClass() == Food.class) {
+					} else if (ingredient.getClass() == Food.class||ingredient instanceof SaltyZongzi) {
 						ration = true;
 					} else if (ingredient instanceof MysteryMeat
 							|| ingredient instanceof StewedMeat

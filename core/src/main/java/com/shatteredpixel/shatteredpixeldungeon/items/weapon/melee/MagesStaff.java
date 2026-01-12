@@ -63,7 +63,7 @@ import java.util.ArrayList;
 
 public class MagesStaff extends MeleeWeapon {
 
-    private Wand wand;
+    public Wand wand;
 
     public static final String AC_IMBUE = "IMBUE";
     public static final String AC_ZAP	= "ZAP";
@@ -366,6 +366,12 @@ public class MagesStaff extends MeleeWeapon {
             //if (Dungeon.hero.subClass == HeroSubClass.BATTLEMAGE){
             //    info += "\n\n" + Messages.get(wand, "bmage_desc");
             //}
+            if(Dungeon.WandLock||wand.lockcharge)
+                info += "\n";
+            if(Dungeon.WandLock)
+                info += "\n所有子弹充能已被_锁定为满充能_。";
+            if(wand.lockcharge)
+                info += "\n该填充子弹的充能已被锁定为_ " + wand.chargeRem + " _点。";
         }
 
         return info;

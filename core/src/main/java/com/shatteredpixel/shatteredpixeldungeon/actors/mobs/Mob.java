@@ -36,6 +36,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Charm;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Dread;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Empulse;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Preparation;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Sleep;
@@ -46,16 +47,20 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.DirectableAlly;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
+import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Surprise;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Wound;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.LloydsBeacon;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.MasterThievesArmband;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.RedBook;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfWealth;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAggression;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Lucky;
@@ -699,6 +704,12 @@ public abstract class Mob extends Char {
 	
 	@Override
 	public void die( Object cause ) {
+        if(properties().contains(Property.BOSS)){
+            LloydsBeacon beacon = Dungeon.hero.belongings.getItem(LloydsBeacon.class);
+            if (beacon != null) {
+                beacon.upgrade();
+            }
+        }
 		if (cause == Chasm.class){
 			//50% chance to round up, 50% to round down
 			if (EXP % 2 == 1) EXP += Random.Int(2);
@@ -724,12 +735,14 @@ public abstract class Mob extends Char {
 		}
 
 		boolean soulMarked = buff(SoulMark.class) != null;
+        boolean EMP = buff(Empulse.class) != null;
 
 		super.die( cause );
 
 		if (!(this instanceof Wraith)
 				&& soulMarked
-				&& Random.Float() < (0.4f*Dungeon.hero.pointsInTalent(Talent.NECROMANCERS_MINIONS)/3f)){
+				&& Random.Float() < (0.4f*Dungeon.hero.pointsInTalent(Talent.NECROMANCERS_MINIONS)/3f))
+        {
 			Wraith w = Wraith.spawnAt(pos);
 			if (w != null) {
 				Buff.affect(w, Corruption.class);
@@ -739,6 +752,16 @@ public abstract class Mob extends Char {
 				}
 			}
 		}
+        int Ran = Dungeon.hero.pointsInTalent(Talent.EMP_Two);
+        if(EMP&&Random.Int(10)<Ran){
+            RedBook redbook = Dungeon.hero.belongings.getItem(RedBook.class);
+            if (redbook != null){
+                redbook.overCharge(1, false);
+                //复制的盗贼，下面两行是粒子特效
+                ScrollOfRecharging.chargeParticle( Dungeon.hero );
+                SpellSprite.show( Dungeon.hero, SpellSprite.CHARGE );
+            }
+        }
 	}
 
 	public float lootChance(){

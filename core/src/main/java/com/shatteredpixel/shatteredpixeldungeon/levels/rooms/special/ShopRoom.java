@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Shopkeeper;
@@ -210,17 +211,23 @@ public class ShopRoom extends SpecialRoom {
 					Generator.randomUsingDefaults( Generator.Category.POTION ) :
 					Generator.randomUsingDefaults( Generator.Category.SCROLL ) );
 
-		if(Dungeon.hero.hasTalent(Talent.BARGAIN_SKILLS)){
-			if(Dungeon.hero.pointsInTalent(Talent.BARGAIN_SKILLS)>=2){
-				itemsToSpawn.add(new SaltyZongzi());
-				itemsToSpawn.add(new SaltyZongzi());
-				itemsToSpawn.add(new SaltyZongzi());
-			}else if(Dungeon.hero.pointsInTalent(Talent.BARGAIN_SKILLS) == 1){
-				itemsToSpawn.add(new SugarZongzi());
-				itemsToSpawn.add(new SugarZongzi());
-			}
-		}
-		if(Dungeon.hero.pointsInTalent(Talent.BARGAIN_SKILLS)<2){
+		if(Dungeon.hero.heroClass== HeroClass.TYPE561){
+            switch (Random.Int(3)){
+                case 0:
+                    itemsToSpawn.add(new Maccol());
+                    itemsToSpawn.add(new Maccol());
+                    break;
+                case 1:
+                    itemsToSpawn.add(new SugarZongzi());
+                    itemsToSpawn.add(new Maccol());
+                    break;
+                case 2:
+                    itemsToSpawn.add(new SugarZongzi());
+                    itemsToSpawn.add(new SugarZongzi());
+                    break;
+            }
+        }
+        else {
 			switch(Random.Int(4)){
 				case 0: case 1:
 					itemsToSpawn.add(new Maccol());

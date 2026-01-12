@@ -59,6 +59,18 @@ public class WellFed extends Buff {
 			left /= 3;
 		}
 	}
+
+    public void reset(int time){
+        try{
+            left += time;
+        } catch (NumberFormatException e) {
+            left = time;
+        }
+        if (Dungeon.isChallenged(Challenges.NO_FOOD)){
+            //150 turns if on diet is enabled
+            left /= 3;
+        }
+    }
 	
 	@Override
 	public int icon() {

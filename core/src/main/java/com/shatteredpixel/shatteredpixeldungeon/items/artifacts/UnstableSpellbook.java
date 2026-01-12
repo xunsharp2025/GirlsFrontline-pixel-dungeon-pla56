@@ -173,6 +173,7 @@ public class UnstableSpellbook extends Artifact {
 		} else if (action.equals( AC_ADD )) {
 			GameScene.selectItem(itemSelector);
 		}
+        lockchB();
 	}
 
 	//forces the reading of a regular scroll if the player tried to exploit by quitting the game when the menu was up
@@ -219,7 +220,7 @@ public class UnstableSpellbook extends Artifact {
 	public void charge(Hero target, float amount) {
 		if (charge < chargeCap){
 			partialCharge += 0.1f*amount;
-			if (partialCharge >= 1){
+			while (partialCharge >= 1){
 				partialCharge--;
 				charge++;
 				updateQuickslot();
@@ -280,6 +281,7 @@ public class UnstableSpellbook extends Artifact {
 	public class bookRecharge extends ArtifactBuff{
 		@Override
 		public boolean act() {
+            lockcha();
 			LockedFloor lock = target.buff(LockedFloor.class);
 			if (charge < chargeCap && !cursed && (lock == null || lock.regenOn())) {
 				//120 turns to charge at full, 80 turns to charge at 0/8

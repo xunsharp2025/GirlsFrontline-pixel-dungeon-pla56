@@ -22,7 +22,6 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.PoisonParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.LloydsBeacon;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.SkeletonKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
@@ -223,10 +222,6 @@ public class Typhootin extends Mob {
         GameScene.bossSlain();
         Dungeon.level.drop( new SkeletonKey( Dungeon.depth  ), pos ).sprite.drop();
 
-        LloydsBeacon beacon = Dungeon.hero.belongings.getItem(LloydsBeacon.class);
-        if (beacon != null) {
-            beacon.upgrade();
-        }
 
         for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])){
             if (mob instanceof CyclopsArmy || mob instanceof Hydra) {

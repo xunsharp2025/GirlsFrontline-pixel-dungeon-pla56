@@ -116,9 +116,9 @@ public class Shopkeeper extends NPC {
 	public static int sellPrice(Item item){
 		float rate=1f;
 
-		if(Dungeon.hero.hasTalent(Talent.BARGAIN_SKILLS)
+		if(Dungeon.hero.hasTalent(Talent.Type56Two_FOOD)
 		&& item instanceof Food){
-			rate-=0.2f*Dungeon.hero.pointsInTalent(Talent.BARGAIN_SKILLS);
+			rate-=0.2f*Dungeon.hero.pointsInTalent(Talent.Type56Two_FOOD);
 		}
         int pay = Math.max(item.value()*2,(int)(item.value()*rate*(Dungeon.curDepth()+4f)));
 

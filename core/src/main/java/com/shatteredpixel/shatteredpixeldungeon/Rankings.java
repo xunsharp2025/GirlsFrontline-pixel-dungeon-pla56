@@ -49,7 +49,7 @@ public enum Rankings {
 	
 	INSTANCE;
 	
-	public static final int TABLE_SIZE	= 11;
+	public static final int TABLE_SIZE	= 21;
 	
 	public static final String RANKINGS_FILE = "rankings.dat";
 	

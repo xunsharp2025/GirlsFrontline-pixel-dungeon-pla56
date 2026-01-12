@@ -64,6 +64,8 @@ public class Type56FourOne extends ArmorAbility {
 		return Messages.get(this, "prompt");
 	}
 
+    private boolean cantreach = false;
+
 	@Override
 	protected void activate(ClassArmor armor, Hero hero, Integer target) {
 
@@ -92,6 +94,10 @@ public class Type56FourOne extends ArmorAbility {
 		}*/ else {
             if(Dungeon.level.distance(hero.pos, target)>1){
                 tpTarget(target);
+                if(cantreach){
+                    cantreach = false;
+                    return;
+                }
             }
 
             int time = 1+ hero.pointsInTalent(Talent.Type56FourOneTwo);
@@ -153,6 +159,7 @@ public class Type56FourOne extends ArmorAbility {
 
         if (dest == -1 || PathFinder.distance[dest] == Integer.MAX_VALUE || Dungeon.hero.rooted){
             GLog.w(Messages.get(this, "out_of_reach"));
+            cantreach = true;
             return;
         }
 

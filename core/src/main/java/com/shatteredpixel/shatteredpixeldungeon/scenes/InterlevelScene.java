@@ -45,6 +45,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndError;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.glwrap.Blending;
@@ -72,10 +73,10 @@ public class InterlevelScene extends PixelScene {
 	private static float fadeTime;
 	
 	public enum Mode {
-		ACCESS,DESCEND, ASCEND, CONTINUE, RESURRECT, RETURN, FALL, NONE
+		ACCESS,DESCEND, ASCEND, CONTINUE, RESURRECT, RETURN, FALL, NONE, RESET
 	}
 	public static Mode mode=Mode.NONE;
-	
+
 	public static String seedCode=null;
 
 	public static int returnDepth;
@@ -85,15 +86,15 @@ public class InterlevelScene extends PixelScene {
 	public static int accessLevelId;
 
 	public static boolean fallIntoPit;
-	
+
 	private enum Phase {
 		FADE_IN, STATIC, FADE_OUT
 	}
 	private Phase phase;
 	private float timeLeft;
-	
+
 	private RenderedTextBlock message;
-	
+
 	private static Thread thread;
 	private static Exception error = null;
 	private float waitingTime;
@@ -107,7 +108,7 @@ public class InterlevelScene extends PixelScene {
 	@Override
 	public void create() {
 		super.create();
-		
+
 		String loadingAsset;
 		int loadingDepth;
 		final float scrollSpeed;
@@ -211,14 +212,14 @@ public class InterlevelScene extends PixelScene {
 			protected NoosaScript script() {
 				return NoosaScriptNoLighting.get();
 			}
-			
+
 			@Override
 			public void draw() {
 				Blending.disable();
 				super.draw();
 				Blending.enable();
 			}
-			
+
 			@Override
 			public void update() {
 				super.update();
@@ -228,7 +229,7 @@ public class InterlevelScene extends PixelScene {
 		bg.scale(4, 4);
 		bg.autoAdjust = true;
 		add(bg);
-		
+
 		Image im = new Image(TextureCache.createGradient(0xAA000000, 0xBB000000, 0xCC000000, 0xDD000000, 0xFF000000)){
 			@Override
 			public void update() {
@@ -245,7 +246,7 @@ public class InterlevelScene extends PixelScene {
 		add(im);
 
 		String text = Messages.get(Mode.class, mode.name());
-		
+
 		message = PixelScene.renderTextBlock( text, 9 );
 		message.setPos(
 				(Camera.main.width - message.width()) / 2,
@@ -277,15 +278,15 @@ public class InterlevelScene extends PixelScene {
 			install.setPos((Camera.main.width - install.width())/2, (Camera.main.height - message.bottom())/3 + message.bottom());
 			add(install);
 		}
-		
+
 		phase = Phase.FADE_IN;
 		timeLeft = fadeTime;
-		
+
 		if (thread == null) {
 			thread = new Thread() {
 				@Override
 				public void run() {
-					
+
 					try {
 
 						if (Dungeon.hero != null){
@@ -315,14 +316,17 @@ public class InterlevelScene extends PixelScene {
 							case FALL:
 								fall();
 								break;
+                            case RESET:
+                                reset();
+                                break;
 						}
-						
+
 					} catch (Exception e) {
-						
+
 						error = e;
-						
+
 					}
-					
+
 					if (phase == Phase.STATIC && error == null) {
 						phase = Phase.FADE_OUT;
 						timeLeft = fadeTime;
@@ -333,17 +337,17 @@ public class InterlevelScene extends PixelScene {
 		}
 		waitingTime = 0f;
 	}
-	
+
 	@Override
 	public void update() {
 		super.update();
 
 		waitingTime += Game.elapsed;
-		
+
 		float p = timeLeft / fadeTime;
-		
+
 		switch (phase) {
-		
+
 		case FADE_IN:
 			message.alpha( 1 - p );
 			if ((timeLeft -= Game.elapsed) <= 0) {
@@ -355,17 +359,17 @@ public class InterlevelScene extends PixelScene {
 				}
 			}
 			break;
-			
+
 		case FADE_OUT:
 			message.alpha( p );
-			
+
 			if ((timeLeft -= Game.elapsed) <= 0) {
 				Game.switchScene( GameScene.class );
 				thread = null;
 				error = null;
 			}
 			break;
-			
+
 		case STATIC:
 			if (error != null) {
 				String errorMsg;
@@ -444,11 +448,11 @@ public class InterlevelScene extends PixelScene {
 		}
 		Dungeon.switchLevel( level, level.entrance );
 	}
-	
+
 	private void fall() throws IOException {
-		
+
 		Mob.holdAllies( Dungeon.level );
-		
+
 		Buff.affect( Dungeon.hero, Chasm.Falling.class );
 		Dungeon.saveAll();
 
@@ -461,6 +465,14 @@ public class InterlevelScene extends PixelScene {
 		}
 		Dungeon.switchLevel( level, level.fallCell( fallIntoPit ));
 	}
+    private void reset() throws IOException {
+        Actor.fixTime();
+        Level copyLevel = Dungeon.tryLoadLevel(Dungeon.depth+10000);
+        if (copyLevel == null) {
+            GLog.n("未读取到复制存档");
+        } else
+            Dungeon.switchLevel(copyLevel,copyLevel.entrance);
+    }
 	
 	private void ascend() throws IOException {
 		

@@ -71,7 +71,7 @@ public class Cypros extends MeleeWeapon {
         return Messages.get(this, "name", mode.title());
     }
 
-    private Wand wand;
+    public Wand wand;
 
     public Item identifyA(){
         return identify();
@@ -338,50 +338,18 @@ public class Cypros extends MeleeWeapon {
 
         String info = super.info();
 
-        if (levelKnown) {
-            info += "\n\n" + Messages.get(MeleeWeapon.class, "stats_known", tier, augment.damageFactor(min()), augment.damageFactor(max()), STRReq());
-            if (STRReq() > hero.STR()) {
-                info += " " + Messages.get(Weapon.class, "too_heavy");
-            } else if (hero.STR() > STRReq()){
-                info += " " + Messages.get(Weapon.class, "excess_str", hero.STR() - STRReq());
-            }
-        } else {
-            info += "\n\n" + Messages.get(MeleeWeapon.class, "stats_unknown", tier, min(0), max(0), STRReq(0));
-            if (STRReq(0) > hero.STR()) {
-                info += " " + Messages.get(MeleeWeapon.class, "probably_too_heavy");
-            }
-        }
-
-        String stats_desc = Messages.get(this, "stats_desc");
-
-        if (!stats_desc.equals("")) info+= "\n\n" + stats_desc;
-
-        switch (augment) {
-            case SPEED:
-                info += "\n\n" + Messages.get(Weapon.class, "faster");
-                break;
-            case DAMAGE:
-                info += "\n\n" + Messages.get(Weapon.class, "stronger");
-                break;
-            case NONE:
-        }
-
         if(mode.desc()!="")
         // 모드 별 설명 추가
             info += "\n\n" + mode.desc();
         if(canShowDEF)
             info += "\n\n" + DEFGAIN();
 
-        if (enchantment != null && (cursedKnown || !enchantment.curse())){
-            info += "\n\n" + Messages.get(Weapon.class, "enchanted", enchantment.name());
-            info += " " + Messages.get(enchantment, "desc");
-        }
-
-        if (cursed && isEquipped( hero )) {
-            info += "\n\n" + Messages.get(Weapon.class, "cursed_worn");
-        } else if (cursedKnown && cursed) {
-            info += "\n\n" + Messages.get(Weapon.class, "cursed");
-        }
+        if(Dungeon.WandLock||wand.lockcharge)
+            info += "\n";
+        if(Dungeon.WandLock)
+            info += "\n_草莓派手雷_的充能已被_锁定为满充能_。";
+        if(wand.lockcharge)
+            info += "\n_草莓派手雷_的充能已被锁定为_ " + wand.chargeRem + " _点。";
 
         return info;
     }
